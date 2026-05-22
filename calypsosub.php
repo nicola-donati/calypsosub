@@ -29,6 +29,11 @@ require_once CALYPSOSUB_PATH . 'includes/admin/class-email-templates.php';
 require_once CALYPSOSUB_PATH . 'includes/account/class-user-account.php';
 require_once CALYPSOSUB_PATH . 'includes/helpers/functions.php';
 
+add_filter( 'use_block_editor_for_post_type', function ( bool $use, string $post_type ): bool {
+	$types = [ 'calypso_uscita', 'calypso_evento', 'calypso_corso', 'calypso_docente', 'calypso_prenotazione' ];
+	return in_array( $post_type, $types, true ) ? false : $use;
+}, 10, 2 );
+
 ( new Calypsosub_Tax_Brevetti() )->init();
 ( new Calypsosub_CPT_Docenti() )->init();
 ( new Calypsosub_CPT_Uscite() )->init();
