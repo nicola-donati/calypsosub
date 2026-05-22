@@ -115,10 +115,15 @@ class Calypsosub_CPT_Corsi {
 
 		<p class="calypso-section-title"><?php _e( 'Date lezioni', 'calypsosub' ); ?></p>
 		<div id="calypso-lezioni-repeater">
-			<?php foreach ( $d['date_lezioni'] as $i => $dt ) : ?>
+			<?php foreach ( $d['date_lezioni'] as $i => $dt ) :
+				$dp = $dt ? substr( $dt, 0, 10 ) : '';
+				$tp = strlen( $dt ) > 10 ? substr( $dt, 11, 5 ) : '';
+			?>
 			<div class="calypso-repeater-row">
-				<input type="datetime-local" name="calypso_date_lezioni[<?php echo (int) $i; ?>]"
-				       value="<?php echo esc_attr( $dt ); ?>">
+				<input type="date" name="calypso_date_lezioni_d[<?php echo (int) $i; ?>]"
+				       value="<?php echo esc_attr( $dp ); ?>" style="flex:2">
+				<input type="time" name="calypso_date_lezioni_t[<?php echo (int) $i; ?>]"
+				       value="<?php echo esc_attr( $tp ); ?>" style="flex:1">
 				<button type="button" class="calypso-btn-remove">&#x2715;</button>
 			</div>
 			<?php endforeach; ?>
@@ -135,15 +140,20 @@ class Calypsosub_CPT_Corsi {
 			document.getElementById('calypso-lezioni-add').addEventListener('click', function () {
 				var row = document.createElement('div');
 				row.className = 'calypso-repeater-row';
-				var inp = document.createElement('input');
-				inp.type = 'datetime-local';
-				inp.name = 'calypso_date_lezioni[' + idx + ']';
-				inp.style.flex = '1';
+				var inpD = document.createElement('input');
+				inpD.type = 'date';
+				inpD.name = 'calypso_date_lezioni_d[' + idx + ']';
+				inpD.style.flex = '2';
+				var inpT = document.createElement('input');
+				inpT.type = 'time';
+				inpT.name = 'calypso_date_lezioni_t[' + idx + ']';
+				inpT.style.flex = '1';
 				var btn = document.createElement('button');
 				btn.type = 'button';
 				btn.className = 'calypso-btn-remove';
 				btn.textContent = '✕';
-				row.appendChild(inp);
+				row.appendChild(inpD);
+				row.appendChild(inpT);
 				row.appendChild(btn);
 				document.getElementById('calypso-lezioni-repeater').appendChild(row);
 				idx++;
@@ -185,9 +195,12 @@ class Calypsosub_CPT_Corsi {
 		update_post_meta( $post_id, '_corso_docenti_ids', $docenti_ids );
 
 		$date_lezioni = [];
-		foreach ( (array) ( $_POST['calypso_date_lezioni'] ?? [] ) as $dt ) {
-			$clean = sanitize_text_field( wp_unslash( $dt ) );
-			if ( $clean ) $date_lezioni[] = $clean;
+		$lezioni_d    = (array) ( $_POST['calypso_date_lezioni_d'] ?? [] );
+		$lezioni_t    = (array) ( $_POST['calypso_date_lezioni_t'] ?? [] );
+		foreach ( $lezioni_d as $i => $dv ) {
+			$dv = sanitize_text_field( wp_unslash( $dv ) );
+			$tv = sanitize_text_field( wp_unslash( $lezioni_t[ $i ] ?? '' ) );
+			if ( $dv ) $date_lezioni[] = $tv ? $dv . 'T' . $tv : $dv;
 		}
 		update_post_meta( $post_id, '_corso_date_lezioni', $date_lezioni );
 	}

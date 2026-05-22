@@ -93,10 +93,15 @@ class Calypsosub_CPT_Uscite {
 
 		<p class="calypso-section-title"><?php _e( 'Date', 'calypsosub' ); ?></p>
 		<div id="calypso-date-repeater">
-			<?php foreach ( $d['date'] as $i => $dt ) : ?>
+			<?php foreach ( $d['date'] as $i => $dt ) :
+				$dp = $dt ? substr( $dt, 0, 10 ) : '';
+				$tp = strlen( $dt ) > 10 ? substr( $dt, 11, 5 ) : '';
+			?>
 			<div class="calypso-repeater-row">
-				<input type="datetime-local" name="calypso_date[<?php echo (int) $i; ?>]"
-				       value="<?php echo esc_attr( $dt ); ?>">
+				<input type="date" name="calypso_date_d[<?php echo (int) $i; ?>]"
+				       value="<?php echo esc_attr( $dp ); ?>" style="flex:2">
+				<input type="time" name="calypso_date_t[<?php echo (int) $i; ?>]"
+				       value="<?php echo esc_attr( $tp ); ?>" style="flex:1">
 				<button type="button" class="calypso-btn-remove">&#x2715;</button>
 			</div>
 			<?php endforeach; ?>
@@ -129,15 +134,20 @@ class Calypsosub_CPT_Uscite {
 			document.getElementById('calypso-date-add').addEventListener('click', function () {
 				var row = document.createElement('div');
 				row.className = 'calypso-repeater-row';
-				var inp = document.createElement('input');
-				inp.type = 'datetime-local';
-				inp.name = 'calypso_date[' + idx + ']';
-				inp.style.flex = '1';
+				var inpD = document.createElement('input');
+				inpD.type = 'date';
+				inpD.name = 'calypso_date_d[' + idx + ']';
+				inpD.style.flex = '2';
+				var inpT = document.createElement('input');
+				inpT.type = 'time';
+				inpT.name = 'calypso_date_t[' + idx + ']';
+				inpT.style.flex = '1';
 				var btn = document.createElement('button');
 				btn.type = 'button';
 				btn.className = 'calypso-btn-remove';
 				btn.textContent = '✕';
-				row.appendChild(inp);
+				row.appendChild(inpD);
+				row.appendChild(inpT);
 				row.appendChild(btn);
 				document.getElementById('calypso-date-repeater').appendChild(row);
 				idx++;
@@ -185,10 +195,13 @@ class Calypsosub_CPT_Uscite {
 		update_post_meta( $post_id, '_uscita_lista_attesa',
 			isset( $_POST['calypso_lista_attesa'] ) ? 1 : 0 );
 
-		$date = [];
-		foreach ( (array) ( $_POST['calypso_date'] ?? [] ) as $dt ) {
-			$clean = sanitize_text_field( wp_unslash( $dt ) );
-			if ( $clean ) $date[] = $clean;
+		$date    = [];
+		$dates_d = (array) ( $_POST['calypso_date_d'] ?? [] );
+		$dates_t = (array) ( $_POST['calypso_date_t'] ?? [] );
+		foreach ( $dates_d as $i => $dv ) {
+			$dv = sanitize_text_field( wp_unslash( $dv ) );
+			$tv = sanitize_text_field( wp_unslash( $dates_t[ $i ] ?? '' ) );
+			if ( $dv ) $date[] = $tv ? $dv . 'T' . $tv : $dv;
 		}
 		update_post_meta( $post_id, '_uscita_date', $date );
 	}
