@@ -21,6 +21,7 @@ INCLUDE = [
     "calypsosub.php",
     "includes",
     "block-templates",
+    "templates",
     "languages",       # opzionale, incluso se presente
 ]
 

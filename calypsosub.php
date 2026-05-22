@@ -28,6 +28,7 @@ require_once CALYPSOSUB_PATH . 'includes/admin/class-admin-menus.php';
 require_once CALYPSOSUB_PATH . 'includes/admin/class-email-templates.php';
 require_once CALYPSOSUB_PATH . 'includes/account/class-user-account.php';
 require_once CALYPSOSUB_PATH . 'includes/helpers/functions.php';
+require_once CALYPSOSUB_PATH . 'includes/class-template-loader.php';
 
 add_filter( 'use_block_editor_for_post_type', function ( bool $use, string $post_type ): bool {
 	$types = [ 'calypso_uscita', 'calypso_evento', 'calypso_corso', 'calypso_docente', 'calypso_prenotazione' ];
@@ -44,6 +45,7 @@ $email_manager                       = new Calypsosub_Booking_Email();
 $GLOBALS['calypsosub_booking_manager'] = new Calypsosub_Booking_Manager( $email_manager );
 $GLOBALS['calypsosub_booking_manager']->init();
 
+( new Calypsosub_Template_Loader() )->init();
 ( new Calypsosub_Admin_Menus() )->init();
 ( new Calypsosub_Email_Templates() )->init();
 ( new Calypsosub_User_Account( $GLOBALS['calypsosub_booking_manager'] ) )->init();
