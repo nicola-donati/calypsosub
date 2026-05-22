@@ -22,7 +22,7 @@ class Calypsosub_CPT_Uscite {
 			'public'       => true,
 			'show_in_rest' => true,
 			'supports'     => [ 'title', 'editor', 'thumbnail' ],
-			'menu_icon'    => 'dashicons-swimmer',
+			'menu_icon'    => 'dashicons-location',
 			'rewrite'      => [ 'slug' => 'uscite' ],
 			'has_archive'  => true,
 		] );

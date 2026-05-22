@@ -14,7 +14,7 @@ class Calypsosub_Admin_Menus {
 			'manage_options',
 			'calypsosub',
 			[ $this, 'render_settings_page' ],
-			'dashicons-swimmer',
+			'dashicons-flag',
 			30
 		);
 
