@@ -116,7 +116,7 @@ function calypso_book( int $post_id, int $user_id, array $data ): string|WP_Erro
 /**
  * Cancella prenotazione.
  */
-function calypso_cancel_booking( int $booking_id, int $user_id ): true|WP_Error {
+function calypso_cancel_booking( int $booking_id, int $user_id ): bool|WP_Error {
 	global $calypsosub_booking_manager;
 	if ( ! $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 		return new WP_Error( 'not_init', 'Booking manager non inizializzato.' );
