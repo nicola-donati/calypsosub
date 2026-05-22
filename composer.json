@@ -1,0 +1,16 @@
+{
+    "name": "calypsosub/calypsosub",
+    "description": "Plugin WordPress ASD Calypso Sub Arezzo",
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^9.6",
+        "brain/monkey": "^2.6",
+        "mockery/mockery": "^1.6",
+        "php-stubs/wordpress-stubs": "^6.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Calypsosub\\Tests\\": "tests/"
+        }
+    }
+}
