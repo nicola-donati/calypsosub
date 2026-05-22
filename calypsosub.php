@@ -35,15 +35,13 @@ require_once CALYPSOSUB_PATH . 'includes/helpers/functions.php';
 ( new Calypsosub_CPT_Eventi() )->init();
 ( new Calypsosub_CPT_Corsi() )->init();
 
-$email_manager                  = new Calypsosub_Booking_Email();
-$calypsosub_booking_manager     = new Calypsosub_Booking_Manager( $email_manager );
-$calypsosub_booking_manager->init();
-
-global $calypsosub_booking_manager;
+$email_manager                       = new Calypsosub_Booking_Email();
+$GLOBALS['calypsosub_booking_manager'] = new Calypsosub_Booking_Manager( $email_manager );
+$GLOBALS['calypsosub_booking_manager']->init();
 
 ( new Calypsosub_Admin_Menus() )->init();
 ( new Calypsosub_Email_Templates() )->init();
-( new Calypsosub_User_Account( $calypsosub_booking_manager ) )->init();
+( new Calypsosub_User_Account( $GLOBALS['calypsosub_booking_manager'] ) )->init();
 
 register_activation_hook( __FILE__, 'calypsosub_activate' );
 function calypsosub_activate(): void {
