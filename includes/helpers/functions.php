@@ -46,16 +46,92 @@ function calypso_get_eventi( array $args = [] ): array {
 }
 
 /**
- * Lista corsi.
+ * Lista corsi ordinati per titolo.
  */
 function calypso_get_corsi( array $args = [] ): array {
 	$query = new WP_Query( array_merge( [
 		'post_type'      => 'calypso_corso',
 		'post_status'    => 'publish',
 		'posts_per_page' => -1,
-		'orderby'        => 'meta_value',
-		'meta_key'       => '_corso_data_inizio',
+		'orderby'        => 'title',
 		'order'          => 'ASC',
+	], $args ) );
+	return $query->posts;
+}
+
+/**
+ * Prossima occorrenza non passata per un corso.
+ */
+function calypso_get_next_occorrenza( int $corso_id ): ?WP_Post {
+	$query = new WP_Query( [
+		'post_type'      => 'calypso_occorrenza',
+		'post_status'    => 'publish',
+		'posts_per_page' => 1,
+		'orderby'        => 'meta_value',
+		'meta_key'       => '_occorrenza_data_inizio',
+		'order'          => 'ASC',
+		'meta_query'     => [
+			'relation' => 'AND',
+			[
+				'key'     => '_occorrenza_corso_id',
+				'value'   => $corso_id,
+				'compare' => '=',
+				'type'    => 'NUMERIC',
+			],
+			[
+				'key'     => '_occorrenza_data_fine',
+				'value'   => date( 'Y-m-d' ),
+				'compare' => '>=',
+				'type'    => 'DATE',
+			],
+		],
+	] );
+	return $query->posts[0] ?? null;
+}
+
+/**
+ * Periodo leggibile per un'occorrenza (es. "MAR – GIU 2026").
+ */
+function calypso_get_occorrenza_periodo( int $occorrenza_id ): string {
+	$inizio = get_post_meta( $occorrenza_id, '_occorrenza_data_inizio', true );
+	$fine   = get_post_meta( $occorrenza_id, '_occorrenza_data_fine', true );
+	if ( ! $inizio ) return '';
+
+	$ts_start  = strtotime( $inizio );
+	$mese_ini  = strtoupper( date_i18n( 'M', $ts_start ) );
+	$anno_ini  = date( 'Y', $ts_start );
+
+	if ( $fine && $fine !== $inizio ) {
+		$ts_end   = strtotime( $fine );
+		$mese_fin = strtoupper( date_i18n( 'M', $ts_end ) );
+		$anno_fin = date( 'Y', $ts_end );
+		if ( $anno_ini === $anno_fin ) {
+			return $mese_ini . ' – ' . $mese_fin . ' ' . $anno_ini;
+		}
+		return $mese_ini . ' ' . $anno_ini . ' – ' . $mese_fin . ' ' . $anno_fin;
+	}
+	return date_i18n( 'j M Y', $ts_start );
+}
+
+/**
+ * Tutte le occorrenze di un corso, ordinate per data.
+ *
+ * @return WP_Post[]
+ */
+function calypso_get_occorrenze_by_corso( int $corso_id, array $args = [] ): array {
+	$query = new WP_Query( array_merge( [
+		'post_type'      => 'calypso_occorrenza',
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+		'orderby'        => 'meta_value',
+		'meta_key'       => '_occorrenza_data_inizio',
+		'order'          => 'ASC',
+		'meta_query'     => [ [
+			'key'     => '_occorrenza_corso_id',
+			'value'   => $corso_id,
+			'compare' => '=',
+			'type'    => 'NUMERIC',
+		] ],
 	], $args ) );
 	return $query->posts;
 }

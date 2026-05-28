@@ -1,0 +1,454 @@
+/*
+Theme Name:   Calypso Sub Arezzo
+Theme URI:    https://www.calypsosub.it/
+Description:  Child theme per Calypso Sub Arezzo. Palette acquatica + sabbia, accento corallo. Tipografia Big Shoulders Display + DM Sans. Le decisioni di sistema (palette, font, dimensioni, spacing) sono in theme.json; questo file aggiunge solo ciò che l'editor non può gestire (utility, placeholders, hover su elementi custom, micro-interazioni).
+Author:       Calypso Sub
+Template:     twentytwentyfour
+Version:      1.0.0
+Text Domain:  calypso-sub
+*/
+
+/* ============================================================
+   0 · NOTA
+   ------------------------------------------------------------
+   Tutto ciò che è ESPOSTO nell'editor di WordPress
+   (palette, font-family, font-size, spacing, ombre, gradienti,
+   stili di h1-h6, link, button, quote, ecc.) sta in theme.json.
+   Qui dentro restano solo:
+     1. token "shortcut" (var custom non gestite da theme.json)
+     2. utility CSS che useremo nei blocchi "HTML personalizzato"
+        o nei nomi-classe aggiuntivi dei blocchi standard
+     3. hover/focus complessi
+     4. placeholder striped per le immagini mancanti
+     5. piccole regole globali che WP non espone (selection, smoothing)
+
+   Le variabili dei preset di WP sono già disponibili come:
+     var(--wp--preset--color--coral)
+     var(--wp--preset--font-family--display)
+     var(--wp--preset--font-size--xl)
+     var(--wp--preset--spacing--40)
+     var(--wp--preset--shadow--coral)
+   Le usiamo direttamente — niente duplicazione.
+============================================================ */
+
+
+/* ============================================================
+   1 · ROOT — alias brevi (opzionali, comodi nei custom HTML)
+============================================================ */
+:root {
+  /* Color alias */
+  --c-abyss:       var(--wp--preset--color--abyss);
+  --c-deep:        var(--wp--preset--color--deep);
+  --c-wave:        var(--wp--preset--color--wave);
+  --c-aqua:        var(--wp--preset--color--aqua);
+  --c-foam:        var(--wp--preset--color--foam);
+  --c-sand:        var(--wp--preset--color--sand);
+  --c-sand-warm:   var(--wp--preset--color--sand-warm);
+  --c-coral:       var(--wp--preset--color--coral);
+  --c-coral-deep:  var(--wp--preset--color--coral-deep);
+  --c-gold:        var(--wp--preset--color--gold);
+  --c-bone:        var(--wp--preset--color--bone);
+  --c-ink:         var(--wp--preset--color--ink);
+
+  /* Type alias */
+  --f-display: var(--wp--preset--font-family--display);
+  --f-body:    var(--wp--preset--font-family--body);
+  --f-mono:    var(--wp--preset--font-family--mono);
+
+  /* Radius custom (WP gestisce il radius dei singoli blocchi
+     ma per i bottoni "pill" abbiamo 999px che si fa in theme.json) */
+  --radius:    4px;
+  --radius-lg: 12px;
+}
+
+
+/* ============================================================
+   2 · GLOBAL — micro-regole che WP non espone
+============================================================ */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "ss01", "cv11";
+  text-rendering: optimizeLegibility;
+}
+
+/* Selezione testo — colore brand */
+::selection {
+  background: var(--c-coral);
+  color: #fff;
+}
+::-moz-selection {
+  background: var(--c-coral);
+  color: #fff;
+}
+
+/* Focus visibile coerente con la palette */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--c-coral);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Smooth scroll quando si naviga via anchor */
+html { scroll-behavior: smooth; }
+
+/* Immagini fluide (WP non lo applica sempre) */
+img { max-width: 100%; height: auto; }
+
+
+/* ============================================================
+   3 · TYPOGRAPHY — utility riusabili
+   ------------------------------------------------------------
+   Usali via "CSS class" sui blocchi (Avanzate → Classi aggiuntive).
+============================================================ */
+
+/* Titoli display (oversize, uppercase, tight) — per hero / numeri */
+.display,
+.is-style-display {
+  font-family: var(--f-display);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+/* Eyebrow / kicker — sopra ai titoli */
+.eyebrow,
+.is-style-eyebrow {
+  font-family: var(--f-mono);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  font-weight: 500;
+  color: var(--c-wave);
+}
+
+/* Highlight evidenziatore (turchese 45% bottom) */
+.mark,
+mark {
+  background: linear-gradient(transparent 60%, rgba(95,184,200,.45) 60%);
+  padding: 0 4px;
+  color: inherit;
+}
+
+/* Numero "statistica" oversize */
+.stat-num {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: clamp(56px, 7vw, 88px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--c-deep);
+}
+.stat-label {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(11, 26, 38, .6);
+  margin-top: 8px;
+}
+
+
+/* ============================================================
+   4 · BUTTONS — varianti custom oltre al default coral
+   ------------------------------------------------------------
+   WP usa di base il bottone "primario" definito in theme.json.
+   Qui aggiungiamo "ghost", "dark" e gli hover con lift.
+============================================================ */
+
+.wp-block-button .wp-block-button__link,
+.btn {
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease, color .15s ease, border-color .15s ease;
+}
+.wp-block-button .wp-block-button__link:hover,
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Variante ghost — bordo bianco, fondo trasparente (per hero scuri) */
+.is-style-ghost > .wp-block-button__link,
+.btn-ghost {
+  background: transparent !important;
+  color: #fff !important;
+  border: 1.5px solid rgba(255, 255, 255, .4) !important;
+  box-shadow: none !important;
+}
+.is-style-ghost > .wp-block-button__link:hover,
+.btn-ghost:hover {
+  border-color: #fff !important;
+  background: rgba(255, 255, 255, .08) !important;
+}
+
+/* Variante dark — riempimento deep ocean */
+.is-style-dark > .wp-block-button__link,
+.btn-dark {
+  background: var(--c-deep) !important;
+  color: #fff !important;
+  box-shadow: 0 6px 18px -4px rgba(10, 37, 64, .35) !important;
+}
+.is-style-dark > .wp-block-button__link:hover,
+.btn-dark:hover {
+  background: var(--c-abyss) !important;
+}
+
+/* Bottone con icona freccia inline (usato nei custom HTML) */
+.btn-arrow::after {
+  content: "→";
+  display: inline-block;
+  margin-left: 8px;
+  transition: transform .2s ease;
+}
+.btn-arrow:hover::after {
+  transform: translateX(3px);
+}
+
+
+/* ============================================================
+   5 · IMAGE PLACEHOLDER — striped fallback
+   ------------------------------------------------------------
+   Usalo come Custom HTML block quando manca la foto reale.
+   <div class="ph" style="aspect-ratio: 16/9">
+     <div class="ph-cap">PRODUCT SHOT · HERO</div>
+   </div>
+============================================================ */
+.ph {
+  position: relative;
+  background:
+    repeating-linear-gradient(135deg,
+      rgba(10, 37, 64, .06) 0 1px,
+      transparent 1px 14px),
+    linear-gradient(180deg, var(--c-aqua), var(--c-wave) 60%, var(--c-deep));
+  color: rgba(255, 255, 255, .85);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  overflow: hidden;
+  isolation: isolate;
+  min-height: 200px;
+}
+.ph::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, .18), transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(0, 0, 0, .25), transparent 60%);
+  pointer-events: none;
+}
+.ph .ph-cap {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, .35);
+  backdrop-filter: blur(4px);
+  border-top-right-radius: 4px;
+  position: relative;
+  z-index: 1;
+  color: #fff;
+}
+
+/* Variante sabbia */
+.ph.ph-sand {
+  background:
+    repeating-linear-gradient(135deg,
+      rgba(10, 37, 64, .07) 0 1px,
+      transparent 1px 14px),
+    linear-gradient(180deg, var(--c-sand) 0%, var(--c-sand-warm) 100%);
+  color: rgba(11, 26, 38, .7);
+}
+.ph.ph-sand .ph-cap {
+  background: rgba(11, 26, 38, .18);
+  color: rgba(11, 26, 38, .85);
+}
+
+
+/* ============================================================
+   6 · LAYOUT helpers — section / container
+   ------------------------------------------------------------
+   WP gestisce contentSize/wideSize ma a volte serve una
+   sezione full-bleed con padding verticale generoso.
+============================================================ */
+.section {
+  padding: clamp(56px, 8vw, 96px) clamp(24px, 4vw, 48px);
+}
+.container {
+  max-width: 1320px;
+  margin-inline: auto;
+}
+
+
+/* ============================================================
+   7 · NAV/HEADER — link sottolineato attivo
+   ------------------------------------------------------------
+   Solo i dettagli che il blocco Navigation non espone.
+============================================================ */
+
+/* Link nav: underline animato che cresce da sinistra */
+.wp-block-navigation .wp-block-navigation-item__content {
+  position: relative;
+  padding-bottom: 4px;
+}
+.wp-block-navigation .wp-block-navigation-item__content::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1.5px;
+  width: 0;
+  background: currentColor;
+  transition: width .2s ease;
+}
+.wp-block-navigation .wp-block-navigation-item__content:hover::after,
+.wp-block-navigation .current-menu-item > .wp-block-navigation-item__content::after {
+  width: 100%;
+}
+
+
+/* ============================================================
+   8 · CARD — superficie generica con hover lift
+============================================================ */
+.card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--wp--preset--shadow--sm);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--wp--preset--shadow--md);
+}
+
+
+/* ============================================================
+   9 · DARK SECTION — quando un gruppo va su sfondo abyss
+   ------------------------------------------------------------
+   Aggiungi la classe .dark-section al blocco Gruppo o Cover.
+============================================================ */
+.dark-section,
+.has-abyss-background-color,
+.has-deep-background-color {
+  color: rgba(255, 255, 255, .92);
+}
+.dark-section h1,
+.dark-section h2,
+.dark-section h3,
+.dark-section h4,
+.has-abyss-background-color h1, .has-abyss-background-color h2, .has-abyss-background-color h3, .has-abyss-background-color h4,
+.has-deep-background-color  h1, .has-deep-background-color  h2, .has-deep-background-color  h3, .has-deep-background-color  h4 {
+  color: #fff;
+}
+.dark-section .eyebrow,
+.has-abyss-background-color .eyebrow,
+.has-deep-background-color  .eyebrow {
+  color: var(--c-aqua);
+}
+.dark-section a {
+  color: var(--c-aqua);
+}
+.dark-section a:hover {
+  color: var(--c-coral);
+}
+
+
+/* ============================================================
+   10 · FORMS — input/textarea/select coerenti col brand
+   ------------------------------------------------------------
+   WP non stila i form di default e Gutenberg li delega
+   spesso a Contact Form 7 / WPForms / Gravity Forms.
+============================================================ */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+input[type="number"],
+input[type="date"],
+input[type="password"],
+textarea,
+select {
+  width: 100%;
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.4;
+  padding: 12px 14px;
+  background: #fff;
+  color: var(--c-ink);
+  border: 1.5px solid rgba(11, 26, 38, .15);
+  border-radius: var(--radius);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--c-wave);
+  box-shadow: 0 0 0 3px rgba(29, 111, 156, .15);
+}
+::placeholder {
+  color: rgba(11, 26, 38, .4);
+}
+label {
+  display: block;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--c-wave);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+
+/* ============================================================
+   11 · TABLE — pulizia di base
+============================================================ */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(11, 26, 38, .08);
+}
+th {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--c-wave);
+  font-weight: 500;
+}
+
+
+/* ============================================================
+   12 · SCROLLBAR (webkit) — sottile, coerente
+============================================================ */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(11, 26, 38, .2);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(11, 26, 38, .35);
+}
+
+
+/* ============================================================
+   13 · REDUCED MOTION
+============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

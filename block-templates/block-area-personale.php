@@ -1,10 +1,4 @@
 <?php
-/**
- * Block template: Area Personale Utente
- * Inserire in una pagina WordPress dedicata come blocco HTML personalizzato:
- *   <?php include( CALYPSOSUB_PATH . 'block-templates/block-area-personale.php' ); ?>
- * Oppure usare lo shortcode [calypso_area_personale] registrato da class-user-account.php
- */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 if ( ! is_user_logged_in() ) {
@@ -35,7 +29,7 @@ foreach ( $booking_ids as $bid ) {
 $cancel_nonce = wp_create_nonce( 'calypso_cancel_nonce' );
 ?>
 <style>
-.calypso-account{--c-deep:#0a2540;--c-wave:#1d6f9c;--c-coral:#ff6b4a;--c-bone:#f6f1e6;--c-foam:#cfe9ee;--radius:4px;--radius-lg:12px;--f-body:"DM Sans",-apple-system,BlinkMacSystemFont,sans-serif;--f-display:"Big Shoulders Display","Anton",Impact,sans-serif;font-family:var(--f-body);max-width:840px;margin:0 auto;padding:0 24px}
+.calypso-account{font-family:var(--f-body);max-width:840px;margin:0 auto;padding:0 24px}
 .calypso-account h2{font-family:var(--f-display);font-size:32px;color:var(--c-deep);margin:0 0 20px}
 .calypso-account h3{font-family:var(--f-display);font-size:24px;color:var(--c-deep);margin:32px 0 16px}
 .calypso-bookings-table{width:100%;border-collapse:collapse;margin-bottom:24px}

@@ -1,27 +1,28 @@
 <?php
-/**
- * Block template: Lista Docenti
- */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 $docenti = calypso_get_docenti();
 ?>
 <style>
-.calypso-docenti{--c-deep:#0a2540;--c-wave:#1d6f9c;--c-coral:#ff6b4a;--c-bone:#f6f1e6;--c-foam:#cfe9ee;--c-ink:#0b1a26;--radius:4px;--radius-lg:12px;--f-body:"DM Sans",-apple-system,BlinkMacSystemFont,sans-serif;--f-display:"Big Shoulders Display","Anton",Impact,sans-serif;font-family:var(--f-body);max-width:1320px;margin:0 auto;padding:0 24px}
-.calypso-docenti__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:24px}
-.calypso-docente-card{background:#fff;border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 2px 8px rgba(10,37,64,.08);transition:transform .2s,box-shadow .2s;text-align:center}
-.calypso-docente-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(10,37,64,.14)}
-.calypso-docente-card__avatar{width:100%;height:220px;object-fit:cover;object-position:top}
-.calypso-docente-card__avatar-placeholder{width:100%;height:220px;background:linear-gradient(160deg,var(--c-deep),var(--c-wave));display:flex;align-items:center;justify-content:center;color:#fff;font-size:64px}
-.calypso-docente-card__body{padding:16px 20px 20px}
-.calypso-docente-card__name{font-family:var(--f-display);font-size:20px;color:var(--c-deep);margin:0 0 4px;line-height:1.2}
-.calypso-docente-card__ruolo{font-size:13px;color:var(--c-wave);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
-.calypso-docente-card__bio{font-size:13px;color:#555;line-height:1.55;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.calypso-docente-card__brevetti{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:12px}
-.calypso-docente-card__brevetto{font-size:11px;background:var(--c-foam);color:var(--c-wave);padding:3px 10px;border-radius:20px}
-.calypso-docente-card__social{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
-.calypso-docente-card__social a{font-size:13px;color:var(--c-wave);text-decoration:none;padding:4px 10px;border:1px solid var(--c-foam);border-radius:var(--radius)}
-.calypso-docente-card__social a:hover{background:var(--c-foam)}
+.calypso-docenti{font-family:var(--f-body);max-width:1320px;margin:0 auto;padding:0 24px}
+.calypso-docenti__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:28px}
+.calypso-docente-card{background:#fff;border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 2px 10px rgba(10,37,64,.10);transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column}
+.calypso-docente-card:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(10,37,64,.16)}
+.calypso-docente-card__link{display:flex;flex-direction:column;flex:1;text-decoration:none;color:inherit}
+.calypso-docente-card__photo-wrap{position:relative;overflow:hidden}
+.calypso-docente-card__avatar{width:100%;height:300px;object-fit:cover;object-position:center;display:block}
+.calypso-docente-card__avatar-placeholder{width:100%;height:300px;background:linear-gradient(160deg,var(--c-deep) 0%,var(--c-wave) 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-size:72px;letter-spacing:-.02em}
+.calypso-docente-card__photo-label{position:absolute;bottom:0;left:0;background:rgba(11,26,38,.72);color:var(--c-sand);font-family:var(--f-mono);font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;padding:6px 12px;backdrop-filter:blur(2px)}
+.calypso-docente-card__body{padding:20px 20px 16px;flex:1;display:flex;flex-direction:column}
+.calypso-docente-card__name{font-family:var(--f-display);font-size:24px;font-weight:800;color:var(--c-wave)!important;margin:0 0 4px;line-height:1.1;text-transform:uppercase;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.calypso-docente-card__name:hover{color:var(--c-deep)!important}
+.calypso-docente-card__ruolo{font-family:var(--f-body);font-size:13px;font-weight:600;color:var(--c-gold)!important;text-transform:capitalize;margin:0 0 12px;letter-spacing:.01em}
+.calypso-docente-card__bio{font-size:14px;color:#444!important;line-height:1.6;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.calypso-docente-card__stats{background:#fff;font-family:var(--f-mono);font-size:11px;font-weight:400;letter-spacing:.05em;padding:12px 20px;line-height:1.6;position:relative}
+.calypso-docente-card__stats::before{content:'';position:absolute;top:0;left:20px;right:20px;height:1px;background:#e8e8e8}
+.calypso-docente-card__stats-items{display:flex;flex-wrap:wrap;gap:0;list-style:none;margin:0;padding:0}
+.calypso-docente-card__stats-items li{display:inline;color:#888!important}
+.calypso-docente-card__stats-items li+li::before{content:" · ";color:#ccc!important}
 .calypso-empty{text-align:center;color:#888;padding:48px 0;font-size:16px}
 @media(max-width:640px){.calypso-docenti__grid{grid-template-columns:1fr 1fr}}
 @media(max-width:400px){.calypso-docenti__grid{grid-template-columns:1fr}}
@@ -33,50 +34,59 @@ $docenti = calypso_get_docenti();
 	<?php else : ?>
 	<div class="calypso-docenti__grid">
 		<?php foreach ( $docenti as $post ) :
-			$post_id  = $post->ID;
-			$nome     = get_post_meta( $post_id, '_docente_nome', true );
-			$cognome  = get_post_meta( $post_id, '_docente_cognome', true );
-			$ruolo    = get_post_meta( $post_id, '_docente_ruolo', true );
-			$bio      = get_post_meta( $post_id, '_docente_bio', true );
-			$social   = (array) ( get_post_meta( $post_id, '_docente_social', true ) ?: [] );
-			$img      = get_the_post_thumbnail_url( $post_id, 'medium' );
-			$brevetti = wp_get_post_terms( $post_id, 'calypso_brevetto', [ 'fields' => 'names' ] );
+			$post_id         = $post->ID;
+			$nome            = get_post_meta( $post_id, '_docente_nome', true );
+			$cognome         = get_post_meta( $post_id, '_docente_cognome', true );
+			$ruolo           = get_post_meta( $post_id, '_docente_ruolo', true );
+			$bio             = get_post_meta( $post_id, '_docente_bio', true );
+			$specializzazioni= get_post_meta( $post_id, '_docente_specializzazioni', true );
+			$anni            = (int) get_post_meta( $post_id, '_docente_anni_esperienza', true );
+			$img             = get_the_post_thumbnail_url( $post_id, 'large' );
+			$brevetti        = wp_get_post_terms( $post_id, 'calypso_brevetto', [ 'fields' => 'names' ] );
 			if ( is_wp_error( $brevetti ) ) $brevetti = [];
-			$display_name = trim( $nome . ' ' . $cognome ) ?: $post->post_title;
+			$display_name    = trim( $nome . ' ' . $cognome ) ?: $post->post_title;
+			$display_upper   = mb_strtoupper( $display_name );
+			$anno_inizio     = $anni > 0 ? ( (int) date( 'Y' ) - $anni ) : null;
+
+			$stats = [];
+			if ( $anno_inizio ) $stats[] = 'DAL ' . $anno_inizio;
+			foreach ( $brevetti as $b ) $stats[] = $b;
+			if ( $specializzazioni ) $stats[] = $specializzazioni;
+			if ( $anni > 0 ) $stats[] = $anni . ' anni di mare';
 		?>
 		<article class="calypso-docente-card">
-			<?php if ( $img ) : ?>
-				<img class="calypso-docente-card__avatar" src="<?php echo esc_url( $img ); ?>"
-				     alt="<?php echo esc_attr( $display_name ); ?>">
-			<?php else : ?>
-				<div class="calypso-docente-card__avatar-placeholder">🤿</div>
-			<?php endif; ?>
-			<div class="calypso-docente-card__body">
-				<h3 class="calypso-docente-card__name"><?php echo esc_html( $display_name ); ?></h3>
-				<?php if ( $ruolo ) : ?>
-					<p class="calypso-docente-card__ruolo"><?php echo esc_html( $ruolo ); ?></p>
-				<?php endif; ?>
-				<?php if ( $bio ) : ?>
-					<p class="calypso-docente-card__bio"><?php echo esc_html( $bio ); ?></p>
-				<?php endif; ?>
-				<?php if ( ! empty( $brevetti ) ) : ?>
-					<div class="calypso-docente-card__brevetti">
-						<?php foreach ( $brevetti as $b ) : ?>
-							<span class="calypso-docente-card__brevetto"><?php echo esc_html( $b ); ?></span>
-						<?php endforeach; ?>
+			<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" class="calypso-docente-card__link">
+				<div class="calypso-docente-card__photo-wrap">
+					<?php if ( $img ) : ?>
+						<img class="calypso-docente-card__avatar"
+						     src="<?php echo esc_url( $img ); ?>"
+						     alt="<?php echo esc_attr( $display_name ); ?>">
+					<?php else : ?>
+						<div class="calypso-docente-card__avatar-placeholder">🤿</div>
+					<?php endif; ?>
+					<div class="calypso-docente-card__photo-label">
+						<?php echo esc_html( 'RITRATTO · ' . mb_strtoupper( $nome ?: $post->post_title ) ); ?>
 					</div>
-				<?php endif; ?>
-				<?php if ( ! empty( $social ) ) : ?>
-					<div class="calypso-docente-card__social">
-						<?php foreach ( $social as $s ) : ?>
-							<a href="<?php echo esc_url( $s['url'] ); ?>"
-							   target="_blank" rel="noopener noreferrer">
-								<?php echo esc_html( $s['nome'] ); ?>
-							</a>
-						<?php endforeach; ?>
-					</div>
-				<?php endif; ?>
+				</div>
+				<div class="calypso-docente-card__body">
+					<h3 class="calypso-docente-card__name"><?php echo esc_html( $display_upper ); ?></h3>
+					<?php if ( $ruolo ) : ?>
+						<p class="calypso-docente-card__ruolo"><?php echo esc_html( $ruolo ); ?></p>
+					<?php endif; ?>
+					<?php if ( $bio ) : ?>
+						<p class="calypso-docente-card__bio"><?php echo esc_html( $bio ); ?></p>
+					<?php endif; ?>
+				</div>
+			</a>
+			<?php if ( ! empty( $stats ) ) : ?>
+			<div class="calypso-docente-card__stats">
+				<ul class="calypso-docente-card__stats-items">
+					<?php foreach ( $stats as $item ) : ?>
+						<li><?php echo esc_html( $item ); ?></li>
+					<?php endforeach; ?>
+				</ul>
 			</div>
+			<?php endif; ?>
 		</article>
 		<?php endforeach; ?>
 	</div>

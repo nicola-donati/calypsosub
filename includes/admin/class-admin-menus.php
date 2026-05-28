@@ -28,6 +28,13 @@ class Calypsosub_Admin_Menus {
 		);
 	}
 
+	private array $cpt_labels = [
+		'calypso_uscita'  => 'Uscite',
+		'calypso_evento'  => 'Eventi',
+		'calypso_corso'   => 'Corsi',
+		'calypso_docente' => 'Docenti',
+	];
+
 	public function render_settings_page(): void {
 		if ( ! current_user_can( 'manage_options' ) ) return;
 
@@ -39,6 +46,7 @@ class Calypsosub_Admin_Menus {
 
 		$notification_emails = get_option( 'calypsosub_notification_emails', '' );
 		$account_page_id     = (int) get_option( 'calypsosub_account_page_id', 0 );
+		$template_modes      = (array) get_option( 'calypsosub_template_modes', [] );
 		?>
 		<div class="wrap">
 			<h1><?php _e( 'Calypso Sub — Impostazioni', 'calypsosub' ); ?></h1>
@@ -80,6 +88,31 @@ class Calypsosub_Admin_Menus {
 						</td>
 					</tr>
 				</table>
+
+				<h2><?php _e( 'Template pagine singole', 'calypsosub' ); ?></h2>
+				<p class="description">
+					<?php _e( 'Scegli quale template usare per la pagina di dettaglio di ogni tipo di contenuto.', 'calypsosub' ); ?>
+				</p>
+				<table class="form-table">
+					<?php foreach ( $this->cpt_labels as $post_type => $label ) :
+						$mode = $template_modes[ $post_type ] ?? 'plugin';
+					?>
+					<tr>
+						<th scope="row"><?php echo esc_html( $label ); ?></th>
+						<td>
+							<select name="calypsosub_template_modes[<?php echo esc_attr( $post_type ); ?>]">
+								<option value="plugin" <?php selected( $mode, 'plugin' ); ?>>
+									<?php _e( 'Plugin (template PHP incluso)', 'calypsosub' ); ?>
+								</option>
+								<option value="wp" <?php selected( $mode, 'wp' ); ?>>
+									<?php _e( 'Tema / Editor Gutenberg', 'calypsosub' ); ?>
+								</option>
+							</select>
+						</td>
+					</tr>
+					<?php endforeach; ?>
+				</table>
+
 				<?php submit_button( __( 'Salva impostazioni', 'calypsosub' ) ); ?>
 			</form>
 		</div>
@@ -91,5 +124,14 @@ class Calypsosub_Admin_Menus {
 			sanitize_text_field( wp_unslash( $_POST['calypsosub_notification_emails'] ?? '' ) ) );
 		update_option( 'calypsosub_account_page_id',
 			absint( $_POST['calypsosub_account_page_id'] ?? 0 ) );
+
+		$raw_modes    = $_POST['calypsosub_template_modes'] ?? [];
+		$allowed      = [ 'plugin', 'wp' ];
+		$clean_modes  = [];
+		foreach ( array_keys( $this->cpt_labels ) as $post_type ) {
+			$val = $raw_modes[ $post_type ] ?? 'plugin';
+			$clean_modes[ $post_type ] = in_array( $val, $allowed, true ) ? $val : 'plugin';
+		}
+		update_option( 'calypsosub_template_modes', $clean_modes );
 	}
 }

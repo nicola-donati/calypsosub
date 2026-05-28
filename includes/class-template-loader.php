@@ -20,9 +20,15 @@ class Calypsosub_Template_Loader {
 		$post_type = get_post_type();
 		if ( ! in_array( $post_type, $this->post_types, true ) ) return $template;
 
+		$modes = (array) get_option( 'calypsosub_template_modes', [] );
+		$mode  = $modes[ $post_type ] ?? 'plugin';
+
+		// Modalità tema/editor: lascia fare a WordPress (tema classico o FSE)
+		if ( 'wp' === $mode ) return $template;
+
 		$filename = 'single-' . $post_type . '.php';
 
-		// Theme override: il tema può mettere calypsosub/{filename} nella sua cartella
+		// Theme override PHP: il tema può mettere calypsosub/{filename} nella sua cartella
 		$theme_override = locate_template( [ 'calypsosub/' . $filename ] );
 		if ( $theme_override ) return $theme_override;
 

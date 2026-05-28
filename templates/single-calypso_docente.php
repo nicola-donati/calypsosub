@@ -38,8 +38,7 @@ $corsi_docente = get_posts( [
 $brevetti = get_the_terms( $id, 'calypso_brevetto' );
 ?>
 <style>
-.cso{--c-deep:#0a2540;--c-wave:#1d6f9c;--c-coral:#ff6b4a;--c-bone:#f6f1e6;--c-foam:#cfe9ee;--c-ink:#0b1a26;--radius:4px;--radius-lg:12px;--f-body:"DM Sans",-apple-system,BlinkMacSystemFont,sans-serif;--f-display:"Big Shoulders Display","Anton",Impact,sans-serif;font-family:var(--f-body);color:var(--c-ink)}
-@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap');
+.cso{font-family:var(--f-body,"DM Sans",-apple-system,sans-serif);color:var(--c-ink,#0b1a26);--radius:4px;--radius-lg:12px}
 
 /* Profile hero */
 .cso-profile-hero{background:var(--c-deep);padding:64px 48px;display:flex;gap:48px;align-items:center;flex-wrap:wrap}

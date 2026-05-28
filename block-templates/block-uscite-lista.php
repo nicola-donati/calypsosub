@@ -1,15 +1,10 @@
 <?php
-/**
- * Block template: Lista Uscite
- * Uso: <?php include( CALYPSOSUB_PATH . 'block-templates/block-uscite-lista.php' ); ?>
- * oppure copiare in un custom block Gutenberg.
- */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 $uscite = calypso_get_uscite();
 ?>
 <style>
-.calypso-list{--c-deep:#0a2540;--c-wave:#1d6f9c;--c-coral:#ff6b4a;--c-bone:#f6f1e6;--c-foam:#cfe9ee;--c-ink:#0b1a26;--c-sand:#e8d9b8;--radius:4px;--radius-lg:12px;--f-body:"DM Sans",-apple-system,BlinkMacSystemFont,sans-serif;--f-display:"Big Shoulders Display","Anton",Impact,sans-serif;font-family:var(--f-body);max-width:1320px;margin:0 auto;padding:0 24px}
+.calypso-list{font-family:var(--f-body);max-width:1320px;margin:0 auto;padding:0 24px}
 .calypso-list__filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
 .calypso-list__filter-input{padding:8px 14px;border:1px solid var(--c-foam);border-radius:var(--radius);font-family:var(--f-body);font-size:14px;color:var(--c-ink)}
 .calypso-list__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}

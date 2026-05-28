@@ -7,6 +7,14 @@ class Calypsosub_CPT_Docenti {
 		add_action( 'init',                      [ $this, 'register_post_type' ] );
 		add_action( 'add_meta_boxes',            [ $this, 'add_meta_boxes' ] );
 		add_action( 'save_post_calypso_docente', [ $this, 'save_meta' ], 10, 2 );
+		add_action( 'admin_enqueue_scripts',     [ $this, 'enqueue_media' ] );
+	}
+
+	public function enqueue_media( string $hook ): void {
+		if ( ! in_array( $hook, [ 'post.php', 'post-new.php' ], true ) ) return;
+		$screen = get_current_screen();
+		if ( ! $screen || $screen->post_type !== 'calypso_docente' ) return;
+		wp_enqueue_media();
 	}
 
 	public function register_post_type(): void {
@@ -104,12 +112,19 @@ class Calypsosub_CPT_Docenti {
 		</div>
 
 		<div class="calypso-meta-field" style="margin-bottom:16px">
-			<label><?php _e( 'Galleria foto (URL)', 'calypsosub' ); ?></label>
+			<label><?php _e( 'Galleria foto', 'calypsosub' ); ?></label>
 			<div id="calypso-galleria-repeater">
-				<?php foreach ( $d['galleria'] as $url ) : ?>
-				<div class="calypso-repeater-row">
-					<input type="url" name="calypso_galleria[]"
-					       value="<?php echo esc_url( $url ); ?>" placeholder="https://...">
+				<?php foreach ( $d['galleria'] as $att_id ) :
+					$thumb = wp_get_attachment_image_url( $att_id, 'thumbnail' );
+				?>
+				<div class="calypso-repeater-row calypso-media-row">
+					<img src="<?php echo esc_url( $thumb ); ?>" class="calypso-thumb"
+					     style="width:60px;height:60px;object-fit:cover;border-radius:3px">
+					<input type="hidden" name="calypso_galleria[]"
+					       value="<?php echo (int) $att_id; ?>">
+					<button type="button" class="button calypso-media-change">
+						<?php _e( 'Cambia', 'calypsosub' ); ?>
+					</button>
 					<button type="button" class="calypso-btn-remove">&#x2715;</button>
 				</div>
 				<?php endforeach; ?>
@@ -159,12 +174,69 @@ class Calypsosub_CPT_Docenti {
 				return inp;
 			}
 
-			document.getElementById('calypso-galleria-add').addEventListener('click', function () {
+			function buildMediaRow(id, thumbUrl) {
 				var row = document.createElement('div');
-				row.className = 'calypso-repeater-row';
-				row.appendChild(makeInput('url', 'calypso_galleria[]', 'https://...', ''));
+				row.className = 'calypso-repeater-row calypso-media-row';
+
+				var img = document.createElement('img');
+				img.src = thumbUrl;
+				img.style.cssText = 'width:60px;height:60px;object-fit:cover;border-radius:3px';
+				img.className = 'calypso-thumb';
+
+				var hidden = document.createElement('input');
+				hidden.type = 'hidden';
+				hidden.name = 'calypso_galleria[]';
+				hidden.value = id;
+
+				var changeBtn = document.createElement('button');
+				changeBtn.type = 'button';
+				changeBtn.className = 'button calypso-media-change';
+				changeBtn.textContent = <?php echo wp_json_encode( __( 'Cambia', 'calypsosub' ) ); ?>;
+
+				row.appendChild(img);
+				row.appendChild(hidden);
+				row.appendChild(changeBtn);
 				row.appendChild(makeRemoveBtn());
-				document.getElementById('calypso-galleria-repeater').appendChild(row);
+				return row;
+			}
+
+			function openMediaPicker(options, onSelect) {
+				var frame = wp.media({
+					title:    options.title || <?php echo wp_json_encode( __( 'Seleziona immagine', 'calypsosub' ) ); ?>,
+					button:   { text: options.btnText || <?php echo wp_json_encode( __( 'Seleziona', 'calypsosub' ) ); ?> },
+					multiple: options.multiple || false,
+					library:  { type: 'image' }
+				});
+				frame.on('select', function () {
+					onSelect(frame.state().get('selection').toArray());
+				});
+				frame.open();
+			}
+
+			document.getElementById('calypso-galleria-add').addEventListener('click', function () {
+				openMediaPicker({ multiple: true }, function (attachments) {
+					var repeater = document.getElementById('calypso-galleria-repeater');
+					attachments.forEach(function (att) {
+						var a = att.toJSON();
+						var thumb = (a.sizes && a.sizes.thumbnail) ? a.sizes.thumbnail.url : a.url;
+						repeater.appendChild(buildMediaRow(a.id, thumb));
+					});
+				});
+			});
+
+			document.addEventListener('click', function (e) {
+				if (e.target.classList.contains('calypso-media-change')) {
+					var row = e.target.closest('.calypso-media-row');
+					openMediaPicker({ multiple: false }, function (attachments) {
+						var a = attachments[0].toJSON();
+						var thumb = (a.sizes && a.sizes.thumbnail) ? a.sizes.thumbnail.url : a.url;
+						row.querySelector('.calypso-thumb').src = thumb;
+						row.querySelector('input[type=hidden]').value = a.id;
+					});
+				}
+				if (e.target.classList.contains('calypso-btn-remove')) {
+					e.target.closest('.calypso-repeater-row').remove();
+				}
 			});
 
 			var socialIdx = document.getElementById('calypso-social-repeater')
@@ -182,12 +254,6 @@ class Calypsosub_CPT_Docenti {
 				row.appendChild(makeRemoveBtn());
 				document.getElementById('calypso-social-repeater').appendChild(row);
 				socialIdx++;
-			});
-
-			document.addEventListener('click', function (e) {
-				if (e.target.classList.contains('calypso-btn-remove')) {
-					e.target.closest('.calypso-repeater-row').remove();
-				}
 			});
 		})();
 		</script>
@@ -219,9 +285,9 @@ class Calypsosub_CPT_Docenti {
 			absint( $_POST['calypso_user_id'] ?? 0 ) );
 
 		$galleria = [];
-		foreach ( (array) ( $_POST['calypso_galleria'] ?? [] ) as $url ) {
-			$clean = esc_url_raw( $url );
-			if ( $clean ) $galleria[] = $clean;
+		foreach ( (array) ( $_POST['calypso_galleria'] ?? [] ) as $id ) {
+			$att_id = absint( $id );
+			if ( $att_id ) $galleria[] = $att_id;
 		}
 		update_post_meta( $post_id, '_docente_galleria', $galleria );
 
@@ -245,7 +311,7 @@ class Calypsosub_CPT_Docenti {
 			'bio'              => (string) get_post_meta( $post_id, '_docente_bio', true ),
 			'anni_esperienza'  => (int)    get_post_meta( $post_id, '_docente_anni_esperienza', true ),
 			'user_id'          => (int)    get_post_meta( $post_id, '_docente_user_id', true ),
-			'galleria'         => (array)  ( get_post_meta( $post_id, '_docente_galleria', true ) ?: [] ),
+			'galleria'         => array_map( 'absint', (array) ( get_post_meta( $post_id, '_docente_galleria', true ) ?: [] ) ),
 			'social'           => (array)  ( get_post_meta( $post_id, '_docente_social', true ) ?: [] ),
 		];
 	}

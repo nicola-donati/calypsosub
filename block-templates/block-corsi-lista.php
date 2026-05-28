@@ -1,37 +1,39 @@
 <?php
-/**
- * Block template: Lista Corsi
- */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 $corsi = calypso_get_corsi();
 ?>
 <style>
-.calypso-list{--c-deep:#0a2540;--c-wave:#1d6f9c;--c-coral:#ff6b4a;--c-bone:#f6f1e6;--c-foam:#cfe9ee;--c-ink:#0b1a26;--radius:4px;--radius-lg:12px;--f-body:"DM Sans",-apple-system,BlinkMacSystemFont,sans-serif;--f-display:"Big Shoulders Display","Anton",Impact,sans-serif;font-family:var(--f-body);max-width:1320px;margin:0 auto;padding:0 24px}
-.calypso-list__filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
+.calypso-corsi{font-family:var(--f-body);max-width:1320px;margin:0 auto;padding:0 24px}
+.calypso-corsi__filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
 .calypso-list__filter-input{padding:8px 14px;border:1px solid var(--c-foam);border-radius:var(--radius);font-family:var(--f-body);font-size:14px;color:var(--c-ink)}
-.calypso-list__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
-.calypso-card{background:#fff;border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 2px 8px rgba(10,37,64,.08);transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column}
-.calypso-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(10,37,64,.14)}
-.calypso-card__img{width:100%;height:200px;object-fit:cover;background:var(--c-foam)}
-.calypso-card__img-placeholder{width:100%;height:200px;background:linear-gradient(135deg,var(--c-deep),var(--c-wave));display:flex;align-items:center;justify-content:center;color:#fff;font-size:40px}
-.calypso-card__body{padding:20px;flex:1;display:flex;flex-direction:column}
-.calypso-card__badge{display:inline-block;background:var(--c-deep);color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:20px;margin-bottom:10px}
-.calypso-card__title{font-family:var(--f-display);font-size:22px;color:var(--c-deep);margin:0 0 6px;line-height:1.15}
-.calypso-card__subtitle{color:var(--c-wave);font-size:14px;margin:0 0 10px}
-.calypso-card__meta{font-size:13px;color:#555;margin-bottom:12px;display:flex;flex-direction:column;gap:4px}
-.calypso-card__desc{font-size:14px;color:#444;flex:1;margin-bottom:16px;line-height:1.6}
-.calypso-card__footer{margin-top:auto}
-.calypso-btn{display:inline-block;background:var(--c-coral);color:#fff;font-family:var(--f-display);font-size:15px;letter-spacing:.04em;text-transform:uppercase;padding:10px 20px;border-radius:var(--radius);text-decoration:none;transition:background .15s}
-.calypso-btn:hover{background:#e04a2a}
-.calypso-docenti-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.calypso-docente-chip{font-size:12px;background:var(--c-foam);color:var(--c-wave);padding:3px 10px;border-radius:20px}
+.calypso-corsi__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
+.calypso-corso-card{background:#fff;border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 2px 10px rgba(10,37,64,.10);transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column}
+.calypso-corso-card:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(10,37,64,.16)}
+.calypso-corso-card__photo-wrap{position:relative;overflow:hidden}
+.calypso-corso-card__img{width:100%;height:220px;object-fit:cover;display:block}
+.calypso-corso-card__img-placeholder{width:100%;height:220px;background:linear-gradient(135deg,var(--c-deep) 0%,var(--c-wave) 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-size:48px}
+.calypso-corso-card__photo-label{position:absolute;bottom:0;left:0;background:rgba(11,26,38,.72);color:var(--c-sand);font-family:var(--f-mono);font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;padding:6px 12px;backdrop-filter:blur(2px)}
+.calypso-corso-card__body{padding:18px 20px 14px;flex:1;display:flex;flex-direction:column}
+.calypso-corso-card__level{display:inline-block;background:var(--c-deep);color:#fff;font-family:var(--f-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:3px 10px;border-radius:20px;margin-bottom:10px;align-self:flex-start}
+.calypso-corso-card__title{font-family:var(--f-display);font-size:21px;font-weight:800;color:var(--c-deep)!important;margin:0 0 8px;line-height:1.2;text-decoration:none}
+.calypso-corso-card__title:hover{color:var(--c-wave)!important}
+.calypso-corso-card__desc{font-size:14px;color:#444!important;line-height:1.6;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;flex:1}
+.calypso-corso-card__stats{font-family:var(--f-mono);font-size:11px;font-weight:400;letter-spacing:.05em;padding:10px 20px;position:relative}
+.calypso-corso-card__stats::before{content:'';position:absolute;top:0;left:20px;right:20px;height:1px;background:#e8e8e8}
+.calypso-corso-card__stats-items{display:flex;flex-wrap:wrap;gap:0;list-style:none;margin:0;padding:0}
+.calypso-corso-card__stats-items li{display:inline;color:#666!important}
+.calypso-corso-card__stats-items li+li::before{content:" · ";color:#ccc!important}
+.calypso-corso-card__footer{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 20px 16px;flex-wrap:wrap;border-top:1px solid #f0f0f0}
+.calypso-corso-card__period{font-family:var(--f-mono);font-size:11px;font-weight:600;color:var(--c-wave)!important;text-transform:uppercase;letter-spacing:.06em}
+.calypso-btn-gold{display:inline-block;background:var(--c-gold);color:var(--c-deep)!important;font-family:var(--f-display);font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:8px 18px;border-radius:var(--radius);text-decoration:none;transition:background .15s}
+.calypso-btn-gold:hover{background:#d4aa1e;color:var(--c-deep)!important}
 .calypso-empty{text-align:center;color:#888;padding:48px 0;font-size:16px}
-@media(max-width:640px){.calypso-list__grid{grid-template-columns:1fr}}
+@media(max-width:640px){.calypso-corsi__grid{grid-template-columns:1fr}}
 </style>
 
-<div class="calypso-list" data-list="corsi">
-	<div class="calypso-list__filters">
+<div class="calypso-corsi" data-list="corsi">
+	<div class="calypso-corsi__filters">
 		<input type="text" class="calypso-list__filter-input" data-filter="search"
 		       placeholder="<?php esc_attr_e( 'Cerca corso…', 'calypsosub' ); ?>">
 	</div>
@@ -39,66 +41,73 @@ $corsi = calypso_get_corsi();
 	<?php if ( empty( $corsi ) ) : ?>
 		<p class="calypso-empty"><?php _e( 'Nessun corso disponibile.', 'calypsosub' ); ?></p>
 	<?php else : ?>
-	<div class="calypso-list__grid">
+	<div class="calypso-corsi__grid">
 		<?php foreach ( $corsi as $post ) :
-			$post_id      = $post->ID;
-			$luogo        = get_post_meta( $post_id, '_corso_luogo', true );
-			$data_inizio  = get_post_meta( $post_id, '_corso_data_inizio', true );
-			$data_fine    = get_post_meta( $post_id, '_corso_data_fine', true );
-			$docenti_ids  = (array) ( get_post_meta( $post_id, '_corso_docenti_ids', true ) ?: [] );
-			$direttore_id = (int) get_post_meta( $post_id, '_corso_direttore_id', true );
-			$desc_breve   = get_post_meta( $post_id, '_corso_desc_breve', true );
-			$img          = get_the_post_thumbnail_url( $post_id, 'medium_large' );
+			$post_id         = $post->ID;
+			$desc_breve      = get_post_meta( $post_id, '_corso_desc_breve', true );
+			$stat_durata     = get_post_meta( $post_id, '_corso_stat_durata', true );
+			$stat_pratica    = get_post_meta( $post_id, '_corso_stat_pratica', true );
+			$stat_profondita = get_post_meta( $post_id, '_corso_stat_profondita', true );
+			$link_iscrizione = get_post_meta( $post_id, '_corso_link_iscrizione', true );
+			$img             = get_the_post_thumbnail_url( $post_id, 'medium_large' );
 
-			$periodo = '';
-			if ( $data_inizio && $data_fine ) {
-				$periodo = date_i18n( get_option( 'date_format' ), strtotime( $data_inizio ) )
-				         . ' — '
-				         . date_i18n( get_option( 'date_format' ), strtotime( $data_fine ) );
-			} elseif ( $data_inizio ) {
-				$periodo = date_i18n( get_option( 'date_format' ), strtotime( $data_inizio ) );
-			}
+			$livelli = wp_get_post_terms( $post_id, 'calypso_livello', [ 'fields' => 'names' ] );
+			$livello = ( ! is_wp_error( $livelli ) && ! empty( $livelli ) ) ? $livelli[0] : '';
+
+			$next_occ = calypso_get_next_occorrenza( $post_id );
+			$periodo  = $next_occ ? calypso_get_occorrenza_periodo( $next_occ->ID ) : '';
+
+			$stats = [];
+			if ( $stat_durata )     $stats[] = $stat_durata;
+			if ( $stat_pratica )    $stats[] = $stat_pratica;
+			if ( $stat_profondita ) $stats[] = $stat_profondita;
+
+			$title_upper = mb_strtoupper( $post->post_title );
 		?>
-		<article class="calypso-card"
-		         data-search="<?php echo esc_attr( strtolower( $post->post_title . ' ' . $luogo ) ); ?>">
-			<?php if ( $img ) : ?>
-				<img class="calypso-card__img" src="<?php echo esc_url( $img ); ?>"
-				     alt="<?php echo esc_attr( $post->post_title ); ?>">
-			<?php else : ?>
-				<div class="calypso-card__img-placeholder">🎓</div>
-			<?php endif; ?>
-			<div class="calypso-card__body">
-				<span class="calypso-card__badge"><?php _e( 'Corso', 'calypsosub' ); ?></span>
-				<h3 class="calypso-card__title">
-					<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" style="color:inherit;text-decoration:none">
-						<?php echo esc_html( $post->post_title ); ?>
-					</a>
-				</h3>
-				<?php if ( $luogo ) : ?>
-					<p class="calypso-card__subtitle">📍 <?php echo esc_html( $luogo ); ?></p>
-				<?php endif; ?>
-				<div class="calypso-card__meta">
-					<?php if ( $periodo ) : ?>
-						<span>📅 <?php echo esc_html( $periodo ); ?></span>
+		<article class="calypso-corso-card"
+		         data-search="<?php echo esc_attr( strtolower( $post->post_title . ' ' . $livello ) ); ?>">
+			<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" style="display:contents;text-decoration:none">
+				<div class="calypso-corso-card__photo-wrap">
+					<?php if ( $img ) : ?>
+						<img class="calypso-corso-card__img"
+						     src="<?php echo esc_url( $img ); ?>"
+						     alt="<?php echo esc_attr( $post->post_title ); ?>">
+					<?php else : ?>
+						<div class="calypso-corso-card__img-placeholder">🎓</div>
 					<?php endif; ?>
-					<?php if ( $direttore_id ) : ?>
-						<span>👤 <?php echo esc_html( get_the_title( $direttore_id ) ); ?></span>
+					<div class="calypso-corso-card__photo-label">
+						<?php echo esc_html( 'CORSO · ' . $title_upper ); ?>
+					</div>
+				</div>
+				<div class="calypso-corso-card__body">
+					<?php if ( $livello ) : ?>
+						<span class="calypso-corso-card__level"><?php echo esc_html( $livello ); ?></span>
+					<?php endif; ?>
+					<h3 class="calypso-corso-card__title"><?php echo esc_html( $post->post_title ); ?></h3>
+					<?php if ( $desc_breve ) : ?>
+						<p class="calypso-corso-card__desc"><?php echo esc_html( $desc_breve ); ?></p>
 					<?php endif; ?>
 				</div>
-				<?php if ( ! empty( $docenti_ids ) ) : ?>
-				<div class="calypso-docenti-list">
-					<?php foreach ( $docenti_ids as $did ) : ?>
-					<span class="calypso-docente-chip"><?php echo esc_html( get_the_title( $did ) ); ?></span>
+			</a>
+			<?php if ( ! empty( $stats ) ) : ?>
+			<div class="calypso-corso-card__stats">
+				<ul class="calypso-corso-card__stats-items">
+					<?php foreach ( $stats as $item ) : ?>
+						<li><?php echo esc_html( $item ); ?></li>
 					<?php endforeach; ?>
-				</div>
+				</ul>
+			</div>
+			<?php endif; ?>
+			<div class="calypso-corso-card__footer">
+				<span class="calypso-corso-card__period">
+					<?php echo $periodo ? esc_html( $periodo ) : esc_html__( 'Date da definire', 'calypsosub' ); ?>
+				</span>
+				<?php if ( $link_iscrizione ) : ?>
+					<a href="<?php echo esc_url( $link_iscrizione ); ?>"
+					   class="calypso-btn-gold" target="_blank" rel="noopener">
+						<?php _e( 'Iscriviti →', 'calypsosub' ); ?>
+					</a>
 				<?php endif; ?>
-				<?php if ( $desc_breve ) : ?>
-					<p class="calypso-card__desc"><?php echo esc_html( $desc_breve ); ?></p>
-				<?php endif; ?>
-				<div class="calypso-card__footer">
-					<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>"
-					   class="calypso-btn"><?php _e( 'Scopri il corso', 'calypsosub' ); ?></a>
-				</div>
 			</div>
 		</article>
 		<?php endforeach; ?>
@@ -110,7 +119,7 @@ $corsi = calypso_get_corsi();
 (function () {
 	var list = document.querySelector('[data-list="corsi"]');
 	if (!list) return;
-	var cards = list.querySelectorAll('.calypso-card');
+	var cards = list.querySelectorAll('.calypso-corso-card');
 	list.querySelector('[data-filter="search"]').addEventListener('input', function () {
 		var q = this.value.toLowerCase();
 		cards.forEach(function (c) { c.style.display = !q || c.dataset.search.includes(q) ? '' : 'none'; });
