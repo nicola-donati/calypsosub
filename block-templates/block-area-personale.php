@@ -29,9 +29,9 @@ foreach ( $booking_ids as $bid ) {
 $cancel_nonce = wp_create_nonce( 'calypso_cancel_nonce' );
 ?>
 <style>
-.calypso-account{font-family:var(--f-body);max-width:840px;margin:0 auto;padding:0 24px}
-.calypso-account h2{font-family:var(--f-display);font-size:32px;color:var(--c-deep);margin:0 0 20px}
-.calypso-account h3{font-family:var(--f-display);font-size:24px;color:var(--c-deep);margin:32px 0 16px}
+.calypso-account{max-width:840px;margin:0 auto;padding:0 24px}
+.calypso-account h2{font-size:32px;color:var(--c-deep);margin:0 0 20px}
+.calypso-account h3{font-size:24px;color:var(--c-deep);margin:32px 0 16px}
 .calypso-bookings-table{width:100%;border-collapse:collapse;margin-bottom:24px}
 .calypso-bookings-table th{background:var(--c-deep);color:#fff;padding:10px 14px;text-align:left;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
 .calypso-bookings-table td{padding:12px 14px;border-bottom:1px solid #e5e7eb;font-size:14px;vertical-align:middle}
@@ -41,9 +41,9 @@ $cancel_nonce = wp_create_nonce( 'calypso_cancel_nonce' );
 .calypso-status-badge--confermata{background:#d1fae5;color:#065f46}
 .calypso-status-badge--lista_attesa{background:#fef3c7;color:#92400e}
 .calypso-status-badge--annullata{background:#fee2e2;color:#991b1b}
-.calypso-cancel-btn{background:transparent;border:1px solid var(--c-coral);color:var(--c-coral);border-radius:var(--radius);padding:5px 14px;font-size:13px;cursor:pointer;font-family:var(--f-body);transition:all .15s}
+.calypso-cancel-btn{background:transparent;border:1px solid var(--c-coral);color:var(--c-coral);border-radius:var(--radius);padding:5px 14px;font-size:13px;cursor:pointer;transition:all .15s}
 .calypso-cancel-btn:hover{background:var(--c-coral);color:#fff}
-.calypso-btn{display:inline-block;background:var(--c-coral);color:#fff;font-family:var(--f-display);font-size:15px;letter-spacing:.04em;text-transform:uppercase;padding:10px 20px;border-radius:var(--radius);text-decoration:none;border:none;cursor:pointer;transition:background .15s}
+.calypso-btn{display:inline-block;background:var(--c-coral);color:#fff;font-size:15px;letter-spacing:.04em;text-transform:uppercase;padding:10px 20px;border-radius:var(--radius);text-decoration:none;border:none;cursor:pointer;transition:background .15s}
 .calypso-btn:hover{background:#e04a2a}
 .calypso-empty-state{color:#888;padding:24px 0;font-size:15px}
 .calypso-bookings-history td{color:#888}

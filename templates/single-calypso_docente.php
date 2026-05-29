@@ -38,15 +38,15 @@ $corsi_docente = get_posts( [
 $brevetti = get_the_terms( $id, 'calypso_brevetto' );
 ?>
 <style>
-.cso{font-family:var(--f-body,"DM Sans",-apple-system,sans-serif);color:var(--c-ink,#0b1a26);--radius:4px;--radius-lg:12px}
+.cso{color:var(--c-ink,#0b1a26);--radius:4px;--radius-lg:12px}
 
 /* Profile hero */
 .cso-profile-hero{background:var(--c-deep);padding:64px 48px;display:flex;gap:48px;align-items:center;flex-wrap:wrap}
 .cso-profile-hero__photo{width:180px;height:180px;border-radius:50%;object-fit:cover;border:4px solid rgba(255,255,255,.2);flex-shrink:0}
 .cso-profile-hero__avatar{width:180px;height:180px;border-radius:50%;background:linear-gradient(135deg,var(--c-wave),var(--c-foam));display:flex;align-items:center;justify-content:center;font-size:72px;flex-shrink:0}
 .cso-profile-hero__info{color:#fff}
-.cso-badge{display:inline-block;background:var(--c-coral);color:#fff;font-family:var(--f-body);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:12px}
-.cso-profile-hero__name{font-family:var(--f-display);font-size:clamp(36px,4vw,56px);font-weight:900;text-transform:uppercase;margin:0 0 4px;line-height:1.05}
+.cso-badge{display:inline-block;background:var(--c-coral);color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:12px}
+.cso-profile-hero__name{font-size:clamp(36px,4vw,56px);font-weight:900;text-transform:uppercase;margin:0 0 4px;line-height:1.05}
 .cso-profile-hero__ruolo{font-size:18px;color:var(--c-foam);margin:0 0 16px}
 .cso-profile-hero__meta{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px}
 .cso-profile-hero__meta-item{display:flex;align-items:center;gap:6px;font-size:14px;color:rgba(255,255,255,.75)}
@@ -57,7 +57,7 @@ $brevetti = get_the_terms( $id, 'calypso_brevetto' );
 .cso-body{max-width:1320px;margin:0 auto;padding:48px 24px;display:grid;grid-template-columns:1fr 300px;gap:48px;align-items:start}
 @media(max-width:900px){.cso-body{grid-template-columns:1fr}}
 .cso-section{margin-bottom:40px}
-.cso-section__title{font-family:var(--f-display);font-size:22px;font-weight:700;color:var(--c-deep);text-transform:uppercase;letter-spacing:.04em;margin:0 0 16px;padding-bottom:8px;border-bottom:3px solid var(--c-foam)}
+.cso-section__title{font-size:22px;font-weight:700;color:var(--c-deep);text-transform:uppercase;letter-spacing:.04em;margin:0 0 16px;padding-bottom:8px;border-bottom:3px solid var(--c-foam)}
 .cso-prose{font-size:16px;line-height:1.75;color:var(--c-ink)}
 .cso-prose p{margin:0 0 1em}
 
@@ -77,7 +77,7 @@ $brevetti = get_the_terms( $id, 'calypso_brevetto' );
 /* Sidebar card */
 .cso-card{background:#fff;border-radius:var(--radius-lg);box-shadow:0 4px 24px rgba(10,37,64,.1);overflow:hidden;position:sticky;top:24px}
 .cso-card__head{background:var(--c-wave);color:#fff;padding:20px 24px}
-.cso-card__head-title{font-family:var(--f-display);font-size:18px;font-weight:700;text-transform:uppercase;margin:0}
+.cso-card__head-title{font-size:18px;font-weight:700;text-transform:uppercase;margin:0}
 .cso-card__body{padding:20px 24px}
 .cso-stat{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--c-foam)}
 .cso-stat:last-child{border-bottom:none}

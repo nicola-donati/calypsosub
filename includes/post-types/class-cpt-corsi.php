@@ -7,6 +7,7 @@ class Calypsosub_CPT_Corsi {
 		add_action( 'init',                    [ $this, 'register_post_type' ] );
 		add_action( 'add_meta_boxes',          [ $this, 'add_meta_boxes' ] );
 		add_action( 'save_post_calypso_corso', [ $this, 'save_meta' ], 10, 2 );
+		add_filter( 'admin_post_thumbnail_html', [ $this, 'featured_image_hero_checkbox' ], 10, 2 );
 	}
 
 	public function register_post_type(): void {
@@ -213,6 +214,19 @@ class Calypsosub_CPT_Corsi {
 		<?php
 	}
 
+	public function featured_image_hero_checkbox( string $html, int $post_id ): string {
+		if ( get_post_type( $post_id ) !== 'calypso_corso' ) {
+			return $html;
+		}
+		$checked = get_post_meta( $post_id, '_hero_use_featured_image', true ) === '1';
+		$html .= '<p style="margin-top:10px;padding-top:10px;border-top:1px solid #ddd">'
+			. '<label style="display:flex;align-items:center;gap:6px;cursor:pointer">'
+			. '<input type="checkbox" name="calypso_hero_bg" value="1"' . ( $checked ? ' checked' : '' ) . ' style="width:auto;margin:0">'
+			. '<span style="font-weight:600">' . esc_html__( 'Usa come sfondo hero', 'calypsosub' ) . '</span>'
+			. '</label></p>';
+		return $html;
+	}
+
 	public function save_meta( int $post_id, WP_Post $post ): void {
 		if ( ! isset( $_POST['calypso_corso_nonce'] ) ) return;
 		if ( ! wp_verify_nonce( sanitize_key( $_POST['calypso_corso_nonce'] ), 'calypso_corso_meta' ) ) return;
@@ -237,6 +251,9 @@ class Calypsosub_CPT_Corsi {
 
 		update_post_meta( $post_id, '_corso_link_iscrizione',
 			esc_url_raw( wp_unslash( $_POST['calypso_link_iscrizione'] ?? '' ) ) );
+
+		update_post_meta( $post_id, '_hero_use_featured_image',
+			isset( $_POST['calypso_hero_bg'] ) ? '1' : '0' );
 
 		update_post_meta( $post_id, '_corso_competenze',
 			sanitize_textarea_field( wp_unslash( $_POST['calypso_competenze'] ?? '' ) ) );
@@ -279,7 +296,8 @@ class Calypsosub_CPT_Corsi {
 			'competenze'      => (string) get_post_meta( $post_id, '_corso_competenze', true ),
 			'direttore_id'    => (int)    get_post_meta( $post_id, '_corso_direttore_id', true ),
 			'docenti_ids'     => (array)  ( get_post_meta( $post_id, '_corso_docenti_ids', true ) ?: [] ),
-			'fasi'            => (array)  ( get_post_meta( $post_id, '_corso_fasi', true ) ?: [] ),
+			'fasi'                  => (array)  ( get_post_meta( $post_id, '_corso_fasi', true ) ?: [] ),
+			'hero_use_featured_image' => (string) get_post_meta( $post_id, '_hero_use_featured_image', true ),
 		];
 	}
 }

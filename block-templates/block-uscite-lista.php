@@ -4,9 +4,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 $uscite = calypso_get_uscite();
 ?>
 <style>
-.calypso-list{font-family:var(--f-body);max-width:1320px;margin:0 auto;padding:0 24px}
+.calypso-list{max-width:1320px;margin:0 auto;padding:0 24px}
 .calypso-list__filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
-.calypso-list__filter-input{padding:8px 14px;border:1px solid var(--c-foam);border-radius:var(--radius);font-family:var(--f-body);font-size:14px;color:var(--c-ink)}
+.calypso-list__filter-input{padding:8px 14px;border:1px solid var(--c-foam);border-radius:var(--radius);font-size:14px;color:var(--c-ink)}
 .calypso-list__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
 .calypso-card{background:#fff;border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 2px 8px rgba(10,37,64,.08);transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column}
 .calypso-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(10,37,64,.14)}
@@ -14,7 +14,7 @@ $uscite = calypso_get_uscite();
 .calypso-card__img-placeholder{width:100%;height:200px;background:var(--c-foam);display:flex;align-items:center;justify-content:center;color:var(--c-wave);font-size:40px}
 .calypso-card__body{padding:20px;flex:1;display:flex;flex-direction:column}
 .calypso-card__badge{display:inline-block;background:var(--c-foam);color:var(--c-wave);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:20px;margin-bottom:10px}
-.calypso-card__title{font-family:var(--f-display);font-size:22px;color:var(--c-deep);margin:0 0 6px;line-height:1.15}
+.calypso-card__title{font-size:22px;color:var(--c-deep);margin:0 0 6px;line-height:1.15}
 .calypso-card__subtitle{color:var(--c-wave);font-size:14px;margin:0 0 10px}
 .calypso-card__meta{font-size:13px;color:#555;margin-bottom:12px;display:flex;flex-direction:column;gap:4px}
 .calypso-card__meta span{display:flex;align-items:center;gap:6px}
@@ -22,7 +22,7 @@ $uscite = calypso_get_uscite();
 .calypso-card__footer{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .calypso-card__spots{font-size:13px;font-weight:600;color:var(--c-wave)}
 .calypso-card__spots--full{color:var(--c-coral)}
-.calypso-btn{display:inline-block;background:var(--c-coral);color:#fff;font-family:var(--f-display);font-size:15px;letter-spacing:.04em;text-transform:uppercase;padding:10px 20px;border-radius:var(--radius);text-decoration:none;border:none;cursor:pointer;transition:background .15s}
+.calypso-btn{display:inline-block;background:var(--c-coral);color:#fff;font-size:15px;letter-spacing:.04em;text-transform:uppercase;padding:10px 20px;border-radius:var(--radius);text-decoration:none;border:none;cursor:pointer;transition:background .15s}
 .calypso-btn:hover{background:#e04a2a}
 .calypso-btn--secondary{background:transparent;border:2px solid var(--c-coral);color:var(--c-coral)}
 .calypso-btn--secondary:hover{background:var(--c-coral);color:#fff}

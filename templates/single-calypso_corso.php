@@ -3,6 +3,13 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 get_header();
 
+// Temi block: renderizza il vero header Gutenberg in un wrapper sticky.
+if ( function_exists( 'block_template_part' ) ) {
+	echo '<div class="cso-site-header-wrap">';
+	block_template_part( 'header' );
+	echo '</div>';
+}
+
 $id = get_the_ID();
 
 $badge           = (string) get_post_meta( $id, '_corso_badge',           true );
@@ -34,77 +41,114 @@ $prossime = array_values( array_filter( $all_occ, static function ( $o ) use ( $
 	return $fine !== '' && $fine >= $oggi;
 } ) );
 
-$related = calypso_get_corsi( [ 'posts_per_page' => 3, 'post__not_in' => [ $id ] ] );
+$related   = calypso_get_corsi( [ 'posts_per_page' => 3, 'post__not_in' => [ $id ] ] );
+$hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $img;
 ?>
 <style>
-/* ── Token locali: sempre definiti, nessun !important necessario ── */
+/* ── Token locali ── */
 .cso{
-  font-family:var(--f-body,"DM Sans",-apple-system,sans-serif);
-  color:var(--c-ink,#0b1a26);
+    color:var(--c-ink,#0b1a26);
+  --c-gold:var(--wp--preset--color--gold,#E9BF26);
 }
-/* Neutralizza override alta specificità del tema FSE */
-.cso h1,.cso h2,.cso h3,.cso h4{color:var(--c-deep,#0a2540);font-family:var(--f-display,"Big Shoulders Display",Impact,sans-serif);text-transform:uppercase}
+/* Neutralizza FSE — heading wave (sfondo bone) */
+.cso h1,.cso h2,.cso h3,.cso h4{color:var(--c-wave,#1B77A7);text-transform:uppercase}
 .cso a{color:inherit;text-decoration:none}
 .cso p,.cso li,.cso span,.cso div{color:inherit}
+/* Related section sfondo chiaro — heading scuri */
+.cso-related h2,.cso-related h3,.cso-related h4{color:var(--c-deep,#0a2540)}
 
-/* ── Hero — sezione navy scura ── */
-.cso-hero{background:var(--c-deep,#0a2540);color:#fff;padding:32px 48px 64px}
+/* Nasconde compat WordPress (fallback temi block) */
+#header,#headerimg,#footer,#page>hr{display:none!important}
+#page{margin:0;padding:0;position:relative}
+
+/* Header assoluto: esce dal flusso, sta sopra il hero a y=0 */
+.cso-site-header-wrap{position:absolute;top:0;left:0;right:0;z-index:200;width:100%}
+html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)}
+
+/* ── Hero — parte da y=0 (sotto l'header sticky) ── */
+:root{--cso-header-h:90px}
+.cso-hero{
+  background:var(--c-deep,#0a2540);
+  color:#fff;
+  padding:calc(var(--cso-header-h) + 40px) 48px 64px;
+  position:relative;
+}
+/* Hero con immagine in evidenza come sfondo */
+.cso-hero--bg-img{
+  background-size:cover;
+  background-position:center center;
+  background-repeat:no-repeat;
+}
+.cso-hero--bg-img .cso-hero__inner{position:relative;z-index:1}
 .cso-hero h1,.cso-hero h2,.cso-hero h3{color:#fff}
 .cso-hero a{color:rgba(255,255,255,.55);text-decoration:none}
 .cso-hero a:hover{color:rgba(255,255,255,.9)}
-@media(max-width:900px){.cso-hero{padding:24px 20px 40px}}
+@media(max-width:900px){.cso-hero{padding:calc(var(--cso-header-h) + 24px) 20px 40px}}
 
 .cso-hero__inner{max-width:1200px;margin:0 auto}
 
-.cso-breadcrumb{display:flex;align-items:center;gap:8px;font-family:var(--f-mono,"DM Mono",monospace);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:48px}
+.cso-breadcrumb{font-size:16px;display:flex;align-items:center;gap:8px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:48px}
 .cso-breadcrumb__current{color:#fff}
 
 .cso-hero__header{display:grid;grid-template-columns:1.4fr 1fr;gap:80px;align-items:end;margin-bottom:56px}
 @media(max-width:900px){.cso-hero__header{grid-template-columns:1fr;gap:24px;margin-bottom:32px}}
 
-.cso-hero__badge{display:inline-flex;padding:6px 14px;background:var(--c-coral,#ff6b4a);color:#fff;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:24px}
-.cso-hero__title{font-family:var(--f-display,"Big Shoulders Display",Impact,sans-serif);font-size:clamp(56px,10vw,144px);font-weight:900;color:#fff;margin:0;line-height:.9;letter-spacing:-.02em;text-transform:uppercase}
-.cso-hero__sub{font-family:var(--f-display,"Big Shoulders Display",Impact,sans-serif);font-size:clamp(20px,3vw,30px);color:var(--c-aqua,#26CBFB);margin-top:16px;font-weight:600;line-height:1}
-.cso-hero__lead{font-size:17px;line-height:1.6;opacity:.85;margin:0;align-self:end}
+.cso-hero__badge{font-size:16px;display:inline-flex;padding:6px 14px;background:var(--c-coral,#ff6b4a);color:#fff;border-radius:999px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:24px}
+.cso-hero__title{font-size:clamp(56px,10vw,144px);font-weight:900;color:#fff;margin:0;line-height:.9;letter-spacing:-.02em;text-transform:uppercase}
+.cso-hero__sub{margin-top:16px;font-weight:600;line-height:1}
+.cso .cso-hero__sub{font-size:clamp(28px,5vw,72px);color:var(--c-aqua,#26CBFB)}
+.cso-hero__lead{font-size:20px;line-height:1.6;opacity:.85;margin:0;align-self:end}
 
 .cso-hero__img{width:100%;height:480px;object-fit:cover;display:block;border-radius:12px}
-.cso-hero__img-placeholder{width:100%;height:480px;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(38,203,251,.1) 100%);display:flex;align-items:center;justify-content:center;font-size:64px;border-radius:12px}
+.cso-hero__img-placeholder{font-size:64px;width:100%;height:480px;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(38,203,251,.1) 100%);display:flex;align-items:center;justify-content:center;border-radius:12px}
 
 /* ── Layout corpo ── */
-.cso-layout{max-width:1200px;margin:0 auto;padding:80px 48px 96px;display:grid;grid-template-columns:1.5fr 1fr;gap:64px;align-items:start}
+.cso-layout{max-width:1200px;margin:0 auto;padding:80px 48px 48px;display:grid;grid-template-columns:1.5fr 1fr;gap:64px;align-items:start}
 @media(max-width:900px){.cso-layout{grid-template-columns:1fr;padding:40px 20px}}
 
 .cso-section{margin-bottom:72px}
+.cso-section:last-child{margin-bottom:0}
 
 /* Eyebrow + heading standard */
-.cso-eyebrow{font-family:var(--f-mono,"DM Mono",monospace);font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--c-wave,#1B77A7);margin:0 0 14px;display:block}
-.cso-display-heading{font-family:var(--f-display,"Big Shoulders Display",Impact,sans-serif);font-size:clamp(28px,4vw,56px);font-weight:800;color:var(--c-deep,#0a2540);text-transform:uppercase;line-height:.96;margin:0 0 24px}
-.cso-lead{font-size:16px;line-height:1.7;color:rgba(11,26,38,.78);margin:0 0 32px;max-width:640px}
+.cso-eyebrow{font-weight:500;letter-spacing:.16em;text-transform:uppercase;margin:0 0 14px;display:block}
+.cso .cso-eyebrow{font-size:16px;color:var(--c-wave,#1B77A7)}
+.cso-display-heading{font-size:clamp(28px,4vw,56px);font-weight:800;text-transform:uppercase;line-height:.96;margin:0 0 24px}
+.cso-lead{line-height:1.7;margin:0 0 32px;max-width:640px}
+.cso .cso-lead{font-size:18px;color:var(--c-ink,#0b1a26)}
 
 /* ── Fasi ── */
 .cso-fasi{margin:0;padding:0;list-style:none}
 .cso-fasi>li{list-style:none}
 .cso-fase{display:grid;grid-template-columns:52px 1fr 90px;gap:20px;padding:24px 0;border-top:1px solid rgba(11,26,38,.1);align-items:start}
 .cso-fase:last-child{border-bottom:1px solid rgba(11,26,38,.1)}
-.cso-fase__num{font-family:var(--f-display,"Big Shoulders Display",Impact,sans-serif);font-size:28px;color:var(--c-coral,#ff6b4a);line-height:1;font-weight:800}
-.cso-fase__titolo{font-family:var(--f-display,"Big Shoulders Display",Impact,sans-serif);font-size:24px;font-weight:700;text-transform:uppercase;color:var(--c-deep,#0a2540);margin:0 0 6px;line-height:1.05}
-.cso-fase__desc{font-size:14px;color:rgba(11,26,38,.72);line-height:1.6;margin:0}
-.cso-fase__ore{font-family:var(--f-mono,"DM Mono",monospace);font-size:11px;color:var(--c-wave,#1B77A7);letter-spacing:.08em;text-transform:uppercase;text-align:right;align-self:start;padding-top:6px;line-height:1.6}
+.cso-fase__num{line-height:1;font-weight:800}
+.cso .cso-fase__num{font-size:28px;color:var(--c-gold,#E9BF26)}
+.cso-fase__titolo{font-weight:700;text-transform:uppercase;margin:0 0 6px;line-height:1.05}
+.cso .cso-fase__titolo{font-size:24px;color:var(--c-wave,#1B77A7)}
+.cso-fase__desc{line-height:1.6;margin:0}
+.cso .cso-fase__desc{font-size:16px;color:var(--c-ink,#0b1a26)}
+.cso-fase__ore{letter-spacing:.08em;text-transform:uppercase;text-align:right;align-self:start;padding-top:6px;line-height:1.6}
+.cso .cso-fase__ore{font-size:16px;color:var(--c-wave,#1B77A7)}
 
 /* ── Competenze ── */
 .cso-competenze-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 32px}
 @media(max-width:600px){.cso-competenze-grid{grid-template-columns:1fr}}
-.cso-competenza{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid rgba(11,26,38,.08);font-size:14px;color:var(--c-ink,#0b1a26);line-height:1.5}
-.cso-competenza__plus{color:var(--c-coral,#ff6b4a);font-weight:700;font-size:16px;flex-shrink:0;line-height:1.4;min-width:14px}
+.cso-competenza{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid rgba(11,26,38,.08);line-height:1.5}
+.cso .cso-competenza{font-size:18px;color:var(--c-ink,#0b1a26)}
+.cso-competenza__plus{font-weight:700;flex-shrink:0;line-height:1.4;min-width:14px}
+.cso .cso-competenza__plus{font-size:22px;color:var(--c-gold,#E9BF26)}
 
 /* ── Docenti ── */
-.cso-docenti-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
-.cso-docente-mini{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(10,37,64,.08);text-align:center;padding:18px 16px;color:var(--c-ink,#0b1a26);transition:transform .2s,box-shadow .2s;display:block}
-.cso-docente-mini:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(10,37,64,.14)}
-.cso-docente-mini img{width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:10px;border:2px solid var(--c-foam,#cfe9ee)}
-.cso-docente-mini__avatar{width:64px;height:64px;border-radius:50%;background:var(--c-foam,#cfe9ee);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 10px}
-.cso-docente-mini__name{font-family:var(--f-display,"Big Shoulders Display",Impact,sans-serif);font-size:16px;font-weight:700;color:var(--c-deep,#0a2540);margin:0 0 3px}
-.cso-docente-mini__ruolo{font-size:12px;color:var(--c-wave,#1B77A7)}
+.cso-docenti-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.cso-docente-mini{background:#fff;border-radius:14px;overflow:hidden;border:1px solid rgba(11,26,38,.08);display:flex;flex-direction:column;text-decoration:none;color:var(--c-ink,#0b1a26);transition:transform .2s,box-shadow .2s}
+.cso-docente-mini:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(10,37,64,.14)}
+.cso-docente-mini img{width:100%;height:180px;object-fit:cover;display:block}
+.cso-docente-mini__avatar{width:100%;height:180px;background:linear-gradient(135deg,var(--c-deep,#0a2540),var(--c-wave,#1B77A7));display:flex;align-items:center;justify-content:center;font-size:48px}
+.cso-docente-mini__body{padding:16px 20px;flex:1;display:flex;flex-direction:column}
+.cso-docente-mini__name{font-weight:700;color:var(--c-deep,#0a2540);margin:0 0 4px;line-height:1.1;text-transform:uppercase}
+.cso .cso-docente-mini__name{font-size:26px}
+.cso-docente-mini__ruolo{color:var(--c-wave,#1B77A7);margin:0}
+.cso .cso-docente-mini__ruolo{font-size:18px}
 
 /* ── Sidebar navy ── */
 .cso-sintesi{background:var(--c-deep,#0a2540);border-radius:12px;box-shadow:0 6px 32px rgba(10,37,64,.28);position:sticky;top:24px;color:#fff;display:flex;flex-direction:column}
@@ -113,38 +157,45 @@ $related = calypso_get_corsi( [ 'posts_per_page' => 3, 'post__not_in' => [ $id ]
 .cso-sintesi p,.cso-sintesi span,.cso-sintesi div{color:inherit}
 
 .cso-sintesi__head{padding:24px 24px 20px;border-bottom:1px solid rgba(255,255,255,.12)}
-.cso-sintesi__cert{font-family:var(--f-mono,"DM Mono",monospace);font-size:11px;color:var(--c-aqua,#26CBFB);letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin:0 0 12px;display:block}
+.cso-sintesi__cert{letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin:0 0 12px;display:block}
+.cso-sintesi .cso-sintesi__cert{font-size:16px;color:var(--c-aqua,#26CBFB)}
 .cso-sintesi__title{font-size:36px;font-weight:900;color:#fff;margin:0;line-height:.96;letter-spacing:-.01em}
 
 .cso-sintesi__stats{padding:8px 24px 20px;border-bottom:1px solid rgba(255,255,255,.12)}
 .cso-stat-row{display:flex;justify-content:space-between;align-items:baseline;padding:14px 0;border-top:1px solid rgba(255,255,255,.12)}
 .cso-stat-row:first-child{border-top:none}
-.cso-stat-row__label{font-family:var(--f-mono,"DM Mono",monospace);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--c-aqua,#26CBFB);font-weight:600}
-.cso-stat-row__val{font-weight:600;font-size:15px;color:#fff}
+.cso-stat-row__label{letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+.cso-sintesi .cso-stat-row__label{font-size:16px;color:var(--c-aqua,#26CBFB)}
+.cso-stat-row__val{font-weight:600}
+.cso-sintesi .cso-stat-row__val{font-size:16px;color:#fff}
 
 .cso-sintesi__inizi{padding:20px 24px 24px;border-bottom:1px solid rgba(255,255,255,.12)}
-.cso-inizi-label{font-family:var(--f-mono,"DM Mono",monospace);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--c-aqua,#26CBFB);font-weight:600;margin:0 0 14px;display:block}
-.cso-inizio-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid rgba(255,255,255,.08);font-size:14px}
+.cso-inizi-label{letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin:0 0 14px;display:block}
+.cso-sintesi .cso-inizi-label{font-size:16px;color:var(--c-aqua,#26CBFB)}
+.cso-inizio-row{font-size:16px;display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid rgba(255,255,255,.08);}
 .cso-inizio-row:first-child{border-top:none}
-.cso-inizio-row__date{color:#fff;font-weight:500}
-.cso-inizio-row__luogo{font-size:13px;font-weight:400;color:rgba(255,255,255,.55)}
-.cso-inizio-row__spots{font-family:var(--f-mono,"DM Mono",monospace);font-size:11px;letter-spacing:.04em}
+.cso-inizio-row__date{font-weight:500}
+.cso-sintesi .cso-inizio-row__date{color:#fff}
+.cso-inizio-row__luogo{font-size:16px;font-weight:400;color:rgba(255,255,255,.55)}
+.cso-inizio-row__spots{font-size:16px;letter-spacing:.04em}
 .cso-inizio-row__spots--ok{color:rgba(255,255,255,.6)}
 .cso-inizio-row__spots--warn{color:var(--c-coral,#ff6b4a)}
 .cso-inizio-row__spots--full{color:rgba(255,255,255,.35)}
 
 .cso-sintesi__cta{padding:20px 24px 24px}
-.cso-btn-primary{display:block;background:var(--c-coral,#ff6b4a);color:#fff;font-family:var(--f-body,"DM Sans",-apple-system,sans-serif);font-size:14px;font-weight:600;letter-spacing:.02em;padding:14px 22px;border-radius:999px;text-align:center;text-decoration:none;transition:background .15s;margin-bottom:10px;box-shadow:0 6px 18px -4px rgba(255,107,74,.55)}
-.cso-btn-primary:hover{background:#e04a2a;color:#fff}
-.cso-btn-secondary{display:block;text-align:center;padding:12px 22px;background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.3);border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;transition:border-color .15s,background .15s}
-.cso-btn-secondary:hover{border-color:#fff;background:rgba(255,255,255,.08);color:#fff}
+.cso-btn-primary{display:block;background:var(--c-coral,#ff6b4a);font-weight:600;letter-spacing:.02em;padding:14px 22px;border-radius:999px;text-align:center;text-decoration:none;transition:background .15s;margin-bottom:10px;box-shadow:0 6px 18px -4px rgba(255,107,74,.55)}
+.cso .cso-btn-primary{font-size:16px;color:#fff}
+.cso .cso-btn-primary:hover{background:#e04a2a;color:#fff}
+.cso-btn-secondary{display:block;text-align:center;padding:12px 22px;background:transparent;border:1.5px solid rgba(255,255,255,.3);border-radius:999px;font-weight:600;text-decoration:none;transition:border-color .15s,background .15s}
+.cso .cso-btn-secondary{font-size:16px;color:#fff}
+.cso .cso-btn-secondary:hover{border-color:#fff;background:rgba(255,255,255,.08);color:#fff}
 
 /* ── Corsi correlati ── */
 .cso-related{background:var(--c-bone,#f6f1e6);padding:80px 48px 96px}
 @media(max-width:900px){.cso-related{padding:48px 20px}}
 .cso-related__inner{max-width:1200px;margin:0 auto}
 .cso-related__header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px;flex-wrap:wrap;gap:24px}
-.cso-related__all{font-size:14px;font-weight:600;color:var(--c-deep,#0a2540);text-decoration:none;display:flex;align-items:center;gap:6px}
+.cso-related__all{font-size:16px;font-weight:600;color:var(--c-deep,#0a2540);text-decoration:none;display:flex;align-items:center;gap:6px}
 .cso-related__all:hover{color:var(--c-wave,#1B77A7)}
 .cso-related__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 @media(max-width:700px){.cso-related__grid{grid-template-columns:1fr}}
@@ -152,18 +203,19 @@ $related = calypso_get_corsi( [ 'posts_per_page' => 3, 'post__not_in' => [ $id ]
 .cso-thumb{background:#fff;border-radius:14px;overflow:hidden;border:1px solid rgba(11,26,38,.08);display:flex;flex-direction:column;text-decoration:none;color:var(--c-ink,#0b1a26);transition:transform .2s,box-shadow .2s}
 .cso-thumb:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(10,37,64,.14)}
 .cso-thumb img{width:100%;height:160px;object-fit:cover;display:block}
-.cso-thumb__placeholder{width:100%;height:160px;background:linear-gradient(135deg,var(--c-deep,#0a2540),var(--c-wave,#1B77A7));display:flex;align-items:center;justify-content:center;font-size:32px}
+.cso-thumb__placeholder{font-size:32px;width:100%;height:160px;background:linear-gradient(135deg,var(--c-deep,#0a2540),var(--c-wave,#1B77A7));display:flex;align-items:center;justify-content:center;}
 .cso-thumb__body{padding:24px;flex:1;display:flex;flex-direction:column}
-.cso-thumb__level{display:inline-flex;padding:4px 10px;background:rgba(29,111,156,.1);color:var(--c-wave,#1B77A7);border-radius:999px;font-size:11px;font-weight:600;align-self:flex-start;margin-bottom:14px}
-.cso-thumb__title{font-family:var(--f-display,"Big Shoulders Display",Impact,sans-serif);font-size:26px;font-weight:800;text-transform:uppercase;color:var(--c-deep,#0a2540);margin:0 0 8px;line-height:1}
-.cso-thumb__desc{font-size:13px;color:rgba(11,26,38,.65);margin:0 0 18px;flex:1}
-.cso-thumb__link{font-size:13px;font-weight:600;color:var(--c-coral,#ff6b4a);display:flex;align-items:center;gap:6px}
+.cso-thumb__level{font-size:13px;display:inline-flex;padding:4px 10px;background:rgba(29,111,156,.1);color:var(--c-wave,#1B77A7);border-radius:999px;font-weight:600;align-self:flex-start;margin-bottom:14px}
+.cso-thumb__title{font-size:26px;font-weight:800;text-transform:uppercase;color:var(--c-deep,#0a2540);margin:0 0 8px;line-height:1}
+.cso-thumb__desc{font-size:15px;color:rgba(11,26,38,.65);margin:0 0 18px;flex:1}
+.cso-thumb__link{font-size:15px;font-weight:600;color:var(--c-coral,#ff6b4a);display:flex;align-items:center;gap:6px}
 </style>
 
 <div class="cso">
 
-<!-- HERO: dark navy con breadcrumb, titolo grande, foto -->
-<section class="cso-hero">
+<!-- HERO -->
+<section class="cso-hero<?php echo $hero_bg ? ' cso-hero--bg-img' : ''; ?>"
+         <?php if ( $hero_bg ) : ?>style="background-image:url('<?php echo esc_url( $img ); ?>')"<?php endif; ?>>
 <div class="cso-hero__inner">
 
 	<nav class="cso-breadcrumb" aria-label="<?php esc_attr_e( 'Breadcrumb', 'calypsosub' ); ?>">
@@ -174,6 +226,22 @@ $related = calypso_get_corsi( [ 'posts_per_page' => 3, 'post__not_in' => [ $id ]
 		<span class="cso-breadcrumb__current"><?php the_title(); ?></span>
 	</nav>
 
+	<?php if ( $hero_bg ) : ?>
+	<!-- Layout full-width quando immagine è sfondo -->
+	<div>
+		<?php if ( $livello ) : ?>
+			<div class="cso-hero__badge"><?php echo esc_html( $livello ); ?></div>
+		<?php endif; ?>
+		<h1 class="cso-hero__title"><?php the_title(); ?></h1>
+		<?php if ( $sottotitolo ) : ?>
+			<div class="cso-hero__sub"><?php echo esc_html( $sottotitolo ); ?></div>
+		<?php endif; ?>
+		<?php if ( $desc_breve ) : ?>
+			<p class="cso-hero__lead" style="max-width:640px;margin-top:24px"><?php echo esc_html( $desc_breve ); ?></p>
+		<?php endif; ?>
+	</div>
+	<?php else : ?>
+	<!-- Layout griglia: titolo sx, lead dx + immagine sotto -->
 	<div class="cso-hero__header">
 		<div>
 			<?php if ( $livello ) : ?>
@@ -188,13 +256,6 @@ $related = calypso_get_corsi( [ 'posts_per_page' => 3, 'post__not_in' => [ $id ]
 			<p class="cso-hero__lead"><?php echo esc_html( $desc_breve ); ?></p>
 		<?php endif; ?>
 	</div>
-
-	<?php if ( $img ) : ?>
-		<img class="cso-hero__img"
-		     src="<?php echo esc_url( $img ); ?>"
-		     alt="<?php echo esc_attr( get_the_title() ); ?>">
-	<?php else : ?>
-		<div class="cso-hero__img-placeholder">🤿</div>
 	<?php endif; ?>
 
 </div>
@@ -273,6 +334,7 @@ $related = calypso_get_corsi( [ 'posts_per_page' => 3, 'post__not_in' => [ $id ]
 	if ( ! empty( $all_shown ) ) : ?>
 	<div class="cso-section">
 		<span class="cso-eyebrow"><?php _e( 'I docenti', 'calypsosub' ); ?></span>
+		<h2 class="cso-display-heading"><?php _e( 'I nostri docenti.', 'calypsosub' ); ?></h2>
 		<div class="cso-docenti-grid">
 			<?php foreach ( $all_shown as $did ) :
 				$ruolo  = (string) get_post_meta( $did, '_docente_ruolo', true );
@@ -283,15 +345,17 @@ $related = calypso_get_corsi( [ 'posts_per_page' => 3, 'post__not_in' => [ $id ]
 			?>
 			<a href="<?php echo esc_url( get_permalink( $did ) ); ?>" class="cso-docente-mini">
 				<?php if ( has_post_thumbnail( $did ) ) : ?>
-					<img src="<?php echo esc_url( get_the_post_thumbnail_url( $did, 'thumbnail' ) ); ?>"
+					<img src="<?php echo esc_url( get_the_post_thumbnail_url( $did, 'medium_large' ) ); ?>"
 					     alt="<?php echo esc_attr( get_the_title( $did ) ); ?>">
 				<?php else : ?>
 					<div class="cso-docente-mini__avatar">🤿</div>
 				<?php endif; ?>
-				<p class="cso-docente-mini__name"><?php echo esc_html( get_the_title( $did ) ); ?></p>
-				<?php if ( $label ) : ?>
-					<p class="cso-docente-mini__ruolo"><?php echo esc_html( $label ); ?></p>
-				<?php endif; ?>
+				<div class="cso-docente-mini__body">
+					<p class="cso-docente-mini__name"><?php echo esc_html( get_the_title( $did ) ); ?></p>
+					<?php if ( $label ) : ?>
+						<p class="cso-docente-mini__ruolo"><?php echo esc_html( $label ); ?></p>
+					<?php endif; ?>
+				</div>
 			</a>
 			<?php endforeach; ?>
 		</div>
@@ -331,7 +395,7 @@ $related = calypso_get_corsi( [ 'posts_per_page' => 3, 'post__not_in' => [ $id ]
 
 	<?php if ( ! empty( $prossime ) ) : ?>
 	<div class="cso-sintesi__inizi">
-		<span class="cso-inizi-label"><?php _e( 'Prossimi inizi', 'calypsosub' ); ?></span>
+		<span class="cso-inizi-label"><?php _e( 'Prossime lezioni', 'calypsosub' ); ?></span>
 		<?php foreach ( $prossime as $occ ) :
 			$occ_inizio = get_post_meta( $occ->ID, '_occorrenza_data_inizio', true );
 			$occ_luogo  = (string) get_post_meta( $occ->ID, '_occorrenza_luogo', true );
@@ -431,4 +495,12 @@ $related = calypso_get_corsi( [ 'posts_per_page' => 3, 'post__not_in' => [ $id ]
 
 </div><!-- .cso -->
 
-<?php get_footer(); ?>
+<?php
+// Temi block: renderizza il vero footer Gutenberg.
+if ( function_exists( 'block_template_part' ) ) {
+	echo '<div class="cso-site-footer-wrap">';
+	block_template_part( 'footer' );
+	echo '</div>';
+}
+get_footer();
+?>

@@ -1,7 +1,7 @@
 /*
 Theme Name:   Calypso Sub Arezzo
 Theme URI:    https://www.calypsosub.it/
-Description:  Child theme per Calypso Sub Arezzo. Palette acquatica + sabbia, accento corallo. Tipografia Big Shoulders Display + DM Sans. Le decisioni di sistema (palette, font, dimensioni, spacing) sono in theme.json; questo file aggiunge solo ciò che l'editor non può gestire (utility, placeholders, hover su elementi custom, micro-interazioni).
+Description:  Child theme per Calypso Sub Arezzo. Palette acquatica + sabbia, accento corallo. Tipografia Big Shoulders Display. Le decisioni di sistema (palette, font, dimensioni, spacing) sono in theme.json; questo file aggiunge solo ciò che l'editor non può gestire (utility, placeholders, hover su elementi custom, micro-interazioni).
 Author:       Calypso Sub
 Template:     twentytwentyfour
 Version:      1.0.0
@@ -50,10 +50,10 @@ Text Domain:  calypso-sub
   --c-bone:        var(--wp--preset--color--bone);
   --c-ink:         var(--wp--preset--color--ink);
 
-  /* Type alias */
+  /* Type alias — unico font: Big Shoulders Display */
   --f-display: var(--wp--preset--font-family--display);
-  --f-body:    var(--wp--preset--font-family--body);
-  --f-mono:    var(--wp--preset--font-family--mono);
+  --f-body:    var(--wp--preset--font-family--display);
+  --f-mono:    var(--wp--preset--font-family--display);
 
   /* Radius custom (WP gestisce il radius dei singoli blocchi
      ma per i bottoni "pill" abbiamo 999px che si fa in theme.json) */
