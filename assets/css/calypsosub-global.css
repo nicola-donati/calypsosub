@@ -107,6 +107,7 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
   font-size:26px;
   font-weight:800;
   text-transform:uppercase;
+  color:var(--c-deep,#0a2540);
   margin:0 0 8px;
   line-height:1.1;
 }
@@ -119,9 +120,14 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 .calypso-card__desc{
   font-size:18px;
   line-height:1.55;
+  color:rgba(11,26,38,.65);
   margin:0 0 18px;
   flex:1;
 }
+/* Override temi che sovrascrivono colori card */
+.cso-docente-mini__name,.cso-thumb__title,.calypso-corso-card__title,.calypso-docente-card__name,.calypso-card__title{color:var(--c-deep,#0a2540) !important}
+.cso-thumb__desc,.calypso-corso-card__desc,.calypso-docente-card__bio,.calypso-card__desc{color:rgba(11,26,38,.65) !important}
+.cso-docente-mini__ruolo{color:var(--c-wave,#1B77A7) !important}
 
 /* ── Card badge livello — 13px normalizzato ─────────────────────────────── */
 .cso-thumb__level,

@@ -128,7 +128,10 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 .cso .cso-competenza__plus{font-size:22px;color:var(--c-gold,#E9BF26)}
 
 /* ── Docenti ── */
-.cso-docenti-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.cso-docenti-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media(max-width:480px){.cso-docenti-grid{grid-template-columns:1fr}}
+.cso .cso-docente-mini__name{color:var(--c-deep,#0a2540)}
+.cso .cso-docente-mini__ruolo{color:var(--c-wave,#1B77A7)}
 
 /* ── Sidebar navy ── */
 .cso-sintesi{background:var(--c-deep,#0a2540);border-radius:18px;box-shadow:0 6px 32px rgba(10,37,64,.28);position:sticky;top:24px;color:#fff;display:flex;flex-direction:column}
@@ -186,11 +189,10 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 .cso-related__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 @media(max-width:700px){.cso-related__grid{grid-template-columns:1fr}}
 
-.cso-thumb__body{padding:20px;flex:1;display:flex;flex-direction:column}
-.cso-thumb__level{font-size:13px;display:inline-flex;padding:4px 10px;background:rgba(29,111,156,.1);color:var(--c-wave,#1B77A7);border-radius:999px;font-weight:600;align-self:flex-start;margin-bottom:14px}
-.cso-thumb__title{font-size:26px;font-weight:800;text-transform:uppercase;color:var(--c-deep,#0a2540);margin:0 0 8px;line-height:1}
-.cso-thumb__desc{font-size:15px;color:rgba(11,26,38,.65);margin:0 0 18px;flex:1}
-.cso-thumb__link{font-size:15px;font-weight:600;color:var(--c-coral,#ff6b4a);display:flex;align-items:center;gap:6px}
+.cso-thumb__level{display:inline-flex;padding:4px 10px;background:rgba(29,111,156,.1);color:var(--c-wave,#1B77A7);border-radius:999px;font-weight:600;align-self:flex-start;margin-bottom:14px}
+.cso .cso-thumb__title{color:var(--c-deep,#0a2540)}
+.cso .cso-thumb__desc{color:rgba(11,26,38,.65)}
+.cso-thumb__link{font-size:16px;font-weight:600;color:var(--c-coral,#ff6b4a);display:flex;align-items:center;gap:6px}
 </style>
 
 <div class="cso">
