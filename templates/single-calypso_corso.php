@@ -128,8 +128,9 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 .cso .cso-competenza__plus{font-size:22px;color:var(--c-gold,#E9BF26)}
 
 /* ── Docenti ── */
-.cso-docenti-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-@media(max-width:480px){.cso-docenti-grid{grid-template-columns:1fr}}
+.cso-docenti-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:600px){.cso-docenti-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:360px){.cso-docenti-grid{grid-template-columns:1fr}}
 .cso .cso-docente-mini__name{color:var(--c-deep,#0a2540)}
 .cso .cso-docente-mini__ruolo{color:var(--c-wave,#1B77A7)}
 
@@ -186,8 +187,9 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 .cso-related__header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px;flex-wrap:wrap;gap:24px}
 .cso-related__all{font-size:16px;font-weight:600;color:var(--c-deep,#0a2540);text-decoration:none;display:flex;align-items:center;gap:6px}
 .cso-related__all:hover{color:var(--c-wave,#1B77A7)}
-.cso-related__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-@media(max-width:700px){.cso-related__grid{grid-template-columns:1fr}}
+.cso-related__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:700px){.cso-related__grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:400px){.cso-related__grid{grid-template-columns:1fr}}
 
 .cso-thumb__level{display:inline-flex;padding:4px 10px;background:rgba(29,111,156,.1);color:var(--c-wave,#1B77A7);border-radius:999px;font-weight:600;align-self:flex-start;margin-bottom:14px}
 .cso .cso-thumb__title{color:var(--c-deep,#0a2540)}
