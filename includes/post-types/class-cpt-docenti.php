@@ -99,10 +99,21 @@ class Calypsosub_CPT_Docenti {
 					<?php endforeach; ?>
 				</select>
 			</div>
-			<div class="calypso-meta-field">
+			<div class="calypso-meta-field" style="grid-column:span 2">
 				<label><?php _e( 'Specializzazioni', 'calypsosub' ); ?></label>
-				<input type="text" name="calypso_specializzazioni"
-				       value="<?php echo esc_attr( $d['specializzazioni'] ); ?>">
+				<div id="calypso-specs-repeater">
+					<?php foreach ( $d['specializzazioni'] as $i => $spec ) : ?>
+					<div class="calypso-repeater-row">
+						<input type="text" name="calypso_specializzazioni[<?php echo (int) $i; ?>]"
+						       value="<?php echo esc_attr( $spec ); ?>"
+						       placeholder="<?php esc_attr_e( 'es. Immersione profonda', 'calypsosub' ); ?>">
+						<button type="button" class="calypso-btn-remove">&#x2715;</button>
+					</div>
+					<?php endforeach; ?>
+				</div>
+				<button type="button" class="button" id="calypso-specs-add">
+					<?php _e( '+ Aggiungi specializzazione', 'calypsosub' ); ?>
+				</button>
 			</div>
 		</div>
 
@@ -134,15 +145,36 @@ class Calypsosub_CPT_Docenti {
 			</button>
 		</div>
 
+		<?php
+		$social_networks = [
+			'instagram' => 'Instagram',
+			'facebook'  => 'Facebook',
+			'youtube'   => 'YouTube',
+			'linkedin'  => 'LinkedIn',
+			'twitter'   => 'X / Twitter',
+			'tiktok'    => 'TikTok',
+			'whatsapp'  => 'WhatsApp',
+			'telegram'  => 'Telegram',
+			'pinterest' => 'Pinterest',
+			'vimeo'     => 'Vimeo',
+			'twitch'    => 'Twitch',
+			'github'    => 'GitHub',
+			'website'   => 'Sito web',
+		];
+		?>
 		<div class="calypso-meta-field">
 			<label><?php _e( 'Social', 'calypsosub' ); ?></label>
 			<div id="calypso-social-repeater">
 				<?php foreach ( $d['social'] as $i => $s ) : ?>
 				<div class="calypso-repeater-row">
-					<input type="text" name="calypso_social[<?php echo (int) $i; ?>][nome]"
-					       value="<?php echo esc_attr( $s['nome'] ); ?>"
-					       placeholder="<?php esc_attr_e( 'Nome (es. Instagram)', 'calypsosub' ); ?>"
-					       style="flex:0.4">
+					<select name="calypso_social[<?php echo (int) $i; ?>][nome]" style="flex:0.4">
+						<?php foreach ( $social_networks as $slug => $label ) : ?>
+						<option value="<?php echo esc_attr( $slug ); ?>"
+						        <?php selected( strtolower( $s['nome'] ), $slug ); ?>>
+							<?php echo esc_html( $label ); ?>
+						</option>
+						<?php endforeach; ?>
+					</select>
 					<input type="url" name="calypso_social[<?php echo (int) $i; ?>][url]"
 					       value="<?php echo esc_url( $s['url'] ); ?>" placeholder="https://...">
 					<button type="button" class="calypso-btn-remove">&#x2715;</button>
@@ -239,18 +271,48 @@ class Calypsosub_CPT_Docenti {
 				}
 			});
 
+			var specsIdx = document.getElementById('calypso-specs-repeater')
+			                 .querySelectorAll('.calypso-repeater-row').length;
+			document.getElementById('calypso-specs-add').addEventListener('click', function () {
+				var row = document.createElement('div');
+				row.className = 'calypso-repeater-row';
+				var inp = document.createElement('input');
+				inp.type = 'text';
+				inp.name = 'calypso_specializzazioni[' + specsIdx + ']';
+				inp.placeholder = <?php echo wp_json_encode( __( 'es. Immersione profonda', 'calypsosub' ) ); ?>;
+				inp.style.flex = '1';
+				var btn = document.createElement('button');
+				btn.type = 'button';
+				btn.className = 'calypso-btn-remove';
+				btn.textContent = '✕';
+				row.appendChild(inp);
+				row.appendChild(btn);
+				document.getElementById('calypso-specs-repeater').appendChild(row);
+				specsIdx++;
+			});
+
+			var socialNetworks = <?php echo wp_json_encode( $social_networks ); ?>;
+
+			function makeSocialSelect(name) {
+				var sel = document.createElement('select');
+				sel.name = name;
+				sel.style.flex = '0.4';
+				Object.keys(socialNetworks).forEach(function(slug) {
+					var opt = document.createElement('option');
+					opt.value = slug;
+					opt.textContent = socialNetworks[slug];
+					sel.appendChild(opt);
+				});
+				return sel;
+			}
+
 			var socialIdx = document.getElementById('calypso-social-repeater')
 			                  .querySelectorAll('.calypso-repeater-row').length;
 			document.getElementById('calypso-social-add').addEventListener('click', function () {
 				var row = document.createElement('div');
 				row.className = 'calypso-repeater-row';
-				row.appendChild(makeInput(
-					'text', 'calypso_social[' + socialIdx + '][nome]',
-					socialPlaceholderNome, 'flex:0.4'
-				));
-				row.appendChild(makeInput(
-					'url', 'calypso_social[' + socialIdx + '][url]', 'https://...', ''
-				));
+				row.appendChild(makeSocialSelect('calypso_social[' + socialIdx + '][nome]'));
+				row.appendChild(makeInput('url', 'calypso_social[' + socialIdx + '][url]', 'https://...', ''));
 				row.appendChild(makeRemoveBtn());
 				document.getElementById('calypso-social-repeater').appendChild(row);
 				socialIdx++;
@@ -267,14 +329,21 @@ class Calypsosub_CPT_Docenti {
 		if ( ! current_user_can( 'edit_post', $post_id ) ) return;
 
 		$text_fields = [
-			'_docente_nome'             => 'calypso_nome',
-			'_docente_cognome'          => 'calypso_cognome',
-			'_docente_ruolo'            => 'calypso_ruolo',
-			'_docente_specializzazioni' => 'calypso_specializzazioni',
-			'_docente_email'            => 'calypso_email',
-			'_docente_telefono'         => 'calypso_telefono',
-			'_docente_bio'              => 'calypso_bio',
+			'_docente_nome'    => 'calypso_nome',
+			'_docente_cognome' => 'calypso_cognome',
+			'_docente_ruolo'   => 'calypso_ruolo',
+			'_docente_email'   => 'calypso_email',
+			'_docente_telefono'=> 'calypso_telefono',
+			'_docente_bio'     => 'calypso_bio',
 		];
+
+		// Specializzazioni: repeater → array di stringhe
+		$specs = [];
+		foreach ( (array) ( $_POST['calypso_specializzazioni'] ?? [] ) as $s ) {
+			$s = sanitize_text_field( wp_unslash( $s ) );
+			if ( $s !== '' ) $specs[] = $s;
+		}
+		update_post_meta( $post_id, '_docente_specializzazioni', $specs );
 		foreach ( $text_fields as $meta_key => $post_key ) {
 			update_post_meta( $post_id, $meta_key,
 				sanitize_text_field( wp_unslash( $_POST[ $post_key ] ?? '' ) ) );
@@ -301,11 +370,21 @@ class Calypsosub_CPT_Docenti {
 	}
 
 	private function get_meta( int $post_id ): array {
+		// Specializzazioni: supporta sia nuovo formato array che vecchio CSV
+		$specs_raw = get_post_meta( $post_id, '_docente_specializzazioni', true );
+		if ( is_array( $specs_raw ) ) {
+			$specializzazioni = array_values( array_filter( $specs_raw ) );
+		} elseif ( is_string( $specs_raw ) && $specs_raw !== '' ) {
+			$specializzazioni = array_values( array_filter( array_map( 'trim', explode( ',', $specs_raw ) ) ) );
+		} else {
+			$specializzazioni = [];
+		}
+
 		return [
 			'nome'             => (string) get_post_meta( $post_id, '_docente_nome', true ),
 			'cognome'          => (string) get_post_meta( $post_id, '_docente_cognome', true ),
 			'ruolo'            => (string) get_post_meta( $post_id, '_docente_ruolo', true ),
-			'specializzazioni' => (string) get_post_meta( $post_id, '_docente_specializzazioni', true ),
+			'specializzazioni' => $specializzazioni,
 			'email'            => (string) get_post_meta( $post_id, '_docente_email', true ),
 			'telefono'         => (string) get_post_meta( $post_id, '_docente_telefono', true ),
 			'bio'              => (string) get_post_meta( $post_id, '_docente_bio', true ),

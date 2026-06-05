@@ -19,7 +19,7 @@ $active  = [];
 $history = [];
 foreach ( $booking_ids as $bid ) {
 	$status = get_post_meta( $bid, '_booking_status', true );
-	if ( in_array( $status, [ 'confermata', 'lista_attesa' ], true ) ) {
+	if ( in_array( $status, [ 'confermata', 'lista_attesa', 'in_attesa' ], true ) ) {
 		$active[] = $bid;
 	} else {
 		$history[] = $bid;
@@ -39,8 +39,10 @@ $cancel_nonce = wp_create_nonce( 'calypso_cancel_nonce' );
 .calypso-bookings-table tr:hover td{background:#f9fafb}
 .calypso-status-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
 .calypso-status-badge--confermata{background:#d1fae5;color:#065f46}
-.calypso-status-badge--lista_attesa{background:#fef3c7;color:#92400e}
+.calypso-status-badge--lista_attesa{background:#dbeafe;color:#1e40af}
+.calypso-status-badge--in_attesa{background:#fef3c7;color:#92400e}
 .calypso-status-badge--annullata{background:#fee2e2;color:#991b1b}
+.calypso-status-badge--rifiutata{background:#fee2e2;color:#991b1b}
 .calypso-cancel-btn{background:transparent;border:1px solid var(--c-coral);color:var(--c-coral);border-radius:var(--radius);padding:5px 14px;font-size:13px;cursor:pointer;transition:all .15s}
 .calypso-cancel-btn:hover{background:var(--c-coral);color:#fff}
 .calypso-btn{display:inline-block;background:var(--c-coral);color:#fff;font-size:15px;letter-spacing:.04em;text-transform:uppercase;padding:10px 20px;border-radius:var(--radius);text-decoration:none;border:none;cursor:pointer;transition:background .15s}
@@ -86,7 +88,16 @@ $cancel_nonce = wp_create_nonce( 'calypso_cancel_nonce' );
 			<td><?php echo esc_html( $prima_data ); ?></td>
 			<td>
 				<span class="calypso-status-badge calypso-status-badge--<?php echo esc_attr( $status ); ?>">
-					<?php echo esc_html( $status === 'lista_attesa' ? __( 'Lista attesa', 'calypsosub' ) : ucfirst( $status ) ); ?>
+					<?php
+					$status_labels = [
+						'in_attesa'    => __( 'In attesa di conferma', 'calypsosub' ),
+						'confermata'   => __( 'Confermata', 'calypsosub' ),
+						'lista_attesa' => __( 'Lista attesa', 'calypsosub' ),
+						'annullata'    => __( 'Annullata', 'calypsosub' ),
+						'rifiutata'    => __( 'Rifiutata', 'calypsosub' ),
+					];
+					echo esc_html( $status_labels[ $status ] ?? ucfirst( $status ) );
+					?>
 				</span>
 			</td>
 			<td><?php echo esc_html( $companions ); ?></td>

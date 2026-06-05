@@ -21,10 +21,12 @@ $stat_profondita = (string) get_post_meta( $id, '_corso_stat_profondita', true )
 $periodo         = (string) get_post_meta( $id, '_corso_periodo',         true );
 $link_iscrizione = (string) get_post_meta( $id, '_corso_link_iscrizione', true );
 $contatto        = (string) get_post_meta( $id, '_corso_contatto',        true );
+$contatto_nome   = (string) get_post_meta( $id, '_corso_contatto_nome',   true );
 $materiale       = (string) get_post_meta( $id, '_corso_materiale',       true );
 $direttore_id    = (int)    get_post_meta( $id, '_corso_direttore_id',    true );
 $docenti_ids     = (array)  ( get_post_meta( $id, '_corso_docenti_ids',   true ) ?: [] );
 $fasi            = (array)  ( get_post_meta( $id, '_corso_fasi',          true ) ?: [] );
+$requisiti       = (string) get_post_meta( $id, '_corso_requisiti',       true );
 $competenze_raw  = (string) get_post_meta( $id, '_corso_competenze',      true );
 $competenze      = $competenze_raw
 	? array_values( array_filter( array_map( 'trim', explode( "\n", $competenze_raw ) ) ) )
@@ -80,31 +82,31 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
   background-repeat:no-repeat;
 }
 .cso-hero--bg-img .cso-hero__inner{position:relative;z-index:1}
-.cso-hero h1,.cso-hero h2,.cso-hero h3{color:#fff}
+.cso-hero h1,.cso-hero h2,.cso-hero h3{color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.6),0 3px 24px rgba(0,0,0,.4)}
 .cso-hero a{color:rgba(255,255,255,.55);text-decoration:none}
 .cso-hero a:hover{color:rgba(255,255,255,.9)}
 @media(max-width:900px){.cso-hero{padding:calc(var(--cso-header-h) + 24px) 20px 40px}}
 
 .cso-hero__inner{max-width:1200px;margin:0 auto}
 
-.cso-breadcrumb{font-size:16px;display:flex;align-items:center;gap:8px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:48px}
+.cso-breadcrumb{font-size:16px;display:flex;align-items:center;gap:8px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:48px;text-shadow:0 1px 4px rgba(0,0,0,.5)}
 .cso-breadcrumb__current{color:#fff}
 
 .cso-hero__header{display:grid;grid-template-columns:1.4fr 1fr;gap:80px;align-items:end;margin-bottom:56px}
 @media(max-width:900px){.cso-hero__header{grid-template-columns:1fr;gap:24px;margin-bottom:32px}}
 
-.cso-hero__badge{font-size:16px;display:inline-flex;padding:6px 14px;background:var(--c-coral,#ff6b4a);color:#fff;border-radius:999px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:24px}
-.cso-hero__title{font-size:clamp(56px,10vw,144px);font-weight:900;color:#fff;margin:0;line-height:.9;letter-spacing:-.02em;text-transform:uppercase}
-.cso-hero__sub{margin-top:16px;font-weight:600;line-height:1}
+.cso-hero__badge{font-size:16px;display:inline-flex;padding:6px 14px;background:var(--c-coral,#ff6b4a);color:#fff;border-radius:999px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:24px;text-shadow:0 1px 4px rgba(0,0,0,.4)}
+.cso-hero__title{font-size:clamp(56px,10vw,144px);font-weight:900;color:#fff;margin:0;line-height:.9;letter-spacing:-.02em;text-transform:uppercase;text-shadow:0 2px 12px rgba(0,0,0,.7),0 4px 32px rgba(0,0,0,.5)}
+.cso-hero__sub{margin-top:16px;font-weight:600;line-height:1;text-shadow:0 1px 8px rgba(0,0,0,.6),0 3px 24px rgba(0,0,0,.4)}
 .cso .cso-hero__sub{font-size:clamp(28px,5vw,72px);color:var(--c-aqua,#26CBFB)}
-.cso-hero__lead{font-size:20px;line-height:1.6;opacity:.85;margin:0;align-self:end}
+.cso-hero__lead{font-size:20px;line-height:1.6;opacity:.85;margin:0;align-self:end;text-shadow:0 1px 6px rgba(0,0,0,.55),0 2px 16px rgba(0,0,0,.35)}
 
 .cso-hero__img{width:100%;height:480px;object-fit:cover;display:block;border-radius:12px}
 .cso-hero__img-placeholder{font-size:64px;width:100%;height:480px;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(38,203,251,.1) 100%);display:flex;align-items:center;justify-content:center;border-radius:12px}
 
 /* ── Layout corpo ── */
 .cso-layout{max-width:1200px;margin:0 auto;padding:80px 48px 48px;display:grid;grid-template-columns:1.5fr 1fr;gap:64px;align-items:start}
-@media(max-width:900px){.cso-layout{grid-template-columns:1fr;padding:40px 20px}}
+@media(max-width:900px){.cso-layout{grid-template-columns:1fr;padding:40px 20px}.cso-layout aside{order:-1}}
 
 .cso-section{margin-bottom:72px}
 .cso-section:last-child{margin-bottom:0}
@@ -142,8 +144,8 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 .cso-docenti-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
 .cso-docente-mini{background:#fff;border-radius:14px;overflow:hidden;border:1px solid rgba(11,26,38,.08);display:flex;flex-direction:column;text-decoration:none;color:var(--c-ink,#0b1a26);transition:transform .2s,box-shadow .2s}
 .cso-docente-mini:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(10,37,64,.14)}
-.cso-docente-mini img{width:100%;height:180px;object-fit:cover;display:block}
-.cso-docente-mini__avatar{width:100%;height:180px;background:linear-gradient(135deg,var(--c-deep,#0a2540),var(--c-wave,#1B77A7));display:flex;align-items:center;justify-content:center;font-size:48px}
+.cso-docente-mini img{width:100%;height:220px;object-fit:cover;display:block}
+.cso-docente-mini__avatar{width:100%;height:220px;background:linear-gradient(135deg,var(--c-deep,#0a2540),var(--c-wave,#1B77A7));display:flex;align-items:center;justify-content:center;font-size:48px}
 .cso-docente-mini__body{padding:16px 20px;flex:1;display:flex;flex-direction:column}
 .cso-docente-mini__name{font-weight:700;color:var(--c-deep,#0a2540);margin:0 0 4px;line-height:1.1;text-transform:uppercase}
 .cso .cso-docente-mini__name{font-size:26px}
@@ -161,13 +163,19 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 .cso-sintesi .cso-sintesi__cert{font-size:16px;color:var(--c-aqua,#26CBFB)}
 .cso-sintesi__title{font-size:36px;font-weight:900;color:#fff;margin:0;line-height:.96;letter-spacing:-.01em}
 
-.cso-sintesi__stats{padding:8px 24px 20px;border-bottom:1px solid rgba(255,255,255,.12)}
-.cso-stat-row{display:flex;justify-content:space-between;align-items:baseline;padding:14px 0;border-top:1px solid rgba(255,255,255,.12)}
+.cso-sintesi__stats{padding:8px 24px 0;border-bottom:1px solid rgba(255,255,255,.12)}
+.cso-stat-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:14px 0;border-top:1px solid rgba(255,255,255,.12)}
 .cso-stat-row:first-child{border-top:none}
-.cso-stat-row__label{letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+.cso-stat-row__label{letter-spacing:.08em;text-transform:uppercase;font-weight:600;flex-shrink:0}
 .cso-sintesi .cso-stat-row__label{font-size:16px;color:var(--c-aqua,#26CBFB)}
-.cso-stat-row__val{font-weight:600}
+.cso-stat-row__val{font-weight:600;text-align:right}
 .cso-sintesi .cso-stat-row__val{font-size:16px;color:#fff}
+@media(max-width:600px){.cso-stat-row{flex-direction:column;gap:4px}.cso-stat-row__val{text-align:left}}
+
+.cso-sintesi__requisiti{padding:20px 24px 20px;border-bottom:1px solid rgba(255,255,255,.12)}
+.cso-sintesi__requisiti-label{letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin:0 0 14px;display:block}
+.cso-sintesi .cso-sintesi__requisiti-label{font-size:16px;color:var(--c-aqua,#26CBFB)}
+.cso-sintesi .cso-sintesi__requisiti-text{font-size:16px;font-weight:600;line-height:1.5;color:#fff;margin:0;padding:0;white-space:pre-line}
 
 .cso-sintesi__inizi{padding:20px 24px 24px;border-bottom:1px solid rgba(255,255,255,.12)}
 .cso-inizi-label{letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin:0 0 14px;display:block}
@@ -202,8 +210,8 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 
 .cso-thumb{background:#fff;border-radius:14px;overflow:hidden;border:1px solid rgba(11,26,38,.08);display:flex;flex-direction:column;text-decoration:none;color:var(--c-ink,#0b1a26);transition:transform .2s,box-shadow .2s}
 .cso-thumb:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(10,37,64,.14)}
-.cso-thumb img{width:100%;height:160px;object-fit:cover;display:block}
-.cso-thumb__placeholder{font-size:32px;width:100%;height:160px;background:linear-gradient(135deg,var(--c-deep,#0a2540),var(--c-wave,#1B77A7));display:flex;align-items:center;justify-content:center;}
+.cso-thumb img{width:100%;height:220px;object-fit:cover;display:block}
+.cso-thumb__placeholder{font-size:32px;width:100%;height:220px;background:linear-gradient(135deg,var(--c-deep,#0a2540),var(--c-wave,#1B77A7));display:flex;align-items:center;justify-content:center;}
 .cso-thumb__body{padding:24px;flex:1;display:flex;flex-direction:column}
 .cso-thumb__level{font-size:13px;display:inline-flex;padding:4px 10px;background:rgba(29,111,156,.1);color:var(--c-wave,#1B77A7);border-radius:999px;font-weight:600;align-self:flex-start;margin-bottom:14px}
 .cso-thumb__title{font-size:26px;font-weight:800;text-transform:uppercase;color:var(--c-deep,#0a2540);margin:0 0 8px;line-height:1}
@@ -221,7 +229,7 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 	<nav class="cso-breadcrumb" aria-label="<?php esc_attr_e( 'Breadcrumb', 'calypsosub' ); ?>">
 		<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php _e( 'Home', 'calypsosub' ); ?></a>
 		<span>/</span>
-		<a href="<?php echo esc_url( get_post_type_archive_link( 'calypso_corso' ) ); ?>"><?php _e( 'Corsi', 'calypsosub' ); ?></a>
+		<a href="<?php echo esc_url( get_post_type_archive_link( 'calypso_corso' ) ); ?>"><?php echo esc_html( calypsosub_opt( 'corsi', 'breadcrumb_archive', __( 'Corsi', 'calypsosub' ) ) ); ?></a>
 		<span>/</span>
 		<span class="cso-breadcrumb__current"><?php the_title(); ?></span>
 	</nav>
@@ -268,7 +276,7 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 
 	<?php if ( $fasi ) : ?>
 	<div class="cso-section">
-		<span class="cso-eyebrow"><?php _e( 'Il programma', 'calypsosub' ); ?></span>
+		<span class="cso-eyebrow"><?php echo esc_html( calypsosub_opt( 'corsi', 'sec_programma_eyebrow', __( 'Il programma', 'calypsosub' ) ) ); ?></span>
 		<h2 class="cso-display-heading">
 			<?php echo $sottotitolo
 				? esc_html( $sottotitolo )
@@ -300,7 +308,7 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 
 	<?php if ( ! empty( $competenze ) ) : ?>
 	<div class="cso-section">
-		<span class="cso-eyebrow"><?php _e( 'Cosa imparerai', 'calypsosub' ); ?></span>
+		<span class="cso-eyebrow"><?php echo esc_html( calypsosub_opt( 'corsi', 'sec_competenze_eyebrow', __( 'Cosa imparerai', 'calypsosub' ) ) ); ?></span>
 		<h2 class="cso-display-heading">
 			<?php printf(
 				esc_html( _n( '%d competenza da portare via.', '%d competenze da portare via.', count( $competenze ), 'calypsosub' ) ),
@@ -320,8 +328,8 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 
 	<?php if ( $materiale ) : ?>
 	<div class="cso-section">
-		<span class="cso-eyebrow"><?php _e( 'Materiale', 'calypsosub' ); ?></span>
-		<h2 class="cso-display-heading"><?php _e( 'Cosa è incluso.', 'calypsosub' ); ?></h2>
+		<span class="cso-eyebrow"><?php echo esc_html( calypsosub_opt( 'corsi', 'sec_materiale_eyebrow', __( 'Materiale', 'calypsosub' ) ) ); ?></span>
+		<h2 class="cso-display-heading"><?php echo esc_html( calypsosub_opt( 'corsi', 'sec_materiale_heading', __( 'Cosa è incluso.', 'calypsosub' ) ) ); ?></h2>
 		<p class="cso-lead" style="white-space:pre-line"><?php echo esc_html( $materiale ); ?></p>
 	</div>
 	<?php endif; ?>
@@ -333,8 +341,8 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 	}
 	if ( ! empty( $all_shown ) ) : ?>
 	<div class="cso-section">
-		<span class="cso-eyebrow"><?php _e( 'I docenti', 'calypsosub' ); ?></span>
-		<h2 class="cso-display-heading"><?php _e( 'I nostri docenti.', 'calypsosub' ); ?></h2>
+		<span class="cso-eyebrow"><?php echo esc_html( calypsosub_opt( 'corsi', 'sec_docenti_eyebrow', __( 'I docenti', 'calypsosub' ) ) ); ?></span>
+		<h2 class="cso-display-heading"><?php echo esc_html( calypsosub_opt( 'corsi', 'sec_docenti_heading', __( 'I nostri docenti.', 'calypsosub' ) ) ); ?></h2>
 		<div class="cso-docenti-grid">
 			<?php foreach ( $all_shown as $did ) :
 				$ruolo  = (string) get_post_meta( $did, '_docente_ruolo', true );
@@ -372,15 +380,15 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 		<?php if ( $badge ) : ?>
 			<span class="cso-sintesi__cert"><?php echo esc_html( $badge ); ?></span>
 		<?php endif; ?>
-		<h2 class="cso-sintesi__title"><?php _e( 'In sintesi', 'calypsosub' ); ?></h2>
+		<h2 class="cso-sintesi__title"><?php echo esc_html( calypsosub_opt( 'corsi', 'sidebar_title', __( 'In sintesi', 'calypsosub' ) ) ); ?></h2>
 	</div>
 
 	<?php
 	$stats = array_filter( [
-		__( 'Durata',     'calypsosub' ) => $stat_durata,
-		__( 'Immersioni', 'calypsosub' ) => $stat_pratica,
-		__( 'Profondità', 'calypsosub' ) => $stat_profondita,
-		__( 'Periodo',    'calypsosub' ) => $periodo,
+		calypsosub_opt( 'corsi', 'stat_durata',     __( 'Durata',     'calypsosub' ) ) => $stat_durata,
+		calypsosub_opt( 'corsi', 'stat_immersioni',  __( 'Immersioni', 'calypsosub' ) ) => $stat_pratica,
+		calypsosub_opt( 'corsi', 'stat_profondita',  __( 'Profondità', 'calypsosub' ) ) => $stat_profondita,
+		calypsosub_opt( 'corsi', 'stat_periodo',     __( 'Periodo di riferimento', 'calypsosub' ) ) => $periodo,
 	] );
 	if ( ! empty( $stats ) ) : ?>
 	<div class="cso-sintesi__stats">
@@ -393,9 +401,16 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 	</div>
 	<?php endif; ?>
 
+	<?php if ( $requisiti ) : ?>
+	<div class="cso-sintesi__requisiti">
+		<span class="cso-sintesi__requisiti-label"><?php echo esc_html( calypsosub_opt( 'corsi', 'sidebar_requisiti_label', __( 'Requisiti', 'calypsosub' ) ) ); ?></span>
+		<p class="cso-sintesi__requisiti-text"><?php echo esc_html( trim( $requisiti ) ); ?></p>
+	</div>
+	<?php endif; ?>
+
 	<?php if ( ! empty( $prossime ) ) : ?>
 	<div class="cso-sintesi__inizi">
-		<span class="cso-inizi-label"><?php _e( 'Prossime lezioni', 'calypsosub' ); ?></span>
+		<span class="cso-inizi-label"><?php echo esc_html( calypsosub_opt( 'corsi', 'inizi_label', __( 'Prossime lezioni', 'calypsosub' ) ) ); ?></span>
 		<?php foreach ( $prossime as $occ ) :
 			$occ_inizio = get_post_meta( $occ->ID, '_occorrenza_data_inizio', true );
 			$occ_luogo  = (string) get_post_meta( $occ->ID, '_occorrenza_luogo', true );
@@ -434,15 +449,19 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 		<?php if ( $link_iscrizione ) : ?>
 			<a href="<?php echo esc_url( $link_iscrizione ); ?>"
 			   class="cso-btn-primary" target="_blank" rel="noopener">
-				<?php _e( 'Iscriviti al corso →', 'calypsosub' ); ?>
+				<?php echo esc_html( calypsosub_opt( 'corsi', 'btn_iscrivi', __( 'Iscriviti al corso →', 'calypsosub' ) ) ); ?>
 			</a>
 		<?php endif; ?>
-		<?php if ( $contatto ) : ?>
+		<?php if ( $contatto ) :
+			$btn_label = $contatto_nome
+				? $contatto_nome . ' · ' . $contatto
+				: __( 'Chiamaci', 'calypsosub' ) . ' · ' . $contatto;
+		?>
 			<a href="<?php echo esc_attr( strpos( $contatto, '@' ) !== false
 				? 'mailto:' . $contatto
 				: 'tel:' . preg_replace( '/[^+0-9]/', '', $contatto ) ); ?>"
 			   class="cso-btn-secondary">
-				<?php echo esc_html( __( 'Chiamaci · ', 'calypsosub' ) . $contatto ); ?>
+				<?php echo esc_html( $btn_label ); ?>
 			</a>
 		<?php endif; ?>
 	</div>
@@ -457,11 +476,11 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 <div class="cso-related__inner">
 	<div class="cso-related__header">
 		<div>
-			<span class="cso-related__eyebrow"><?php _e( 'Continua a scendere', 'calypsosub' ); ?></span>
-			<h2 class="cso-display-heading" style="margin:0"><?php _e( 'Altri corsi.', 'calypsosub' ); ?></h2>
+			<span class="cso-related__eyebrow"><?php echo esc_html( calypsosub_opt( 'corsi', 'related_eyebrow', __( 'Continua a scendere', 'calypsosub' ) ) ); ?></span>
+			<h2 class="cso-display-heading" style="margin:0"><?php echo esc_html( calypsosub_opt( 'corsi', 'related_heading', __( 'Altri corsi.', 'calypsosub' ) ) ); ?></h2>
 		</div>
 		<a href="<?php echo esc_url( get_post_type_archive_link( 'calypso_corso' ) ); ?>"
-		   class="cso-related__all"><?php _e( 'Tutti i corsi →', 'calypsosub' ); ?></a>
+		   class="cso-related__all"><?php echo esc_html( calypsosub_opt( 'corsi', 'related_link', __( 'Tutti i corsi →', 'calypsosub' ) ) ); ?></a>
 	</div>
 	<div class="cso-related__grid">
 		<?php foreach ( $related as $r ) :
@@ -484,7 +503,7 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 				<?php if ( $r_desc ) : ?>
 					<p class="cso-thumb__desc"><?php echo esc_html( $r_desc ); ?></p>
 				<?php endif; ?>
-				<span class="cso-thumb__link"><?php _e( 'Scopri il corso →', 'calypsosub' ); ?></span>
+				<span class="cso-thumb__link"><?php echo esc_html( calypsosub_opt( 'corsi', 'related_card_link', __( 'Scopri il corso →', 'calypsosub' ) ) ); ?></span>
 			</div>
 		</a>
 		<?php endforeach; ?>

@@ -15,24 +15,17 @@ class Calypsosub_Template_Loader {
 	}
 
 	public function load_template( string $template ): string {
-		if ( ! is_singular() ) return $template;
+		if ( is_singular() ) {
+			$post_type = get_post_type();
+			if ( ! in_array( $post_type, $this->post_types, true ) ) return $template;
+			$filename = 'single-' . $post_type . '.php';
+		} elseif ( is_post_type_archive( $this->post_types ) ) {
+			$post_type = get_query_var( 'post_type' );
+			$filename  = 'archive-' . $post_type . '.php';
+		} else {
+			return $template;
+		}
 
-		$post_type = get_post_type();
-		if ( ! in_array( $post_type, $this->post_types, true ) ) return $template;
-
-		$modes = (array) get_option( 'calypsosub_template_modes', [] );
-		$mode  = $modes[ $post_type ] ?? 'plugin';
-
-		// Modalità tema/editor: lascia fare a WordPress (tema classico o FSE)
-		if ( 'wp' === $mode ) return $template;
-
-		$filename = 'single-' . $post_type . '.php';
-
-		// Theme override PHP: il tema può mettere calypsosub/{filename} nella sua cartella
-		$theme_override = locate_template( [ 'calypsosub/' . $filename ] );
-		if ( $theme_override ) return $theme_override;
-
-		// Fallback: template del plugin
 		$plugin_template = CALYPSOSUB_PATH . 'templates/' . $filename;
 		if ( file_exists( $plugin_template ) ) return $plugin_template;
 
