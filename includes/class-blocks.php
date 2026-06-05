@@ -16,6 +16,26 @@ class Calypsosub_Blocks {
 				'inside_hero' => [ 'type' => 'boolean', 'default' => false ],
 			],
 		],
+		'calypso/hero-home' => [
+			'file'       => 'block-hero-home.php',
+			'title'      => 'Hero Home',
+			'attributes' => [
+				'image_id'       => [ 'type' => 'integer', 'default' => 0 ],
+				'eyebrow'        => [ 'type' => 'string',  'default' => 'La subacquea ad Arezzo dal 1978' ],
+				'eyebrow_wave'   => [ 'type' => 'boolean', 'default' => true ],
+				'title'          => [ 'type' => 'string',  'default' => "Sotto la superficie\nc'è un" ],
+				'title_em'       => [ 'type' => 'string',  'default' => 'altro mondo.' ],
+				'description'    => [ 'type' => 'string',  'default' => '' ],
+				'btn1_text'      => [ 'type' => 'string',  'default' => 'Diventa socio' ],
+				'btn1_url'       => [ 'type' => 'string',  'default' => '' ],
+				'btn2_text'      => [ 'type' => 'string',  'default' => 'Guarda il video' ],
+				'btn2_url'       => [ 'type' => 'string',  'default' => '' ],
+				'show_uscita'    => [ 'type' => 'boolean', 'default' => true ],
+				'marquee_on'     => [ 'type' => 'boolean', 'default' => true ],
+				'marquee_items'  => [ 'type' => 'string',  'default' => 'Argentario,Elba,Giglio,Giannutri,Croazia,Egadi' ],
+				'marquee_mobile' => [ 'type' => 'boolean', 'default' => false ],
+			],
+		],
 	];
 
 	public function init(): void {
@@ -71,16 +91,183 @@ class Calypsosub_Blocks {
 		);
 
 		$js = <<<JS
-(function (blocks, element, components) {
+(function (blocks, element, components, blockEditor) {
 	var el = element.createElement;
+	var Fragment          = element.Fragment;
+	var InspectorControls = blockEditor ? blockEditor.InspectorControls : null;
+	var MediaUploadCheck  = blockEditor ? blockEditor.MediaUploadCheck  : null;
+	var MediaUpload       = blockEditor ? blockEditor.MediaUpload       : null;
+	var PanelBody     = components.PanelBody;
+	var TextControl   = components.TextControl;
+	var TextareaControl = components.TextareaControl;
 	var ToggleControl = components.ToggleControl;
-	var PanelBody    = components.PanelBody;
-	var InspectorControls = wp.blockEditor ? wp.blockEditor.InspectorControls : null;
+	var Button        = components.Button;
 
 	var calypsoBlocks = {$blocks_json};
+
 	calypsoBlocks.forEach(function (info) {
 		if (blocks.getBlockType(info.name)) return;
 
+		/* ── Controlli speciali per hero-home ── */
+		if (info.name === 'calypso/hero-home') {
+			blocks.registerBlockType(info.name, {
+				title: info.title,
+				category: 'calypso',
+				icon: 'cover-image',
+				attributes: info.attributes || {},
+				edit: function (props) {
+					var a = props.attributes;
+					var set = props.setAttributes;
+
+					var imgLabel = a.image_id
+						? 'Immagine: ID ' + a.image_id
+						: 'Nessuna immagine';
+
+					var mediaBtn = (MediaUploadCheck && MediaUpload)
+						? el(MediaUploadCheck, {},
+							el(MediaUpload, {
+								onSelect: function (media) { set({ image_id: media.id }); },
+								allowedTypes: ['image'],
+								value: a.image_id,
+								render: function (ref) {
+									return el(Button, {
+										onClick: ref.open,
+										variant: a.image_id ? 'secondary' : 'primary',
+										style: { marginBottom: '8px' }
+									}, a.image_id ? '⬡ Cambia immagine' : '⬡ Scegli immagine');
+								}
+							}))
+						: null;
+
+					var controls = InspectorControls
+						? el(InspectorControls, {},
+							el(PanelBody, { title: 'Immagine sfondo', initialOpen: true },
+								mediaBtn,
+								a.image_id
+									? el(Button, {
+										onClick: function () { set({ image_id: 0 }); },
+										variant: 'link',
+										isDestructive: true
+									}, 'Rimuovi immagine')
+									: null
+							),
+							el(PanelBody, { title: 'Testo', initialOpen: false },
+								el(TextControl, {
+									label: 'Eyebrow',
+									value: a.eyebrow || '',
+									onChange: function (v) { set({ eyebrow: v }); }
+								}),
+								el(ToggleControl, {
+									label: 'Mostra icona onda',
+									checked: !!a.eyebrow_wave,
+									onChange: function (v) { set({ eyebrow_wave: v }); }
+								}),
+								el(TextareaControl, {
+									label: 'Titolo (\\n per a capo)',
+									value: a.title || '',
+									onChange: function (v) { set({ title: v }); }
+								}),
+								el(TextControl, {
+									label: 'Titolo — parte in evidenza (aqua)',
+									value: a.title_em || '',
+									onChange: function (v) { set({ title_em: v }); }
+								}),
+								el(TextareaControl, {
+									label: 'Descrizione',
+									value: a.description || '',
+									onChange: function (v) { set({ description: v }); }
+								})
+							),
+							el(PanelBody, { title: 'Bottoni', initialOpen: false },
+								el(TextControl, {
+									label: 'Bottone primario — testo',
+									value: a.btn1_text || '',
+									onChange: function (v) { set({ btn1_text: v }); }
+								}),
+								el(TextControl, {
+									label: 'Bottone primario — URL',
+									value: a.btn1_url || '',
+									type: 'url',
+									onChange: function (v) { set({ btn1_url: v }); }
+								}),
+								el(TextControl, {
+									label: 'Bottone secondario — testo',
+									value: a.btn2_text || '',
+									onChange: function (v) { set({ btn2_text: v }); }
+								}),
+								el(TextControl, {
+									label: 'Bottone secondario — URL',
+									value: a.btn2_url || '',
+									type: 'url',
+									onChange: function (v) { set({ btn2_url: v }); }
+								})
+							),
+							el(PanelBody, { title: 'Prossima uscita', initialOpen: false },
+								el(ToggleControl, {
+									label: 'Mostra card prossima uscita',
+									help: 'Visibile solo su desktop, auto-aggiornata dal database',
+									checked: !!a.show_uscita,
+									onChange: function (v) { set({ show_uscita: v }); }
+								})
+							),
+							el(PanelBody, { title: 'Ticker luoghi', initialOpen: false },
+								el(ToggleControl, {
+									label: 'Mostra ticker',
+									checked: !!a.marquee_on,
+									onChange: function (v) { set({ marquee_on: v }); }
+								}),
+								a.marquee_on ? el(TextareaControl, {
+									label: 'Luoghi (separati da virgola)',
+									value: a.marquee_items || '',
+									onChange: function (v) { set({ marquee_items: v }); }
+								}) : null,
+								a.marquee_on ? el(ToggleControl, {
+									label: 'Visibile su mobile',
+									checked: !!a.marquee_mobile,
+									onChange: function (v) { set({ marquee_mobile: v }); }
+								}) : null
+							)
+						)
+						: null;
+
+					var preview = el('div', {
+						style: {
+							padding: '24px 20px',
+							background: '#0a2540',
+							borderRadius: '6px',
+							color: '#fff',
+							fontFamily: 'system-ui, sans-serif',
+							minHeight: '120px',
+							position: 'relative'
+						}
+					},
+						el('div', { style: { fontSize: '10px', letterSpacing: '.12em', textTransform: 'uppercase', color: '#26CBFB', marginBottom: '8px' } },
+							'~ ' + (a.eyebrow || 'Eyebrow')
+						),
+						el('div', { style: { fontSize: '28px', fontWeight: '900', lineHeight: '1', marginBottom: '8px' } },
+							(a.title || 'Titolo').replace(/\\n/g, ' ') + ' ',
+							el('em', { style: { color: '#26CBFB', fontStyle: 'normal' } }, a.title_em || 'em')
+						),
+						a.description ? el('div', { style: { fontSize: '12px', opacity: '.8', marginBottom: '12px' } }, a.description.substring(0, 80) + '…') : null,
+						el('div', { style: { display: 'flex', gap: '8px' } },
+							a.btn1_text ? el('span', { style: { background: '#ff6b4a', color: '#fff', fontSize: '11px', padding: '6px 12px', borderRadius: '999px', fontWeight: '700' } }, a.btn1_text) : null,
+							a.btn2_text ? el('span', { style: { background: 'rgba(255,255,255,.1)', color: '#fff', fontSize: '11px', padding: '6px 12px', borderRadius: '999px', border: '1px solid rgba(255,255,255,.3)' } }, a.btn2_text) : null
+						),
+						el('div', { style: { fontSize: '10px', opacity: '.5', marginTop: '8px' } },
+							'⚓ Hero Home · ' + (a.image_id ? 'img:' + a.image_id : 'no image') +
+							(a.show_uscita ? ' · prossima uscita ON' : '') +
+							(a.marquee_on ? ' · ticker ON' : '')
+						)
+					);
+
+					return el(Fragment, {}, controls, preview);
+				},
+				save: function () { return null; },
+			});
+			return;
+		}
+
+		/* ── Blocchi generici ── */
 		var hasInsideHero = info.attributes && info.attributes.inside_hero !== undefined;
 
 		blocks.registerBlockType(info.name, {
@@ -118,12 +305,12 @@ class Calypsosub_Blocks {
 						)
 					));
 				}
-				return el(element.Fragment, {}, children);
+				return el(Fragment, {}, children);
 			},
 			save: function () { return null; },
 		});
 	});
-}(window.wp.blocks, window.wp.element, window.wp.components));
+}(window.wp.blocks, window.wp.element, window.wp.components, window.wp.blockEditor));
 JS;
 
 		wp_add_inline_script( 'calypso-blocks-editor', $js );
