@@ -6,24 +6,18 @@ $docenti = calypso_get_docenti();
 <style>
 .calypso-docenti{max-width:1320px;margin:0 auto;padding:0 24px}
 .calypso-docenti__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:28px}
-.calypso-docente-card{background:#fff;border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 2px 10px rgba(10,37,64,.10);transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column}
-.calypso-docente-card:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(10,37,64,.16)}
 .calypso-docente-card__link{display:flex;flex-direction:column;flex:1;text-decoration:none;color:inherit}
 .calypso-docente-card__photo-wrap{position:relative;overflow:hidden}
-.calypso-docente-card__avatar{width:100%;height:300px;object-fit:cover;object-position:center;display:block}
-.calypso-docente-card__avatar-placeholder{width:100%;height:300px;background:linear-gradient(160deg,var(--c-deep) 0%,var(--c-wave) 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-size:72px;letter-spacing:-.02em}
 .calypso-docente-card__photo-label{position:absolute;bottom:0;left:0;background:rgba(11,26,38,.72);color:var(--c-sand);font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;padding:6px 12px;backdrop-filter:blur(2px)}
-.calypso-docente-card__body{padding:20px 20px 16px;flex:1;display:flex;flex-direction:column}
-.calypso-docente-card__name{font-size:24px;font-weight:800;color:var(--c-wave)!important;margin:0 0 4px;line-height:1.1;text-transform:uppercase;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.calypso-docente-card__name{font-size:26px;font-weight:800;color:var(--c-wave)!important;margin:0 0 4px;line-height:1.1;text-transform:uppercase;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .calypso-docente-card__name:hover{color:var(--c-deep)!important}
-.calypso-docente-card__ruolo{font-size:13px;font-weight:600;color:var(--c-gold)!important;text-transform:capitalize;margin:0 0 12px;letter-spacing:.01em}
-.calypso-docente-card__bio{font-size:14px;color:#444!important;line-height:1.6;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.calypso-docente-card__ruolo{font-size:18px;font-weight:600;color:var(--c-gold)!important;text-transform:capitalize;margin:0 0 12px;letter-spacing:.01em}
+.calypso-docente-card__bio{font-size:18px;color:#444!important;line-height:1.6;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .calypso-docente-card__stats{background:#fff;font-size:11px;font-weight:400;letter-spacing:.05em;padding:12px 20px;line-height:1.6;position:relative}
 .calypso-docente-card__stats::before{content:'';position:absolute;top:0;left:20px;right:20px;height:1px;background:#e8e8e8}
 .calypso-docente-card__stats-items{display:flex;flex-wrap:wrap;gap:0;list-style:none;margin:0;padding:0}
 .calypso-docente-card__stats-items li{display:inline;color:#888!important}
 .calypso-docente-card__stats-items li+li::before{content:" · ";color:#ccc!important}
-.calypso-empty{text-align:center;color:#888;padding:48px 0;font-size:16px}
 @media(max-width:640px){.calypso-docenti__grid{grid-template-columns:1fr 1fr}}
 @media(max-width:400px){.calypso-docenti__grid{grid-template-columns:1fr}}
 </style>

@@ -29,9 +29,19 @@ require_once CALYPSOSUB_PATH . 'includes/bookings/class-booking-email.php';
 require_once CALYPSOSUB_PATH . 'includes/bookings/class-booking-manager.php';
 require_once CALYPSOSUB_PATH . 'includes/admin/class-admin-menus.php';
 require_once CALYPSOSUB_PATH . 'includes/admin/class-email-templates.php';
+require_once CALYPSOSUB_PATH . 'includes/admin/class-settings-pages.php';
 require_once CALYPSOSUB_PATH . 'includes/account/class-user-account.php';
 require_once CALYPSOSUB_PATH . 'includes/class-template-loader.php';
 require_once CALYPSOSUB_PATH . 'includes/class-blocks.php';
+
+add_action( 'wp_enqueue_scripts', function (): void {
+	wp_enqueue_style(
+		'calypsosub-global',
+		CALYPSOSUB_URL . 'assets/css/calypsosub-global.css',
+		[],
+		CALYPSOSUB_VERSION
+	);
+} );
 
 add_filter( 'use_block_editor_for_post_type', function ( bool $use, string $post_type ): bool {
 	$types = [ 'calypso_uscita', 'calypso_evento', 'calypso_corso', 'calypso_docente', 'calypso_prenotazione', 'calypso_occorrenza' ];
@@ -52,6 +62,7 @@ $GLOBALS['calypsosub_booking_manager']->init();
 
 ( new Calypsosub_Template_Loader() )->init();
 ( new Calypsosub_Admin_Menus() )->init();
+( new Calypsosub_Settings_Pages() )->init();
 ( new Calypsosub_Blocks() )->init();
 ( new Calypsosub_Email_Templates() )->init();
 ( new Calypsosub_User_Account( $GLOBALS['calypsosub_booking_manager'] ) )->init();

@@ -22,6 +22,7 @@ INCLUDE = [
     "includes",
     "block-templates",
     "templates",
+    "assets",
     "languages",       # opzionale, incluso se presente
 ]
 

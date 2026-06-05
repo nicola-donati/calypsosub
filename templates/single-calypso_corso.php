@@ -50,7 +50,6 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 /* ── Token locali ── */
 .cso{
     color:var(--c-ink,#0b1a26);
-  --c-gold:var(--wp--preset--color--gold,#E9BF26);
 }
 /* Neutralizza FSE — heading wave (sfondo bone) */
 .cso h1,.cso h2,.cso h3,.cso h4{color:var(--c-wave,#1B77A7);text-transform:uppercase}
@@ -59,16 +58,7 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 /* Related section sfondo chiaro — heading scuri */
 .cso-related h2,.cso-related h3,.cso-related h4{color:var(--c-deep,#0a2540)}
 
-/* Nasconde compat WordPress (fallback temi block) */
-#header,#headerimg,#footer,#page>hr{display:none!important}
-#page{margin:0;padding:0;position:relative}
-
-/* Header assoluto: esce dal flusso, sta sopra il hero a y=0 */
-.cso-site-header-wrap{position:absolute;top:0;left:0;right:0;z-index:200;width:100%}
-html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)}
-
 /* ── Hero — parte da y=0 (sotto l'header sticky) ── */
-:root{--cso-header-h:90px}
 .cso-hero{
   background:var(--c-deep,#0a2540);
   color:#fff;
@@ -85,15 +75,12 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 .cso-hero h1,.cso-hero h2,.cso-hero h3{color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.6),0 3px 24px rgba(0,0,0,.4)}
 .cso-hero a{color:rgba(255,255,255,.55);text-decoration:none}
 .cso-hero a:hover{color:rgba(255,255,255,.9)}
-@media(max-width:900px){.cso-hero{padding:calc(var(--cso-header-h) + 24px) 20px 40px}}
+@media(max-width:1024px){.cso-hero{padding:calc(var(--cso-header-h) + 24px) 20px 40px}}
 
-.cso-hero__inner{max-width:1200px;margin:0 auto}
-
-.cso-breadcrumb{font-size:16px;display:flex;align-items:center;gap:8px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:48px;text-shadow:0 1px 4px rgba(0,0,0,.5)}
-.cso-breadcrumb__current{color:#fff}
+.cso-hero__inner{max-width:1320px;margin:0 auto}
 
 .cso-hero__header{display:grid;grid-template-columns:1.4fr 1fr;gap:80px;align-items:end;margin-bottom:56px}
-@media(max-width:900px){.cso-hero__header{grid-template-columns:1fr;gap:24px;margin-bottom:32px}}
+@media(max-width:1024px){.cso-hero__header{grid-template-columns:1fr;gap:24px;margin-bottom:32px}}
 
 .cso-hero__badge{font-size:16px;display:inline-flex;padding:6px 14px;background:var(--c-coral,#ff6b4a);color:#fff;border-radius:999px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:24px;text-shadow:0 1px 4px rgba(0,0,0,.4)}
 .cso-hero__title{font-size:clamp(56px,10vw,144px);font-weight:900;color:#fff;margin:0;line-height:.9;letter-spacing:-.02em;text-transform:uppercase;text-shadow:0 2px 12px rgba(0,0,0,.7),0 4px 32px rgba(0,0,0,.5)}
@@ -105,8 +92,8 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 .cso-hero__img-placeholder{font-size:64px;width:100%;height:480px;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(38,203,251,.1) 100%);display:flex;align-items:center;justify-content:center;border-radius:12px}
 
 /* ── Layout corpo ── */
-.cso-layout{max-width:1200px;margin:0 auto;padding:80px 48px 48px;display:grid;grid-template-columns:1.5fr 1fr;gap:64px;align-items:start}
-@media(max-width:900px){.cso-layout{grid-template-columns:1fr;padding:40px 20px}.cso-layout aside{order:-1}}
+.cso-layout{max-width:1320px;margin:0 auto;padding:80px 48px 48px;display:grid;grid-template-columns:1.5fr 1fr;gap:64px;align-items:start}
+@media(max-width:1024px){.cso-layout{grid-template-columns:1fr;padding:40px 20px}.cso-layout aside{order:-1}}
 
 .cso-section{margin-bottom:72px}
 .cso-section:last-child{margin-bottom:0}
@@ -142,19 +129,10 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 
 /* ── Docenti ── */
 .cso-docenti-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
-.cso-docente-mini{background:#fff;border-radius:14px;overflow:hidden;border:1px solid rgba(11,26,38,.08);display:flex;flex-direction:column;text-decoration:none;color:var(--c-ink,#0b1a26);transition:transform .2s,box-shadow .2s}
-.cso-docente-mini:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(10,37,64,.14)}
-.cso-docente-mini img{width:100%;height:220px;object-fit:cover;display:block}
-.cso-docente-mini__avatar{width:100%;height:220px;background:linear-gradient(135deg,var(--c-deep,#0a2540),var(--c-wave,#1B77A7));display:flex;align-items:center;justify-content:center;font-size:48px}
-.cso-docente-mini__body{padding:16px 20px;flex:1;display:flex;flex-direction:column}
-.cso-docente-mini__name{font-weight:700;color:var(--c-deep,#0a2540);margin:0 0 4px;line-height:1.1;text-transform:uppercase}
-.cso .cso-docente-mini__name{font-size:26px}
-.cso-docente-mini__ruolo{color:var(--c-wave,#1B77A7);margin:0}
-.cso .cso-docente-mini__ruolo{font-size:18px}
 
 /* ── Sidebar navy ── */
-.cso-sintesi{background:var(--c-deep,#0a2540);border-radius:12px;box-shadow:0 6px 32px rgba(10,37,64,.28);position:sticky;top:24px;color:#fff;display:flex;flex-direction:column}
-@media(max-width:900px){.cso-sintesi{position:static}}
+.cso-sintesi{background:var(--c-deep,#0a2540);border-radius:18px;box-shadow:0 6px 32px rgba(10,37,64,.28);position:sticky;top:24px;color:#fff;display:flex;flex-direction:column}
+@media(max-width:1024px){.cso-sintesi{position:static}}
 .cso-sintesi h2,.cso-sintesi h3{color:#fff}
 .cso-sintesi p,.cso-sintesi span,.cso-sintesi div{color:inherit}
 
@@ -192,27 +170,23 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 
 .cso-sintesi__cta{padding:20px 24px 24px}
 .cso-btn-primary{display:block;background:var(--c-coral,#ff6b4a);font-weight:600;letter-spacing:.02em;padding:14px 22px;border-radius:999px;text-align:center;text-decoration:none;transition:background .15s;margin-bottom:10px;box-shadow:0 6px 18px -4px rgba(255,107,74,.55)}
-.cso .cso-btn-primary{font-size:16px;color:#fff}
+.cso .cso-btn-primary{font-size:18px;color:#fff}
 .cso .cso-btn-primary:hover{background:#e04a2a;color:#fff}
 .cso-btn-secondary{display:block;text-align:center;padding:12px 22px;background:transparent;border:1.5px solid rgba(255,255,255,.3);border-radius:999px;font-weight:600;text-decoration:none;transition:border-color .15s,background .15s}
-.cso .cso-btn-secondary{font-size:16px;color:#fff}
+.cso .cso-btn-secondary{font-size:18px;color:#fff}
 .cso .cso-btn-secondary:hover{border-color:#fff;background:rgba(255,255,255,.08);color:#fff}
 
 /* ── Corsi correlati ── */
 .cso-related{background:var(--c-bone,#f6f1e6);padding:80px 48px 96px}
-@media(max-width:900px){.cso-related{padding:48px 20px}}
-.cso-related__inner{max-width:1200px;margin:0 auto}
+@media(max-width:1024px){.cso-related{padding:48px 20px}}
+.cso-related__inner{max-width:1320px;margin:0 auto}
 .cso-related__header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px;flex-wrap:wrap;gap:24px}
 .cso-related__all{font-size:16px;font-weight:600;color:var(--c-deep,#0a2540);text-decoration:none;display:flex;align-items:center;gap:6px}
 .cso-related__all:hover{color:var(--c-wave,#1B77A7)}
 .cso-related__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 @media(max-width:700px){.cso-related__grid{grid-template-columns:1fr}}
 
-.cso-thumb{background:#fff;border-radius:14px;overflow:hidden;border:1px solid rgba(11,26,38,.08);display:flex;flex-direction:column;text-decoration:none;color:var(--c-ink,#0b1a26);transition:transform .2s,box-shadow .2s}
-.cso-thumb:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(10,37,64,.14)}
-.cso-thumb img{width:100%;height:220px;object-fit:cover;display:block}
-.cso-thumb__placeholder{font-size:32px;width:100%;height:220px;background:linear-gradient(135deg,var(--c-deep,#0a2540),var(--c-wave,#1B77A7));display:flex;align-items:center;justify-content:center;}
-.cso-thumb__body{padding:24px;flex:1;display:flex;flex-direction:column}
+.cso-thumb__body{padding:20px;flex:1;display:flex;flex-direction:column}
 .cso-thumb__level{font-size:13px;display:inline-flex;padding:4px 10px;background:rgba(29,111,156,.1);color:var(--c-wave,#1B77A7);border-radius:999px;font-weight:600;align-self:flex-start;margin-bottom:14px}
 .cso-thumb__title{font-size:26px;font-weight:800;text-transform:uppercase;color:var(--c-deep,#0a2540);margin:0 0 8px;line-height:1}
 .cso-thumb__desc{font-size:15px;color:rgba(11,26,38,.65);margin:0 0 18px;flex:1}

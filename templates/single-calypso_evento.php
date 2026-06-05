@@ -53,7 +53,7 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 .cso-infobar__label{opacity:.6;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;display:block}
 .cso-infobar__value{font-weight:600}
 .cso-body{max-width:1320px;margin:0 auto;padding:48px 24px;display:grid;grid-template-columns:1fr 360px;gap:48px;align-items:start}
-@media(max-width:900px){.cso-body{grid-template-columns:1fr}}
+@media(max-width:1024px){.cso-body{grid-template-columns:1fr}}
 .cso-section{margin-bottom:40px}
 .cso-section__title{font-size:22px;font-weight:700;color:var(--c-deep);text-transform:uppercase;letter-spacing:.04em;margin:0 0 16px;padding-bottom:8px;border-bottom:3px solid var(--c-foam)}
 .cso-prose{font-size:16px;line-height:1.75;color:var(--c-ink)}
@@ -75,7 +75,7 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 .cso-form-row input,.cso-form-row textarea{width:100%;padding:10px 14px;border:1.5px solid var(--c-foam);border-radius:var(--radius);font-size:14px;color:var(--c-ink);transition:border-color .2s}
 .cso-form-row input:focus,.cso-form-row textarea:focus{outline:none;border-color:var(--c-wave)}
 .cso-form-row textarea{min-height:80px;resize:vertical}
-.cso-btn{display:block;width:100%;padding:14px;background:var(--c-wave);color:#fff;border:none;border-radius:var(--radius);font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;transition:background .2s,transform .15s}
+.cso-btn{display:block;width:100%;padding:14px;background:var(--c-wave);color:#fff;border:none;border-radius:999px;font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;transition:background .2s,transform .15s}
 .cso-btn:hover{background:#165c82;transform:translateY(-1px)}
 .cso-btn:disabled{background:#ccc;cursor:not-allowed;transform:none}
 .cso-btn--secondary{background:var(--c-deep)}
@@ -99,7 +99,7 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 	<?php endif; ?>
 	<div class="cso-hero__overlay"></div>
 	<div class="cso-hero__content">
-		<span class="cso-badge"><?php esc_html_e( 'Evento', 'calypsosub' ); ?></span>
+		<span class="cso-badge"><?php echo esc_html( calypsosub_opt( 'eventi', 'badge', __( 'Evento', 'calypsosub' ) ) ); ?></span>
 		<h1 class="cso-hero__title"><?php the_title(); ?></h1>
 		<?php if ( $sottotitolo ) : ?>
 		<p class="cso-hero__subtitle"><?php echo esc_html( $sottotitolo ); ?></p>
@@ -151,14 +151,14 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 	<div class="cso-main">
 		<?php if ( get_the_content() ) : ?>
 		<div class="cso-section">
-			<h2 class="cso-section__title"><?php esc_html_e( 'Descrizione', 'calypsosub' ); ?></h2>
+			<h2 class="cso-section__title"><?php echo esc_html( calypsosub_opt( 'eventi', 'sec_descrizione', __( 'Descrizione', 'calypsosub' ) ) ); ?></h2>
 			<div class="cso-prose"><?php the_content(); ?></div>
 		</div>
 		<?php endif; ?>
 
 		<?php if ( $date ) : ?>
 		<div class="cso-section">
-			<h2 class="cso-section__title"><?php esc_html_e( 'Date', 'calypsosub' ); ?></h2>
+			<h2 class="cso-section__title"><?php echo esc_html( calypsosub_opt( 'eventi', 'sec_date', __( 'Date', 'calypsosub' ) ) ); ?></h2>
 			<ul class="cso-dates-list">
 				<?php foreach ( $date as $dt ) : ?>
 				<li><span class="cso-dates-list__dot"></span><?php echo esc_html( $fmt( $dt ) ); ?></li>
@@ -171,7 +171,7 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 	<aside>
 		<div class="cso-card">
 			<div class="cso-card__head">
-				<p class="cso-card__head-title"><?php esc_html_e( 'Partecipa', 'calypsosub' ); ?></p>
+				<p class="cso-card__head-title"><?php echo esc_html( calypsosub_opt( 'eventi', 'card_title', __( 'Partecipa', 'calypsosub' ) ) ); ?></p>
 				<?php if ( $prossima ) : ?>
 				<p class="cso-card__head-sub"><?php echo esc_html( $fmt( $prossima ) ); ?></p>
 				<?php endif; ?>
@@ -179,33 +179,33 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 			<div class="cso-card__body">
 
 				<?php if ( $has_booking ) : ?>
-				<div class="cso-notice cso-notice--success"><?php esc_html_e( '✓ Sei già iscritto a questo evento.', 'calypsosub' ); ?></div>
-				<a href="<?php echo esc_url( get_permalink( get_option( 'calypsosub_account_page_id' ) ) ); ?>" class="cso-btn cso-btn--secondary"><?php esc_html_e( 'Area personale', 'calypsosub' ); ?></a>
+				<div class="cso-notice cso-notice--success"><?php echo esc_html( calypsosub_opt( 'eventi', 'msg_gia_iscritto', __( '✓ Sei già iscritto a questo evento.', 'calypsosub' ) ) ); ?></div>
+				<a href="<?php echo esc_url( get_permalink( get_option( 'calypsosub_account_page_id' ) ) ); ?>" class="cso-btn cso-btn--secondary"><?php echo esc_html( calypsosub_opt( 'eventi', 'btn_area_personale', __( 'Area personale', 'calypsosub' ) ) ); ?></a>
 
 				<?php elseif ( ! $logged_in ) : ?>
 				<div class="cso-login-cta">
-					<p><?php esc_html_e( 'Accedi per iscriverti all\'evento.', 'calypsosub' ); ?></p>
+					<p><?php echo esc_html( calypsosub_opt( 'eventi', 'msg_accedi_cta', __( "Accedi per iscriverti all'evento.", 'calypsosub' ) ) ); ?></p>
 					<a href="<?php echo esc_url( wp_login_url( get_permalink() ) ); ?>" class="cso-btn"><?php esc_html_e( 'Accedi', 'calypsosub' ); ?></a>
 				</div>
 
 				<?php elseif ( $can_book ) : ?>
 				<?php if ( $remaining === 0 && $lista_attesa ) : ?>
-				<div class="cso-notice cso-notice--waitlist"><?php esc_html_e( 'Posti esauriti — puoi iscriverti in lista d\'attesa.', 'calypsosub' ); ?></div>
+				<div class="cso-notice cso-notice--waitlist"><?php echo esc_html( calypsosub_opt( 'eventi', 'msg_lista_avviso', __( "Posti esauriti — puoi iscriverti in lista d'attesa.", 'calypsosub' ) ) ); ?></div>
 				<?php elseif ( $remaining !== null ) : ?>
-				<div class="cso-spots"><div class="cso-spots__num"><?php echo esc_html( $remaining ); ?></div><div class="cso-spots__label"><?php esc_html_e( 'posti disponibili', 'calypsosub' ); ?></div></div>
+				<div class="cso-spots"><div class="cso-spots__num"><?php echo esc_html( $remaining ); ?></div><div class="cso-spots__label"><?php echo esc_html( calypsosub_opt( 'eventi', 'label_posti', __( 'posti disponibili', 'calypsosub' ) ) ); ?></div></div>
 				<?php endif; ?>
 
 				<div id="cso-booking-msg" class="cso-notice"></div>
 				<form id="cso-booking-form">
 					<div class="cso-form-row">
-						<label for="cso-allergie"><?php esc_html_e( 'Allergie / note', 'calypsosub' ); ?></label>
+						<label for="cso-allergie"><?php echo esc_html( calypsosub_opt( 'eventi', 'label_allergie', __( 'Allergie / note', 'calypsosub' ) ) ); ?></label>
 						<textarea id="cso-allergie" name="allergie" placeholder="<?php esc_attr_e( 'Facoltativo', 'calypsosub' ); ?>"></textarea>
 					</div>
-					<button type="submit" class="cso-btn" id="cso-book-btn"><?php esc_html_e( 'Iscriviti', 'calypsosub' ); ?></button>
+					<button type="submit" class="cso-btn" id="cso-book-btn"><?php echo esc_html( calypsosub_opt( 'eventi', 'btn_iscriviti', __( 'Iscriviti', 'calypsosub' ) ) ); ?></button>
 				</form>
 
 				<?php else : ?>
-				<div class="cso-notice cso-notice--error"><?php esc_html_e( 'Posti esauriti.', 'calypsosub' ); ?></div>
+				<div class="cso-notice cso-notice--error"><?php echo esc_html( calypsosub_opt( 'eventi', 'msg_esauriti', __( 'Posti esauriti.', 'calypsosub' ) ) ); ?></div>
 				<?php endif; ?>
 
 			</div>

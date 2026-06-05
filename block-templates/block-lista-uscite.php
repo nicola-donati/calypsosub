@@ -182,7 +182,7 @@ $first_row      = true;
 .cso-blu .cso-uscita-row__luogo{display:flex;align-items:center;gap:5px;margin:0;font-size:12px;color:rgba(11,26,38,.6)}
 
 /* Badge livello */
-.cso-blu .cso-uscita-row__badge{display:inline-flex;padding:3px 8px;border-radius:999px;font-weight:600;justify-self:start;font-size:10px;background:rgba(27,119,167,.1);color:var(--c-wave,#1B77A7)}
+.cso-blu .cso-uscita-row__badge{display:inline-flex;padding:3px 8px;border-radius:999px;font-weight:600;justify-self:start;font-size:13px;background:rgba(27,119,167,.1);color:var(--c-wave,#1B77A7)}
 
 /* Ritrovo */
 .cso-blu .cso-uscita-row__ritrovo-label{letter-spacing:.1em;text-transform:uppercase;margin:0 0 3px;display:block;font-size:9px;color:rgba(11,26,38,.5)}
@@ -205,12 +205,6 @@ $first_row      = true;
 }
 .cso-blu .cso-btn-dark:hover{background:var(--c-abyss,#061826);color:#fff}
 .cso-blu .cso-btn-dark--disabled{background:rgba(11,26,38,.08);pointer-events:none;cursor:default;color:rgba(11,26,38,.3)}
-
-/* Empty */
-.cso-blu .cso-empty{padding:64px 0;text-align:center}
-.cso-blu .cso-empty__title{font-size:24px;color:var(--c-deep,#1B77A7)}
-.cso-blu .cso-empty__sub{font-size:16px;color:rgba(11,26,38,.55)}
-.cso-blu .cso-empty__sub a{color:var(--c-wave,#1B77A7);text-decoration:underline}
 
 /* ════════════════════════════
    RESPONSIVE

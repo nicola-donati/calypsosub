@@ -72,20 +72,12 @@ function cso_social_icon( string $nome ): string {
 /* ── Token locali ── */
 .cso-doc{
 	color:var(--c-ink,#0b1a26);
-	--c-gold:var(--wp--preset--color--gold,#E9BF26);
 }
 .cso-doc h1,.cso-doc h2,.cso-doc h3,.cso-doc h4{color:var(--c-wave,#1B77A7);text-transform:uppercase}
 .cso-doc a{color:inherit;text-decoration:none}
 .cso-doc p,.cso-doc li,.cso-doc span,.cso-doc div{color:inherit}
 
-/* WP compat */
-#header,#headerimg,#footer,#page>hr{display:none!important}
-#page{margin:0;padding:0;position:relative}
-.cso-site-header-wrap{position:absolute;top:0;left:0;right:0;z-index:200;width:100%}
-html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)}
-
 /* ── Hero ── */
-:root{--cso-header-h:90px}
 .cso-doc-hero{
 	background:var(--c-deep,#1B77A7);
 	color:#fff;
@@ -94,12 +86,7 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 .cso-doc-hero h1,.cso-doc-hero h2,.cso-doc-hero h3{color:#fff}
 .cso-doc-hero__inner{max-width:1320px;margin:0 auto}
 
-.cso-doc-hero__crumbs{
-	display:flex;align-items:center;gap:8px;
-	letter-spacing:.08em;text-transform:uppercase;
-	margin-bottom:48px;flex-wrap:wrap;
-}
-.cso-doc .cso-doc-hero__crumbs{font-size:12px;color:rgba(255,255,255,.55)}
+.cso-doc .cso-doc-hero__crumbs{font-size:16px;color:rgba(255,255,255,.55)}
 .cso-doc-hero__crumbs a{color:rgba(255,255,255,.55);text-decoration:none}
 .cso-doc-hero__crumbs a:hover{color:#fff}
 .cso-doc-hero__crumbs .current{color:#fff}

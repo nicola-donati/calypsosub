@@ -8,17 +8,8 @@ $corsi = calypso_get_corsi();
 .calypso-corsi__filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
 .calypso-list__filter-input{padding:8px 14px;border:1px solid var(--c-foam);border-radius:var(--radius);font-size:14px;color:var(--c-ink)}
 .calypso-corsi__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
-.calypso-corso-card{background:#fff;border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 2px 10px rgba(10,37,64,.10);transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column}
-.calypso-corso-card:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(10,37,64,.16)}
 .calypso-corso-card__photo-wrap{position:relative;overflow:hidden}
-.calypso-corso-card__img{width:100%;height:220px;object-fit:cover;display:block}
-.calypso-corso-card__img-placeholder{width:100%;height:220px;background:linear-gradient(135deg,var(--c-deep) 0%,var(--c-wave) 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-size:48px}
 .calypso-corso-card__photo-label{position:absolute;bottom:0;left:0;background:rgba(11,26,38,.72);color:var(--c-sand);font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;padding:6px 12px;backdrop-filter:blur(2px)}
-.calypso-corso-card__body{padding:18px 20px 14px;flex:1;display:flex;flex-direction:column}
-.calypso-corso-card__level{display:inline-block;background:var(--c-deep);color:#fff;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:3px 10px;border-radius:20px;margin-bottom:10px;align-self:flex-start}
-.calypso-corso-card__title{font-size:21px;font-weight:800;color:var(--c-deep)!important;margin:0 0 8px;line-height:1.2;text-decoration:none}
-.calypso-corso-card__title:hover{color:var(--c-wave)!important}
-.calypso-corso-card__desc{font-size:14px;color:#444!important;line-height:1.6;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;flex:1}
 .calypso-corso-card__stats{font-size:11px;font-weight:400;letter-spacing:.05em;padding:10px 20px;position:relative}
 .calypso-corso-card__stats::before{content:'';position:absolute;top:0;left:20px;right:20px;height:1px;background:#e8e8e8}
 .calypso-corso-card__stats-items{display:flex;flex-wrap:wrap;gap:0;list-style:none;margin:0;padding:0}
@@ -26,9 +17,6 @@ $corsi = calypso_get_corsi();
 .calypso-corso-card__stats-items li+li::before{content:" · ";color:#ccc!important}
 .calypso-corso-card__footer{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 20px 16px;flex-wrap:wrap;border-top:1px solid #f0f0f0}
 .calypso-corso-card__period{font-size:11px;font-weight:600;color:var(--c-wave)!important;text-transform:uppercase;letter-spacing:.06em}
-.calypso-btn-gold{display:inline-block;background:var(--c-gold);color:var(--c-deep)!important;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:8px 18px;border-radius:var(--radius);text-decoration:none;transition:background .15s}
-.calypso-btn-gold:hover{background:#d4aa1e;color:var(--c-deep)!important}
-.calypso-empty{text-align:center;color:#888;padding:48px 0;font-size:16px}
 @media(max-width:640px){.calypso-corsi__grid{grid-template-columns:1fr}}
 </style>
 

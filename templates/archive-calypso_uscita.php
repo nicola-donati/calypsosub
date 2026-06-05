@@ -4,9 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 get_header();
 
 if ( function_exists( 'block_template_part' ) ) {
-	echo '<div class="cso-site-header-wrap">';
 	block_template_part( 'header' );
-	echo '</div>';
 }
 
 /* ── Filtri da GET ── */
@@ -122,29 +120,16 @@ $archive_url = get_post_type_archive_link( 'calypso_uscita' );
 $first_row   = true;
 ?>
 <style>
-/* ── Token locali ── */
-.cso-archive{
-	color:var(--c-ink,#0b1a26);
-	--c-gold:var(--wp--preset--color--gold,#E9BF26);
-}
+.cso-archive{color:var(--c-ink,#0b1a26)}
 .cso-archive h1,.cso-archive h2,.cso-archive h3,.cso-archive h4{color:var(--c-wave,#1B77A7);text-transform:uppercase}
 .cso-archive a{color:inherit;text-decoration:none}
 .cso-archive p,.cso-archive li,.cso-archive span,.cso-archive div{color:inherit}
 
-/* Nasconde compat WP */
-#header,#headerimg,#footer,#page>hr{display:none!important}
-#page{margin:0;padding:0;position:relative}
-
-/* Header assoluto */
-.cso-site-header-wrap{position:absolute;top:0;left:0;right:0;z-index:200;width:100%}
-html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)}
-
 /* ── Hero ── */
-:root{--cso-header-h:90px}
 .cso-hero{
 	background:var(--c-deep,#1B77A7);
 	color:#fff;
-	padding:calc(var(--cso-header-h) + 32px) 48px 80px;
+	padding:calc(90px + 32px) 48px 80px;
 	position:relative;
 }
 .cso-hero h1,.cso-hero h2,.cso-hero h3{color:#fff}
@@ -183,7 +168,7 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 .cso-mese__heading{margin:0 0 24px;display:flex;align-items:baseline;gap:16px}
 .cso-archive .cso-mese__heading{font-size:56px;color:var(--c-deep,#1B77A7)}
 .cso-mese__count{font-weight:400;letter-spacing:.1em;text-transform:uppercase}
-.cso-archive .cso-mese__count{font-size:14px;color:rgba(11,26,38,.45)}
+.cso-archive .cso-mese__count{font-size:18px;color:rgba(11,26,38,.45)}
 
 /* Card uscite del mese */
 .cso-uscite-list{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 12px 40px -20px rgba(10,37,64,.2)}
@@ -210,7 +195,7 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 /* Colonna info */
 .cso-uscita-row__info a{text-decoration:none;color:inherit;display:block}
 .cso-uscita-row__title{font-weight:700;margin:0 0 4px;line-height:1.2}
-.cso-archive .cso-uscita-row__title{font-size:16px;color:var(--c-deep,#1B77A7)}
+.cso-archive .cso-uscita-row__title{font-size:26px;color:var(--c-deep,#1B77A7)}
 .cso-uscita-row__luogo{display:flex;align-items:center;gap:5px;margin:0}
 .cso-archive .cso-uscita-row__luogo{font-size:12px;color:rgba(11,26,38,.6)}
 
@@ -259,7 +244,7 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 
 /* ── Tablet ≤1024px ── */
 @media(max-width:1024px){
-	.cso-hero{padding:calc(var(--cso-header-h) + 24px) 28px 64px}
+	.cso-hero{padding:calc(90px + 24px) 28px 64px}
 	.cso-archive .cso-hero__title{font-size:76px}
 	.cso-archive .cso-hero__lead{font-size:16px}
 	.cso-archive-body{padding:56px 28px 72px}
@@ -285,7 +270,7 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 
 /* ── Mobile ≤760px ── */
 @media(max-width:760px){
-	.cso-hero{padding:calc(var(--cso-header-h) + 20px) 20px 48px}
+	.cso-hero{padding:calc(90px + 20px) 20px 48px}
 	.cso-archive .cso-hero__title{font-size:52px}
 	.cso-archive .cso-hero__lead{font-size:15px;margin-top:24px}
 	.cso-archive-body{padding:40px 20px 64px}
