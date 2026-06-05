@@ -187,7 +187,9 @@ $mq_dur  = max( 12, count( $places ) * 3 ); /* 3s per voce */
   background:var(--c-deep,#0a2540);color:#fff;
   padding:20px 0;overflow:hidden;
   border-top:1px solid rgba(255,255,255,.06);
+  margin:0!important;
 }
+.csh-hero{margin:0!important}
 .csh-marquee__track{
   display:flex;gap:56px;white-space:nowrap;
   font-family:var(--f-display,'Big Shoulders Display',Impact,sans-serif);
