@@ -49,6 +49,15 @@ class Calypsosub_Blocks {
 	}
 
 	public function enqueue_editor_js(): void {
+		wp_register_script(
+			'calypso-blocks-editor',
+			false,
+			[ 'wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor' ],
+			null,
+			true
+		);
+		wp_enqueue_script( 'calypso-blocks-editor' );
+
 		$blocks_json = wp_json_encode(
 			array_map(
 				static fn( string $name, array $cfg ) => [
@@ -117,6 +126,6 @@ class Calypsosub_Blocks {
 }(window.wp.blocks, window.wp.element, window.wp.components));
 JS;
 
-		wp_add_inline_script( 'wp-blocks', $js );
+		wp_add_inline_script( 'calypso-blocks-editor', $js );
 	}
 }
