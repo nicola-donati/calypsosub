@@ -127,10 +127,13 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 .cso-competenza__plus{font-weight:700;flex-shrink:0;line-height:1.4;min-width:14px}
 .cso .cso-competenza__plus{font-size:22px;color:var(--c-gold,#E9BF26)}
 
-/* ── Docenti ── */
+/* ── Docenti (sezione full-width) ── */
+.cso-docenti-section{padding:64px 48px 80px}
+.cso-docenti-section__inner{max-width:1320px;margin:0 auto}
+@media(max-width:1024px){.cso-docenti-section{padding:48px 20px 64px}}
 .cso-docenti-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-@media(max-width:600px){.cso-docenti-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:360px){.cso-docenti-grid{grid-template-columns:1fr}}
+@media(max-width:700px){.cso-docenti-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:400px){.cso-docenti-grid{grid-template-columns:1fr}}
 .cso .cso-docente-mini__name{color:var(--c-deep,#0a2540)}
 .cso .cso-docente-mini__ruolo{color:var(--c-wave,#1B77A7)}
 
@@ -312,41 +315,6 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 	</div>
 	<?php endif; ?>
 
-	<?php
-	$all_shown = $docenti_ids;
-	if ( $direttore_id && ! in_array( $direttore_id, $all_shown, true ) ) {
-		array_unshift( $all_shown, $direttore_id );
-	}
-	if ( ! empty( $all_shown ) ) : ?>
-	<div class="cso-section">
-		<span class="cso-eyebrow"><?php echo esc_html( calypsosub_opt( 'corsi', 'sec_docenti_eyebrow', __( 'I docenti', 'calypsosub' ) ) ); ?></span>
-		<h2 class="cso-display-heading"><?php echo esc_html( calypsosub_opt( 'corsi', 'sec_docenti_heading', __( 'I nostri docenti.', 'calypsosub' ) ) ); ?></h2>
-		<div class="cso-docenti-grid">
-			<?php foreach ( $all_shown as $did ) :
-				$ruolo  = (string) get_post_meta( $did, '_docente_ruolo', true );
-				$is_dir = ( $did === $direttore_id );
-				$label  = $is_dir
-					? __( 'Direttore', 'calypsosub' ) . ( $ruolo ? ' · ' . $ruolo : '' )
-					: $ruolo;
-			?>
-			<a href="<?php echo esc_url( get_permalink( $did ) ); ?>" class="cso-docente-mini">
-				<?php if ( has_post_thumbnail( $did ) ) : ?>
-					<img src="<?php echo esc_url( get_the_post_thumbnail_url( $did, 'medium_large' ) ); ?>"
-					     alt="<?php echo esc_attr( get_the_title( $did ) ); ?>">
-				<?php else : ?>
-					<div class="cso-docente-mini__avatar">🤿</div>
-				<?php endif; ?>
-				<div class="cso-docente-mini__body">
-					<p class="cso-docente-mini__name"><?php echo esc_html( get_the_title( $did ) ); ?></p>
-					<?php if ( $label ) : ?>
-						<p class="cso-docente-mini__ruolo"><?php echo esc_html( $label ); ?></p>
-					<?php endif; ?>
-				</div>
-			</a>
-			<?php endforeach; ?>
-		</div>
-	</div>
-	<?php endif; ?>
 
 </main>
 
@@ -448,6 +416,44 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 </aside>
 
 </div><!-- .cso-layout -->
+
+<?php
+$all_shown = $docenti_ids;
+if ( $direttore_id && ! in_array( $direttore_id, $all_shown, true ) ) {
+	array_unshift( $all_shown, $direttore_id );
+}
+if ( ! empty( $all_shown ) ) : ?>
+<section class="cso-docenti-section">
+<div class="cso-docenti-section__inner">
+	<span class="cso-eyebrow"><?php echo esc_html( calypsosub_opt( 'corsi', 'sec_docenti_eyebrow', __( 'I docenti', 'calypsosub' ) ) ); ?></span>
+	<h2 class="cso-display-heading"><?php echo esc_html( calypsosub_opt( 'corsi', 'sec_docenti_heading', __( 'I nostri docenti.', 'calypsosub' ) ) ); ?></h2>
+	<div class="cso-docenti-grid">
+		<?php foreach ( $all_shown as $did ) :
+			$ruolo  = (string) get_post_meta( $did, '_docente_ruolo', true );
+			$is_dir = ( $did === $direttore_id );
+			$label  = $is_dir
+				? __( 'Direttore', 'calypsosub' ) . ( $ruolo ? ' · ' . $ruolo : '' )
+				: $ruolo;
+		?>
+		<a href="<?php echo esc_url( get_permalink( $did ) ); ?>" class="cso-docente-mini">
+			<?php if ( has_post_thumbnail( $did ) ) : ?>
+				<img src="<?php echo esc_url( get_the_post_thumbnail_url( $did, 'medium_large' ) ); ?>"
+				     alt="<?php echo esc_attr( get_the_title( $did ) ); ?>">
+			<?php else : ?>
+				<div class="cso-docente-mini__avatar">🤿</div>
+			<?php endif; ?>
+			<div class="cso-docente-mini__body">
+				<p class="cso-docente-mini__name"><?php echo esc_html( get_the_title( $did ) ); ?></p>
+				<?php if ( $label ) : ?>
+					<p class="cso-docente-mini__ruolo"><?php echo esc_html( $label ); ?></p>
+				<?php endif; ?>
+			</div>
+		</a>
+		<?php endforeach; ?>
+	</div>
+</div>
+</section>
+<?php endif; ?>
 
 <?php if ( ! empty( $related ) ) : ?>
 <section class="cso-related">
