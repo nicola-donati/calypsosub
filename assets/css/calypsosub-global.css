@@ -186,8 +186,13 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 /* ── Hero tipografia condivisa ───────────────────────────────────────────── */
 
 /* Altezza minima — tutti gli hero padding-based */
+/* Altezza hero — tutti i template e blocchi */
 .cso-hero,.cso-doc-hero{min-height:clamp(520px,85vh,860px)}
-@media(max-width:1024px){.cso-hero,.cso-doc-hero{min-height:clamp(460px,80vh,640px)}}
+.csh-hero{height:clamp(520px,85vh,860px)}  /* usa height perché il contenuto è absolute */
+@media(max-width:1024px){
+  .cso-hero,.cso-doc-hero{min-height:clamp(460px,80vh,640px)}
+  .csh-hero{height:clamp(460px,80vh,640px)}
+}
 /* csh-hero usa height (content absolute), gestita nel blocco */
 
 /* Titolo principale */

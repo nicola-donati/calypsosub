@@ -104,7 +104,7 @@ $mq_dur  = max( 12, count( $places ) * 3 ); /* 3s per voce */
   margin-left:calc(-50vw + 50%);
   margin-right:calc(-50vw + 50%);
 }
-.csh-hero{position:relative;height:clamp(520px,85vh,860px);color:#fff;overflow:hidden}
+.csh-hero{position:relative;color:#fff;overflow:hidden}
 
 /*
  * Quando l'hero home è nella pagina, il site header FSE
@@ -219,7 +219,6 @@ body:has(.csh-hero) .wp-site-blocks>.wp-block-template-part:first-child>header{
 
 /* ── Mobile (≤1024px) ───────────────────────────────────────── */
 @media(max-width:1024px){
-  .csh-hero{height:clamp(460px,80vh,640px)}
   .csh-hero__content{
     left:20px;right:20px;bottom:32px;
     flex-direction:column;align-items:flex-start;gap:0;
