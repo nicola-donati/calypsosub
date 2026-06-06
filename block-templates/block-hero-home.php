@@ -133,7 +133,7 @@ body:has(.csh-hero) .wp-site-blocks>.wp-block-template-part:first-child>header{
   font-size:14px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
 }
 .csh-hero__title{
-  font-size:clamp(56px,10vw,144px);
+  font-size:clamp(48px,7vw,108px);
   font-family:var(--f-display,'Big Shoulders Display',Impact,sans-serif);
   margin-top:20px;
 }
