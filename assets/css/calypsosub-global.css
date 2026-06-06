@@ -195,10 +195,19 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 }
 /* csh-hero usa height (content absolute), gestita nel blocco */
 
-/* Titolo principale */
-.cso-hero__title,
+/* Titolo principale — single page (corso, evento, uscita, docente) */
+.cso-hero__title{
+  font-size:clamp(40px,6vw,88px);
+  font-weight:900;
+  line-height:.9;
+  letter-spacing:-.02em;
+  text-transform:uppercase;
+  color:#fff;
+  margin:0 0 8px;
+  text-shadow:0 2px 12px rgba(0,0,0,.7),0 4px 32px rgba(0,0,0,.5);
+}
+/* Titolo blocco hero home — frase multilinea, dimensione diversa */
 .csh-hero__title{
-  font-size:clamp(56px,10vw,144px);
   font-weight:900;
   line-height:.9;
   letter-spacing:-.02em;
@@ -216,6 +225,13 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
   line-height:1.6;
   color:rgba(255,255,255,.85);
   text-shadow:0 1px 6px rgba(0,0,0,.55),0 2px 16px rgba(0,0,0,.35);
+}
+/* Limita la descrizione hero a 3 righe */
+.cso-hero__lead,.cso-hero__subtitle{
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
 }
 
 /* Badge — struttura condivisa, colore sovrascrivibile nel template */
