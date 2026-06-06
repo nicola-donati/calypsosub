@@ -82,7 +82,6 @@ function cso_social_icon( string $nome ): string {
 	background:var(--c-deep,#1B77A7);
 	color:#fff;
 	padding:calc(var(--cso-header-h) + 32px) 48px 64px;
-	min-height:clamp(600px,100dvh,1020px);
 }
 .cso-doc-hero h1,.cso-doc-hero h2,.cso-doc-hero h3{color:#fff}
 .cso-doc-hero__inner{max-width:1320px;margin:0 auto}

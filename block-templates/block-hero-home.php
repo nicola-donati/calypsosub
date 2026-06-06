@@ -135,15 +135,12 @@ body:has(.csh-hero) .wp-site-blocks>.wp-block-template-part:first-child>header{
 .csh-hero__title{
   font-size:clamp(56px,10vw,144px);
   font-family:var(--f-display,'Big Shoulders Display',Impact,sans-serif);
-  font-weight:900;line-height:.9;letter-spacing:-.02em;
-  margin:20px 0 8px;color:#fff;text-transform:uppercase;
-  text-shadow:0 2px 12px rgba(0,0,0,.7),0 4px 32px rgba(0,0,0,.5);
+  margin-top:20px;
 }
 .csh-hero__title em{font-style:normal;color:var(--c-aqua,#26CBFB)}
 .csh-hero__desc{
-  font-size:19px;line-height:1.5;max-width:540px;
-  opacity:.92;margin-top:28px;color:#fff;
-  text-shadow:0 1px 6px rgba(0,0,0,.3);
+  max-width:540px;
+  opacity:.92;margin-top:28px;
 }
 .csh-hero__btns{display:flex;gap:12px;margin-top:36px;flex-wrap:wrap}
 .csh-btn-primary{

@@ -182,3 +182,48 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 .cso-doc-hero__crumbs a:hover{color:#fff}
 .cso-breadcrumb__current,
 .cso-doc-hero__crumbs .current{color:#fff}
+
+/* ── Hero tipografia condivisa ───────────────────────────────────────────── */
+
+/* Altezza minima — tutti gli hero padding-based */
+.cso-hero,.cso-doc-hero{min-height:clamp(600px,100dvh,1020px)}
+@media(max-width:1024px){.cso-hero,.cso-doc-hero{min-height:clamp(500px,100dvh,720px)}}
+/* csh-hero usa height (content absolute), gestita nel blocco */
+
+/* Titolo principale */
+.cso-hero__title,
+.csh-hero__title{
+  font-size:clamp(56px,10vw,144px);
+  font-weight:900;
+  line-height:.9;
+  letter-spacing:-.02em;
+  text-transform:uppercase;
+  color:#fff;
+  margin:0 0 8px;
+  text-shadow:0 2px 12px rgba(0,0,0,.7),0 4px 32px rgba(0,0,0,.5);
+}
+
+/* Sottotitolo / lead */
+.cso-hero__subtitle,
+.cso-hero__lead,
+.csh-hero__desc{
+  font-size:20px;
+  line-height:1.6;
+  color:rgba(255,255,255,.85);
+  text-shadow:0 1px 6px rgba(0,0,0,.55),0 2px 16px rgba(0,0,0,.35);
+}
+
+/* Badge — struttura condivisa, colore sovrascrivibile nel template */
+.cso-hero__badge,
+.cso-badge{
+  display:inline-flex;
+  font-size:16px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  padding:6px 14px;
+  border-radius:999px;
+  color:#fff;
+  margin-bottom:24px;
+  text-shadow:0 1px 4px rgba(0,0,0,.4);
+}

@@ -131,13 +131,12 @@ $first_row   = true;
 	color:#fff;
 	padding:calc(90px + 32px) 48px 80px;
 	position:relative;
-	min-height:clamp(600px,100dvh,1020px);
 }
 .cso-hero h1,.cso-hero h2,.cso-hero h3{color:#fff}
 .cso-hero__inner{max-width:1320px;margin:0 auto}
 .cso-hero__eyebrow{font-weight:600;letter-spacing:.16em;text-transform:uppercase;margin:0 0 20px;display:block}
 .cso-archive .cso-hero__eyebrow{font-size:16px;color:var(--c-aqua,#26CBFB)}
-.cso-hero__title{font-size:124px;font-weight:900;color:#fff;margin:0;line-height:.92;letter-spacing:-.02em;text-transform:uppercase}
+.cso-hero__title{font-size:124px;color:#fff;margin:0;text-shadow:0 2px 12px rgba(0,0,0,.7),0 4px 32px rgba(0,0,0,.5)}
 .cso-hero__title em{font-style:italic;color:var(--c-aqua,#26CBFB)}
 .cso-hero__lead{line-height:1.65;opacity:.85;margin:32px 0 0;max-width:700px}
 .cso-archive .cso-hero__lead{font-size:18px;color:#fff}
