@@ -113,7 +113,9 @@ $mq_dur  = max( 12, count( $places ) * 3 ); /* 3s per voce */
  */
 body:has(.csh-hero) .wp-site-blocks>header,
 body:has(.csh-hero) .wp-site-blocks>.wp-block-template-part:first-child>header{
-  position:absolute;top:0;left:0;right:0;z-index:200;width:100%;
+  position:absolute;
+  top:var(--wp-admin--admin-bar--height,0px);
+  left:0;right:0;z-index:200;width:100%;
 }
 .csh-hero__bg{position:absolute;inset:0;background:var(--c-abyss,#061826);overflow:hidden}
 .csh-hero__bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
