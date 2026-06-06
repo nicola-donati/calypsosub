@@ -104,7 +104,7 @@ $mq_dur  = max( 12, count( $places ) * 3 ); /* 3s per voce */
   margin-left:calc(-50vw + 50%);
   margin-right:calc(-50vw + 50%);
 }
-.csh-hero{position:relative;height:1020px;color:#fff;overflow:hidden}
+.csh-hero{position:relative;height:clamp(600px,100dvh,1020px);color:#fff;overflow:hidden}
 
 /*
  * Quando l'hero home è nella pagina, il site header FSE
@@ -133,11 +133,11 @@ body:has(.csh-hero) .wp-site-blocks>.wp-block-template-part:first-child>header{
   font-size:14px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
 }
 .csh-hero__title{
-  font-size:clamp(64px,8vw,108px);
+  font-size:clamp(56px,10vw,144px);
   font-family:var(--f-display,'Big Shoulders Display',Impact,sans-serif);
-  font-weight:900;line-height:.92;letter-spacing:-.02em;
-  margin:20px 0 8px;color:#fff;
-  text-shadow:0 2px 20px rgba(0,0,0,.4);
+  font-weight:900;line-height:.9;letter-spacing:-.02em;
+  margin:20px 0 8px;color:#fff;text-transform:uppercase;
+  text-shadow:0 2px 12px rgba(0,0,0,.7),0 4px 32px rgba(0,0,0,.5);
 }
 .csh-hero__title em{font-style:normal;color:var(--c-aqua,#26CBFB)}
 .csh-hero__desc{
@@ -222,7 +222,7 @@ body:has(.csh-hero) .wp-site-blocks>.wp-block-template-part:first-child>header{
 
 /* ── Mobile (≤1024px) ───────────────────────────────────────── */
 @media(max-width:1024px){
-  .csh-hero{height:720px}
+  .csh-hero{height:clamp(500px,100dvh,720px)}
   .csh-hero__content{
     left:20px;right:20px;bottom:32px;
     flex-direction:column;align-items:flex-start;gap:0;

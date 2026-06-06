@@ -64,6 +64,7 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
   color:#fff;
   padding:calc(var(--cso-header-h) + 40px) 48px 64px;
   position:relative;
+  min-height:clamp(600px,100dvh,1020px);
 }
 /* Hero con immagine in evidenza come sfondo */
 .cso-hero--bg-img{

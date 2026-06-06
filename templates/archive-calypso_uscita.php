@@ -131,6 +131,7 @@ $first_row   = true;
 	color:#fff;
 	padding:calc(90px + 32px) 48px 80px;
 	position:relative;
+	min-height:clamp(600px,100dvh,1020px);
 }
 .cso-hero h1,.cso-hero h2,.cso-hero h3{color:#fff}
 .cso-hero__inner{max-width:1320px;margin:0 auto}
