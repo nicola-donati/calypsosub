@@ -97,22 +97,24 @@ if ( $show_uscita ) {
 $places  = array_values( array_filter( array_map( 'trim', explode( ',', $marquee_items ) ) ) );
 $mq_dur  = max( 12, count( $places ) * 3 ); /* 3s per voce */
 ?>
-<?php
-/* ── Header sovrascritto (come nei template single) ── */
-if ( function_exists( 'block_template_part' ) ) {
-	echo '<div class="cso-site-header-wrap">';
-	block_template_part( 'header' );
-	echo '</div>';
-}
-?>
 <style>
 /* ── Hero Home ─────────────────────────────────────────────── */
-/* Full-bleed: sfugge dal padding del content container della pagina */
+/* Full-bleed: sfugge dal padding del content container */
 .csh-hero,.csh-marquee{
   margin-left:calc(-50vw + 50%);
   margin-right:calc(-50vw + 50%);
 }
 .csh-hero{position:relative;height:1020px;color:#fff;overflow:hidden}
+
+/*
+ * Quando l'hero home è nella pagina, il site header FSE
+ * diventa absolute (fluttua sopra l'hero, non occupa spazio).
+ * :has() è supportato da tutti i browser moderni.
+ */
+body:has(.csh-hero) .wp-site-blocks>header,
+body:has(.csh-hero) .wp-site-blocks>.wp-block-template-part:first-child>header{
+  position:absolute;top:0;left:0;right:0;z-index:200;width:100%;
+}
 .csh-hero__bg{position:absolute;inset:0;background:var(--c-abyss,#061826);overflow:hidden}
 .csh-hero__bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
 .csh-hero__overlay{
