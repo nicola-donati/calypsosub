@@ -244,7 +244,7 @@ function cso_social_icon( string $nome ): string {
 .cso-doc-gallery-item--tall{grid-row:span 2}
 .cso-doc-gallery-item__cap{
 	position:absolute;bottom:0;left:0;
-	font-family:monospace;letter-spacing:.1em;text-transform:uppercase;
+	letter-spacing:.1em;text-transform:uppercase;
 	padding:8px 12px;background:rgba(0,0,0,.35);backdrop-filter:blur(4px);
 	border-top-right-radius:4px;
 }

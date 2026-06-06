@@ -106,7 +106,7 @@ $meta_str = implode( ' · ', $meta_parts );
 .csou-ph__date{font-size:38px;font-weight:900;line-height:.95;letter-spacing:-.02em;color:#fff}
 .csou-ph__meta{font-size:13px;opacity:.85;margin-top:12px;line-height:1.5;color:#fff}
 .csou-ph__posti{
-  margin-top:14px;font-size:12px;font-family:monospace;
+  margin-top:14px;font-size:12px;
   opacity:.7;letter-spacing:.04em;color:#fff;
 }
 .csou-ph__posti--warn{opacity:1;color:#ff6b4a}

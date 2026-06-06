@@ -134,7 +134,6 @@ body:has(.csh-hero) .wp-site-blocks>.wp-block-template-part:first-child>header{
 }
 .csh-hero__title{
   font-size:clamp(48px,7vw,108px);
-  font-family:var(--f-display,'Big Shoulders Display',Impact,sans-serif);
   margin-top:20px;
 }
 .csh-hero__title em{font-style:normal;color:var(--c-aqua,#26CBFB)}
@@ -164,7 +163,7 @@ body:has(.csh-hero) .wp-site-blocks>.wp-block-template-part:first-child>header{
 .csh-hero__scroll{
   position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
   color:rgba(255,255,255,.7);font-size:11px;
-  font-family:var(--f-mono,monospace);letter-spacing:.18em;
+  letter-spacing:.18em;
   display:flex;flex-direction:column;align-items:center;gap:8px;
   text-decoration:none;pointer-events:none;
 }
@@ -184,11 +183,10 @@ body:has(.csh-hero) .wp-site-blocks>.wp-block-template-part:first-child>header{
 }
 .csh-pu__eyebrow{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.7)}
 .csh-pu__date{
-  font-size:38px;font-weight:900;line-height:.95;letter-spacing:-.02em;
-  font-family:var(--f-display,'Big Shoulders Display',Impact,sans-serif);color:#fff;
+  font-size:38px;font-weight:900;line-height:.95;letter-spacing:-.02em;color:#fff;
 }
 .csh-pu__meta{font-size:13px;opacity:.85;margin-top:12px;line-height:1.5;color:#fff}
-.csh-pu__posti{margin-top:14px;font-size:12px;font-family:var(--f-mono,monospace);opacity:.7;color:#fff}
+.csh-pu__posti{margin-top:14px;font-size:12px;opacity:.7;color:#fff}
 .csh-pu__posti--warn{opacity:1;color:#ff6b4a}
 .csh-pu__cta{
   margin-top:14px;display:inline-flex;align-items:center;gap:6px;
@@ -206,7 +204,6 @@ body:has(.csh-hero) .wp-site-blocks>.wp-block-template-part:first-child>header{
 .csh-hero{margin:0!important}
 .csh-marquee__track{
   display:flex;gap:56px;white-space:nowrap;
-  font-family:var(--f-display,'Big Shoulders Display',Impact,sans-serif);
   font-size:28px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
   animation:csh-scroll <?php echo (int) $mq_dur; ?>s linear infinite;
   will-change:transform;
