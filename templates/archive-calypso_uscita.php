@@ -4,7 +4,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 get_header();
 
 if ( function_exists( 'block_template_part' ) ) {
+	echo '<div class="cso-site-header-wrap">';
 	block_template_part( 'header' );
+	echo '</div>';
 }
 
 /* ── Filtri da GET ── */

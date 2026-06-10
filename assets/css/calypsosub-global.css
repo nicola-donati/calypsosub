@@ -185,17 +185,21 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 
 /* ── Hero tipografia condivisa ───────────────────────────────────────────── */
 
-/* Altezza hero — tutti i template e blocchi — fissa, nessuna responsive */
+/* Altezza hero — tutti i template e blocchi — fissa per breakpoint */
 .cso-hero,.cso-doc-hero,.csh-hero{
   position:relative;
   height:800px;
   box-sizing:border-box;
   overflow:hidden;
 }
+@media(max-width:1024px){
+  .cso-hero,.cso-doc-hero,.csh-hero{height:720px}
+}
 @media(max-width:768px){
-  .cso-hero,.cso-doc-hero,.csh-hero{
-    height:1200px;
-  }
+  .cso-hero,.cso-doc-hero,.csh-hero{height:640px}
+}
+@media(max-width:480px){
+  .cso-hero,.cso-doc-hero,.csh-hero{height:600px}
 }
 
 /* Scroll indicator — tutti gli hero */

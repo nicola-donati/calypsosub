@@ -1,12 +1,42 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-$corsi = calypso_get_corsi();
+$corsi        = calypso_get_corsi();
+$all_livelli  = get_terms( [ 'taxonomy' => 'calypso_livello', 'hide_empty' => true ] );
+$has_livelli  = ! is_wp_error( $all_livelli ) && ! empty( $all_livelli );
 ?>
 <style>
 .calypso-corsi{max-width:1320px;margin:0 auto;padding:0 24px}
-.calypso-corsi__filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
-.calypso-list__filter-input{padding:8px 14px;border:1px solid var(--c-foam);border-radius:var(--radius);font-size:14px;color:var(--c-ink)}
+
+/* ── Filtri ── */
+.calypso-corsi__filters{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;margin-bottom:32px;flex-wrap:wrap;
+}
+.calypso-corsi__levels{display:flex;gap:8px;flex-wrap:wrap}
+.calypso-corsi__pill{
+  padding:8px 18px;border-radius:999px;
+  border:1.5px solid rgba(11,26,38,.15);
+  background:transparent;color:rgba(11,26,38,.7);
+  font-size:13px;font-weight:600;font-family:inherit;
+  cursor:pointer;line-height:1;
+  transition:background .15s,color .15s,border-color .15s;
+}
+.calypso-corsi__pill:hover{background:var(--c-deep,.0a2540);color:#fff;border-color:var(--c-deep,#0a2540)}
+.calypso-corsi__pill.is-active{background:var(--c-deep,#0a2540);color:#fff;border-color:var(--c-deep,#0a2540)}
+.calypso-corsi__search-wrap{position:relative;display:flex;align-items:center}
+.calypso-corsi__search-wrap svg{position:absolute;left:12px;color:rgba(11,26,38,.35);pointer-events:none}
+.calypso-list__filter-input{
+  padding:9px 16px 9px 36px;
+  border:1.5px solid rgba(11,26,38,.15);border-radius:999px;
+  font-size:13px;font-weight:500;font-family:inherit;
+  color:var(--c-ink,#0b1a26);background:#fff;
+  min-width:200px;transition:border-color .15s;
+}
+.calypso-list__filter-input::placeholder{color:rgba(11,26,38,.4)}
+.calypso-list__filter-input:focus{outline:none;border-color:var(--c-wave,#1B77A7)}
+
+/* ── Grid ── */
 .calypso-corsi__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
 .calypso-corso-card__photo-wrap{position:relative;overflow:hidden}
 .calypso-corso-card__photo-label{position:absolute;bottom:0;left:0;background:rgba(11,26,38,.72);color:var(--c-sand);font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;padding:6px 12px;backdrop-filter:blur(2px)}
@@ -17,13 +47,32 @@ $corsi = calypso_get_corsi();
 .calypso-corso-card__stats-items li+li::before{content:" · ";color:#ccc!important}
 .calypso-corso-card__footer{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 20px 16px;flex-wrap:wrap;border-top:1px solid #f0f0f0}
 .calypso-corso-card__period{font-size:11px;font-weight:600;color:var(--c-wave)!important;text-transform:uppercase;letter-spacing:.06em}
-@media(max-width:640px){.calypso-corsi__grid{grid-template-columns:1fr}}
+@media(max-width:640px){
+  .calypso-corsi__grid{grid-template-columns:1fr}
+  .calypso-list__filter-input{min-width:0;width:100%}
+}
 </style>
 
 <div class="calypso-corsi" data-list="corsi">
 	<div class="calypso-corsi__filters">
-		<input type="text" class="calypso-list__filter-input" data-filter="search"
-		       placeholder="<?php esc_attr_e( 'Cerca corso…', 'calypsosub' ); ?>">
+
+		<?php if ( $has_livelli ) : ?>
+		<div class="calypso-corsi__levels">
+			<button class="calypso-corsi__pill is-active" data-level=""><?php _e( 'Tutti', 'calypsosub' ); ?></button>
+			<?php foreach ( $all_livelli as $term ) : ?>
+			<button class="calypso-corsi__pill" data-level="<?php echo esc_attr( $term->slug ); ?>">
+				<?php echo esc_html( $term->name ); ?>
+			</button>
+			<?php endforeach; ?>
+		</div>
+		<?php endif; ?>
+
+		<div class="calypso-corsi__search-wrap">
+			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+			<input type="text" class="calypso-list__filter-input" data-filter="search"
+			       placeholder="<?php esc_attr_e( 'Cerca corso…', 'calypsosub' ); ?>">
+		</div>
+
 	</div>
 
 	<?php if ( empty( $corsi ) ) : ?>
@@ -39,8 +88,10 @@ $corsi = calypso_get_corsi();
 			$link_iscrizione = get_post_meta( $post_id, '_corso_link_iscrizione', true );
 			$img             = get_the_post_thumbnail_url( $post_id, 'medium_large' );
 
-			$livelli = wp_get_post_terms( $post_id, 'calypso_livello', [ 'fields' => 'names' ] );
-			$livello = ( ! is_wp_error( $livelli ) && ! empty( $livelli ) ) ? $livelli[0] : '';
+			$livelli_raw  = wp_get_post_terms( $post_id, 'calypso_livello' );
+			$livello_obj  = ( ! is_wp_error( $livelli_raw ) && ! empty( $livelli_raw ) ) ? $livelli_raw[0] : null;
+			$livello      = $livello_obj ? $livello_obj->name : '';
+			$livello_slug = $livello_obj ? $livello_obj->slug : '';
 
 			$next_occ = calypso_get_next_occorrenza( $post_id );
 			$periodo  = $next_occ ? calypso_get_occorrenza_periodo( $next_occ->ID ) : '';
@@ -53,7 +104,8 @@ $corsi = calypso_get_corsi();
 			$title_upper = mb_strtoupper( $post->post_title );
 		?>
 		<article class="calypso-corso-card"
-		         data-search="<?php echo esc_attr( strtolower( $post->post_title . ' ' . $livello ) ); ?>">
+		         data-search="<?php echo esc_attr( strtolower( $post->post_title . ' ' . $livello ) ); ?>"
+		         data-livello="<?php echo esc_attr( $livello_slug ); ?>">
 			<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" style="display:contents;text-decoration:none">
 				<div class="calypso-corso-card__photo-wrap">
 					<?php if ( $img ) : ?>
@@ -107,10 +159,29 @@ $corsi = calypso_get_corsi();
 (function () {
 	var list = document.querySelector('[data-list="corsi"]');
 	if (!list) return;
-	var cards = list.querySelectorAll('.calypso-corso-card');
-	list.querySelector('[data-filter="search"]').addEventListener('input', function () {
-		var q = this.value.toLowerCase();
-		cards.forEach(function (c) { c.style.display = !q || c.dataset.search.includes(q) ? '' : 'none'; });
+	var cards       = Array.from(list.querySelectorAll('.calypso-corso-card'));
+	var searchInput = list.querySelector('[data-filter="search"]');
+	var pills       = Array.from(list.querySelectorAll('.calypso-corsi__pill'));
+	var activeLevel = '';
+
+	function applyFilters() {
+		var q = searchInput ? searchInput.value.toLowerCase() : '';
+		cards.forEach(function (c) {
+			var matchSearch = !q || c.dataset.search.includes(q);
+			var matchLevel  = !activeLevel || c.dataset.livello === activeLevel;
+			c.style.display = (matchSearch && matchLevel) ? '' : 'none';
+		});
+	}
+
+	if (searchInput) searchInput.addEventListener('input', applyFilters);
+
+	pills.forEach(function (pill) {
+		pill.addEventListener('click', function () {
+			pills.forEach(function (p) { p.classList.remove('is-active'); });
+			this.classList.add('is-active');
+			activeLevel = this.dataset.level || '';
+			applyFilters();
+		});
 	});
 })();
 </script>

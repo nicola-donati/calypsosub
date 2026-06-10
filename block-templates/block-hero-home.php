@@ -104,12 +104,12 @@ $mq_dur  = max( 12, count( $places ) * 3 ); /* 3s per voce */
   margin-left:calc(-50vw + 50%);
   margin-right:calc(-50vw + 50%);
 }
-/* Altezza hero-home: totale (800/1200px) meno il marquee (72px) */
+/* Altezza hero-home: totale meno il marquee (72px) — segue i breakpoint globali */
 .csh-hero{position:relative;color:#fff;overflow:hidden;height:calc(800px - 72px);box-sizing:border-box}
 .csh-marquee{height:72px;box-sizing:border-box;overflow:hidden}
-@media(max-width:768px){
-  .csh-hero{height:calc(1200px - 72px)}
-}
+@media(max-width:1024px){.csh-hero{height:calc(720px - 72px)}}
+@media(max-width:768px){.csh-hero{height:calc(640px - 72px)}}
+@media(max-width:480px){.csh-hero{height:calc(600px - 72px)}}
 
 /*
  * Quando l'hero home è nella pagina, il site header FSE
@@ -122,6 +122,9 @@ body:has(.csh-hero) .wp-site-blocks>.wp-block-template-part:first-child>header{
   top:var(--wp-admin--admin-bar--height,0px);
   left:0;right:0;z-index:200;width:100%;
 }
+/* Azzera block gap WP tra i blocchi della pagina home */
+body:has(.csh-hero) .wp-block-post-content>*,
+body:has(.csh-hero) .entry-content>*{margin-top:0!important;margin-block-start:0!important}
 .csh-hero__bg{position:absolute;inset:0;background:var(--c-abyss,#061826);overflow:hidden}
 .csh-hero__bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
 .csh-hero__overlay{

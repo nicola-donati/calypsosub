@@ -2,6 +2,12 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 get_header();
 
+if ( function_exists( 'block_template_part' ) ) {
+	echo '<div class="cso-site-header-wrap">';
+	block_template_part( 'header' );
+	echo '</div>';
+}
+
 $id = get_the_ID();
 
 $sottotitolo        = (string) get_post_meta( $id, '_uscita_sottotitolo', true );

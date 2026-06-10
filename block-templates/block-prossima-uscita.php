@@ -122,6 +122,8 @@ $meta_str = implode( ' · ', $meta_parts );
   display:block;
   background:var(--c-deep,#0a2540);
   padding:20px 24px;
+  margin-top:0;
+  margin-block-start:0;
 }
 .csou-strip__inner{
   max-width:1320px;
