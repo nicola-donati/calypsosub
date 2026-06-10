@@ -2,6 +2,23 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
+ * Legge un'opzione di impostazioni del plugin.
+ * Se vuota restituisce il default.
+ *
+ * @param string $section  docenti | uscite | corsi | eventi
+ * @param string $key      chiave del campo
+ * @param string $default  valore di fallback
+ */
+function calypsosub_opt( string $section, string $key, string $default = '' ): string {
+	static $cache = [];
+	if ( ! isset( $cache[ $section ] ) ) {
+		$cache[ $section ] = (array) get_option( 'calypsosub_opts_' . $section, [] );
+	}
+	$val = $cache[ $section ][ $key ] ?? '';
+	return $val !== '' ? $val : $default;
+}
+
+/**
  * Wrapper per auth — estendibile con membership plugin.
  */
 function calypso_is_user_logged_in(): bool {

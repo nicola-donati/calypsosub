@@ -131,6 +131,10 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 		<p class="cso-hero__subtitle"><?php echo esc_html( $sottotitolo ); ?></p>
 		<?php endif; ?>
 	</div>
+	<div class="cso-hero__scroll" aria-hidden="true">
+		SCORRI
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+	</div>
 </section>
 
 <!-- Info bar -->

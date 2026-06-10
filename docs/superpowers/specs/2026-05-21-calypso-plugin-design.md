@@ -140,13 +140,6 @@ I corsi **non hanno prenotazione**.
 | Brevetti | taxonomy `calypso_brevetto` | |
 
 ---
-⚠ Articoli non inseriti (1)
-Codice 	Motivo 	Dettaglio
-2571525053 	Descrizione non corrispondente 	Nessun fornitore PCM selezionato (DescrizioneNonCorrispondente)
-Codice 	Stato 	Fornitore 	Prezzo 	Consegna 	Sim. 	Note
-2571525053 	descrizione_non_corrispondente 				— 	Nessun fornitore PCM selezionato (DescrizioneNonCorrispondente)
-2571525052 	added 	HOFFMANN ITALIA SPA 	43.7500 		17 % 	
-2571525050 	added 	HOFFMANN ITALIA SPA 	23.2800 		17 %
 
 ## 4. Taxonomy
 

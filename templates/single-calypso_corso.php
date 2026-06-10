@@ -72,7 +72,7 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
   background-repeat:no-repeat;
 }
 .cso-hero--bg-img .cso-hero__inner{position:relative;z-index:1}
-.cso-hero h1,.cso-hero h2,.cso-hero h3{color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.6),0 3px 24px rgba(0,0,0,.4)}
+.cso-hero h1,.cso-hero h2,.cso-hero h3{color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.9),0 5px 36px rgba(0,0,0,.75),0 12px 56px rgba(0,0,0,.5)}
 .cso-hero a{color:rgba(255,255,255,.55);text-decoration:none}
 .cso-hero a:hover{color:rgba(255,255,255,.9)}
 @media(max-width:1024px){.cso-hero{padding:calc(var(--cso-header-h) + 24px) 20px 40px}}
@@ -84,7 +84,7 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 
 .cso-hero__badge{background:var(--c-coral,#ff6b4a)}
 
-.cso-hero__sub{margin-top:16px;font-weight:600;line-height:1;text-shadow:0 1px 8px rgba(0,0,0,.6),0 3px 24px rgba(0,0,0,.4)}
+.cso-hero__sub{margin-top:16px;font-weight:600;line-height:1;text-shadow:0 2px 14px rgba(0,0,0,.9),0 5px 36px rgba(0,0,0,.75),0 12px 56px rgba(0,0,0,.5)}
 .cso .cso-hero__sub{font-size:clamp(28px,5vw,72px);color:var(--c-aqua,#26CBFB)}
 .cso-hero__lead{line-height:1.6;opacity:.85;margin:0;align-self:end}
 
@@ -248,6 +248,10 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 	<?php endif; ?>
 
 </div>
+  <div class="cso-hero__scroll" aria-hidden="true">
+    SCORRI
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+  </div>
 </section>
 
 <!-- CORPO: contenuto + sidebar sticky -->

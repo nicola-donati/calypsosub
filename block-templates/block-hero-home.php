@@ -104,7 +104,12 @@ $mq_dur  = max( 12, count( $places ) * 3 ); /* 3s per voce */
   margin-left:calc(-50vw + 50%);
   margin-right:calc(-50vw + 50%);
 }
-.csh-hero{position:relative;color:#fff;overflow:hidden}
+/* Altezza hero-home: totale (800/1200px) meno il marquee (72px) */
+.csh-hero{position:relative;color:#fff;overflow:hidden;height:calc(800px - 72px);box-sizing:border-box}
+.csh-marquee{height:72px;box-sizing:border-box;overflow:hidden}
+@media(max-width:768px){
+  .csh-hero{height:calc(1200px - 72px)}
+}
 
 /*
  * Quando l'hero home è nella pagina, il site header FSE
@@ -161,11 +166,12 @@ body:has(.csh-hero) .wp-site-blocks>.wp-block-template-part:first-child>header{
 
 /* Scroll indicator */
 .csh-hero__scroll{
-  position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
-  color:rgba(255,255,255,.7);font-size:11px;
-  letter-spacing:.18em;
-  display:flex;flex-direction:column;align-items:center;gap:8px;
-  text-decoration:none;pointer-events:none;
+  position:absolute;bottom:24px;left:50%;
+  color:rgba(255,255,255,.7);font-size:14px;
+  letter-spacing:.18em;text-transform:uppercase;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  pointer-events:none;
+  animation:cso-scroll-bounce 2s ease-in-out infinite;
 }
 
 /* Card prossima uscita */
@@ -197,7 +203,7 @@ body:has(.csh-hero) .wp-site-blocks>.wp-block-template-part:first-child>header{
 /* ── Marquee ────────────────────────────────────────────────── */
 .csh-marquee{
   background:var(--c-deep,#0a2540);color:#fff;
-  padding:20px 0;overflow:hidden;
+  display:flex;align-items:center;
   border-top:1px solid rgba(255,255,255,.06);
   margin:0!important;
 }
@@ -315,7 +321,7 @@ body:has(.csh-hero) .wp-site-blocks>.wp-block-template-part:first-child>header{
   <!-- Scroll indicator -->
   <div class="csh-hero__scroll" aria-hidden="true">
     SCORRI
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
   </div>
 
 </section>

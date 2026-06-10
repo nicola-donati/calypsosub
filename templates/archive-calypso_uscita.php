@@ -136,7 +136,7 @@ $first_row   = true;
 .cso-hero__inner{max-width:1320px;margin:0 auto}
 .cso-hero__eyebrow{font-weight:600;letter-spacing:.16em;text-transform:uppercase;margin:0 0 20px;display:block}
 .cso-archive .cso-hero__eyebrow{font-size:16px;color:var(--c-aqua,#26CBFB)}
-.cso-hero__title{font-size:124px;color:#fff;margin:0;text-shadow:0 2px 12px rgba(0,0,0,.7),0 4px 32px rgba(0,0,0,.5)}
+.cso-hero__title{font-size:124px;color:#fff;margin:0;text-shadow:0 2px 16px rgba(0,0,0,.95),0 6px 48px rgba(0,0,0,.8),0 16px 80px rgba(0,0,0,.55)}
 .cso-hero__title em{font-style:italic;color:var(--c-aqua,#26CBFB)}
 .cso-hero__lead{line-height:1.65;opacity:.85;margin:32px 0 0;max-width:700px}
 .cso-archive .cso-hero__lead{font-size:18px;color:#fff}
@@ -325,6 +325,10 @@ $first_row   = true;
 		) ); ?>
 	</p>
 </div>
+  <div class="cso-hero__scroll" aria-hidden="true">
+    SCORRI
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+  </div>
 </section>
 
 <!-- ── CORPO ── -->
