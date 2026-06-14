@@ -33,6 +33,9 @@ require_once CALYPSOSUB_PATH . 'includes/admin/class-settings-pages.php';
 require_once CALYPSOSUB_PATH . 'includes/account/class-user-account.php';
 require_once CALYPSOSUB_PATH . 'includes/class-template-loader.php';
 require_once CALYPSOSUB_PATH . 'includes/class-blocks.php';
+require_once CALYPSOSUB_PATH . 'includes/ajax/class-ajax-eventi.php';
+add_action( 'wp_ajax_calypso_eventi_search',        [ 'Calypsosub_Ajax_Eventi', 'handle' ] );
+add_action( 'wp_ajax_nopriv_calypso_eventi_search', [ 'Calypsosub_Ajax_Eventi', 'handle' ] );
 
 add_action( 'wp_enqueue_scripts', function (): void {
 	wp_enqueue_style(
@@ -70,4 +73,20 @@ $GLOBALS['calypsosub_booking_manager']->init();
 register_activation_hook( __FILE__, 'calypsosub_activate' );
 function calypsosub_activate(): void {
     flush_rewrite_rules();
+    calypsosub_grant_editor_caps();
 }
+
+function calypsosub_grant_editor_caps(): void {
+    foreach ( [ 'administrator', 'editor' ] as $role_name ) {
+        $role = get_role( $role_name );
+        if ( $role ) $role->add_cap( 'calypsosub_manage', true );
+    }
+}
+
+/* Assicura che gli editor abbiano la cap anche senza re-attivazione del plugin */
+add_action( 'plugins_loaded', function (): void {
+    $role = get_role( 'editor' );
+    if ( $role && empty( $role->capabilities['calypsosub_manage'] ) ) {
+        calypsosub_grant_editor_caps();
+    }
+} );

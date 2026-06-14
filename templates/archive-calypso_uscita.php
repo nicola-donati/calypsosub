@@ -118,8 +118,15 @@ $mesi_it  = [
 ];
 $giorni_it = [ 'Sun' => 'DOM', 'Mon' => 'LUN', 'Tue' => 'MAR', 'Wed' => 'MER', 'Thu' => 'GIO', 'Fri' => 'VEN', 'Sat' => 'SAB' ];
 
-$archive_url = get_post_type_archive_link( 'calypso_uscita' );
-$first_row   = true;
+$archive_url  = get_post_type_archive_link( 'calypso_uscita' );
+$first_row    = true;
+
+$hero_img_id  = (int) get_option( 'calypsosub_hero_img_uscite', 0 );
+$hero_img_url = $hero_img_id ? wp_get_attachment_image_url( $hero_img_id, 'full' ) : '';
+$_ov_c = calypsosub_opt( 'uscite', 'overlay_color', '#061826' );
+$_ov_o = (int) calypsosub_opt( 'uscite', 'overlay_opacity', '88' );
+list( $_r, $_g, $_b ) = array_map( 'hexdec', str_split( ltrim( $_ov_c, '#' ), 2 ) );
+$overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d,%d,%.3f) 40%%,rgba(%d,%d,%d,%.3f) 100%%)', $_r, $_g, $_b, round( $_ov_o / 100 * 0.682, 3 ), $_r, $_g, $_b, round( $_ov_o / 100 * 0.170, 3 ), $_r, $_g, $_b, round( $_ov_o / 100, 3 ) );
 ?>
 <style>
 .cso-archive{color:var(--c-ink,#0b1a26)}
@@ -134,6 +141,10 @@ $first_row   = true;
 	padding:calc(90px + 32px) 48px 80px;
 	position:relative;
 }
+.cso-hero__bg{position:absolute;inset:0;overflow:hidden}
+.cso-hero__bg img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+.cso-hero__overlay{position:absolute;inset:0;background:linear-gradient(rgba(6,24,38,.6) 0%,rgba(6,24,38,.15) 40%,rgba(6,24,38,.88) 100%)}
+.cso-hero--has-img .cso-hero__inner,.cso-hero--has-img .cso-hero__scroll{position:relative;z-index:1}
 .cso-hero h1,.cso-hero h2,.cso-hero h3{color:#fff}
 .cso-hero__inner{max-width:1320px;margin:0 auto}
 .cso-hero__eyebrow{font-weight:600;letter-spacing:.16em;text-transform:uppercase;margin:0 0 20px;display:block}
@@ -311,7 +322,13 @@ $first_row   = true;
 <div class="cso-archive">
 
 <!-- ── HERO ── -->
-<section class="cso-hero">
+<section class="cso-hero<?php echo $hero_img_url ? ' cso-hero--has-img' : ''; ?>">
+<?php if ( $hero_img_url ) : ?>
+<div class="cso-hero__bg">
+	<img src="<?php echo esc_url( $hero_img_url ); ?>" alt="" loading="eager" fetchpriority="high">
+</div>
+<div class="cso-hero__overlay" style="background:<?php echo esc_attr( $overlay_gradient ); ?>"></div>
+<?php endif; ?>
 <div class="cso-hero__inner">
 	<span class="cso-hero__eyebrow"><?php echo esc_html( str_replace( '{anno}', date( 'Y' ),
 		calypsosub_opt( 'uscite', 'archive_eyebrow', __( 'Calendario · stagione {anno}', 'calypsosub' ) )

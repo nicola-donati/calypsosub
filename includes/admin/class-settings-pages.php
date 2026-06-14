@@ -171,7 +171,7 @@ class Calypsosub_Settings_Pages {
 				'edit.php?post_type=' . $cfg['cpt'],
 				sprintf( 'Impostazioni — %s', $cfg['label'] ),
 				'Impostazioni',
-				'manage_options',
+				'calypsosub_manage',
 				'calypsosub-settings-' . $section,
 				fn() => $this->render( $section )
 			);
@@ -197,7 +197,7 @@ class Calypsosub_Settings_Pages {
 	/* ── Render pagina ──────────────────────────────────────────────────────── */
 
 	private function render( string $section ): void {
-		if ( ! current_user_can( 'manage_options' ) ) return;
+		if ( ! current_user_can( 'calypsosub_manage' ) ) return;
 		$cfg  = self::config()[ $section ];
 		$opts = (array) get_option( 'calypsosub_opts_' . $section, [] );
 		$saved = isset( $_GET['saved'] );
@@ -256,7 +256,7 @@ class Calypsosub_Settings_Pages {
 	public function save(): void {
 		$section = sanitize_key( $_POST['_cso_section'] ?? '' );
 		if ( ! $section || ! isset( self::config()[ $section ] ) ) wp_die( 'Sezione non valida.' );
-		if ( ! current_user_can( 'manage_options' ) ) wp_die( 'Permesso negato.' );
+		if ( ! current_user_can( 'calypsosub_manage' ) ) wp_die( 'Permesso negato.' );
 		check_admin_referer( 'calypsosub_settings_' . $section, '_cso_nonce' );
 
 		$cfg      = self::config()[ $section ];

@@ -132,7 +132,7 @@ class Calypsosub_Booking_Manager {
 	 */
 	public function cancel_booking( int $booking_id, int $user_id ): bool|WP_Error {
 		$owner = (int) get_post_meta( $booking_id, '_booking_user_id', true );
-		if ( $owner !== $user_id && ! current_user_can( 'manage_options' ) ) {
+		if ( $owner !== $user_id && ! current_user_can( 'calypsosub_manage' ) ) {
 			return new WP_Error( 'forbidden', __( 'Non autorizzato.', 'calypsosub' ) );
 		}
 

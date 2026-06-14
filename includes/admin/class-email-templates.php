@@ -12,14 +12,14 @@ class Calypsosub_Email_Templates {
 			'calypsosub',
 			__( 'Template Email', 'calypsosub' ),
 			__( 'Template Email', 'calypsosub' ),
-			'manage_options',
+			'calypsosub_manage',
 			'calypsosub-email-templates',
 			[ $this, 'render_page' ]
 		);
 	}
 
 	public function render_page(): void {
-		if ( ! current_user_can( 'manage_options' ) ) return;
+		if ( ! current_user_can( 'calypsosub_manage' ) ) return;
 
 		$email = new Calypsosub_Booking_Email();
 		$templates = $email->default_templates();
