@@ -11,7 +11,7 @@ if ( function_exists( 'block_template_part' ) ) {
 
 /* ── Default 50 eventi via shared class ── */
 $today          = current_time( 'Y-m-d' );
-$eventi         = Calypsosub_Ajax_Eventi::query( '', '', '', '', true );
+$eventi         = Calypsosub_Ajax_Eventi::query( '', '', '', '', true, date( 'Y-m-d', strtotime( '-3 months', strtotime( $today ) ) ) );
 $booking_counts = Calypsosub_Ajax_Eventi::booking_counts( $eventi );
 
 /* ── Opzioni filtro luogo ── */

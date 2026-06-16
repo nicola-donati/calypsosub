@@ -21,21 +21,38 @@ $filter_avail    = array_filter( $filter_avail );
 $raw   = get_posts( [ 'post_type' => 'calypso_uscita', 'posts_per_page' => -1, 'post_status' => 'publish' ] );
 $today = current_time( 'Y-m-d' );
 
-$uscite = [];
+$cutoff          = date( 'Y-m-d', strtotime( '-3 months', strtotime( $today ) ) );
+$uscite_future   = [];
+$uscite_past_win = [];
+$uscite_past_old = [];
+
 foreach ( $raw as $u ) {
 	$date_meta = get_post_meta( $u->ID, '_uscita_date', true );
 	$dates     = is_array( $date_meta ) ? array_filter( $date_meta ) : [];
-	sort( $dates ); // ISO strings — ordinamento lessicografico = cronologico
+	sort( $dates );
 	if ( empty( $dates ) ) continue;
-	$prima_raw  = $dates[0];                                        // "2026-06-15T08:30" o "2026-06-15"
-	$prima      = substr( $prima_raw, 0, 10 );                     // "2026-06-15"
-	if ( $prima < $today ) continue;
+	$prima_raw      = $dates[0];
+	$prima          = substr( $prima_raw, 0, 10 );
 	$u->_prima_data = $prima;
 	$u->_prima_ora  = strlen( $prima_raw ) > 10 ? substr( $prima_raw, 11, 5 ) : '';
 	$u->_dates      = $dates;
-	$uscite[]       = $u;
+	$u->_passata    = $prima < $today;
+	if ( $prima >= $today ) {
+		$uscite_future[] = $u;
+	} elseif ( $prima >= $cutoff ) {
+		$uscite_past_win[] = $u;
+	} else {
+		$uscite_past_old[] = $u;
+	}
 }
-usort( $uscite, static fn( $a, $b ) => strcmp( $a->_prima_data, $b->_prima_data ) );
+
+/* Fallback: se meno di 5 passate nel trimestre, aggiungi le più recenti precedenti */
+usort( $uscite_past_old, static fn( $a, $b ) => strcmp( $b->_prima_data, $a->_prima_data ) );
+$needed    = max( 0, 5 - count( $uscite_past_win ) );
+$past_show = array_merge( $uscite_past_win, array_slice( $uscite_past_old, 0, $needed ) );
+usort( $past_show,     static fn( $a, $b ) => strcmp( $a->_prima_data, $b->_prima_data ) );
+usort( $uscite_future, static fn( $a, $b ) => strcmp( $a->_prima_data, $b->_prima_data ) );
+$uscite = array_merge( $past_show, $uscite_future );
 
 /* ── Conteggio prenotazioni (batch) ── */
 $booking_counts = [];
@@ -245,6 +262,12 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 .cso-btn-dark:hover{background:var(--c-abyss,#061826)}
 .cso-btn-dark--disabled{background:rgba(11,26,38,.08);pointer-events:none;cursor:default}
 .cso-archive .cso-btn-dark--disabled{color:rgba(11,26,38,.3)}
+
+/* Uscita passata */
+.cso-uscita-row--passata{background:rgba(11,26,38,.03)}
+.cso-uscita-row--passata .cso-uscita-row__daynum{color:rgba(11,26,38,.3) !important}
+.cso-uscita-row--passata .cso-uscita-row__title{color:rgba(11,26,38,.45) !important}
+.cso-uscita-row--passata .cso-uscita-row__dayname{color:rgba(11,26,38,.3) !important}
 
 /* Stato vuoto */
 .cso-empty{padding:64px 0;text-align:center}
@@ -463,7 +486,10 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 			$livello  = ! empty( $u->_livelli ) ? $u->_livelli[0] : '';
 
 			/* Pulsante */
-			if ( $u->_posti === null || $u->_posti > 0 ) {
+			if ( $u->_passata ) {
+				$btn_label    = calypsosub_opt( 'uscite', 'btn_terminata', __( 'Terminata', 'calypsosub' ) );
+				$btn_disabled = true;
+			} elseif ( $u->_posti === null || $u->_posti > 0 ) {
 				$btn_label    = $lbl_prenota;
 				$btn_disabled = false;
 			} elseif ( $u->_lista_attesa ) {
@@ -490,8 +516,13 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 					. esc_html( $u->_posti . ' ' . __( 'posti', 'calypsosub' ) ) . '</span>';
 			}
 
-			$row_class = 'cso-uscita-row' . ( $first_row ? ' cso-uscita-row--highlight' : '' );
-			$first_row = false;
+			$row_class = 'cso-uscita-row';
+			if ( $u->_passata ) {
+				$row_class .= ' cso-uscita-row--passata';
+			} elseif ( $first_row ) {
+				$row_class .= ' cso-uscita-row--highlight';
+			}
+			$first_row = $first_row && $u->_passata;
 
 			/* Link prenota */
 			$book_url = is_user_logged_in()

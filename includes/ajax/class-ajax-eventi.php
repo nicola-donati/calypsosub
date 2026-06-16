@@ -31,7 +31,11 @@ class Calypsosub_Ajax_Eventi {
 	 * @param bool   $limit Cap result at 50 (future-first then past-desc).
 	 * @return WP_Post[]    Posts with _prima_data and _prima_ora properties set.
 	 */
-	public static function query( string $q, string $da, string $a, string $luogo, bool $limit = true ): array {
+	/**
+	 * @param string $from_date Y-m-d — includi passati da questa data ('' = tutti). Se impostato,
+	 *                          garantisce almeno 5 passati anche se più vecchi del cutoff.
+	 */
+	public static function query( string $q, string $da, string $a, string $luogo, bool $limit = true, string $from_date = '' ): array {
 		$all   = get_posts( [
 			'post_type'      => 'calypso_evento',
 			'posts_per_page' => -1,
@@ -39,8 +43,9 @@ class Calypsosub_Ajax_Eventi {
 		] );
 		$today = current_time( 'Y-m-d' );
 
-		$future = [];
-		$past   = [];
+		$future   = [];
+		$past_win = [];
+		$past_old = [];
 
 		foreach ( $all as $e ) {
 			$date_meta = get_post_meta( $e->ID, '_evento_date', true );
@@ -71,15 +76,26 @@ class Calypsosub_Ajax_Eventi {
 
 			if ( $prima >= $today ) {
 				$future[] = $e;
+			} elseif ( $from_date === '' || $prima >= $from_date ) {
+				$past_win[] = $e;
 			} else {
-				$past[] = $e;
+				$past_old[] = $e;
 			}
 		}
 
-		usort( $future, static fn( $x, $y ) => strcmp( $x->_prima_data, $y->_prima_data ) );
-		usort( $past,   static fn( $x, $y ) => strcmp( $y->_prima_data, $x->_prima_data ) );
+		/* Fallback: garantisce almeno 5 passati anche prima del cutoff */
+		if ( $from_date !== '' ) {
+			usort( $past_old, static fn( $x, $y ) => strcmp( $y->_prima_data, $x->_prima_data ) );
+			$needed   = max( 0, 5 - count( $past_win ) );
+			$past_win = array_merge( $past_win, array_slice( $past_old, 0, $needed ) );
+		} else {
+			$past_win = array_merge( $past_win, $past_old );
+		}
 
-		$merged = array_merge( $future, $past );
+		usort( $future,   static fn( $x, $y ) => strcmp( $x->_prima_data, $y->_prima_data ) );
+		usort( $past_win, static fn( $x, $y ) => strcmp( $y->_prima_data, $x->_prima_data ) );
+
+		$merged = array_merge( $future, $past_win );
 		return $limit ? array_slice( $merged, 0, 50 ) : $merged;
 	}
 

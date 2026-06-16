@@ -79,6 +79,69 @@ class Calypsosub_Blocks {
 				'marquee_mobile' => [ 'type' => 'boolean', 'default' => false ],
 			],
 		],
+		'calypso/sezione' => [
+			'file'  => 'block-sezione.php',
+			'title' => 'Sezione',
+			'icon'  => 'layout',
+			'attributes' => [
+				'eyebrow'          => [ 'type' => 'string',  'default' => '' ],
+				'title'            => [ 'type' => 'string',  'default' => '' ],
+				'header_link_text' => [ 'type' => 'string',  'default' => '' ],
+				'header_link_url'  => [ 'type' => 'string',  'default' => '' ],
+				'bg_color'         => [ 'type' => 'string',  'default' => '#dff4f8' ],
+				'bg_image_id'      => [ 'type' => 'integer', 'default' => 0 ],
+				'padding_y'        => [ 'type' => 'integer', 'default' => 80 ],
+				'max_width'        => [ 'type' => 'integer', 'default' => 1320 ],
+				'eyebrow_color'    => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'title_color'      => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'title_size'       => [ 'type' => 'integer', 'default' => 76 ],
+			],
+		],
+		'calypso/promo-card' => [
+			'file'  => 'block-promo-card.php',
+			'title' => 'Promo Card',
+			'icon'  => 'format-image',
+			'attributes' => [
+				/* ── Immagine ── */
+				'image_id'         => [ 'type' => 'integer', 'default' => 0 ],
+				'image_alt'        => [ 'type' => 'string',  'default' => '' ],
+				'image_height'     => [ 'type' => 'integer', 'default' => 200 ],
+				'image_object_fit' => [ 'type' => 'string',  'default' => 'cover' ],
+				'image_object_pos' => [ 'type' => 'string',  'default' => 'center center' ],
+				/* ── Overlay immagine ── */
+				'overlay_text'     => [ 'type' => 'string',  'default' => '' ],
+				'overlay_bg'       => [ 'type' => 'string',  'default' => 'rgba(6,24,38,0.45)' ],
+				'overlay_color'    => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'overlay_size'     => [ 'type' => 'integer', 'default' => 10 ],
+				/* ── Contenuto ── */
+				'eyebrow'          => [ 'type' => 'string',  'default' => '01' ],
+				'title'            => [ 'type' => 'string',  'default' => 'Titolo' ],
+				'description'      => [ 'type' => 'string',  'default' => '' ],
+				'link_text'        => [ 'type' => 'string',  'default' => 'Scopri' ],
+				'link_url'         => [ 'type' => 'string',  'default' => '' ],
+				'link_new_tab'     => [ 'type' => 'boolean', 'default' => false ],
+				/* ── Stile card ── */
+				'card_bg'          => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'card_radius'      => [ 'type' => 'integer', 'default' => 16 ],
+				'card_padding'     => [ 'type' => 'integer', 'default' => 24 ],
+				'card_shadow'      => [ 'type' => 'boolean', 'default' => true ],
+				/* ── Tipografia eyebrow ── */
+				'eyebrow_color'    => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'eyebrow_size'     => [ 'type' => 'integer', 'default' => 13 ],
+				/* ── Tipografia titolo ── */
+				'title_color'      => [ 'type' => 'string',  'default' => '#061826' ],
+				'title_size'       => [ 'type' => 'integer', 'default' => 42 ],
+				'title_weight'     => [ 'type' => 'string',  'default' => '900' ],
+				'title_transform'  => [ 'type' => 'string',  'default' => 'uppercase' ],
+				'title_font'       => [ 'type' => 'string',  'default' => '' ],
+				/* ── Tipografia descrizione ── */
+				'desc_color'       => [ 'type' => 'string',  'default' => '#3d5a6c' ],
+				'desc_size'        => [ 'type' => 'integer', 'default' => 14 ],
+				/* ── Link ── */
+				'link_color'       => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'link_size'        => [ 'type' => 'integer', 'default' => 13 ],
+			],
+		],
 	];
 
 	public function init(): void {
@@ -100,7 +163,7 @@ class Calypsosub_Blocks {
 			$path  = CALYPSOSUB_PATH . 'block-templates/' . $cfg['file'];
 			$attrs = $cfg['attributes'] ?? [];
 			register_block_type( $name, [
-				'render_callback' => static function ( array $attributes ) use ( $path ): string {
+				'render_callback' => static function ( array $attributes, string $content = '' ) use ( $path ): string {
 					ob_start();
 					include $path;
 					return (string) ob_get_clean();
@@ -149,6 +212,14 @@ class Calypsosub_Blocks {
 	var RangeControl    = components.RangeControl;
 	var Button          = components.Button;
 	var Divider         = components.Divider;
+	var SelectControl   = components.SelectControl;
+	var ColorPalette    = components.ColorPalette;
+
+	function getThemeColors() {
+		try {
+			return window.wp.data.select('core/block-editor').getSettings().colors || [];
+		} catch(e) { return []; }
+	}
 
 	var calypsoBlocks = {$blocks_json};
 
@@ -595,6 +666,494 @@ class Calypsosub_Blocks {
 					return el(Fragment, {}, controls, preview);
 				},
 				save: function () { return null; },
+			});
+			return;
+		}
+
+		/* ════════════════════════════════════════════
+		   calypso/promo-card — card personalizzabile
+		   ════════════════════════════════════════════ */
+		if (info.name === 'calypso/promo-card') {
+			blocks.registerBlockType(info.name, {
+				title: info.title,
+				category: 'calypso',
+				icon: 'format-image',
+				attributes: info.attributes || {},
+				edit: function (props) {
+					var a   = props.attributes;
+					var set = props.setAttributes;
+
+					function colorRow(label, key) {
+						return el('div', { style: { marginBottom: '12px' } },
+							el('p', { style: { fontSize: '11px', fontWeight: 500, color: '#1e1e1e', margin: '0 0 6px' } }, label),
+							el(ColorPalette, {
+								colors: getThemeColors(),
+								value: a[key] || '',
+								onChange: function (v) { var u = {}; u[key] = v || ''; set(u); }
+							})
+						);
+					}
+
+					var mediaBtn = (MediaUploadCheck && MediaUpload)
+						? el(MediaUploadCheck, {},
+							el(MediaUpload, {
+								onSelect: function (media) { set({ image_id: media.id }); },
+								allowedTypes: ['image'],
+								value: a.image_id,
+								render: function (ref) {
+									return el(Button, {
+										onClick: ref.open,
+										variant: a.image_id ? 'secondary' : 'primary',
+										style: { marginBottom: '8px' }
+									}, a.image_id ? '⬡ Cambia immagine' : '⬡ Scegli immagine');
+								}
+							}))
+						: null;
+
+					var controls = InspectorControls ? el(InspectorControls, {},
+
+						/* ── Immagine ── */
+						el(PanelBody, { title: 'Immagine', initialOpen: true },
+							mediaBtn,
+							a.image_id ? el(Button, {
+								onClick: function () { set({ image_id: 0 }); },
+								variant: 'link',
+								isDestructive: true,
+								style: { marginBottom: '12px' }
+							}, 'Rimuovi immagine') : null,
+							el(TextControl, {
+								label: 'Alt text',
+								value: a.image_alt || '',
+								onChange: function (v) { set({ image_alt: v }); }
+							}),
+							el(RangeControl, {
+								label: 'Altezza area immagine (px)',
+								value: a.image_height || 200,
+								min: 80,
+								max: 600,
+								step: 10,
+								onChange: function (v) { set({ image_height: v || 200 }); }
+							}),
+							SelectControl ? el(SelectControl, {
+								label: 'Object fit',
+								value: a.image_object_fit || 'cover',
+								options: [
+									{ value: 'cover',   label: 'Cover (riempie)' },
+									{ value: 'contain', label: 'Contain (mostra tutto)' },
+									{ value: 'fill',    label: 'Fill (distorce)' },
+									{ value: 'none',    label: 'Nessuno' }
+								],
+								onChange: function (v) { set({ image_object_fit: v }); }
+							}) : null,
+							SelectControl ? el(SelectControl, {
+								label: 'Allineamento immagine',
+								value: a.image_object_pos || 'center center',
+								options: [
+									{ value: 'center center', label: 'Centro' },
+									{ value: 'top center',    label: 'Alto' },
+									{ value: 'bottom center', label: 'Basso' },
+									{ value: 'left center',   label: 'Sinistra' },
+									{ value: 'right center',  label: 'Destra' }
+								],
+								onChange: function (v) { set({ image_object_pos: v }); }
+							}) : null
+						),
+
+						/* ── Overlay ── */
+						el(PanelBody, { title: 'Overlay immagine', initialOpen: false },
+							el(TextControl, {
+								label: 'Testo overlay (vuoto = nascosto)',
+								value: a.overlay_text || '',
+								onChange: function (v) { set({ overlay_text: v }); }
+							}),
+							el(TextControl, {
+								label: 'Sfondo overlay (CSS — rgba OK)',
+								value: a.overlay_bg || 'rgba(6,24,38,0.6)',
+								onChange: function (v) { set({ overlay_bg: v }); }
+							}),
+							colorRow('Colore testo overlay', 'overlay_color'),
+							el(RangeControl, {
+								label: 'Font size overlay (px)',
+								value: a.overlay_size || 10,
+								min: 8,
+								max: 20,
+								step: 1,
+								onChange: function (v) { set({ overlay_size: v || 10 }); }
+							})
+						),
+
+						/* ── Contenuto ── */
+						el(PanelBody, { title: 'Contenuto', initialOpen: true },
+							el(TextControl, {
+								label: 'Eyebrow / Numero',
+								value: a.eyebrow || '',
+								onChange: function (v) { set({ eyebrow: v }); }
+							}),
+							el(TextControl, {
+								label: 'Titolo',
+								value: a.title || '',
+								onChange: function (v) { set({ title: v }); }
+							}),
+							el(TextareaControl, {
+								label: 'Descrizione',
+								value: a.description || '',
+								rows: 3,
+								onChange: function (v) { set({ description: v }); }
+							}),
+							el(TextControl, {
+								label: 'Testo link',
+								value: a.link_text || '',
+								onChange: function (v) { set({ link_text: v }); }
+							}),
+							el(TextControl, {
+								label: 'URL link',
+								value: a.link_url || '',
+								type: 'url',
+								onChange: function (v) { set({ link_url: v }); }
+							}),
+							el(ToggleControl, {
+								label: 'Apri in nuova scheda',
+								checked: !!a.link_new_tab,
+								onChange: function (v) { set({ link_new_tab: v }); }
+							})
+						),
+
+						/* ── Stile card ── */
+						el(PanelBody, { title: 'Stile card', initialOpen: false },
+							colorRow('Sfondo card', 'card_bg'),
+							el(RangeControl, {
+								label: 'Border radius (px)',
+								value: a.card_radius !== undefined ? a.card_radius : 16,
+								min: 0,
+								max: 48,
+								step: 2,
+								onChange: function (v) { set({ card_radius: v }); }
+							}),
+							el(RangeControl, {
+								label: 'Padding corpo (px)',
+								value: a.card_padding !== undefined ? a.card_padding : 24,
+								min: 0,
+								max: 64,
+								step: 4,
+								onChange: function (v) { set({ card_padding: v }); }
+							}),
+							el(ToggleControl, {
+								label: 'Ombra',
+								checked: a.card_shadow !== false,
+								onChange: function (v) { set({ card_shadow: v }); }
+							})
+						),
+
+						/* ── Tipografia eyebrow ── */
+						el(PanelBody, { title: 'Tipografia — Eyebrow', initialOpen: false },
+							colorRow('Colore', 'eyebrow_color'),
+							el(RangeControl, {
+								label: 'Font size (px)',
+								value: a.eyebrow_size || 13,
+								min: 8,
+								max: 32,
+								step: 1,
+								onChange: function (v) { set({ eyebrow_size: v || 13 }); }
+							})
+						),
+
+						/* ── Tipografia titolo ── */
+						el(PanelBody, { title: 'Tipografia — Titolo', initialOpen: false },
+							colorRow('Colore', 'title_color'),
+							el(RangeControl, {
+								label: 'Font size (px)',
+								value: a.title_size || 42,
+								min: 16,
+								max: 100,
+								step: 2,
+								onChange: function (v) { set({ title_size: v || 42 }); }
+							}),
+							SelectControl ? el(SelectControl, {
+								label: 'Font weight',
+								value: a.title_weight || '900',
+								options: [
+									{ value: '400', label: 'Regular (400)' },
+									{ value: '600', label: 'SemiBold (600)' },
+									{ value: '700', label: 'Bold (700)' },
+									{ value: '800', label: 'ExtraBold (800)' },
+									{ value: '900', label: 'Black (900)' }
+								],
+								onChange: function (v) { set({ title_weight: v }); }
+							}) : null,
+							SelectControl ? el(SelectControl, {
+								label: 'Text transform',
+								value: a.title_transform || 'uppercase',
+								options: [
+									{ value: 'uppercase',  label: 'MAIUSCOLO' },
+									{ value: 'none',       label: 'Normale' },
+									{ value: 'capitalize', label: 'Prima Lettera' }
+								],
+								onChange: function (v) { set({ title_transform: v }); }
+							}) : null,
+							el(TextControl, {
+								label: 'Font family (vuoto = eredita tema)',
+								help: 'Es: "Montserrat", sans-serif',
+								value: a.title_font || '',
+								onChange: function (v) { set({ title_font: v }); }
+							})
+						),
+
+						/* ── Tipografia descrizione ── */
+						el(PanelBody, { title: 'Tipografia — Descrizione', initialOpen: false },
+							colorRow('Colore', 'desc_color'),
+							el(RangeControl, {
+								label: 'Font size (px)',
+								value: a.desc_size || 14,
+								min: 10,
+								max: 24,
+								step: 1,
+								onChange: function (v) { set({ desc_size: v || 14 }); }
+							})
+						),
+
+						/* ── Link ── */
+						el(PanelBody, { title: 'Tipografia — Link', initialOpen: false },
+							colorRow('Colore', 'link_color'),
+							el(RangeControl, {
+								label: 'Font size (px)',
+								value: a.link_size || 13,
+								min: 10,
+								max: 24,
+								step: 1,
+								onChange: function (v) { set({ link_size: v || 13 }); }
+							})
+						)
+
+					) : null;
+
+					/* Preview nel canvas */
+					var previewRadius = (a.card_radius !== undefined ? a.card_radius : 16) + 'px';
+					var previewPad    = (a.card_padding !== undefined ? a.card_padding : 24) + 'px';
+					var previewH      = Math.min(a.image_height || 200, 280) + 'px';
+
+					var preview = el('div', {
+						style: {
+							maxWidth: '300px',
+							borderRadius: previewRadius,
+							overflow: 'hidden',
+							background: a.card_bg || '#ffffff',
+							fontFamily: 'system-ui, sans-serif',
+							boxShadow: a.card_shadow !== false ? '0 8px 32px -8px rgba(6,24,38,.2)' : 'none'
+						}
+					},
+						/* Image area */
+						el('div', {
+							style: {
+								height: previewH,
+								background: a.image_id ? '#b8d4e0' : '#d5e8ef',
+								position: 'relative',
+								overflow: 'hidden',
+								display: 'flex',
+								alignItems: 'flex-end'
+							}
+						},
+							a.image_id ? el('div', {
+								style: { position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1B77A7', fontSize: '12px', opacity: .7, pointerEvents: 'none' }
+							}, '📷 img #' + a.image_id) : null,
+							a.overlay_text ? el('div', {
+								style: {
+									position: 'relative',
+									width: '100%',
+									padding: '8px 14px',
+									background: a.overlay_bg || 'rgba(6,24,38,0.6)',
+									color: a.overlay_color || '#fff',
+									fontSize: (a.overlay_size || 10) + 'px',
+									fontWeight: 700,
+									letterSpacing: '.14em',
+									textTransform: 'uppercase'
+								}
+							}, a.overlay_text) : null
+						),
+						/* Body */
+						el('div', { style: { padding: previewPad } },
+							a.eyebrow ? el('div', {
+								style: { color: a.eyebrow_color || '#1B77A7', fontSize: (a.eyebrow_size || 13) + 'px', fontWeight: 700, marginBottom: '6px' }
+							}, a.eyebrow) : null,
+							a.title ? el('div', {
+								style: {
+									color: a.title_color || '#061826',
+									fontSize: Math.min(a.title_size || 42, 36) + 'px',
+									fontWeight: a.title_weight || '900',
+									textTransform: a.title_transform || 'uppercase',
+									lineHeight: 1,
+									marginBottom: '10px',
+									fontFamily: a.title_font || 'inherit'
+								}
+							}, a.title) : null,
+							a.description ? el('div', {
+								style: { color: a.desc_color || '#3d5a6c', fontSize: (a.desc_size || 14) + 'px', lineHeight: 1.5, marginBottom: '14px' }
+							}, a.description) : null,
+							el('div', {
+								style: { color: a.link_color || '#1B77A7', fontSize: (a.link_size || 13) + 'px', fontWeight: 600 }
+							}, (a.link_text || 'Scopri') + ' →')
+						)
+					);
+
+					return el(Fragment, {}, controls, preview);
+				},
+				save: function () { return null; },
+			});
+			return;
+		}
+
+		/* ════════════════════════════════════════════
+		   calypso/sezione — sezione generica con InnerBlocks
+		   ════════════════════════════════════════════ */
+		if (info.name === 'calypso/sezione') {
+			var InnerBlocks = blockEditor ? blockEditor.InnerBlocks : null;
+			if (!InnerBlocks) return;
+
+			blocks.registerBlockType(info.name, {
+				title: info.title,
+				category: 'calypso',
+				icon: info.icon || 'layout',
+				attributes: info.attributes || {},
+				edit: function (props) {
+					var a   = props.attributes;
+					var set = props.setAttributes;
+
+					function colorRow(label, key) {
+						return el('div', { style: { marginBottom: '12px' } },
+							el('p', { style: { fontSize: '11px', fontWeight: 500, color: '#1e1e1e', margin: '0 0 6px' } }, label),
+							el(ColorPalette, {
+								colors: getThemeColors(),
+								value: a[key] || '',
+								onChange: function (v) { var u = {}; u[key] = v || ''; set(u); }
+							})
+						);
+					}
+
+					var mediaBtn = (MediaUploadCheck && MediaUpload)
+						? el(MediaUploadCheck, {},
+							el(MediaUpload, {
+								onSelect: function (media) { set({ bg_image_id: media.id }); },
+								allowedTypes: ['image'],
+								value: a.bg_image_id,
+								render: function (ref) {
+									return el(Button, {
+										onClick: ref.open,
+										variant: a.bg_image_id ? 'secondary' : 'primary',
+										style: { marginBottom: '8px' }
+									}, a.bg_image_id ? '⬡ Cambia sfondo' : '⬡ Scegli immagine sfondo');
+								}
+							}))
+						: null;
+
+					var controls = InspectorControls ? el(InspectorControls, {},
+
+						el(PanelBody, { title: 'Intestazione', initialOpen: true },
+							el(TextControl, {
+								label: 'Eyebrow',
+								value: a.eyebrow || '',
+								onChange: function (v) { set({ eyebrow: v }); }
+							}),
+							el(TextareaControl, {
+								label: 'Titolo (\\n per a capo)',
+								value: a.title || '',
+								rows: 3,
+								onChange: function (v) { set({ title: v }); }
+							}),
+							el(TextControl, {
+								label: 'Testo link intestazione (vuoto = nascosto)',
+								value: a.header_link_text || '',
+								onChange: function (v) { set({ header_link_text: v }); }
+							}),
+							a.header_link_text ? el(TextControl, {
+								label: 'URL link intestazione',
+								value: a.header_link_url || '',
+								type: 'url',
+								onChange: function (v) { set({ header_link_url: v }); }
+							}) : null
+						),
+
+						el(PanelBody, { title: 'Sfondo', initialOpen: false },
+							colorRow('Colore sfondo', 'bg_color'),
+							mediaBtn,
+							a.bg_image_id ? el(Button, {
+								onClick: function () { set({ bg_image_id: 0 }); },
+								variant: 'link',
+								isDestructive: true,
+								style: { marginBottom: '8px' }
+							}, 'Rimuovi immagine') : null
+						),
+
+						el(PanelBody, { title: 'Tipografia', initialOpen: false },
+							colorRow('Colore eyebrow / link', 'eyebrow_color'),
+							colorRow('Colore titolo', 'title_color'),
+							el(RangeControl, {
+								label: 'Dimensione titolo (px)',
+								value: a.title_size || 76,
+								min: 20,
+								max: 120,
+								step: 2,
+								onChange: function (v) { set({ title_size: v || 76 }); }
+							})
+						),
+
+						el(PanelBody, { title: 'Spaziatura', initialOpen: false },
+							el(RangeControl, {
+								label: 'Padding verticale (px)',
+								value: a.padding_y || 80,
+								min: 0,
+								max: 200,
+								step: 8,
+								onChange: function (v) { set({ padding_y: v || 80 }); }
+							}),
+							el(RangeControl, {
+								label: 'Larghezza massima (px)',
+								value: a.max_width || 1320,
+								min: 400,
+								max: 1920,
+								step: 20,
+								onChange: function (v) { set({ max_width: v || 1320 }); }
+							})
+						)
+
+					) : null;
+
+					var titleLines = (a.title || '').split('\\n');
+					var hasHeader  = a.eyebrow || a.title || (a.header_link_text && a.header_link_url);
+
+					return el(Fragment, {},
+						controls,
+						el('section', {
+							style: { backgroundColor: a.bg_color || '#dff4f8', fontFamily: 'system-ui,sans-serif' }
+						},
+							el('div', {
+								style: {
+									maxWidth: (a.max_width || 1320) + 'px',
+									margin: '0 auto',
+									padding: (a.padding_y || 80) + 'px 48px'
+								}
+							},
+								hasHeader ? el('div', {
+									style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '24px', marginBottom: '48px', flexWrap: 'wrap' }
+								},
+									el('div', {},
+										a.eyebrow ? el('span', {
+											style: { display: 'block', fontWeight: 600, letterSpacing: '.16em', textTransform: 'uppercase', fontSize: '13px', color: a.eyebrow_color || '#1B77A7', marginBottom: '16px' }
+										}, a.eyebrow) : null,
+										a.title ? el('h2', {
+											style: { fontSize: Math.min(a.title_size || 76, 60) + 'px', lineHeight: .95, color: a.title_color || '#1B77A7', margin: 0, fontWeight: 900 }
+										}, titleLines.join(' · ')) : null
+									),
+									(a.header_link_text) ? el('span', {
+										style: { flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 600, color: a.eyebrow_color || '#1B77A7' }
+									}, a.header_link_text + ' →') : null
+								) : null,
+								el(InnerBlocks, {})
+							)
+						)
+					);
+				},
+				save: function () {
+					return el(InnerBlocks.Content, {});
+				},
 			});
 			return;
 		}
