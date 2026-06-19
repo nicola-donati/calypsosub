@@ -1,7 +1,19 @@
 <?php
+use Brain\Monkey;
+use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
 
 class Test_Gallery_Helpers extends TestCase {
+
+	protected function setUp(): void {
+		parent::setUp();
+		Monkey\setUp();
+	}
+
+	protected function tearDown(): void {
+		Monkey\tearDown();
+		parent::tearDown();
+	}
 
 	public function test_cell_style_desktop_pattern(): void {
 		$expected = [
@@ -125,5 +137,50 @@ class Test_Gallery_Helpers extends TestCase {
 				'operator' => 'EXISTS',
 			],
 		], $args['tax_query'] );
+	}
+
+	public function test_resolve_overlay_text_prefers_meta(): void {
+		Functions\when( '_x' )->returnArg( 1 );
+		Functions\expect( 'get_post_meta' )
+			->once()
+			->with( 42, '_calypso_overlay_text', true )
+			->andReturn( 'Tartaruga · Caretta caretta' );
+
+		$result = Calypsosub_Gallery_Helpers::resolve_overlay_text( 42 );
+
+		$this->assertSame( 'Tartaruga · Caretta caretta', $result );
+	}
+
+	public function test_resolve_overlay_text_falls_back_to_caption(): void {
+		Functions\when( 'get_post_meta' )->justReturn( '' );
+		Functions\expect( 'get_the_excerpt' )
+			->once()
+			->with( 42 )
+			->andReturn( 'corallo rosso · 38m' );
+
+		$result = Calypsosub_Gallery_Helpers::resolve_overlay_text( 42 );
+
+		$this->assertSame( 'corallo rosso · 38m', $result );
+	}
+
+	public function test_resolve_overlay_text_falls_back_to_alt(): void {
+		Functions\when( 'get_the_excerpt' )->justReturn( '' );
+		Functions\when( 'get_post_meta' )
+			->alias( function ( $id, $key, $single ) {
+				return $key === '_wp_attachment_image_alt' ? 'murena' : '';
+			} );
+
+		$result = Calypsosub_Gallery_Helpers::resolve_overlay_text( 42 );
+
+		$this->assertSame( 'murena', $result );
+	}
+
+	public function test_resolve_overlay_text_empty_when_all_empty(): void {
+		Functions\when( 'get_post_meta' )->justReturn( '' );
+		Functions\when( 'get_the_excerpt' )->justReturn( '' );
+
+		$result = Calypsosub_Gallery_Helpers::resolve_overlay_text( 42 );
+
+		$this->assertSame( '', $result );
 	}
 }

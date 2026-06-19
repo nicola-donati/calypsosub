@@ -71,4 +71,19 @@ class Calypsosub_Gallery_Helpers {
 		];
 		return $args;
 	}
+
+	public static function resolve_overlay_text( int $attachment_id ): string {
+		$meta = get_post_meta( $attachment_id, '_calypso_overlay_text', true );
+		if ( is_string( $meta ) && trim( $meta ) !== '' ) {
+			return $meta;
+		}
+
+		$caption = get_the_excerpt( $attachment_id );
+		if ( is_string( $caption ) && trim( $caption ) !== '' ) {
+			return $caption;
+		}
+
+		$alt = get_post_meta( $attachment_id, '_wp_attachment_image_alt', true );
+		return is_string( $alt ) ? $alt : '';
+	}
 }
