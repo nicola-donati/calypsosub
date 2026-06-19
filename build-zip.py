@@ -6,6 +6,7 @@ Uso: python3 build-zip.py [--output DIR]
 import argparse
 import os
 import re
+import stat
 import sys
 import zipfile
 from pathlib import Path
@@ -64,6 +65,14 @@ EXCLUDE_PATTERNS = [
 _EXCLUDE_RE = [re.compile(p, re.IGNORECASE) for p in EXCLUDE_PATTERNS]
 
 
+def _write(zf: zipfile.ZipFile, file_path: Path, arcname: str) -> None:
+    """Add file with explicit Unix permissions (fixes Windows→Linux permission loss)."""
+    info = zipfile.ZipInfo(arcname)
+    info.compress_type = zipfile.ZIP_DEFLATED
+    info.external_attr = (stat.S_IFREG | 0o644) << 16
+    zf.writestr(info, file_path.read_bytes())
+
+
 def should_exclude(rel_path: str) -> bool:
     """True se il file deve essere escluso dallo ZIP."""
     normalized = rel_path.replace("\\", "/")
@@ -103,7 +112,7 @@ def build_zip(repo_root: Path, output_dir: Path) -> Path:
                 if should_exclude(rel):
                     skipped.append(rel)
                     continue
-                zf.write(src, rel)
+                _write(zf, src, rel)
                 added.append(rel)
 
             elif src.is_dir():
@@ -114,7 +123,7 @@ def build_zip(repo_root: Path, output_dir: Path) -> Path:
                     if should_exclude(rel):
                         skipped.append(rel)
                         continue
-                    zf.write(file_path, rel)
+                    _write(zf, file_path, rel)
                     added.append(rel)
 
     return zip_path, added, skipped
@@ -163,7 +172,7 @@ def main():
             print(f"  - {f}")
 
     size_kb = zip_path.stat().st_size / 1024
-    print(f"\n✓ {zip_path.name}  ({size_kb:.1f} KB)")
+    print(f"\n[OK] {zip_path.name}  ({size_kb:.1f} KB)")
 
 
 if __name__ == "__main__":

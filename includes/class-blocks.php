@@ -92,9 +92,20 @@ class Calypsosub_Blocks {
 				'bg_image_id'      => [ 'type' => 'integer', 'default' => 0 ],
 				'padding_y'        => [ 'type' => 'integer', 'default' => 80 ],
 				'max_width'        => [ 'type' => 'integer', 'default' => 1320 ],
-				'eyebrow_color'    => [ 'type' => 'string',  'default' => '#1B77A7' ],
-				'title_color'      => [ 'type' => 'string',  'default' => '#1B77A7' ],
-				'title_size'       => [ 'type' => 'integer', 'default' => 76 ],
+				'eyebrow_color'          => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'title_color'            => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'title_size'             => [ 'type' => 'integer', 'default' => 76 ],
+				'eyebrow_size'           => [ 'type' => 'integer', 'default' => 13 ],
+				'eyebrow_letter_spacing' => [ 'type' => 'integer', 'default' => 16 ],
+				'eyebrow_font_weight'    => [ 'type' => 'integer', 'default' => 600 ],
+				'eyebrow_margin_bottom'  => [ 'type' => 'integer', 'default' => 16 ],
+				'title_line_height'      => [ 'type' => 'integer', 'default' => 95 ],
+				'title_font_weight'      => [ 'type' => 'integer', 'default' => 900 ],
+				'link_color'             => [ 'type' => 'string',  'default' => '' ],
+				'link_size'              => [ 'type' => 'integer', 'default' => 14 ],
+				'link_font_weight'       => [ 'type' => 'integer', 'default' => 600 ],
+				'padding_x'              => [ 'type' => 'integer', 'default' => 48 ],
+				'head_margin_bottom'     => [ 'type' => 'integer', 'default' => 48 ],
 			],
 		],
 		'calypso/promo-card' => [
@@ -1027,6 +1038,26 @@ class Calypsosub_Blocks {
 							})
 						);
 					}
+					var fwOpts = [
+						{ value: '300', label: 'Light (300)' },
+						{ value: '400', label: 'Regular (400)' },
+						{ value: '500', label: 'Medium (500)' },
+						{ value: '600', label: 'SemiBold (600)' },
+						{ value: '700', label: 'Bold (700)' },
+						{ value: '800', label: 'ExtraBold (800)' },
+						{ value: '900', label: 'Black (900)' }
+					];
+					function weightRow(label, key, def) {
+						return SelectControl ? el(SelectControl, {
+							label: label,
+							value: String(a[key] || def),
+							options: fwOpts,
+							onChange: function (v) { var u = {}; u[key] = parseInt(v, 10); set(u); }
+						}) : null;
+					}
+					function subHead(text) {
+						return el('p', { style: { fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#757575', margin: '12px 0 6px', borderBottom: '1px solid #e0e0e0', paddingBottom: '5px' } }, text);
+					}
 
 					var mediaBtn = (MediaUploadCheck && MediaUpload)
 						? el(MediaUploadCheck, {},
@@ -1083,33 +1114,76 @@ class Calypsosub_Blocks {
 						),
 
 						el(PanelBody, { title: 'Tipografia', initialOpen: false },
-							colorRow('Colore eyebrow / link', 'eyebrow_color'),
-							colorRow('Colore titolo', 'title_color'),
+							subHead('Eyebrow'),
+							colorRow('Colore', 'eyebrow_color'),
 							el(RangeControl, {
-								label: 'Dimensione titolo (px)',
+								label: 'Dimensione (px)',
+								value: a.eyebrow_size || 13,
+								min: 8, max: 40, step: 1,
+								onChange: function (v) { set({ eyebrow_size: v || 13 }); }
+							}),
+							el(RangeControl, {
+								label: 'Letter spacing (em ×100)',
+								value: a.eyebrow_letter_spacing !== undefined ? a.eyebrow_letter_spacing : 16,
+								min: 0, max: 50, step: 1,
+								onChange: function (v) { set({ eyebrow_letter_spacing: v === undefined ? 16 : v }); }
+							}),
+							weightRow('Peso font', 'eyebrow_font_weight', 600),
+							el(RangeControl, {
+								label: 'Margine inferiore (px)',
+								value: a.eyebrow_margin_bottom !== undefined ? a.eyebrow_margin_bottom : 16,
+								min: 0, max: 60, step: 2,
+								onChange: function (v) { set({ eyebrow_margin_bottom: v === undefined ? 16 : v }); }
+							}),
+							subHead('Titolo'),
+							colorRow('Colore', 'title_color'),
+							el(RangeControl, {
+								label: 'Dimensione (px)',
 								value: a.title_size || 76,
-								min: 20,
-								max: 120,
-								step: 2,
+								min: 20, max: 120, step: 2,
 								onChange: function (v) { set({ title_size: v || 76 }); }
-							})
+							}),
+							el(RangeControl, {
+								label: 'Interlinea (×100, es. 95 = 0.95)',
+								value: a.title_line_height !== undefined ? a.title_line_height : 95,
+								min: 70, max: 200, step: 5,
+								onChange: function (v) { set({ title_line_height: v === undefined ? 95 : v }); }
+							}),
+							weightRow('Peso font', 'title_font_weight', 900),
+							subHead('Link intestazione'),
+							colorRow('Colore link (vuoto = usa colore eyebrow)', 'link_color'),
+							el(RangeControl, {
+								label: 'Dimensione (px)',
+								value: a.link_size || 14,
+								min: 10, max: 30, step: 1,
+								onChange: function (v) { set({ link_size: v || 14 }); }
+							}),
+							weightRow('Peso font', 'link_font_weight', 600)
 						),
 
 						el(PanelBody, { title: 'Spaziatura', initialOpen: false },
 							el(RangeControl, {
 								label: 'Padding verticale (px)',
 								value: a.padding_y || 80,
-								min: 0,
-								max: 200,
-								step: 8,
+								min: 0, max: 200, step: 8,
 								onChange: function (v) { set({ padding_y: v || 80 }); }
+							}),
+							el(RangeControl, {
+								label: 'Padding orizzontale (px)',
+								value: a.padding_x !== undefined ? a.padding_x : 48,
+								min: 0, max: 200, step: 4,
+								onChange: function (v) { set({ padding_x: v === undefined ? 48 : v }); }
+							}),
+							el(RangeControl, {
+								label: 'Margine sotto intestazione (px)',
+								value: a.head_margin_bottom !== undefined ? a.head_margin_bottom : 48,
+								min: 0, max: 120, step: 4,
+								onChange: function (v) { set({ head_margin_bottom: v === undefined ? 48 : v }); }
 							}),
 							el(RangeControl, {
 								label: 'Larghezza massima (px)',
 								value: a.max_width || 1320,
-								min: 400,
-								max: 1920,
-								step: 20,
+								min: 400, max: 1920, step: 20,
 								onChange: function (v) { set({ max_width: v || 1320 }); }
 							})
 						)
@@ -1118,6 +1192,7 @@ class Calypsosub_Blocks {
 
 					var titleLines = (a.title || '').split('\\n');
 					var hasHeader  = a.eyebrow || a.title || (a.header_link_text && a.header_link_url);
+					var effLinkColor = (a.link_color && a.link_color !== '') ? a.link_color : (a.eyebrow_color || '#1B77A7');
 
 					return el(Fragment, {},
 						controls,
@@ -1128,22 +1203,22 @@ class Calypsosub_Blocks {
 								style: {
 									maxWidth: (a.max_width || 1320) + 'px',
 									margin: '0 auto',
-									padding: (a.padding_y || 80) + 'px 48px'
+									padding: (a.padding_y || 80) + 'px ' + (a.padding_x !== undefined ? a.padding_x : 48) + 'px'
 								}
 							},
 								hasHeader ? el('div', {
-									style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '24px', marginBottom: '48px', flexWrap: 'wrap' }
+									style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '24px', marginBottom: (a.head_margin_bottom !== undefined ? a.head_margin_bottom : 48) + 'px', flexWrap: 'wrap' }
 								},
 									el('div', {},
 										a.eyebrow ? el('span', {
-											style: { display: 'block', fontWeight: 600, letterSpacing: '.16em', textTransform: 'uppercase', fontSize: '13px', color: a.eyebrow_color || '#1B77A7', marginBottom: '16px' }
+											style: { display: 'block', fontWeight: a.eyebrow_font_weight || 600, letterSpacing: ((a.eyebrow_letter_spacing !== undefined ? a.eyebrow_letter_spacing : 16) / 100) + 'em', textTransform: 'uppercase', fontSize: (a.eyebrow_size || 13) + 'px', color: a.eyebrow_color || '#1B77A7', marginBottom: (a.eyebrow_margin_bottom !== undefined ? a.eyebrow_margin_bottom : 16) + 'px' }
 										}, a.eyebrow) : null,
 										a.title ? el('h2', {
-											style: { fontSize: Math.min(a.title_size || 76, 60) + 'px', lineHeight: .95, color: a.title_color || '#1B77A7', margin: 0, fontWeight: 900 }
+											style: { fontSize: Math.min(a.title_size || 76, 60) + 'px', lineHeight: (a.title_line_height !== undefined ? a.title_line_height : 95) / 100, color: a.title_color || '#1B77A7', margin: 0, fontWeight: a.title_font_weight || 900 }
 										}, titleLines.join(' · ')) : null
 									),
 									(a.header_link_text) ? el('span', {
-										style: { flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 600, color: a.eyebrow_color || '#1B77A7' }
+										style: { flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: (a.link_size || 14) + 'px', fontWeight: a.link_font_weight || 600, color: effLinkColor }
 									}, a.header_link_text + ' →') : null
 								) : null,
 								el(InnerBlocks, {})
