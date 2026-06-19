@@ -20,6 +20,7 @@ define( 'CALYPSOSUB_URL', plugin_dir_url( __FILE__ ) );
 require_once CALYPSOSUB_PATH . 'includes/helpers/functions.php';
 require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-brevetti.php';
 require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-livelli.php';
+require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-media-tag.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-docenti.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-uscite.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-eventi.php';
@@ -53,6 +54,7 @@ add_filter( 'use_block_editor_for_post_type', function ( bool $use, string $post
 
 ( new Calypsosub_Tax_Brevetti() )->init();
 ( new Calypsosub_Tax_Livelli() )->init();
+( new Calypsosub_Tax_Media_Tag() )->init();
 ( new Calypsosub_CPT_Docenti() )->init();
 ( new Calypsosub_CPT_Uscite() )->init();
 ( new Calypsosub_CPT_Eventi() )->init();
