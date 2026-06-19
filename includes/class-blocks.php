@@ -153,6 +153,27 @@ class Calypsosub_Blocks {
 				'link_size'        => [ 'type' => 'integer', 'default' => 13 ],
 			],
 		],
+		'calypso/galleria' => [
+			'file'  => 'block-galleria.php',
+			'title' => 'Galleria',
+			'icon'  => 'format-gallery',
+			'attributes' => [
+				'source_mode'            => [ 'type' => 'string',  'default' => 'all' ],
+				'tag_ids'                => [ 'type' => 'array',   'default' => [], 'items' => [ 'type' => 'integer' ] ],
+				'manual_ids'             => [ 'type' => 'array',   'default' => [], 'items' => [ 'type' => 'integer' ] ],
+				'max_items'              => [ 'type' => 'integer', 'default' => 12 ],
+				'lightbox'               => [ 'type' => 'boolean', 'default' => false ],
+				'gap'                    => [ 'type' => 'integer', 'default' => 0 ],
+				'row_height'             => [ 'type' => 'integer', 'default' => 200 ],
+				'max_width'              => [ 'type' => 'integer', 'default' => 1320 ],
+				'bg_color'               => [ 'type' => 'string',  'default' => '' ],
+				'overlay_bg'             => [ 'type' => 'string',  'default' => 'rgba(0,0,0,.35)' ],
+				'overlay_color'          => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'overlay_size'           => [ 'type' => 'integer', 'default' => 10 ],
+				'overlay_font_weight'    => [ 'type' => 'integer', 'default' => 400 ],
+				'overlay_letter_spacing' => [ 'type' => 'integer', 'default' => 12 ],
+			],
+		],
 	];
 
 	public function init(): void {
