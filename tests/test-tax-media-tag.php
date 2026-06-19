@@ -18,7 +18,7 @@ class Test_Tax_Media_Tag extends TestCase {
 	public function test_init_hooks_register_on_init_action(): void {
 		Functions\expect( 'add_action' )
 			->once()
-			->with( 'init', \Mockery::type( 'array' ) );
+			->with( 'init', [ \Mockery::type( Calypsosub_Tax_Media_Tag::class ), 'register' ] );
 
 		( new Calypsosub_Tax_Media_Tag() )->init();
 	}
