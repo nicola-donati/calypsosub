@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calypso Sub Arezzo — Home · Desktop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Calypso Sub Arezzo — Design tokens & shared styles */
+
+:root {
+  /* Colors — palette acquatica con sabbia e accento corallo */
+  --c-abyss: #061826;        /* nero blu profondissimo */
+  --c-deep: #0a2540;         /* deep ocean */
+  --c-wave: #1d6f9c;         /* mid blue */
+  --c-aqua: #5fb8c8;         /* turchese chiaro (logo) */
+  --c-foam: #cfe9ee;         /* schiuma chiarissima */
+  --c-sand: #e8d9b8;         /* sabbia (logo) */
+  --c-sand-warm: #d9c391;    /* sabbia calda */
+  --c-coral: #ff6b4a;        /* accento corallo per CTA */
+  --c-coral-deep: #e04a2a;
+  --c-bone: #f6f1e6;         /* bianco sabbia */
+  --c-ink: #0b1a26;          /* testo scuro */
+
+  /* Type */
+  --f-display: "Big Shoulders Display", "Anton", Impact, sans-serif;
+  --f-body: "DM Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Spacing */
+  --gutter: 24px;
+  --maxw: 1320px;
+  --radius: 4px;
+  --radius-lg: 12px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--f-body);
+  color: var(--c-ink);
+  background: var(--c-bone);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "ss01", "cv11";
+  line-height: 1.5;
+}
+
+/* Display utility */
+.display {
+  font-family: var(--f-display);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  font-family: var(--f-mono);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  font-weight: 500;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  font-family: var(--f-body);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .15s, box-shadow .15s, background .15s;
+  white-space: nowrap;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary {
+  background: var(--c-coral);
+  color: white;
+  box-shadow: 0 6px 18px -4px rgba(255,107,74,.55);
+}
+.btn-primary:hover { background: var(--c-coral-deep); }
+.btn-ghost {
+  background: transparent;
+  color: white;
+  border: 1.5px solid rgba(255,255,255,.4);
+  padding: 12.5px 22px;
+}
+.btn-ghost:hover { border-color: white; background: rgba(255,255,255,.08); }
+.btn-dark {
+  background: var(--c-deep);
+  color: white;
+}
+.btn-dark:hover { background: var(--c-abyss); }
+
+/* Image placeholder — striped, with caption */
+.ph {
+  position: relative;
+  background:
+    repeating-linear-gradient(135deg,
+      rgba(10,37,64,.06) 0 1px,
+      transparent 1px 14px),
+    linear-gradient(180deg, var(--c-aqua), var(--c-wave) 60%, var(--c-deep));
+  color: rgba(255,255,255,.85);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  overflow: hidden;
+  isolation: isolate;
+}
+.ph::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.18), transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(0,0,0,.25), transparent 60%);
+  pointer-events: none;
+}
+.ph .ph-cap {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 10px 12px;
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(4px);
+  border-top-right-radius: 4px;
+  position: relative;
+  z-index: 1;
+}
+.ph.ph-sand {
+  background:
+    repeating-linear-gradient(135deg,
+      rgba(10,37,64,.07) 0 1px,
+      transparent 1px 14px),
+    linear-gradient(180deg, var(--c-sand) 0%, var(--c-sand-warm) 100%);
+  color: rgba(11,26,38,.7);
+}
+.ph.ph-sand .ph-cap {
+  background: rgba(11,26,38,.18);
+  color: rgba(11,26,38,.85);
+}
+
+/* Page section */
+.section {
+  padding: 96px 48px;
+}
+.container {
+  max-width: var(--maxw);
+  margin: 0 auto;
+}
+
+/* Stats counter row */
+.stat-num {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 88px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--c-deep);
+}
+.stat-label {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(11,26,38,.6);
+  margin-top: 8px;
+}
+
+/* Mark / underline accent */
+.mark {
+  background: linear-gradient(transparent 60%, rgba(95,184,200,.45) 60%);
+  padding: 0 4px;
+}
+
+/* Selection */
+::selection { background: var(--c-coral); color: white; }
+
+:root{--c-coral:#e9bf26;--c-aqua:#26cbfb;--c-deep:#1b77a7;--c-sand:#e8d9b8;--f-display:"Big Shoulders Display",Impact,sans-serif;}
+html,body{background:#fff;}
+body{width:1440px;margin:0 auto;}
+.e0{background: var(--c-bone); color: var(--c-ink); overflow: hidden;}
+.e1{position: relative; height: 1020px; color: white; overflow: hidden;}
+.e2{position: absolute; inset: 0px; overflow: hidden; background: rgb(10, 37, 64);}
+.e3{position: absolute; inset: 0px; width: 100%; height: 100%; object-fit: cover; object-position: center center;}
+.e4{position: absolute; bottom: 0px; left: 0px;}
+.e5{position: absolute; inset: 0px; background: linear-gradient(rgba(6, 24, 38, 0.55) 0%, rgba(6, 24, 38, 0.15) 40%, rgba(6, 24, 38, 0.85) 100%);}
+.e6{position: absolute; top: 0px; left: 0px; right: 0px; z-index: 10; padding: 24px 48px; display: flex; align-items: center; justify-content: space-between;}
+.e7{display: flex; align-items: center; gap: 12px;}
+.e8{height: 44px; width: auto; display: block; filter: drop-shadow(rgba(0, 0, 0, 0.3) 0px 1px 2px);}
+.e9{display: flex; align-items: center; gap: 36px;}
+.e10{color: rgba(255, 255, 255, 0.85); text-decoration: none; font-size: 14px; font-weight: 500; letter-spacing: 0.01em; position: relative; padding-bottom: 4px; border-bottom: 1.5px solid transparent;}
+.e11{display: flex; gap: 12px; align-items: center;}
+.e12{color: rgba(255, 255, 255, 0.85); font-size: 13px; text-decoration: none;}
+.e13{padding: 10px 18px; font-size: 13px;}
+.e14{position: absolute; left: 48px; right: 48px; bottom: 80px; display: flex; align-items: flex-end; justify-content: space-between; gap: 60px;}
+.e15{max-width: 820px;}
+.e16{color: var(--c-aqua); display: flex; align-items: center; gap: 10px;}
+.e17{font-size: 108px; margin: 20px 0px 8px; max-width: 820px;}
+.e18{font-style: normal; color: var(--c-aqua);}
+.e19{font-size: 19px; line-height: 1.5; max-width: 540px; opacity: 0.92; margin-top: 28px;}
+.e20{display: flex; gap: 12px; margin-top: 36px;}
+.e21{background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 14px; padding: 20px; width: 280px; color: white;}
+.e22{display: flex; align-items: center; gap: 8px; margin-bottom: 12px;}
+.e23{width: 8px; height: 8px; background: rgb(84, 224, 154); border-radius: 50%; box-shadow: rgba(84, 224, 154, 0.25) 0px 0px 0px 4px;}
+.e24{font-size: 10px;}
+.e25{font-size: 38px; line-height: 0.95;}
+.e26{font-size: 13px; opacity: 0.85; margin-top: 12px;}
+.e27{margin-top: 14px; font-size: 12px; font-family: var(--f-mono); opacity: 0.7;}
+.e28{margin-top: 14px; display: inline-flex; align-items: center; gap: 6px; color: var(--c-aqua); font-size: 13px; text-decoration: none; font-weight: 600;}
+.e29{position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); color: rgba(255, 255, 255, 0.7); font-size: 11px; font-family: var(--f-mono); letter-spacing: 0.18em; display: flex; flex-direction: column; align-items: center; gap: 8px;}
+.e30{background: var(--c-deep); color: white; padding: 20px 0px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); overflow: hidden;}
+.e31{display: flex; gap: 56px; white-space: nowrap; font-family: var(--f-display); font-size: 28px; letter-spacing: 0.04em; text-transform: uppercase;}
+.e32{color: var(--c-coral);}
+.e33{padding-top: 120px; padding-bottom: 96px;}
+.e34{display: grid; grid-template-columns: 1.1fr 1fr; gap: 100px; align-items: flex-end;}
+.e35{color: var(--c-wave); margin-bottom: 20px;}
+.e36{font-size: 92px; margin: 0px; color: var(--c-deep);}
+.e37{font-size: 18px; line-height: 1.6; color: rgba(11, 26, 38, 0.78); margin: 0px;}
+.e38{display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 56px;}
+.e39{background: var(--c-deep); color: white; padding-top: 96px; padding-bottom: 96px;}
+.e40{display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 56px;}
+.e41{color: var(--c-aqua); margin-bottom: 16px;}
+.e42{font-size: 76px; margin: 0px; max-width: 700px;}
+.e43{color: var(--c-aqua); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600;}
+.e44{display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;}
+.e45{background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;}
+.e46{height: 200px; border-radius: 0px; position: relative; overflow: hidden; background: rgb(10, 37, 64);}
+.e47{padding: 24px;}
+.e48{font-family: var(--f-mono); font-size: 11px; color: var(--c-coral); margin-bottom: 12px;}
+.e49{font-size: 36px; margin: 0px 0px 12px; color: white;}
+.e50{font-size: 14px; line-height: 1.55; color: rgba(255, 255, 255, 0.7); margin: 0px;}
+.e51{margin-top: 20px; display: inline-flex; align-items: center; gap: 6px; color: var(--c-aqua); text-decoration: none; font-size: 13px; font-weight: 600;}
+.e52{background: var(--c-foam);}
+.e53{color: var(--c-wave); margin-bottom: 16px;}
+.e54{font-size: 76px; margin: 0px; color: var(--c-deep); max-width: 720px;}
+.e55{color: var(--c-deep); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600;}
+.e56{background: white; border-radius: 16px; overflow: hidden; box-shadow: rgba(10, 37, 64, 0.3) 0px 30px 80px -40px;}
+.e57{display: grid; grid-template-columns: 120px 1fr 180px 220px 140px 160px; align-items: center; padding: 24px 28px; border-top: medium; background: rgba(255, 107, 74, 0.04);}
+.e58{display: flex; flex-direction: column; align-items: flex-start;}
+.e59{font-family: var(--f-mono); font-size: 11px; color: rgba(11, 26, 38, 0.5); letter-spacing: 0.12em;}
+.e60{font-size: 44px; color: var(--c-deep); line-height: 1;}
+.e61{font-family: var(--f-mono); font-size: 11px; color: rgba(11, 26, 38, 0.5); letter-spacing: 0.12em; margin-top: 2px;}
+.e62{font-size: 26px; color: var(--c-deep); margin-bottom: 4px;}
+.e63{display: flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(11, 26, 38, 0.65);}
+.e64{display: inline-flex; padding: 4px 10px; background: rgba(29, 111, 156, 0.1); color: var(--c-wave); border-radius: 999px; font-size: 11px; font-weight: 600; justify-self: start;}
+.e65{font-family: var(--f-mono); font-size: 11px; color: rgba(11, 26, 38, 0.6); letter-spacing: 0.06em; text-transform: uppercase;}
+.e66{color: rgba(11, 26, 38, 0.45); font-size: 10px; margin-bottom: 4px;}
+.e67{font-size: 12px; color: var(--c-coral); font-family: var(--f-mono); letter-spacing: 0.08em;}
+.e68{justify-self: end;}
+.e69{display: grid; grid-template-columns: 120px 1fr 180px 220px 140px 160px; align-items: center; padding: 24px 28px; border-top: 1px solid rgba(11, 26, 38, 0.06); background: transparent;}
+.e70{font-size: 12px; color: rgba(11, 26, 38, 0.55); font-family: var(--f-mono); letter-spacing: 0.08em;}
+.e71{padding: 0px; background: var(--c-bone);}
+.e72{display: grid; grid-template-columns: repeat(6, 1fr); grid-auto-rows: 200px; gap: 0px;}
+.e73{grid-area: span 2 / span 3; position: relative; overflow: hidden; background: rgb(10, 37, 64);}
+.e74{grid-column: span 2; position: relative; overflow: hidden; background: rgb(10, 37, 64);}
+.e75{grid-column: span 1; position: relative; overflow: hidden; background: rgb(10, 37, 64);}
+.e76{grid-area: span 2 / span 2; position: relative; overflow: hidden; background: rgb(10, 37, 64);}
+.e77{padding-top: 120px; padding-bottom: 120px;}
+.e78{display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;}
+.e79{color: var(--c-coral); margin-bottom: 16px;}
+.e80{font-size: 88px; margin: 0px 0px 24px; color: var(--c-deep);}
+.e81{font-size: 17px; line-height: 1.6; color: rgba(11, 26, 38, 0.75); max-width: 480px;}
+.e82{background: transparent; color: var(--c-deep); border: 1.5px solid var(--c-deep);}
+.e83{display: flex; flex-direction: column; gap: 12px;}
+.e84{background: var(--c-deep); color: white; padding: 24px 28px; border-radius: 12px; border: medium; display: grid; grid-template-columns: 90px 1fr auto; align-items: center; gap: 24px;}
+.e85{display: inline-flex; padding: 4px 10px; background: rgba(255, 107, 74, 0.2); color: var(--c-coral); border-radius: 999px; font-size: 11px; font-weight: 600; justify-self: start;}
+.e86{font-size: 26px; margin-bottom: 4px;}
+.e87{font-size: 13px; opacity: 0.7;}
+.e88{font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.08em; opacity: 0.7; text-transform: uppercase; text-align: right;}
+.e89{opacity: 0.6; font-size: 9px; margin-bottom: 4px;}
+.e90{background: white; color: var(--c-ink); padding: 24px 28px; border-radius: 12px; border: 1px solid rgba(11, 26, 38, 0.08); display: grid; grid-template-columns: 90px 1fr auto; align-items: center; gap: 24px;}
+.e91{background: var(--c-sand); padding-top: 96px; padding-bottom: 96px;}
+.e92{color: var(--c-deep); margin-bottom: 16px;}
+.e93{background: white; border-radius: 12px; overflow: hidden;}
+.e94{height: 280px; border-radius: 0px; position: relative; overflow: hidden; background: rgb(10, 37, 64);}
+.e95{padding: 20px;}
+.e96{font-size: 24px; color: var(--c-deep); margin-bottom: 4px;}
+.e97{font-size: 13px; color: var(--c-wave); font-weight: 600;}
+.e98{display: flex; justify-content: space-between; margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(11, 26, 38, 0.08); font-family: var(--f-mono); font-size: 11px; color: rgba(11, 26, 38, 0.6); letter-spacing: 0.06em;}
+.e99{background: var(--c-abyss); color: white; padding-top: 120px; padding-bottom: 120px; position: relative; overflow: hidden;}
+.e100{margin-bottom: 80px; max-width: 800px;}
+.e101{font-size: 92px; margin: 0px 0px 24px;}
+.e102{font-size: 17px; line-height: 1.65; opacity: 0.78; max-width: 600px;}
+.e103{display: grid; grid-template-columns: repeat(5, 1fr); gap: 32px; position: relative;}
+.e104{position: absolute; left: 0px; right: 0px; top: 28px; height: 1px; background: rgba(95, 184, 200, 0.25);}
+.e105{position: relative;}
+.e106{width: 12px; height: 12px; border-radius: 50%; background: var(--c-aqua); margin-bottom: 18px; box-shadow: none;}
+.e107{font-size: 36px; color: var(--c-aqua); margin-bottom: 8px;}
+.e108{font-size: 18px; margin-bottom: 6px;}
+.e109{font-size: 13px; opacity: 0.7; line-height: 1.5;}
+.e110{width: 12px; height: 12px; border-radius: 50%; background: var(--c-coral); margin-bottom: 18px; box-shadow: rgba(255, 107, 74, 0.2) 0px 0px 0px 6px;}
+.e111{height: 480px; border-radius: 16px; position: relative; overflow: hidden; background: rgb(10, 37, 64);}
+.e112{color: var(--c-wave); margin-bottom: 24px;}
+.e113{font-size: 56px; color: var(--c-deep); line-height: 1.05; margin-bottom: 32px;}
+.e114{display: flex; align-items: center; gap: 14px;}
+.e115{width: 48px; height: 48px; border-radius: 50%; background: var(--c-aqua);}
+.e116{font-weight: 600; font-size: 15px; color: var(--c-deep);}
+.e117{font-size: 13px; color: rgba(11, 26, 38, 0.6);}
+.e118{position: relative; padding: 160px 48px; overflow: hidden; color: white;}
+.e119{position: absolute; inset: 0px; background: linear-gradient(rgba(6, 24, 38, 0.4), rgba(6, 24, 38, 0.85));}
+.e120{position: relative; text-align: center; max-width: 880px; margin: 0px auto;}
+.e121{color: var(--c-aqua); margin-bottom: 24px; justify-content: center; display: inline-flex;}
+.e122{font-size: 104px; margin: 0px; line-height: 0.92;}
+.e123{font-style: normal; color: var(--c-coral);}
+.e124{font-size: 19px; line-height: 1.55; opacity: 0.9; max-width: 580px; margin: 32px auto 40px;}
+.e125{display: flex; gap: 12px; justify-content: center;}
+.e126{padding: 18px 32px; font-size: 15px;}
+.e127{padding: 17px 30px;}
+.e128{display: flex; justify-content: center; gap: 56px; margin-top: 80px; opacity: 0.85;}
+.e129{text-align: center;}
+.e130{font-size: 32px; color: var(--c-aqua);}
+.e131{color: rgba(255, 255, 255, 0.7);}
+.e132{background: var(--c-abyss); color: white; padding: 72px 48px 32px;}
+.e133{max-width: 1320px; margin: 0px auto;}
+.e134{display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 48px; padding-bottom: 56px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);}
+.e135{margin-top: 24px; opacity: 0.65; font-size: 14px; line-height: 1.65; max-width: 320px;}
+.e136{display: flex; gap: 12px; margin-top: 24px;}
+.e137{width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; color: rgba(255, 255, 255, 0.75);}
+.e138{opacity: 0.5; margin-bottom: 16px;}
+.e139{display: flex; flex-direction: column; gap: 10px;}
+.e140{color: rgba(255, 255, 255, 0.75); text-decoration: none; font-size: 14px;}
+.e141{display: flex; justify-content: space-between; padding-top: 24px; font-size: 12px; opacity: 0.5;}
+</style>
+</head>
+<body>
+<div class="e0"><section class="e1"><div class="ph e2"><img src="https://images.unsplash.com/photo-1582967788606-a171c1080cb0?auto=format&fit=crop&w=2400&q=80" alt="hero · Argentario" loading="lazy" class="e3"><div class="ph-cap e4">hero · Argentario</div></div><div class="e5"></div><nav class="e6"><div class="e7"><img src="https://www.calypsosub.it/wp-content/uploads/2024/08/Logo-Calypso_2018_OK-1.png" alt="Calypso Sub Arezzo" class="e8"></div><div class="e9"><a href="#" class="e10">Corsi</a><a href="#" class="e10">Uscite</a><a href="#" class="e10">Istruttori</a><a href="#" class="e10">Storia</a><a href="#" class="e10">Contatti</a></div><div class="e11"><a href="#" class="e12">Accedi</a><button class="btn btn-primary e13">Iscriviti <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button></div></nav><div class="e14"><div class="e15"><div class="eyebrow e16"><svg width="20" height="20" viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1 6 C 4 1, 8 11, 12 6 S 20 1, 23 6"></path></svg> La subacquea ad Arezzo dal 1978</div><h1 class="display e17">Sotto la superficie<br>c’è un <em class="e18">altro mondo.</em></h1><p class="e19">Calypso Sub è il club di chi crede che il mare non si visiti, si abiti. Quasi cinquant'anni di immersioni, corsi e amicizie in profondità.</p><div class="e20"><button class="btn btn-primary">Diventa socio <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button><button class="btn btn-ghost"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Guarda il video</button></div></div><div class="e21"><div class="e22"><span class="e23"></span><span class="eyebrow e24">Prossima uscita</span></div><div class="display e25">SAB<br>16 MAG</div><div class="e26">Secche di Tor di Cala<br>Argentario · 2 immersioni</div><div class="e27">14 / 18 posti</div><a href="#" class="e28">Prenota →</a></div></div><div class="e29">SCORRI <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg></div></section><section class="e30"><div class="e31"><span>Argentario</span><span class="e32">★</span><span>Elba</span><span class="e32">★</span><span>Giglio</span><span class="e32">★</span><span>Giannutri</span><span class="e32">★</span><span>Croazia</span><span class="e32">★</span><span>Egadi</span><span class="e32">★</span><span>Argentario</span><span class="e32">★</span><span>Elba</span><span class="e32">★</span><span>Giglio</span><span class="e32">★</span><span>Giannutri</span><span class="e32">★</span><span>Croazia</span><span class="e32">★</span><span>Egadi</span><span class="e32">★</span><span>Argentario</span><span class="e32">★</span><span>Elba</span><span class="e32">★</span><span>Giglio</span><span class="e32">★</span><span>Giannutri</span><span class="e32">★</span><span>Croazia</span><span class="e32">★</span><span>Egadi</span><span class="e32">★</span></div></section><section class="section e33"><div class="container e34"><div><div class="eyebrow e35">01 — Chi siamo</div><h2 class="display e36">Una <span class="mark">famiglia</span><br>che respira<br>profondo.</h2></div><div><p class="e37">Siamo nati nel 1978 in un garage di via Roma con tre bombole, una macchina fotografica subacquea e una mappa dell'Argentario annerita dal sale. Quasi mezzo secolo dopo siamo ancora qui, con la stessa idea: il mare si gode meglio insieme.</p><div class="e38"><div><div class="stat-num">47</div><div class="stat-label">Anni di club</div></div><div><div class="stat-num">312</div><div class="stat-label">Soci attivi</div></div><div><div class="stat-num">14k</div><div class="stat-label">Immersioni</div></div><div><div class="stat-num">23</div><div class="stat-label">Istruttori</div></div></div></div></div></section><section class="section e39"><div class="container"><div class="e40"><div><div class="eyebrow e41">02 — Cosa offriamo</div><h2 class="display e42">Quattro modi<br>per vivere il mare.</h2></div><a href="#" class="e43">Tutte le attività <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></div><div class="e44"><div class="e45"><div class="ph e46"><img src="https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=1600&q=80" alt="corso piscina · sede Arezzo" loading="lazy" class="e3"><div class="ph-cap e4">corso piscina · sede Arezzo</div></div><div class="e47"><div class="e48">01</div><h3 class="display e49">Corsi</h3><p class="e50">Open Water, Advanced, Rescue, Apnea, Nitrox. Brevetti FIAS riconosciuti CMAS.</p><a href="#" class="e51">Scopri <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></div></div><div class="e45"><div class="ph e46"><img src="https://images.unsplash.com/photo-1502537745125-b5b94aac2fa1?auto=format&fit=crop&w=1600&q=80" alt="gommone uscita Argentario" loading="lazy" class="e3"><div class="ph-cap e4">gommone uscita Argentario</div></div><div class="e47"><div class="e48">02</div><h3 class="display e49">Uscite</h3><p class="e50">Argentario, Elba, Giglio. Ogni sabato da aprile a ottobre, due immersioni.</p><a href="#" class="e51">Scopri <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></div></div><div class="e45"><div class="ph e46"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1600&q=80" alt="cena sociale settembre" loading="lazy" class="e3"><div class="ph-cap e4">cena sociale settembre</div></div><div class="e47"><div class="e48">03</div><h3 class="display e49">Eventi</h3><p class="e50">Cene sociali, proiezioni, festa del club. Per soci e accompagnatori.</p><a href="#" class="e51">Scopri <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></div></div><div class="e45"><div class="ph e46"><img src="https://images.unsplash.com/photo-1505142468610-359e7d316be0?auto=format&fit=crop&w=1600&q=80" alt="viaggio Egadi 2025" loading="lazy" class="e3"><div class="ph-cap e4">viaggio Egadi 2025</div></div><div class="e47"><div class="e48">04</div><h3 class="display e49">Viaggi</h3><p class="e50">Una volta l'anno: Egitto, Maldive, Filippine. Solo per soci.</p><a href="#" class="e51">Scopri <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></div></div></div></div></section><section class="section e52"><div class="container"><div class="e40"><div><div class="eyebrow e53">03 — Prossime uscite</div><h2 class="display e54">Maggio e giugno,<br>il mare ci aspetta.</h2></div><a href="#" class="e55">Calendario completo <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></div><div class="e56"><div class="e57"><div class="e58"><span class="e59">SAB</span><span class="display e60">16</span><span class="e61">MAG</span></div><div><div class="display e62">Secche di Tor di Cala</div><div class="e63"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Argentario · 2 immersioni</div></div><div class="e64">Tutti i livelli</div><div class="e65"><div class="e66">RITROVO</div>07:30 · Cala Galera</div><div class="e67">● 4 posti</div><div class="e68"><button class="btn btn-dark e13">Prenota</button></div></div><div class="e69"><div class="e58"><span class="e59">DOM</span><span class="display e60">24</span><span class="e61">MAG</span></div><div><div class="display e62">Punta del Cinese</div><div class="e63"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Argentario · 2 immersioni</div></div><div class="e64">AOWD+</div><div class="e65"><div class="e66">RITROVO</div>08:00 · Porto S. Stefano</div><div class="e70">7 posti</div><div class="e68"><button class="btn btn-dark e13">Prenota</button></div></div><div class="e69"><div class="e58"><span class="e59">SAB</span><span class="display e60">06</span><span class="e61">GIU</span></div><div><div class="display e62">Scoglio del Remaiolo</div><div class="e63"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Isola d'Elba · weekend</div></div><div class="e64">OWD+</div><div class="e65"><div class="e66">RITROVO</div>Sab 06:30 · imbarco Piombino</div><div class="e70">10 posti</div><div class="e68"><button class="btn btn-dark e13">Prenota</button></div></div><div class="e69"><div class="e58"><span class="e59">SAB</span><span class="display e60">13</span><span class="e61">GIU</span></div><div><div class="display e62">Le Formiche</div><div class="e63"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Grosseto · 2 immersioni</div></div><div class="e64">AOWD+</div><div class="e65"><div class="e66">RITROVO</div>07:45 · Marina di Grosseto</div><div class="e70">12 posti</div><div class="e68"><button class="btn btn-dark e13">Prenota</button></div></div><div class="e69"><div class="e58"><span class="e59">SAB</span><span class="display e60">20</span><span class="e61">GIU</span></div><div><div class="display e62">Relitto KT</div><div class="e63"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Argentario · profonda</div></div><div class="e64">Deep Diver</div><div class="e65"><div class="e66">RITROVO</div>07:00 · Cala Galera</div><div class="e70">6 posti</div><div class="e68"><button class="btn btn-dark e13">Prenota</button></div></div></div></div></section><section class="e71"><div class="e72"><div class="ph e73"><img src="https://images.unsplash.com/photo-1582967788606-a171c1080cb0?auto=format&fit=crop&w=1600&q=80" alt="tartaruga · Caretta caretta" loading="lazy" class="e3"><div class="ph-cap e4">tartaruga · Caretta caretta</div></div><div class="ph e74"><img src="https://images.unsplash.com/photo-1546026423-cc4642628d2b?auto=format&fit=crop&w=1600&q=80" alt="corallo rosso · 38m" loading="lazy" class="e3"><div class="ph-cap e4">corallo rosso · 38m</div></div><div class="ph e75"><img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1600&q=80" alt="banco saraghi · Argentario" loading="lazy" class="e3"><div class="ph-cap e4">banco saraghi · Argentario</div></div><div class="ph e75"><img src="https://images.unsplash.com/photo-1535591273668-578e31182c4f?auto=format&fit=crop&w=1600&q=80" alt="murena · Punta Cinese" loading="lazy" class="e3"><div class="ph-cap e4">murena · Punta Cinese</div></div><div class="ph e74"><img src="https://images.unsplash.com/photo-1560275619-4662e36fa65c?auto=format&fit=crop&w=1600&q=80" alt="reef · Argentario" loading="lazy" class="e3"><div class="ph-cap e4">reef · Argentario</div></div><div class="ph e76"><img src="https://images.unsplash.com/photo-1582554671007-e3d56b21ddca?auto=format&fit=crop&w=1600&q=80" alt="gorgonia gialla · 32m" loading="lazy" class="e3"><div class="ph-cap e4">gorgonia gialla · 32m</div></div><div class="ph e75"><img src="https://images.unsplash.com/photo-1545671913-b89ac1b4ac10?auto=format&fit=crop&w=1600&q=80" alt="polpo · notturna Elba" loading="lazy" class="e3"><div class="ph-cap e4">polpo · notturna Elba</div></div><div class="ph e75"><img src="https://images.unsplash.com/photo-1559825481-12a05cc00344?auto=format&fit=crop&w=1600&q=80" alt="corallo · macro" loading="lazy" class="e3"><div class="ph-cap e4">corallo · macro</div></div><div class="ph e75"><img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=1600&q=80" alt="medusa" loading="lazy" class="e3"><div class="ph-cap e4">medusa</div></div><div class="ph e75"><img src="https://images.unsplash.com/photo-1551244072-5d12893278ab?auto=format&fit=crop&w=1600&q=80" alt="diver in deco · 5m" loading="lazy" class="e3"><div class="ph-cap e4">diver in deco · 5m</div></div></div></section><section class="section e77"><div class="container"><div class="e78"><div><div class="eyebrow e79">04 — Corsi</div><h2 class="display e80">Si comincia<br>da una bombola.</h2><p class="e81">Tutti i nostri corsi sono certificati FIAS, riconosciuti CMAS in tutto il mondo. Si parte dalla piscina di Arezzo, si finisce in mare aperto. Da settembre a giugno, due serate a settimana.</p><div class="e20"><button class="btn btn-primary">Tutti i corsi <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button><button class="btn e82">Prova gratuita in piscina</button></div></div><div class="e83"><div class="e84"><div class="e85">Base</div><div><div class="display e86">Open Water Diver</div><div class="e87">32 ore · 8 lezioni · brevetto FIAS</div></div><div class="e88"><div class="e89">DURATA</div>8 sett.</div></div><div class="e90"><div class="e64">Avanzato</div><div><div class="display e86">Advanced Open Water</div><div class="e87">24 ore · 5 immersioni · profondità 30m</div></div><div class="e88"><div class="e89">DURATA</div>5 sett.</div></div><div class="e90"><div class="e64">Specialty</div><div><div class="display e86">Apnea &amp; Nitrox</div><div class="e87">Specializzazioni per ampliare il tuo brevetto</div></div><div class="e88"><div class="e89">DURATA</div>4 sett.</div></div><div class="e90"><div class="e64">Pro</div><div><div class="display e86">Rescue Diver</div><div class="e87">40 ore · soccorso e gestione emergenze</div></div><div class="e88"><div class="e89">DURATA</div>10 sett.</div></div></div></div></div></section><section class="section e91"><div class="container"><div class="e40"><div><div class="eyebrow e92">05 — Istruttori</div><h2 class="display e54">Le persone con cui<br>scenderai sotto.</h2></div><a href="#" class="e55">Tutto il team <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></div><div class="e44"><div class="e93"><div class="ph e94"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80" alt="ritratto · Marco Bianchi" loading="lazy" class="e3"><div class="ph-cap e4">ritratto · Marco Bianchi</div></div><div class="e95"><div class="display e96">Marco Bianchi</div><div class="e97">Direttore tecnico</div><div class="e98"><span>dal 1992</span><span>M3 CMAS · Trimix</span></div></div></div><div class="e93"><div class="ph e94"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80" alt="ritratto · Elena Conti" loading="lazy" class="e3"><div class="ph-cap e4">ritratto · Elena Conti</div></div><div class="e95"><div class="display e96">Elena Conti</div><div class="e97">Istruttrice apnea</div><div class="e98"><span>dal 2008</span><span>AIDA Master</span></div></div></div><div class="e93"><div class="ph e94"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80" alt="ritratto · Luca Pieri" loading="lazy" class="e3"><div class="ph-cap e4">ritratto · Luca Pieri</div></div><div class="e95"><div class="display e96">Luca Pieri</div><div class="e97">Istruttore OWD</div><div class="e98"><span>dal 2014</span><span>M2 FIAS · DAN</span></div></div></div><div class="e93"><div class="ph e94"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=800&q=80" alt="ritratto · Sara Magi" loading="lazy" class="e3"><div class="ph-cap e4">ritratto · Sara Magi</div></div><div class="e95"><div class="display e96">Sara Magi</div><div class="e97">Biologa &amp; guida</div><div class="e98"><span>dal 2018</span><span>Bio · Photo · Macro</span></div></div></div></div></div></section><section class="section e99"><div class="container"><div class="e100"><div class="eyebrow e41">06 — Storia</div><h2 class="display e101"><em class="e18">1978.</em><br>Tre amici,<br>tre bombole.</h2><p class="e102">La storia del club si intreccia con quella della subacquea italiana. Da quando Cousteau aprì il blu agli sportivi negli anni '50, il mare è diventato luogo di pratica e di incontro. Calypso nasce in quella scia.</p></div><div class="e103"><div class="e104"></div><div class="e105"><div class="e106"></div><div class="display e107">1978</div><div class="display e108">Fondazione</div><div class="e109">Tre soci fondatori in via Roma, Arezzo.</div></div><div class="e105"><div class="e106"></div><div class="display e107">1985</div><div class="display e108">Prima sede</div><div class="e109">Apre la sede in via del Mare con piscina dedicata.</div></div><div class="e105"><div class="e106"></div><div class="display e107">1996</div><div class="display e108">Affiliazione FIAS</div><div class="e109">Il club entra in FIAS, riconoscimento CMAS.</div></div><div class="e105"><div class="e106"></div><div class="display e107">2010</div><div class="display e108">Centenario soci</div><div class="e109">Superiamo per la prima volta i 100 soci attivi.</div></div><div class="e105"><div class="e110"></div><div class="display e107">2024</div><div class="display e108">Oggi</div><div class="e109">312 soci, 23 istruttori, 47 anni di mare.</div></div></div></div></section><section class="section e77"><div class="container e78"><div class="ph e111"><img src="https://images.unsplash.com/photo-1530053969600-caed2596d242?auto=format&fit=crop&w=1600&q=80" alt="socia da 6 anni · Chiara, 34" loading="lazy" class="e3"><div class="ph-cap e4">socia da 6 anni · Chiara, 34</div></div><div><div class="eyebrow e112">07 — Voci dal club</div><div class="display e113"><span class="e32">“</span>Pensavo di iscrivermi per imparare a respirare sott'acqua. Sei anni dopo, ho trovato la mia <span class="mark">tribù</span>.<span class="e32">”</span></div><div class="e114"><div class="e115"></div><div><div class="e116">Chiara R.</div><div class="e117">Socia dal 2020 · AOWD</div></div></div></div></div></section><section class="e118"><div class="ph e2"><img src="https://images.unsplash.com/photo-1564865878688-9a244444042a?auto=format&fit=crop&w=1600&q=80" alt="immersione di gruppo · gommone Calypso" loading="lazy" class="e3"><div class="ph-cap e4">immersione di gruppo · gommone Calypso</div></div><div class="e119"></div><div class="container e120"><div class="eyebrow e121">08 — Iscriviti</div><h2 class="display e122">Il mare <em class="e123">è già</em> iniziato.</h2><p class="e124">Una sola quota associativa annuale che include uso piscina, assicurazione FIAS, sconti su corsi e accesso a tutte le uscite del club.</p><div class="e125"><button class="btn btn-primary e126">Iscriviti adesso <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button><button class="btn btn-ghost e127">Prima vieni a conoscerci</button></div><div class="e128"><div class="e129"><div class="display e130">Gratuita</div><div class="stat-label e131">Prima prova</div></div><div class="e129"><div class="display e130">FIAS · CMAS</div><div class="stat-label e131">Affiliazione</div></div><div class="e129"><div class="display e130">312</div><div class="stat-label e131">Soci attivi</div></div></div></div></section><footer class="e132"><div class="e133"><div class="e134"><div><div class="e7"><img src="https://www.calypsosub.it/wp-content/uploads/2024/08/Logo-Calypso_2018_OK-1.png" alt="Calypso Sub Arezzo" class="e8"></div><p class="e135">Il club subacqueo di Arezzo dal 1978. Affiliato FIAS Federazione Italiana Attività Subacquee.</p><div class="e136"><a href="#" class="e137"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a><a href="#" class="e137"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a><a href="#" class="e137"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg></a></div></div><div><div class="eyebrow e138">Club</div><div class="e139"><a href="#" class="e140">Storia</a><a href="#" class="e140">Istruttori</a><a href="#" class="e140">Sede</a><a href="#" class="e140">Affiliazione FIAS</a></div></div><div><div class="eyebrow e138">Attività</div><div class="e139"><a href="#" class="e140">Corsi</a><a href="#" class="e140">Uscite in barca</a><a href="#" class="e140">Cene sociali</a><a href="#" class="e140">Eventi</a></div></div><div><div class="eyebrow e138">Contatti</div><div class="e139"><a href="#" class="e140">info@calypsosub.it</a><a href="#" class="e140">+39 0575 000 000</a><a href="#" class="e140">Via del Mare 12, Arezzo</a><a href="#" class="e140">Lun–Ven · 18–20</a></div></div></div><div class="e141"><span>© 2026 Calypso Sub Arezzo · A.S.D.</span><span>Privacy · Cookie · Statuto</span></div></div></footer></div>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calypso Sub Arezzo — Storia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Calypso Sub Arezzo — Design tokens & shared styles */
+
+:root {
+  /* Colors — palette acquatica con sabbia e accento corallo */
+  --c-abyss: #061826;        /* nero blu profondissimo */
+  --c-deep: #0a2540;         /* deep ocean */
+  --c-wave: #1d6f9c;         /* mid blue */
+  --c-aqua: #5fb8c8;         /* turchese chiaro (logo) */
+  --c-foam: #cfe9ee;         /* schiuma chiarissima */
+  --c-sand: #e8d9b8;         /* sabbia (logo) */
+  --c-sand-warm: #d9c391;    /* sabbia calda */
+  --c-coral: #ff6b4a;        /* accento corallo per CTA */
+  --c-coral-deep: #e04a2a;
+  --c-bone: #f6f1e6;         /* bianco sabbia */
+  --c-ink: #0b1a26;          /* testo scuro */
+
+  /* Type */
+  --f-display: "Big Shoulders Display", "Anton", Impact, sans-serif;
+  --f-body: "DM Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Spacing */
+  --gutter: 24px;
+  --maxw: 1320px;
+  --radius: 4px;
+  --radius-lg: 12px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--f-body);
+  color: var(--c-ink);
+  background: var(--c-bone);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "ss01", "cv11";
+  line-height: 1.5;
+}
+
+/* Display utility */
+.display {
+  font-family: var(--f-display);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  font-family: var(--f-mono);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  font-weight: 500;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  font-family: var(--f-body);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .15s, box-shadow .15s, background .15s;
+  white-space: nowrap;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary {
+  background: var(--c-coral);
+  color: white;
+  box-shadow: 0 6px 18px -4px rgba(255,107,74,.55);
+}
+.btn-primary:hover { background: var(--c-coral-deep); }
+.btn-ghost {
+  background: transparent;
+  color: white;
+  border: 1.5px solid rgba(255,255,255,.4);
+  padding: 12.5px 22px;
+}
+.btn-ghost:hover { border-color: white; background: rgba(255,255,255,.08); }
+.btn-dark {
+  background: var(--c-deep);
+  color: white;
+}
+.btn-dark:hover { background: var(--c-abyss); }
+
+/* Image placeholder — striped, with caption */
+.ph {
+  position: relative;
+  background:
+    repeating-linear-gradient(135deg,
+      rgba(10,37,64,.06) 0 1px,
+      transparent 1px 14px),
+    linear-gradient(180deg, var(--c-aqua), var(--c-wave) 60%, var(--c-deep));
+  color: rgba(255,255,255,.85);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  overflow: hidden;
+  isolation: isolate;
+}
+.ph::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.18), transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(0,0,0,.25), transparent 60%);
+  pointer-events: none;
+}
+.ph .ph-cap {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 10px 12px;
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(4px);
+  border-top-right-radius: 4px;
+  position: relative;
+  z-index: 1;
+}
+.ph.ph-sand {
+  background:
+    repeating-linear-gradient(135deg,
+      rgba(10,37,64,.07) 0 1px,
+      transparent 1px 14px),
+    linear-gradient(180deg, var(--c-sand) 0%, var(--c-sand-warm) 100%);
+  color: rgba(11,26,38,.7);
+}
+.ph.ph-sand .ph-cap {
+  background: rgba(11,26,38,.18);
+  color: rgba(11,26,38,.85);
+}
+
+/* Page section */
+.section {
+  padding: 96px 48px;
+}
+.container {
+  max-width: var(--maxw);
+  margin: 0 auto;
+}
+
+/* Stats counter row */
+.stat-num {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 88px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--c-deep);
+}
+.stat-label {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(11,26,38,.6);
+  margin-top: 8px;
+}
+
+/* Mark / underline accent */
+.mark {
+  background: linear-gradient(transparent 60%, rgba(95,184,200,.45) 60%);
+  padding: 0 4px;
+}
+
+/* Selection */
+::selection { background: var(--c-coral); color: white; }
+
+:root{--c-coral:#e9bf26;--c-aqua:#26cbfb;--c-deep:#1b77a7;--c-sand:#e8d9b8;--f-display:"Big Shoulders Display",Impact,sans-serif;}
+html,body{background:#fff;}
+body{width:1440px;margin:0 auto;}
+.e0{background: var(--c-bone); color: var(--c-ink);}
+.e1{background: var(--c-deep); position: relative;}
+.e2{position: relative; top: 0px; left: 0px; right: 0px; z-index: 10; padding: 24px 48px; display: flex; align-items: center; justify-content: space-between;}
+.e3{display: flex; align-items: center; gap: 12px;}
+.e4{height: 44px; width: auto; display: block; filter: drop-shadow(rgba(0, 0, 0, 0.3) 0px 1px 2px);}
+.e5{display: flex; align-items: center; gap: 36px;}
+.e6{color: rgba(255, 255, 255, 0.85); text-decoration: none; font-size: 14px; font-weight: 500; letter-spacing: 0.01em; position: relative; padding-bottom: 4px; border-bottom: 1.5px solid transparent;}
+.e7{display: flex; gap: 12px; align-items: center;}
+.e8{color: rgba(255, 255, 255, 0.85); font-size: 13px; text-decoration: none;}
+.e9{padding: 10px 18px; font-size: 13px;}
+.e10{background: var(--c-deep); color: white; padding: 32px 48px 96px;}
+.e11{color: var(--c-aqua); margin-bottom: 16px;}
+.e12{font-size: 124px; margin: 0px; line-height: 0.92; max-width: 1100px;}
+.e13{font-style: normal; color: var(--c-aqua);}
+.e14{font-size: 18px; line-height: 1.6; opacity: 0.85; max-width: 700px; margin-top: 32px;}
+.e15{padding-top: 80px;}
+.e16{display: grid; grid-template-columns: 180px 1fr 1fr; gap: 60px; padding: 32px 0px; border-top: 1px solid rgba(11, 26, 38, 0.1);}
+.e17{font-size: 64px; color: var(--c-coral); line-height: 0.9;}
+.e18{font-size: 32px; color: var(--c-deep); margin: 0px 0px 12px; line-height: 1.05;}
+.e19{font-size: 15px; line-height: 1.65; color: rgba(11, 26, 38, 0.75); margin: 0px;}
+.e20{height: 200px; border-radius: 8px; position: relative; overflow: hidden; background: rgb(10, 37, 64);}
+.e21{position: absolute; inset: 0px; width: 100%; height: 100%; object-fit: cover; object-position: center center;}
+.e22{position: absolute; bottom: 0px; left: 0px;}
+.e23{background: var(--c-abyss); color: white; text-align: center;}
+.e24{max-width: 880px;}
+.e25{font-size: 64px; line-height: 1.05;}
+.e26{color: var(--c-coral);}
+.e27{margin-top: 32px; color: var(--c-aqua); justify-content: center; display: inline-flex;}
+.e28{background: var(--c-abyss); color: white; padding: 72px 48px 32px;}
+.e29{max-width: 1320px; margin: 0px auto;}
+.e30{display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 48px; padding-bottom: 56px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);}
+.e31{margin-top: 24px; opacity: 0.65; font-size: 14px; line-height: 1.65; max-width: 320px;}
+.e32{display: flex; gap: 12px; margin-top: 24px;}
+.e33{width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; color: rgba(255, 255, 255, 0.75);}
+.e34{opacity: 0.5; margin-bottom: 16px;}
+.e35{display: flex; flex-direction: column; gap: 10px;}
+.e36{color: rgba(255, 255, 255, 0.75); text-decoration: none; font-size: 14px;}
+.e37{display: flex; justify-content: space-between; padding-top: 24px; font-size: 12px; opacity: 0.5;}
+</style>
+</head>
+<body>
+<div class="e0"><div class="e1"><nav class="e2"><div class="e3"><img src="https://www.calypsosub.it/wp-content/uploads/2024/08/Logo-Calypso_2018_OK-1.png" alt="Calypso Sub Arezzo" class="e4"></div><div class="e5"><a href="#" class="e6">Corsi</a><a href="#" class="e6">Uscite</a><a href="#" class="e6">Istruttori</a><a href="#" class="e6">Storia</a><a href="#" class="e6">Contatti</a></div><div class="e7"><a href="#" class="e8">Accedi</a><button class="btn btn-primary e9">Iscriviti <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button></div></nav></div><section class="e10"><div class="container"><div class="eyebrow e11">Storia · 1978 — oggi</div><h1 class="display e12"><em class="e13">1978.</em><br>Tre amici,<br>tre bombole.</h1><p class="e14">La storia di Calypso si intreccia con quella della subacquea italiana. Da quando Cousteau aprì il blu agli sportivi negli anni '50, il mare è diventato un luogo di pratica, ricerca e incontro. Calypso nasce in quella scia.</p></div></section><section class="section e15"><div class="container"><div class="e16"><div class="display e17">1943</div><div><h3 class="display e18">Cousteau e Gagnan inventano l'aqualung</h3><p class="e19">L'autorespiratore moderno nasce a Marsiglia. Da quel momento il mare smette di essere appannaggio dei palombari.</p></div><div class="ph e20"><img src="https://images.unsplash.com/photo-1505142468610-359e7d316be0?auto=format&fit=crop&w=1600&q=80" alt="archivio · 1943" loading="lazy" class="e21"><div class="ph-cap e22">archivio · 1943</div></div></div><div class="e16"><div class="display e17">1959</div><div><h3 class="display e18">Nasce CMAS</h3><p class="e19">Confédération Mondiale des Activités Subaquatiques. Cousteau ne è il primo presidente. La subacquea sportiva ha la sua federazione mondiale.</p></div><div class="ph e20"><img src="https://images.unsplash.com/photo-1527431016-5ea83a4cf2d3?auto=format&fit=crop&w=1600&q=80" alt="archivio · 1959" loading="lazy" class="e21"><div class="ph-cap e22">archivio · 1959</div></div></div><div class="e16"><div class="display e17">1978</div><div><h3 class="display e18">Calypso fonda il club ad Arezzo</h3><p class="e19">Tre amici, due ingegneri e un dentista, affittano un garage in via Roma. Tre bombole d'acciaio, una compressore artigianale, e una mappa dell'Argentario.</p></div><div class="ph e20"><img src="https://images.unsplash.com/photo-1518877593221-1f28583780b4?auto=format&fit=crop&w=1600&q=80" alt="archivio · 1978" loading="lazy" class="e21"><div class="ph-cap e22">archivio · 1978</div></div></div><div class="e16"><div class="display e17">1985</div><div><h3 class="display e18">Apre la sede storica</h3><p class="e19">Via del Mare 12. Sede operativa, magazzino, prima compressoria a norma. La piscina comunale apre le porte al club per i corsi serali.</p></div><div class="ph e20"><img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fit=crop&w=1600&q=80" alt="archivio · 1985" loading="lazy" class="e21"><div class="ph-cap e22">archivio · 1985</div></div></div><div class="e16"><div class="display e17">1996</div><div><h3 class="display e18">Affiliazione FIAS</h3><p class="e19">Il club entra ufficialmente in FIAS, Federazione Italiana Attività Subacquee. Riconoscimento CMAS, brevetti spendibili in tutto il mondo.</p></div><div class="ph e20"><img src="https://images.unsplash.com/photo-1564865878688-9a244444042a?auto=format&fit=crop&w=1600&q=80" alt="archivio · 1996" loading="lazy" class="e21"><div class="ph-cap e22">archivio · 1996</div></div></div><div class="e16"><div class="display e17">2003</div><div><h3 class="display e18">Marco Bianchi direttore tecnico</h3><p class="e19">Una nuova generazione. Marco prende le redini dopo 11 anni come istruttore. La scuola si struttura, nascono le prime specialità.</p></div><div class="ph e20"><img src="https://images.unsplash.com/photo-1493787039806-2edcbe808750?auto=format&fit=crop&w=1600&q=80" alt="archivio · 2003" loading="lazy" class="e21"><div class="ph-cap e22">archivio · 2003</div></div></div><div class="e16"><div class="display e17">2010</div><div><h3 class="display e18">Centenario soci</h3><p class="e19">Per la prima volta il club supera i 100 soci attivi. Il modello Calypso — formazione + uscite + community — si consolida.</p></div><div class="ph e20"><img src="https://images.unsplash.com/photo-1502537745125-b5b94aac2fa1?auto=format&fit=crop&w=1600&q=80" alt="archivio · 2010" loading="lazy" class="e21"><div class="ph-cap e22">archivio · 2010</div></div></div><div class="e16"><div class="display e17">2018</div><div><h3 class="display e18">40 anni di mare</h3><p class="e19">La grande festa al porto di Cala Galera. 800 invitati, vecchi soci tornati per l'occasione, proiezioni dei filmati storici.</p></div><div class="ph e20"><img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80" alt="archivio · 2018" loading="lazy" class="e21"><div class="ph-cap e22">archivio · 2018</div></div></div><div class="e16"><div class="display e17">2024</div><div><h3 class="display e18">Oggi</h3><p class="e19">312 soci, 23 istruttori, 47 anni di immersioni. La compressoria è ancora in via del Mare, le bombole sono cambiate, lo spirito no.</p></div><div class="ph e20"><img src="https://images.unsplash.com/photo-1560275619-4662e36fa65c?auto=format&fit=crop&w=1600&q=80" alt="archivio · 2024" loading="lazy" class="e21"><div class="ph-cap e22">archivio · 2024</div></div></div></div></section><section class="section e23"><div class="container e24"><div class="display e25"><span class="e26">“</span>Il mare è tutto. Copre i sette decimi del globo terrestre. Il suo respiro è puro e sano.<span class="e26">”</span></div><div class="eyebrow e27">Jules Verne · 1869</div></div></section><footer class="e28"><div class="e29"><div class="e30"><div><div class="e3"><img src="https://www.calypsosub.it/wp-content/uploads/2024/08/Logo-Calypso_2018_OK-1.png" alt="Calypso Sub Arezzo" class="e4"></div><p class="e31">Il club subacqueo di Arezzo dal 1978. Affiliato FIAS Federazione Italiana Attività Subacquee.</p><div class="e32"><a href="#" class="e33"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a><a href="#" class="e33"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a><a href="#" class="e33"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg></a></div></div><div><div class="eyebrow e34">Club</div><div class="e35"><a href="#" class="e36">Storia</a><a href="#" class="e36">Istruttori</a><a href="#" class="e36">Sede</a><a href="#" class="e36">Affiliazione FIAS</a></div></div><div><div class="eyebrow e34">Attività</div><div class="e35"><a href="#" class="e36">Corsi</a><a href="#" class="e36">Uscite in barca</a><a href="#" class="e36">Cene sociali</a><a href="#" class="e36">Eventi</a></div></div><div><div class="eyebrow e34">Contatti</div><div class="e35"><a href="#" class="e36">info@calypsosub.it</a><a href="#" class="e36">+39 0575 000 000</a><a href="#" class="e36">Via del Mare 12, Arezzo</a><a href="#" class="e36">Lun–Ven · 18–20</a></div></div></div><div class="e37"><span>© 2026 Calypso Sub Arezzo · A.S.D.</span><span>Privacy · Cookie · Statuto</span></div></div></footer></div>
+</body>
+</html>

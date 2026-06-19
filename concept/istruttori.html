@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calypso Sub Arezzo — Istruttori</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Calypso Sub Arezzo — Design tokens & shared styles */
+
+:root {
+  /* Colors — palette acquatica con sabbia e accento corallo */
+  --c-abyss: #061826;        /* nero blu profondissimo */
+  --c-deep: #0a2540;         /* deep ocean */
+  --c-wave: #1d6f9c;         /* mid blue */
+  --c-aqua: #5fb8c8;         /* turchese chiaro (logo) */
+  --c-foam: #cfe9ee;         /* schiuma chiarissima */
+  --c-sand: #e8d9b8;         /* sabbia (logo) */
+  --c-sand-warm: #d9c391;    /* sabbia calda */
+  --c-coral: #ff6b4a;        /* accento corallo per CTA */
+  --c-coral-deep: #e04a2a;
+  --c-bone: #f6f1e6;         /* bianco sabbia */
+  --c-ink: #0b1a26;          /* testo scuro */
+
+  /* Type */
+  --f-display: "Big Shoulders Display", "Anton", Impact, sans-serif;
+  --f-body: "DM Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Spacing */
+  --gutter: 24px;
+  --maxw: 1320px;
+  --radius: 4px;
+  --radius-lg: 12px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--f-body);
+  color: var(--c-ink);
+  background: var(--c-bone);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "ss01", "cv11";
+  line-height: 1.5;
+}
+
+/* Display utility */
+.display {
+  font-family: var(--f-display);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  font-family: var(--f-mono);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  font-weight: 500;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  font-family: var(--f-body);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .15s, box-shadow .15s, background .15s;
+  white-space: nowrap;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary {
+  background: var(--c-coral);
+  color: white;
+  box-shadow: 0 6px 18px -4px rgba(255,107,74,.55);
+}
+.btn-primary:hover { background: var(--c-coral-deep); }
+.btn-ghost {
+  background: transparent;
+  color: white;
+  border: 1.5px solid rgba(255,255,255,.4);
+  padding: 12.5px 22px;
+}
+.btn-ghost:hover { border-color: white; background: rgba(255,255,255,.08); }
+.btn-dark {
+  background: var(--c-deep);
+  color: white;
+}
+.btn-dark:hover { background: var(--c-abyss); }
+
+/* Image placeholder — striped, with caption */
+.ph {
+  position: relative;
+  background:
+    repeating-linear-gradient(135deg,
+      rgba(10,37,64,.06) 0 1px,
+      transparent 1px 14px),
+    linear-gradient(180deg, var(--c-aqua), var(--c-wave) 60%, var(--c-deep));
+  color: rgba(255,255,255,.85);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  overflow: hidden;
+  isolation: isolate;
+}
+.ph::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.18), transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(0,0,0,.25), transparent 60%);
+  pointer-events: none;
+}
+.ph .ph-cap {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 10px 12px;
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(4px);
+  border-top-right-radius: 4px;
+  position: relative;
+  z-index: 1;
+}
+.ph.ph-sand {
+  background:
+    repeating-linear-gradient(135deg,
+      rgba(10,37,64,.07) 0 1px,
+      transparent 1px 14px),
+    linear-gradient(180deg, var(--c-sand) 0%, var(--c-sand-warm) 100%);
+  color: rgba(11,26,38,.7);
+}
+.ph.ph-sand .ph-cap {
+  background: rgba(11,26,38,.18);
+  color: rgba(11,26,38,.85);
+}
+
+/* Page section */
+.section {
+  padding: 96px 48px;
+}
+.container {
+  max-width: var(--maxw);
+  margin: 0 auto;
+}
+
+/* Stats counter row */
+.stat-num {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 88px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--c-deep);
+}
+.stat-label {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(11,26,38,.6);
+  margin-top: 8px;
+}
+
+/* Mark / underline accent */
+.mark {
+  background: linear-gradient(transparent 60%, rgba(95,184,200,.45) 60%);
+  padding: 0 4px;
+}
+
+/* Selection */
+::selection { background: var(--c-coral); color: white; }
+
+:root{--c-coral:#e9bf26;--c-aqua:#26cbfb;--c-deep:#1b77a7;--c-sand:#e8d9b8;--f-display:"Big Shoulders Display",Impact,sans-serif;}
+html,body{background:#fff;}
+body{width:1440px;margin:0 auto;}
+.e0{background: var(--c-bone); color: var(--c-ink);}
+.e1{background: var(--c-deep); position: relative;}
+.e2{position: relative; top: 0px; left: 0px; right: 0px; z-index: 10; padding: 24px 48px; display: flex; align-items: center; justify-content: space-between;}
+.e3{display: flex; align-items: center; gap: 12px;}
+.e4{height: 44px; width: auto; display: block; filter: drop-shadow(rgba(0, 0, 0, 0.3) 0px 1px 2px);}
+.e5{display: flex; align-items: center; gap: 36px;}
+.e6{color: rgba(255, 255, 255, 0.85); text-decoration: none; font-size: 14px; font-weight: 500; letter-spacing: 0.01em; position: relative; padding-bottom: 4px; border-bottom: 1.5px solid transparent;}
+.e7{display: flex; gap: 12px; align-items: center;}
+.e8{color: rgba(255, 255, 255, 0.85); font-size: 13px; text-decoration: none;}
+.e9{padding: 10px 18px; font-size: 13px;}
+.e10{background: var(--c-deep); color: white; padding: 32px 48px 96px;}
+.e11{color: var(--c-aqua); margin-bottom: 16px;}
+.e12{font-size: 124px; margin: 0px; line-height: 0.92; max-width: 1100px;}
+.e13{font-style: normal; color: var(--c-aqua);}
+.e14{font-size: 18px; line-height: 1.6; opacity: 0.85; max-width: 700px; margin-top: 32px;}
+.e15{padding-top: 80px;}
+.e16{display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;}
+.e17{background: white; border-radius: 12px; overflow: hidden; border: 1px solid rgba(11, 26, 38, 0.06);}
+.e18{height: 320px; border-radius: 0px; position: relative; overflow: hidden; background: rgb(10, 37, 64);}
+.e19{position: absolute; inset: 0px; width: 100%; height: 100%; object-fit: cover; object-position: center center;}
+.e20{position: absolute; bottom: 0px; left: 0px;}
+.e21{padding: 22px;}
+.e22{font-size: 26px; color: var(--c-deep); margin-bottom: 4px; line-height: 1;}
+.e23{font-size: 13px; color: var(--c-coral); font-weight: 600; margin-bottom: 14px;}
+.e24{font-size: 13px; line-height: 1.55; color: rgba(11, 26, 38, 0.7); margin: 0px;}
+.e25{margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(11, 26, 38, 0.08); font-family: var(--f-mono); font-size: 10px; color: rgba(11, 26, 38, 0.55); letter-spacing: 0.08em;}
+.e26{background: var(--c-abyss); color: white; padding: 72px 48px 32px;}
+.e27{max-width: 1320px; margin: 0px auto;}
+.e28{display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 48px; padding-bottom: 56px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);}
+.e29{margin-top: 24px; opacity: 0.65; font-size: 14px; line-height: 1.65; max-width: 320px;}
+.e30{display: flex; gap: 12px; margin-top: 24px;}
+.e31{width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; color: rgba(255, 255, 255, 0.75);}
+.e32{opacity: 0.5; margin-bottom: 16px;}
+.e33{display: flex; flex-direction: column; gap: 10px;}
+.e34{color: rgba(255, 255, 255, 0.75); text-decoration: none; font-size: 14px;}
+.e35{display: flex; justify-content: space-between; padding-top: 24px; font-size: 12px; opacity: 0.5;}
+</style>
+</head>
+<body>
+<div class="e0"><div class="e1"><nav class="e2"><div class="e3"><img src="https://www.calypsosub.it/wp-content/uploads/2024/08/Logo-Calypso_2018_OK-1.png" alt="Calypso Sub Arezzo" class="e4"></div><div class="e5"><a href="#" class="e6">Corsi</a><a href="#" class="e6">Uscite</a><a href="#" class="e6">Istruttori</a><a href="#" class="e6">Storia</a><a href="#" class="e6">Contatti</a></div><div class="e7"><a href="#" class="e8">Accedi</a><button class="btn btn-primary e9">Iscriviti <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button></div></nav></div><section class="e10"><div class="container"><div class="eyebrow e11">Il team · 23 istruttori</div><h1 class="display e12">Le persone con cui<br>scenderai <em class="e13">sotto.</em></h1><p class="e14">Tutti i nostri istruttori sono brevettati FIAS, con anni di esperienza nei mari toscani e oltre. Otto di loro insegnano stabilmente, gli altri quindici accompagnano le uscite e tengono i workshop di specialità.</p></div></section><section class="section e15"><div class="container"><div class="e16"><div class="e17"><div class="ph e18"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80" alt="ritratto · Marco" loading="lazy" class="e19"><div class="ph-cap e20">ritratto · Marco</div></div><div class="e21"><div class="display e22">Marco Bianchi</div><div class="e23">Direttore tecnico</div><p class="e24">Ha cominciato a 14 anni con il padre. Direttore tecnico dal 2003.</p><div class="e25">DAL 1992 · M3 CMAS · Trimix · 30 anni di mare</div></div></div><div class="e17"><div class="ph e18"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80" alt="ritratto · Elena" loading="lazy" class="e19"><div class="ph-cap e20">ritratto · Elena</div></div><div class="e21"><div class="display e22">Elena Conti</div><div class="e23">Istruttrice apnea</div><p class="e24">Campionessa regionale apnea profonda 2019. Insegna respirazione e tecnica.</p><div class="e25">DAL 2008 · AIDA Master · -52m PB</div></div></div><div class="e17"><div class="ph e18"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80" alt="ritratto · Luca" loading="lazy" class="e19"><div class="ph-cap e20">ritratto · Luca</div></div><div class="e21"><div class="display e22">Luca Pieri</div><div class="e23">Istruttore OWD</div><p class="e24">Il volto dei corsi base. Pazienza infinita, voce calma sott'acqua.</p><div class="e25">DAL 2014 · M2 FIAS · DAN First Aid</div></div></div><div class="e17"><div class="ph e18"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=800&q=80" alt="ritratto · Sara" loading="lazy" class="e19"><div class="ph-cap e20">ritratto · Sara</div></div><div class="e21"><div class="display e22">Sara Magi</div><div class="e23">Biologa &amp; guida</div><p class="e24">PhD biologia marina, conosce ogni nudibranco dell'Argentario per nome.</p><div class="e25">DAL 2018 · Bio · Photo · Macro</div></div></div><div class="e17"><div class="ph e18"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80" alt="ritratto · Andrea" loading="lazy" class="e19"><div class="ph-cap e20">ritratto · Andrea</div></div><div class="e21"><div class="display e22">Andrea Fanti</div><div class="e23">Capitano gommone</div><p class="e24">Nato a Porto S. Stefano, conosce il mare come gli aretini conoscono la Chimera.</p><div class="e25">DAL 2001 · Patente nautica · skipper</div></div></div><div class="e17"><div class="ph e18"><img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=800&q=80" alt="ritratto · Giulia" loading="lazy" class="e19"><div class="ph-cap e20">ritratto · Giulia</div></div><div class="e21"><div class="display e22">Giulia Trento</div><div class="e23">Istruttrice junior</div><p class="e24">Brevettata Calypso da bambina, oggi porta la prossima generazione.</p><div class="e25">DAL 2021 · M1 FIAS · Rescue</div></div></div><div class="e17"><div class="ph e18"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80" alt="ritratto · Paolo" loading="lazy" class="e19"><div class="ph-cap e20">ritratto · Paolo</div></div><div class="e21"><div class="display e22">Paolo Vannucci</div><div class="e23">Specialty Deep</div><p class="e24">Profondista. Conosce ogni relitto del Tirreno settentrionale.</p><div class="e25">DAL 2005 · Trimix · -100m</div></div></div><div class="e17"><div class="ph e18"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80" alt="ritratto · Chiara" loading="lazy" class="e19"><div class="ph-cap e20">ritratto · Chiara</div></div><div class="e21"><div class="display e22">Chiara Rossi</div><div class="e23">Istruttrice Nitrox</div><p class="e24">Tecnica e configurazione, la persona da chiamare quando l'attrezzatura non collabora.</p><div class="e25">DAL 2016 · M2 · Nitrox · Sidemount</div></div></div></div></div></section><footer class="e26"><div class="e27"><div class="e28"><div><div class="e3"><img src="https://www.calypsosub.it/wp-content/uploads/2024/08/Logo-Calypso_2018_OK-1.png" alt="Calypso Sub Arezzo" class="e4"></div><p class="e29">Il club subacqueo di Arezzo dal 1978. Affiliato FIAS Federazione Italiana Attività Subacquee.</p><div class="e30"><a href="#" class="e31"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a><a href="#" class="e31"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a><a href="#" class="e31"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg></a></div></div><div><div class="eyebrow e32">Club</div><div class="e33"><a href="#" class="e34">Storia</a><a href="#" class="e34">Istruttori</a><a href="#" class="e34">Sede</a><a href="#" class="e34">Affiliazione FIAS</a></div></div><div><div class="eyebrow e32">Attività</div><div class="e33"><a href="#" class="e34">Corsi</a><a href="#" class="e34">Uscite in barca</a><a href="#" class="e34">Cene sociali</a><a href="#" class="e34">Eventi</a></div></div><div><div class="eyebrow e32">Contatti</div><div class="e33"><a href="#" class="e34">info@calypsosub.it</a><a href="#" class="e34">+39 0575 000 000</a><a href="#" class="e34">Via del Mare 12, Arezzo</a><a href="#" class="e34">Lun–Ven · 18–20</a></div></div></div><div class="e35"><span>© 2026 Calypso Sub Arezzo · A.S.D.</span><span>Privacy · Cookie · Statuto</span></div></div></footer></div>
+</body>
+</html>

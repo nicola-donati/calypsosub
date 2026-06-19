@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calypso Sub Arezzo — Prenotazione · uscite & eventi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Calypso Sub Arezzo — Design tokens & shared styles */
+
+:root {
+  /* Colors — palette acquatica con sabbia e accento corallo */
+  --c-abyss: #061826;        /* nero blu profondissimo */
+  --c-deep: #0a2540;         /* deep ocean */
+  --c-wave: #1d6f9c;         /* mid blue */
+  --c-aqua: #5fb8c8;         /* turchese chiaro (logo) */
+  --c-foam: #cfe9ee;         /* schiuma chiarissima */
+  --c-sand: #e8d9b8;         /* sabbia (logo) */
+  --c-sand-warm: #d9c391;    /* sabbia calda */
+  --c-coral: #ff6b4a;        /* accento corallo per CTA */
+  --c-coral-deep: #e04a2a;
+  --c-bone: #f6f1e6;         /* bianco sabbia */
+  --c-ink: #0b1a26;          /* testo scuro */
+
+  /* Type */
+  --f-display: "Big Shoulders Display", "Anton", Impact, sans-serif;
+  --f-body: "DM Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Spacing */
+  --gutter: 24px;
+  --maxw: 1320px;
+  --radius: 4px;
+  --radius-lg: 12px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--f-body);
+  color: var(--c-ink);
+  background: var(--c-bone);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "ss01", "cv11";
+  line-height: 1.5;
+}
+
+/* Display utility */
+.display {
+  font-family: var(--f-display);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  font-family: var(--f-mono);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  font-weight: 500;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  font-family: var(--f-body);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .15s, box-shadow .15s, background .15s;
+  white-space: nowrap;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary {
+  background: var(--c-coral);
+  color: white;
+  box-shadow: 0 6px 18px -4px rgba(255,107,74,.55);
+}
+.btn-primary:hover { background: var(--c-coral-deep); }
+.btn-ghost {
+  background: transparent;
+  color: white;
+  border: 1.5px solid rgba(255,255,255,.4);
+  padding: 12.5px 22px;
+}
+.btn-ghost:hover { border-color: white; background: rgba(255,255,255,.08); }
+.btn-dark {
+  background: var(--c-deep);
+  color: white;
+}
+.btn-dark:hover { background: var(--c-abyss); }
+
+/* Image placeholder — striped, with caption */
+.ph {
+  position: relative;
+  background:
+    repeating-linear-gradient(135deg,
+      rgba(10,37,64,.06) 0 1px,
+      transparent 1px 14px),
+    linear-gradient(180deg, var(--c-aqua), var(--c-wave) 60%, var(--c-deep));
+  color: rgba(255,255,255,.85);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  overflow: hidden;
+  isolation: isolate;
+}
+.ph::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.18), transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(0,0,0,.25), transparent 60%);
+  pointer-events: none;
+}
+.ph .ph-cap {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 10px 12px;
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(4px);
+  border-top-right-radius: 4px;
+  position: relative;
+  z-index: 1;
+}
+.ph.ph-sand {
+  background:
+    repeating-linear-gradient(135deg,
+      rgba(10,37,64,.07) 0 1px,
+      transparent 1px 14px),
+    linear-gradient(180deg, var(--c-sand) 0%, var(--c-sand-warm) 100%);
+  color: rgba(11,26,38,.7);
+}
+.ph.ph-sand .ph-cap {
+  background: rgba(11,26,38,.18);
+  color: rgba(11,26,38,.85);
+}
+
+/* Page section */
+.section {
+  padding: 96px 48px;
+}
+.container {
+  max-width: var(--maxw);
+  margin: 0 auto;
+}
+
+/* Stats counter row */
+.stat-num {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 88px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--c-deep);
+}
+.stat-label {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(11,26,38,.6);
+  margin-top: 8px;
+}
+
+/* Mark / underline accent */
+.mark {
+  background: linear-gradient(transparent 60%, rgba(95,184,200,.45) 60%);
+  padding: 0 4px;
+}
+
+/* Selection */
+::selection { background: var(--c-coral); color: white; }
+
+:root{--c-coral:#e9bf26;--c-aqua:#26cbfb;--c-deep:#1b77a7;--c-sand:#e8d9b8;--f-display:"Big Shoulders Display",Impact,sans-serif;}
+html,body{background:#fff;}
+body{width:1440px;margin:0 auto;}
+.e0{background: var(--c-bone); color: var(--c-ink);}
+.e1{background: var(--c-deep); position: relative;}
+.e2{position: relative; top: 0px; left: 0px; right: 0px; z-index: 10; padding: 24px 48px; display: flex; align-items: center; justify-content: space-between;}
+.e3{display: flex; align-items: center; gap: 12px;}
+.e4{height: 44px; width: auto; display: block; filter: drop-shadow(rgba(0, 0, 0, 0.3) 0px 1px 2px);}
+.e5{display: flex; align-items: center; gap: 36px;}
+.e6{color: rgba(255, 255, 255, 0.85); text-decoration: none; font-size: 14px; font-weight: 500; letter-spacing: 0.01em; position: relative; padding-bottom: 4px; border-bottom: 1.5px solid transparent;}
+.e7{display: flex; gap: 12px; align-items: center;}
+.e8{color: rgba(255, 255, 255, 0.85); font-size: 13px; text-decoration: none;}
+.e9{padding: 10px 18px; font-size: 13px;}
+.e10{background: var(--c-deep); color: white; padding: 32px 48px 96px;}
+.e11{color: var(--c-coral); margin-bottom: 16px;}
+.e12{font-size: 124px; margin: 0px; line-height: 0.92; max-width: 1100px;}
+.e13{font-style: normal; color: var(--c-coral);}
+.e14{font-size: 18px; line-height: 1.6; opacity: 0.85; max-width: 700px; margin-top: 32px;}
+.e15{padding-top: 80px; padding-bottom: 56px;}
+.e16{display: flex; align-items: center; gap: 16px; margin-bottom: 48px;}
+.e17{width: 36px; height: 36px; border-radius: 50%; background: var(--c-coral); border: medium; color: white; display: flex; align-items: center; justify-content: center; font-family: var(--f-mono); font-size: 12px; font-weight: 600; letter-spacing: 0.04em;}
+.e18{font-size: 13px; font-weight: 600; color: var(--c-deep);}
+.e19{flex: 1 1 0%; height: 1px; background: rgba(11, 26, 38, 0.15);}
+.e20{width: 36px; height: 36px; border-radius: 50%; background: transparent; border: 1.5px solid rgba(11, 26, 38, 0.2); color: rgba(11, 26, 38, 0.55); display: flex; align-items: center; justify-content: center; font-family: var(--f-mono); font-size: 12px; font-weight: 600; letter-spacing: 0.04em;}
+.e21{font-size: 13px; font-weight: 600; color: rgba(11, 26, 38, 0.55);}
+.e22{display: flex; gap: 8px; margin-bottom: 24px; padding: 6px; background: white; border-radius: 999px; border: 1px solid rgba(11, 26, 38, 0.08); width: fit-content;}
+.e23{padding: 10px 20px; border-radius: 999px; border: medium; cursor: pointer; background: var(--c-deep); color: white; font-size: 13px; font-weight: 600; font-family: inherit; display: flex; align-items: center; gap: 8px;}
+.e24{font-family: var(--f-mono); font-size: 10px; opacity: 0.7; padding: 2px 6px; background: rgba(255, 255, 255, 0.18); border-radius: 4px;}
+.e25{padding: 10px 20px; border-radius: 999px; border: medium; cursor: pointer; background: transparent; color: rgba(11, 26, 38, 0.7); font-size: 13px; font-weight: 600; font-family: inherit; display: flex; align-items: center; gap: 8px;}
+.e26{font-family: var(--f-mono); font-size: 10px; opacity: 0.7; padding: 2px 6px; background: rgba(11, 26, 38, 0.08); border-radius: 4px;}
+.e27{display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;}
+.e28{background: white; border-radius: 14px; overflow: hidden; border: 2px solid var(--c-coral); box-shadow: rgba(255, 107, 74, 0.35) 0px 20px 40px -20px; position: relative; cursor: pointer;}
+.e29{position: absolute; top: 12px; right: 12px; z-index: 2; background: var(--c-coral); color: white; padding: 4px 10px; border-radius: 999px; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; font-family: var(--f-mono); text-transform: uppercase;}
+.e30{position: relative;}
+.e31{height: 140px; border-radius: 0px; position: relative; overflow: hidden; background: rgb(10, 37, 64);}
+.e32{position: absolute; inset: 0px; width: 100%; height: 100%; object-fit: cover; object-position: center center;}
+.e33{position: absolute; bottom: 0px; left: 0px;}
+.e34{position: absolute; top: 12px; left: 12px; background: rgba(255, 255, 255, 0.95); border-radius: 8px; padding: 6px 10px; text-align: center; min-width: 52px;}
+.e35{font-size: 22px; color: var(--c-deep); line-height: 1;}
+.e36{font-size: 9px; color: rgba(11, 26, 38, 0.6);}
+.e37{padding: 16px 18px 18px;}
+.e38{display: inline-flex; padding: 3px 8px; background: rgba(29, 111, 156, 0.1); color: var(--c-wave); border-radius: 999px; font-size: 10px; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.06em;}
+.e39{font-weight: 700; font-size: 15px; color: var(--c-deep); margin-bottom: 4px; line-height: 1.2;}
+.e40{font-size: 12px; color: rgba(11, 26, 38, 0.6); display: flex; align-items: center; gap: 5px;}
+.e41{display: flex; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(11, 26, 38, 0.06); font-size: 11px; font-family: var(--f-mono); letter-spacing: 0.04em; color: rgba(11, 26, 38, 0.6);}
+.e42{color: var(--c-coral); font-weight: 600;}
+.e43{background: white; border-radius: 14px; overflow: hidden; border: 1px solid rgba(11, 26, 38, 0.08); box-shadow: none; position: relative; cursor: pointer;}
+.e44{display: inline-flex; padding: 3px 8px; background: rgba(255, 107, 74, 0.12); color: var(--c-coral); border-radius: 999px; font-size: 10px; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.06em;}
+.e45{margin-top: 20px; font-size: 12px; color: rgba(11, 26, 38, 0.55); font-family: var(--f-mono); letter-spacing: 0.04em;}
+.e46{color: var(--c-wave); text-decoration: underline; text-underline-offset: 3px;}
+.e47{padding: 32px 48px 96px; background: var(--c-foam);}
+.e48{max-width: 1320px; margin: 0px auto; display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; align-items: flex-start;}
+.e49{background: white; border-radius: 18px; padding: 56px; border: 1px solid rgba(11, 26, 38, 0.06);}
+.e50{display: flex; align-items: baseline; gap: 20px; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid rgba(11, 26, 38, 0.1);}
+.e51{font-size: 56px; color: var(--c-coral); line-height: 1; font-family: var(--f-mono); font-weight: 500;}
+.e52{font-size: 38px; color: var(--c-deep); margin: 0px; line-height: 1;}
+.e53{font-size: 13px; color: rgba(11, 26, 38, 0.6); margin-top: 6px;}
+.e54{display: grid; grid-template-columns: 1fr 1fr; gap: 18px;}
+.e55{grid-column: auto;}
+.e56{color: rgba(11, 26, 38, 0.6); margin-bottom: 8px;}
+.e57{width: 100%; padding: 14px 16px; border: 1px solid rgba(11, 26, 38, 0.15); border-radius: 8px; background: white; font-size: 14px; font-family: inherit; color: var(--c-ink);}
+.e58{grid-column: span 2;}
+.e59{width: 100%; padding: 14px 16px; border: 1px solid rgba(11, 26, 38, 0.15); border-radius: 8px; background: white; font-size: 14px; font-family: var(--f-mono); color: var(--c-ink); letter-spacing: 0.04em; text-transform: uppercase;}
+.e60{margin-top: 56px;}
+.e61{display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;}
+.e62{padding: 14px 8px; border-radius: 8px; border: 1px solid rgba(11, 26, 38, 0.15); background: white; color: rgba(11, 26, 38, 0.7); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;}
+.e63{padding: 14px 8px; border-radius: 8px; border: 1.5px solid var(--c-coral); background: rgba(255, 107, 74, 0.08); color: var(--c-coral); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;}
+.e64{width: 100%; padding: 14px 16px; border: 1px solid rgba(11, 26, 38, 0.15); border-radius: 8px; background: white; font-size: 14px; font-family: var(--f-mono); color: var(--c-ink);}
+.e65{font-size: 11px; color: rgba(11, 26, 38, 0.5); font-family: var(--f-mono); margin-top: 6px; letter-spacing: 0.04em;}
+.e66{display: flex; gap: 12px;}
+.e67{width: 100%; padding: 14px 16px; border: 1px solid rgba(11, 26, 38, 0.15); border-radius: 8px; background: white; font-size: 14px; font-family: inherit; color: var(--c-ink); flex: 1 1 0%;}
+.e68{border: 1.5px dashed rgba(11, 26, 38, 0.2); border-radius: 10px; padding: 20px 18px; background: rgba(11, 26, 38, 0.02); display: flex; align-items: center; gap: 14px;}
+.e69{width: 40px; height: 40px; border-radius: 8px; background: rgba(95, 184, 200, 0.15); display: flex; align-items: center; justify-content: center; color: var(--c-wave);}
+.e70{flex: 1 1 0%;}
+.e71{font-size: 11px; color: rgba(11, 26, 38, 0.55); margin-top: 2px;}
+.e72{padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(11, 26, 38, 0.2); background: white; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--c-deep);}
+.e73{display: grid; grid-template-columns: 1fr 1fr; gap: 8px;}
+.e74{padding: 14px 16px; border-radius: 8px; border: 1px solid rgba(11, 26, 38, 0.15); background: white; color: rgba(11, 26, 38, 0.75); font-size: 13px; font-weight: 600; cursor: pointer; text-align: left; font-family: inherit; display: flex; align-items: center; gap: 10px;}
+.e75{width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid rgba(11, 26, 38, 0.3); background: white;}
+.e76{padding: 14px 16px; border-radius: 8px; border: 1.5px solid var(--c-coral); background: rgba(255, 107, 74, 0.08); color: var(--c-coral); font-size: 13px; font-weight: 600; cursor: pointer; text-align: left; font-family: inherit; display: flex; align-items: center; gap: 10px;}
+.e77{width: 14px; height: 14px; border-radius: 50%; border: 4px solid var(--c-coral); background: white;}
+.e78{margin-top: 20px; padding: 20px; background: var(--c-bone); border-radius: 12px;}
+.e79{color: rgba(11, 26, 38, 0.6); margin-bottom: 14px;}
+.e80{display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;}
+.e81{display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: rgba(255, 107, 74, 0.08); border: 1px solid rgba(255, 107, 74, 0.3); border-radius: 8px; font-size: 13px; cursor: pointer; color: var(--c-coral); font-weight: 600;}
+.e82{width: 16px; height: 16px; border-radius: 4px; border: medium; background: var(--c-coral); color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;}
+.e83{display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: white; border: 1px solid rgba(11, 26, 38, 0.1); border-radius: 8px; font-size: 13px; cursor: pointer; color: rgba(11, 26, 38, 0.75); font-weight: 500;}
+.e84{width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid rgba(11, 26, 38, 0.3); background: white; color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;}
+.e85{display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 18px;}
+.e86{display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;}
+.e87{padding: 14px 16px; border-radius: 8px; border: 1.5px solid var(--c-coral); background: rgba(255, 107, 74, 0.08); color: var(--c-coral); cursor: pointer; text-align: left; font-family: inherit;}
+.e88{font-size: 13px; font-weight: 600; margin-bottom: 2px;}
+.e89{font-size: 11px; opacity: 0.7; font-family: var(--f-mono);}
+.e90{padding: 14px 16px; border-radius: 8px; border: 1px solid rgba(11, 26, 38, 0.15); background: white; color: rgba(11, 26, 38, 0.75); cursor: pointer; text-align: left; font-family: inherit;}
+.e91{display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px;}
+.e92{width: 100%; padding: 16px; border: 1px solid rgba(11, 26, 38, 0.15); border-radius: 8px; background: white; font-size: 14px; font-family: inherit; color: var(--c-ink); resize: vertical; line-height: 1.5;}
+.e93{margin-top: 40px; padding: 24px; background: var(--c-bone); border-radius: 12px;}
+.e94{display: flex; gap: 12px; font-size: 13px; color: rgba(11, 26, 38, 0.78); line-height: 1.55; padding: 8px 0px; cursor: pointer;}
+.e95{flex: 0 0 18px; width: 18px; height: 18px; border-radius: 4px; margin-top: 2px; border: medium; background: var(--c-coral); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;}
+.e96{flex: 0 0 18px; width: 18px; height: 18px; border-radius: 4px; margin-top: 2px; border: 1.5px solid rgba(11, 26, 38, 0.3); background: white; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;}
+.e97{margin-top: 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px;}
+.e98{padding: 14px 22px; border-radius: 999px; background: transparent; color: var(--c-deep); border: 1.5px solid rgba(11, 26, 38, 0.2); font-weight: 600; font-size: 14px; cursor: pointer; font-family: inherit;}
+.e99{display: flex; align-items: center; gap: 20px;}
+.e100{font-size: 11px; color: rgba(11, 26, 38, 0.55); font-family: var(--f-mono); letter-spacing: 0.04em;}
+.e101{padding: 16px 28px; font-size: 14px;}
+.e102{position: sticky; top: 24px; align-self: flex-start;}
+.e103{background: var(--c-deep); color: white; border-radius: 18px; overflow: hidden; box-shadow: rgba(10, 37, 64, 0.5) 0px 30px 80px -40px;}
+.e104{height: 200px; border-radius: 0px; position: relative; overflow: hidden; background: rgb(10, 37, 64);}
+.e105{position: absolute; inset: 0px; background: linear-gradient(rgba(10, 37, 64, 0.1) 30%, rgba(10, 37, 64, 0.92) 100%);}
+.e106{position: absolute; top: 16px; left: 16px; display: inline-flex; padding: 4px 10px; background: rgba(255, 107, 74, 0.95); color: white; border-radius: 999px; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; font-family: var(--f-mono); text-transform: uppercase;}
+.e107{position: absolute; left: 24px; right: 24px; bottom: 20px;}
+.e108{color: var(--c-aqua); margin-bottom: 6px; font-size: 10px;}
+.e109{font-size: 30px; line-height: 1.05;}
+.e110{font-size: 13px; opacity: 0.8; margin-top: 4px; display: flex; align-items: center; gap: 5px;}
+.e111{padding: 24px 24px 8px;}
+.e112{color: var(--c-aqua); margin-bottom: 16px; font-size: 10px;}
+.e113{display: flex; justify-content: space-between; align-items: center; padding: 12px 0px; border-top: medium; font-size: 13px;}
+.e114{opacity: 0.7; font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;}
+.e115{font-weight: 600; color: white;}
+.e116{display: flex; justify-content: space-between; align-items: center; padding: 12px 0px; border-top: 1px solid rgba(255, 255, 255, 0.08); font-size: 13px;}
+.e117{font-weight: 600; color: var(--c-coral);}
+.e118{padding: 16px 24px 24px; border-top: 1px solid rgba(255, 255, 255, 0.08);}
+.e119{color: var(--c-aqua); margin-bottom: 14px; font-size: 10px;}
+.e120{display: flex; flex-direction: column; gap: 10px;}
+.e121{display: flex; align-items: center; gap: 10px; font-size: 13px; opacity: 0.9;}
+.e122{color: var(--c-aqua);}
+.e123{padding: 20px 24px; background: rgba(255, 255, 255, 0.04); border-top: 1px solid rgba(255, 255, 255, 0.08);}
+.e124{color: var(--c-coral); margin-bottom: 12px; font-size: 10px;}
+.e125{font-size: 13px; line-height: 1.6; opacity: 0.88;}
+.e126{padding: 20px 24px; border-top: 1px solid rgba(255, 255, 255, 0.08);}
+.e127{color: var(--c-aqua); margin-bottom: 8px; font-size: 10px;}
+.e128{font-size: 12px; line-height: 1.55; opacity: 0.7;}
+.e129{margin-top: 16px; background: white; border-radius: 14px; padding: 22px; border: 1px solid rgba(11, 26, 38, 0.08); display: flex; gap: 14px; align-items: flex-start;}
+.e130{width: 42px; height: 42px; border-radius: 50%; background: var(--c-aqua); flex: 0 0 auto; display: flex; align-items: center; justify-content: center; color: white;}
+.e131{font-weight: 700; font-size: 14px; color: var(--c-deep); margin-bottom: 4px;}
+.e132{font-size: 12px; color: rgba(11, 26, 38, 0.65); line-height: 1.5; margin-bottom: 10px;}
+.e133{color: var(--c-wave);}
+.e134{font-size: 11px; color: rgba(11, 26, 38, 0.5); font-family: var(--f-mono); letter-spacing: 0.04em; text-transform: uppercase;}
+.e135{background: var(--c-abyss); color: white; padding: 72px 48px 32px;}
+.e136{max-width: 1320px; margin: 0px auto;}
+.e137{display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 48px; padding-bottom: 56px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);}
+.e138{margin-top: 24px; opacity: 0.65; font-size: 14px; line-height: 1.65; max-width: 320px;}
+.e139{display: flex; gap: 12px; margin-top: 24px;}
+.e140{width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; color: rgba(255, 255, 255, 0.75);}
+.e141{opacity: 0.5; margin-bottom: 16px;}
+.e142{color: rgba(255, 255, 255, 0.75); text-decoration: none; font-size: 14px;}
+.e143{display: flex; justify-content: space-between; padding-top: 24px; font-size: 12px; opacity: 0.5;}
+</style>
+</head>
+<body>
+<div class="e0"><div class="e1"><nav class="e2"><div class="e3"><img src="https://www.calypsosub.it/wp-content/uploads/2024/08/Logo-Calypso_2018_OK-1.png" alt="Calypso Sub Arezzo" class="e4"></div><div class="e5"><a href="#" class="e6">Corsi</a><a href="#" class="e6">Uscite</a><a href="#" class="e6">Istruttori</a><a href="#" class="e6">Storia</a><a href="#" class="e6">Contatti</a></div><div class="e7"><a href="#" class="e8">Accedi</a><button class="btn btn-primary e9">Iscriviti <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button></div></nav></div><section class="e10"><div class="container"><div class="eyebrow e11">Prenotazione · stagione 2026</div><h1 class="display e12">Riserva<br>il tuo <em class="e13">posto.</em></h1><p class="e14">Conferma in tre passaggi. Risposta dell'organizzazione entro 24 ore. Posti a bordo limitati: prenotazione obbligatoria 48 ore prima dell'uscita. Saldo in sede al ritrovo o con bonifico anticipato.</p></div></section><section class="section e15"><div class="container"><div class="e16"><div class="e3"><div class="e17">01</div><div class="e18">Scegli evento</div></div><div class="e19"></div><div class="e3"><div class="e20">02</div><div class="e21">I tuoi dati</div></div><div class="e19"></div><div class="e3"><div class="e20">03</div><div class="e21">Conferma</div></div></div><div class="e22"><button class="e23">Uscite in mare<span class="e24">12</span></button><button class="e25">Eventi sociali<span class="e26">4</span></button><button class="e25">Viaggi club<span class="e26">2</span></button><button class="e25">Prova gratuita<span class="e26">1</span></button></div><div class="e27"><div class="e28"><div class="e29">● Selezionata</div><div class="e30"><div class="ph e31"><img src="https://images.unsplash.com/photo-1560275619-4662e36fa65c?auto=format&fit=crop&w=1600&q=80" alt="secche di tor di cala" loading="lazy" class="e32"><div class="ph-cap e33">secche di tor di cala</div></div><div class="e34"><div class="display e35">16</div><div class="eyebrow e36">MAG · SAB</div></div></div><div class="e37"><div class="e38">uscita</div><div class="e39">Secche di Tor di Cala</div><div class="e40"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Argentario · 2 immersioni</div><div class="e41"><span>Tutti i livelli</span><span class="e42">● 4 / 18</span></div></div></div><div class="e43"><div class="e30"><div class="ph e31"><img src="https://images.unsplash.com/photo-1518877593221-1f28583780b4?auto=format&fit=crop&w=1600&q=80" alt="scoglio del remaiolo" loading="lazy" class="e32"><div class="ph-cap e33">scoglio del remaiolo</div></div><div class="e34"><div class="display e35">06</div><div class="eyebrow e36">GIU · SAB+DOM</div></div></div><div class="e37"><div class="e38">uscita</div><div class="e39">Scoglio del Remaiolo</div><div class="e40"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Elba · weekend completo</div><div class="e41"><span>OWD+</span><span class="e42">● 10 / 16</span></div></div></div><div class="e43"><div class="e30"><div class="ph e31"><img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fit=crop&w=1600&q=80" alt='proiezione "mediterraneo"' loading="lazy" class="e32"><div class="ph-cap e33">proiezione "mediterraneo"</div></div><div class="e34"><div class="display e35">12</div><div class="eyebrow e36">NOV · SAB</div></div></div><div class="e37"><div class="e44">evento</div><div class="e39">Proiezione "Mediterraneo"</div><div class="e40"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Sede club · ore 21</div><div class="e41"><span>Aperto a tutti</span><span class="e42">● 34 / 80</span></div></div></div><div class="e43"><div class="e30"><div class="ph e31"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1600&q=80" alt="cena sociale di natale" loading="lazy" class="e32"><div class="ph-cap e33">cena sociale di natale</div></div><div class="e34"><div class="display e35">08</div><div class="eyebrow e36">DIC · DOM</div></div></div><div class="e37"><div class="e44">evento</div><div class="e39">Cena sociale di Natale</div><div class="e40"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Trattoria del Porto · Cala Galera</div><div class="e41"><span>Soci + ospiti</span><span class="e42">● 62 / 90</span></div></div></div></div><div class="e45">13 uscite in stagione · vedi <a href="#" class="e46">calendario completo →</a></div></div></section><section class="e47"><div class="e48"><div class="e49"><div class="e50"><div class="display e51">01</div><div><h2 class="display e52">I tuoi dati</h2><div class="e53">Compila come da documento d'identità.</div></div></div><div class="e54"><div class="e55"><div class="eyebrow e56">Nome</div><input placeholder="Marco" class="e57"></div><div class="e55"><div class="eyebrow e56">Cognome</div><input placeholder="Rossi" class="e57"></div><div class="e58"><div class="eyebrow e56">Email</div><input placeholder="marco.rossi@esempio.it" type="email" class="e57"></div><div class="e55"><div class="eyebrow e56">Telefono</div><input placeholder="+39 333 1234567" class="e57"></div><div class="e55"><div class="eyebrow e56">Data di nascita</div><input placeholder="01/01/1990" class="e57"></div><div class="e58"><div class="eyebrow e56">Codice fiscale</div><input placeholder="RSSMRC90A01H501Z" class="e59"></div></div><div class="e60"><div class="e50"><div class="display e51">02</div><div><h2 class="display e52">Brevetto e tessera FIAS</h2><div class="e53">Necessario per immersioni — per soli eventi sociali puoi saltare.</div></div></div><div class="e54"><div class="e58"><div class="eyebrow e56">Livello brevetto</div><div class="e61"><button class="e62">Mai immerso</button><button class="e62">OWD</button><button class="e63">AOWD</button><button class="e62">Rescue</button><button class="e62">Divemaster+</button></div></div><div class="e55"><div class="eyebrow e56">Ente brevetto</div><select class="e57"><option>FIAS / CMAS</option><option>PADI</option><option>SSI</option><option>NAUI</option></select></div><div class="e55"><div class="eyebrow e56">N° brevetto</div><input placeholder="IT-2018-0042" class="e64"></div><div class="e55"><div class="eyebrow e56">N° tessera FIAS 2026</div><input placeholder="3478291" class="e64"><div class="e65">Tessera in corso di rinnovo? lasciar vuoto.</div></div><div class="e55"><div class="eyebrow e56">Scadenza idoneità medica</div><input placeholder="GG/MM/AAAA" class="e64"></div><div class="e58"><div class="eyebrow e56">Ultima immersione</div><div class="e66"><input placeholder="N° immersioni log" class="e67"><input placeholder="Data ultima imm." class="e67"></div></div><div class="e58"><div class="eyebrow e56">Carica certificato medico</div><div class="e68"><div class="e69"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg></div><div class="e70"><div class="e18">Trascina qui o seleziona file</div><div class="e71">Certificato sportivo agonistico in corso di validità</div></div><button class="e72">Seleziona</button></div><div class="e65">PDF o foto · max 5 MB · richiesto solo se non già in archivio</div></div></div></div><div class="e60"><div class="e50"><div class="display e51">03</div><div><h2 class="display e52">Attrezzatura</h2><div class="e53">Tutta l'attrezzatura del club è revisionata semestralmente, bombole con collaudo in corso.</div></div></div><div class="e58"><div class="eyebrow e56">Porto / Noleggio</div><div class="e73"><button class="e74"><span class="e75"></span>Porto la mia attrezzatura</button><button class="e76"><span class="e77"></span>Noleggio dal club</button></div></div><div class="e78"><div class="eyebrow e79">Pezzi da noleggiare</div><div class="e80"><label class="e81"><span class="e82">✓</span>Muta umida 7mm</label><label class="e83"><span class="e84"></span>Muta stagna</label><label class="e81"><span class="e82">✓</span>GAV / jacket</label><label class="e81"><span class="e82">✓</span>Erogatore</label><label class="e83"><span class="e84"></span>Computer</label><label class="e81"><span class="e82">✓</span>Calzari + pinne</label><label class="e83"><span class="e84"></span>Maschera + snorkel</label><label class="e83"><span class="e84"></span>Faro / torcia</label></div><div class="e85"><div class="e55"><div class="eyebrow e56">Taglia muta</div><select class="e57"><option>XS</option><option>S</option><option selected="">M</option><option>L</option><option>XL</option><option>XXL</option></select></div><div class="e55"><div class="eyebrow e56">N° scarpa</div><input placeholder="42" class="e57"></div><div class="e55"><div class="eyebrow e56">Peso piombo</div><select class="e57"><option>4 kg</option><option>5 kg</option><option selected="">6 kg</option><option>7 kg</option><option>8 kg</option><option>9 kg</option><option>10 kg</option></select></div></div></div></div><div class="e60"><div class="e50"><div class="display e51">04</div><div><h2 class="display e52">Logistica del giorno</h2><div class="e53">Come arrivi, cosa mangi, chi viene con te.</div></div></div><div class="e58"><div class="eyebrow e56">Trasporto al porto</div><div class="e86"><button class="e87"><div class="e88">Mezzo proprio</div><div class="e89">Mi muovo da solo</div></button><button class="e90"><div class="e88">Passaggio club</div><div class="e89">Da Arezzo · 06:00</div></button><button class="e90"><div class="e88">Pulmino sociale</div><div class="e89">+15 a tratta</div></button></div></div><div class="e91"><div class="e55"><div class="eyebrow e56">Pranzo a bordo</div><select class="e57"><option selected="">A bordo (panino + frutta + acqua)</option><option>Porto al sacco</option><option>Nessun pranzo</option></select></div><div class="e55"><div class="eyebrow e56">Accompagnatori non subacquei</div><select class="e57"><option selected="">0</option><option>1</option><option>2</option><option>3</option></select><div class="e65">Possono salire a bordo, non immergersi.</div></div></div></div><div class="e60"><div class="e50"><div class="display e51">05</div><div><h2 class="display e52">Note all'organizzazione</h2><div class="e53">Allergie, intolleranze, condizioni mediche, richieste particolari.</div></div></div><textarea rows="5" placeholder="Es. Sono celiaco, problema cervicale leggero, prima uscita post-corso, vorrei essere abbinato a un compagno esperto…" class="e92"></textarea></div><div class="e93"><label class="e94"><span class="e95">✓</span><span>Confermo di aver letto e accettato lo <a href="#" class="e46">statuto del club</a> e le condizioni di partecipazione.</span></label><label class="e94"><span class="e95">✓</span><span>Dichiaro di essere in possesso di idoneità medico-sportiva in corso di validità e brevetto adeguato al livello dell'uscita.</span></label><label class="e94"><span class="e96"></span><span>Accetto l'<a href="#" class="e46">informativa privacy</a> e l'uso delle immagini scattate durante l'attività per i canali social del club.</span></label></div><div class="e97"><button class="e98">← Indietro</button><div class="e99"><div class="e100">Riceverai conferma via email entro 24h</div><button class="btn btn-primary e101">Invia richiesta prenotazione <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button></div></div></div><aside class="e102"><div class="e103"><div class="e30"><div class="ph e104"><img src="https://images.unsplash.com/photo-1560275619-4662e36fa65c?auto=format&fit=crop&w=1600&q=80" alt="argentario · secche di tor di cala" loading="lazy" class="e32"><div class="ph-cap e33">argentario · secche di tor di cala</div></div><div class="e105"></div><div class="e106">● Uscita selezionata</div><div class="e107"><div class="eyebrow e108">SAB · 16 MAGGIO 2026</div><div class="display e109">Secche di Tor di Cala</div><div class="e110"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Argentario · 2 immersioni</div></div></div><div class="e111"><div class="eyebrow e112">Briefing rapido</div><div class="e113"><span class="e114">Ritrovo</span><span class="e115">07:30 · Cala Galera</span></div><div class="e116"><span class="e114">Imbarco</span><span class="e115">M/B Calypso II</span></div><div class="e116"><span class="e114">Rientro previsto</span><span class="e115">17:00 ca.</span></div><div class="e116"><span class="e114">Profondità max</span><span class="e115">24 m</span></div><div class="e116"><span class="e114">Temperatura acqua</span><span class="e115">18° C · 7mm</span></div><div class="e116"><span class="e114">Visibilità prev.</span><span class="e115">15—20 m</span></div><div class="e116"><span class="e114">Difficoltà</span><span class="e115">Tutti i livelli (OWD+)</span></div><div class="e116"><span class="e114">Posti</span><span class="e117">4 di 18 disponibili</span></div></div><div class="e118"><div class="eyebrow e119">Inclusi nell'uscita</div><div class="e120"><div class="e121"><span class="e122">✓</span> Bombole + cariche (aria)</div><div class="e121"><span class="e122">✓</span> Pesi e cinturoni</div><div class="e121"><span class="e122">✓</span> Briefing tecnico in barca</div><div class="e121"><span class="e122">✓</span> Accompagnamento guida FIAS</div><div class="e121"><span class="e122">✓</span> Assicurazione RC e infortuni</div><div class="e121"><span class="e122">✓</span> Pranzo a bordo (se selezionato)</div></div></div><div class="e123"><div class="eyebrow e124">Cosa portare</div><div class="e125">Costume, asciugamano grande, k-way, brevetto cartaceo, tessera FIAS 2026, idoneità medica. Crema solare resistente all'acqua consigliata.</div></div><div class="e126"><div class="eyebrow e127">Cancellazione</div><div class="e128">Disdetta gratuita fino a 72 h prima del ritrovo. In caso di maltempo, l'uscita viene riprogrammata senza penali.</div></div></div><div class="e129"><div class="e130"><svg width="20" height="20" viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1 6 C 4 1, 8 11, 12 6 S 20 1, 23 6"></path></svg></div><div><div class="e131">Hai dubbi sull'uscita?</div><div class="e132">Chiama in sede ai 0575 / 123 456 dalle 18 alle 20, oppure scrivi a <a href="#" class="e133">uscite@calypsosub.it</a></div><div class="e134">Lun—Ven · 18:00—20:00</div></div></div></aside></div></section><footer class="e135"><div class="e136"><div class="e137"><div><div class="e3"><img src="https://www.calypsosub.it/wp-content/uploads/2024/08/Logo-Calypso_2018_OK-1.png" alt="Calypso Sub Arezzo" class="e4"></div><p class="e138">Il club subacqueo di Arezzo dal 1978. Affiliato FIAS Federazione Italiana Attività Subacquee.</p><div class="e139"><a href="#" class="e140"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a><a href="#" class="e140"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a><a href="#" class="e140"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg></a></div></div><div><div class="eyebrow e141">Club</div><div class="e120"><a href="#" class="e142">Storia</a><a href="#" class="e142">Istruttori</a><a href="#" class="e142">Sede</a><a href="#" class="e142">Affiliazione FIAS</a></div></div><div><div class="eyebrow e141">Attività</div><div class="e120"><a href="#" class="e142">Corsi</a><a href="#" class="e142">Uscite in barca</a><a href="#" class="e142">Cene sociali</a><a href="#" class="e142">Eventi</a></div></div><div><div class="eyebrow e141">Contatti</div><div class="e120"><a href="#" class="e142">info@calypsosub.it</a><a href="#" class="e142">+39 0575 000 000</a><a href="#" class="e142">Via del Mare 12, Arezzo</a><a href="#" class="e142">Lun–Ven · 18–20</a></div></div></div><div class="e143"><span>© 2026 Calypso Sub Arezzo · A.S.D.</span><span>Privacy · Cookie · Statuto</span></div></div></footer></div>
+</body>
+</html>

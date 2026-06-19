@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calypso Sub Arezzo — Iscrizione</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Calypso Sub Arezzo — Design tokens & shared styles */
+
+:root {
+  /* Colors — palette acquatica con sabbia e accento corallo */
+  --c-abyss: #061826;        /* nero blu profondissimo */
+  --c-deep: #0a2540;         /* deep ocean */
+  --c-wave: #1d6f9c;         /* mid blue */
+  --c-aqua: #5fb8c8;         /* turchese chiaro (logo) */
+  --c-foam: #cfe9ee;         /* schiuma chiarissima */
+  --c-sand: #e8d9b8;         /* sabbia (logo) */
+  --c-sand-warm: #d9c391;    /* sabbia calda */
+  --c-coral: #ff6b4a;        /* accento corallo per CTA */
+  --c-coral-deep: #e04a2a;
+  --c-bone: #f6f1e6;         /* bianco sabbia */
+  --c-ink: #0b1a26;          /* testo scuro */
+
+  /* Type */
+  --f-display: "Big Shoulders Display", "Anton", Impact, sans-serif;
+  --f-body: "DM Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Spacing */
+  --gutter: 24px;
+  --maxw: 1320px;
+  --radius: 4px;
+  --radius-lg: 12px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--f-body);
+  color: var(--c-ink);
+  background: var(--c-bone);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "ss01", "cv11";
+  line-height: 1.5;
+}
+
+/* Display utility */
+.display {
+  font-family: var(--f-display);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  font-family: var(--f-mono);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  font-weight: 500;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  font-family: var(--f-body);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .15s, box-shadow .15s, background .15s;
+  white-space: nowrap;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary {
+  background: var(--c-coral);
+  color: white;
+  box-shadow: 0 6px 18px -4px rgba(255,107,74,.55);
+}
+.btn-primary:hover { background: var(--c-coral-deep); }
+.btn-ghost {
+  background: transparent;
+  color: white;
+  border: 1.5px solid rgba(255,255,255,.4);
+  padding: 12.5px 22px;
+}
+.btn-ghost:hover { border-color: white; background: rgba(255,255,255,.08); }
+.btn-dark {
+  background: var(--c-deep);
+  color: white;
+}
+.btn-dark:hover { background: var(--c-abyss); }
+
+/* Image placeholder — striped, with caption */
+.ph {
+  position: relative;
+  background:
+    repeating-linear-gradient(135deg,
+      rgba(10,37,64,.06) 0 1px,
+      transparent 1px 14px),
+    linear-gradient(180deg, var(--c-aqua), var(--c-wave) 60%, var(--c-deep));
+  color: rgba(255,255,255,.85);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  overflow: hidden;
+  isolation: isolate;
+}
+.ph::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.18), transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(0,0,0,.25), transparent 60%);
+  pointer-events: none;
+}
+.ph .ph-cap {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 10px 12px;
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(4px);
+  border-top-right-radius: 4px;
+  position: relative;
+  z-index: 1;
+}
+.ph.ph-sand {
+  background:
+    repeating-linear-gradient(135deg,
+      rgba(10,37,64,.07) 0 1px,
+      transparent 1px 14px),
+    linear-gradient(180deg, var(--c-sand) 0%, var(--c-sand-warm) 100%);
+  color: rgba(11,26,38,.7);
+}
+.ph.ph-sand .ph-cap {
+  background: rgba(11,26,38,.18);
+  color: rgba(11,26,38,.85);
+}
+
+/* Page section */
+.section {
+  padding: 96px 48px;
+}
+.container {
+  max-width: var(--maxw);
+  margin: 0 auto;
+}
+
+/* Stats counter row */
+.stat-num {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 88px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--c-deep);
+}
+.stat-label {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(11,26,38,.6);
+  margin-top: 8px;
+}
+
+/* Mark / underline accent */
+.mark {
+  background: linear-gradient(transparent 60%, rgba(95,184,200,.45) 60%);
+  padding: 0 4px;
+}
+
+/* Selection */
+::selection { background: var(--c-coral); color: white; }
+
+:root{--c-coral:#e9bf26;--c-aqua:#26cbfb;--c-deep:#1b77a7;--c-sand:#e8d9b8;--f-display:"Big Shoulders Display",Impact,sans-serif;}
+html,body{background:#fff;}
+body{width:1440px;margin:0 auto;}
+.e0{background: var(--c-bone); color: var(--c-ink);}
+.e1{background: var(--c-deep); position: relative;}
+.e2{position: relative; top: 0px; left: 0px; right: 0px; z-index: 10; padding: 24px 48px; display: flex; align-items: center; justify-content: space-between;}
+.e3{display: flex; align-items: center; gap: 12px;}
+.e4{height: 44px; width: auto; display: block; filter: drop-shadow(rgba(0, 0, 0, 0.3) 0px 1px 2px);}
+.e5{display: flex; align-items: center; gap: 36px;}
+.e6{color: rgba(255, 255, 255, 0.85); text-decoration: none; font-size: 14px; font-weight: 500; letter-spacing: 0.01em; position: relative; padding-bottom: 4px; border-bottom: 1.5px solid transparent;}
+.e7{display: flex; gap: 12px; align-items: center;}
+.e8{color: rgba(255, 255, 255, 0.85); font-size: 13px; text-decoration: none;}
+.e9{padding: 10px 18px; font-size: 13px;}
+.e10{background: var(--c-deep); color: white; padding: 32px 48px 96px;}
+.e11{color: var(--c-coral); margin-bottom: 16px;}
+.e12{font-size: 124px; margin: 0px; line-height: 0.92; max-width: 1100px;}
+.e13{font-style: normal; color: var(--c-coral);}
+.e14{font-size: 18px; line-height: 1.6; opacity: 0.85; max-width: 700px; margin-top: 32px;}
+.e15{padding-top: 80px;}
+.e16{display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px;}
+.e17{color: var(--c-wave); margin-bottom: 12px;}
+.e18{font-size: 48px; color: var(--c-deep); margin: 0px 0px 32px; line-height: 1;}
+.e19{display: grid; grid-template-columns: 1fr 1fr; gap: 16px;}
+.e20{grid-column: auto;}
+.e21{color: rgba(11, 26, 38, 0.6); margin-bottom: 8px;}
+.e22{width: 100%; padding: 14px 16px; border: 1px solid rgba(11, 26, 38, 0.15); border-radius: 8px; background: white; font-size: 14px; font-family: inherit;}
+.e23{grid-column: span 2;}
+.e24{grid-column: span 2; margin-top: 8px;}
+.e25{color: rgba(11, 26, 38, 0.6); margin-bottom: 12px;}
+.e26{display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;}
+.e27{padding: 12px 8px; border-radius: 8px; border: 1px solid rgba(11, 26, 38, 0.15); background: white; color: rgba(11, 26, 38, 0.7); font-size: 13px; font-weight: 600; cursor: pointer;}
+.e28{padding: 12px 8px; border-radius: 8px; border: 1.5px solid var(--c-coral); background: rgba(255, 107, 74, 0.08); color: var(--c-coral); font-size: 13px; font-weight: 600; cursor: pointer;}
+.e29{grid-column: span 2; display: flex; gap: 10px; margin-top: 8px; font-size: 13px; color: rgba(11, 26, 38, 0.7); line-height: 1.5;}
+.e30{margin-top: 4px;}
+.e31{display: flex; gap: 12px; margin-top: 32px;}
+.e32{padding: 16px 28px;}
+.e33{background: var(--c-deep); color: white; border-radius: 16px; padding: 32px; height: fit-content; position: sticky; top: 24px;}
+.e34{color: var(--c-aqua); margin-bottom: 16px;}
+.e35{font-size: 36px; margin: 0px 0px 24px;}
+.e36{display: flex; flex-direction: column; gap: 14px; padding-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.12);}
+.e37{display: flex; align-items: center; gap: 10px; font-size: 14px; opacity: 0.92;}
+.e38{color: var(--c-aqua);}
+.e39{display: flex; justify-content: space-between; align-items: baseline; margin-top: 24px;}
+.e40{opacity: 0.7; font-size: 14px;}
+.e41{font-size: 32px; color: var(--c-coral);}
+.e42{font-size: 11px; opacity: 0.6; font-family: var(--f-mono); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px;}
+.e43{background: var(--c-abyss); color: white; padding: 72px 48px 32px;}
+.e44{max-width: 1320px; margin: 0px auto;}
+.e45{display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 48px; padding-bottom: 56px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);}
+.e46{margin-top: 24px; opacity: 0.65; font-size: 14px; line-height: 1.65; max-width: 320px;}
+.e47{display: flex; gap: 12px; margin-top: 24px;}
+.e48{width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; color: rgba(255, 255, 255, 0.75);}
+.e49{opacity: 0.5; margin-bottom: 16px;}
+.e50{display: flex; flex-direction: column; gap: 10px;}
+.e51{color: rgba(255, 255, 255, 0.75); text-decoration: none; font-size: 14px;}
+.e52{display: flex; justify-content: space-between; padding-top: 24px; font-size: 12px; opacity: 0.5;}
+</style>
+</head>
+<body>
+<div class="e0"><div class="e1"><nav class="e2"><div class="e3"><img src="https://www.calypsosub.it/wp-content/uploads/2024/08/Logo-Calypso_2018_OK-1.png" alt="Calypso Sub Arezzo" class="e4"></div><div class="e5"><a href="#" class="e6">Corsi</a><a href="#" class="e6">Uscite</a><a href="#" class="e6">Istruttori</a><a href="#" class="e6">Storia</a><a href="#" class="e6">Contatti</a></div><div class="e7"><a href="#" class="e8">Accedi</a><button class="btn btn-primary e9">Iscriviti <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button></div></nav></div><section class="e10"><div class="container"><div class="eyebrow e11">Iscrizione 2026</div><h1 class="display e12">Diventa<br><em class="e13">socio.</em></h1><p class="e14">La quota associativa annuale include uso piscina, assicurazione FIAS, sconti del 15% su tutti i corsi, accesso a tutte le uscite del club, partecipazione alle cene e agli eventi sociali.</p></div></section><section class="section e15"><div class="container e16"><div><div class="eyebrow e17">Step 1 di 3</div><h2 class="display e18">I tuoi dati.</h2><div class="e19"><div class="e20"><div class="eyebrow e21">Nome</div><input placeholder="Marco" class="e22"></div><div class="e20"><div class="eyebrow e21">Cognome</div><input placeholder="Rossi" class="e22"></div><div class="e23"><div class="eyebrow e21">Email</div><input placeholder="marco@esempio.it" class="e22"></div><div class="e20"><div class="eyebrow e21">Telefono</div><input placeholder="+39 333 1234567" class="e22"></div><div class="e20"><div class="eyebrow e21">Data di nascita</div><input placeholder="01/01/1990" class="e22"></div><div class="e23"><div class="eyebrow e21">Codice fiscale</div><input placeholder="RSSMRC90A01..." class="e22"></div><div class="e24"><div class="eyebrow e25">Esperienza</div><div class="e26"><button class="e27">Mai immerso</button><button class="e28">OWD</button><button class="e27">AOWD</button><button class="e27">Pro</button></div></div><label class="e29"><input type="checkbox" class="e30">Accetto lo statuto del club e l'informativa privacy. Confermo l'idoneità medico-sportiva.</label></div><div class="e31"><button class="btn btn-primary e32">Continua al pagamento <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button></div></div><aside class="e33"><div class="eyebrow e34">Riepilogo iscrizione</div><h3 class="display e35">Socio ordinario<br>2026</h3><div class="e36"><div class="e37"><span class="e38">✓</span> Quota associativa annuale</div><div class="e37"><span class="e38">✓</span> Assicurazione FIAS inclusa</div><div class="e37"><span class="e38">✓</span> Uso piscina (mer 21–22)</div><div class="e37"><span class="e38">✓</span> Sconto 15% su tutti i corsi</div><div class="e37"><span class="e38">✓</span> Accesso prioritario alle uscite</div><div class="e37"><span class="e38">✓</span> Cene e eventi sociali</div></div><div class="e39"><span class="e40">Quota associativa</span><span class="display e41">annuale</span></div><div class="e42">Pagamento sicuro · Stripe / SEPA / contanti in sede</div></aside></div></section><footer class="e43"><div class="e44"><div class="e45"><div><div class="e3"><img src="https://www.calypsosub.it/wp-content/uploads/2024/08/Logo-Calypso_2018_OK-1.png" alt="Calypso Sub Arezzo" class="e4"></div><p class="e46">Il club subacqueo di Arezzo dal 1978. Affiliato FIAS Federazione Italiana Attività Subacquee.</p><div class="e47"><a href="#" class="e48"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a><a href="#" class="e48"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a><a href="#" class="e48"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg></a></div></div><div><div class="eyebrow e49">Club</div><div class="e50"><a href="#" class="e51">Storia</a><a href="#" class="e51">Istruttori</a><a href="#" class="e51">Sede</a><a href="#" class="e51">Affiliazione FIAS</a></div></div><div><div class="eyebrow e49">Attività</div><div class="e50"><a href="#" class="e51">Corsi</a><a href="#" class="e51">Uscite in barca</a><a href="#" class="e51">Cene sociali</a><a href="#" class="e51">Eventi</a></div></div><div><div class="eyebrow e49">Contatti</div><div class="e50"><a href="#" class="e51">info@calypsosub.it</a><a href="#" class="e51">+39 0575 000 000</a><a href="#" class="e51">Via del Mare 12, Arezzo</a><a href="#" class="e51">Lun–Ven · 18–20</a></div></div></div><div class="e52"><span>© 2026 Calypso Sub Arezzo · A.S.D.</span><span>Privacy · Cookie · Statuto</span></div></div></footer></div>
+</body>
+</html>

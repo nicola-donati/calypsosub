@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calypso Sub Arezzo — Corso · Open Water Diver</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Calypso Sub Arezzo — Design tokens & shared styles */
+
+:root {
+  /* Colors — palette acquatica con sabbia e accento corallo */
+  --c-abyss: #061826;        /* nero blu profondissimo */
+  --c-deep: #0a2540;         /* deep ocean */
+  --c-wave: #1d6f9c;         /* mid blue */
+  --c-aqua: #5fb8c8;         /* turchese chiaro (logo) */
+  --c-foam: #cfe9ee;         /* schiuma chiarissima */
+  --c-sand: #e8d9b8;         /* sabbia (logo) */
+  --c-sand-warm: #d9c391;    /* sabbia calda */
+  --c-coral: #ff6b4a;        /* accento corallo per CTA */
+  --c-coral-deep: #e04a2a;
+  --c-bone: #f6f1e6;         /* bianco sabbia */
+  --c-ink: #0b1a26;          /* testo scuro */
+
+  /* Type */
+  --f-display: "Big Shoulders Display", "Anton", Impact, sans-serif;
+  --f-body: "DM Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Spacing */
+  --gutter: 24px;
+  --maxw: 1320px;
+  --radius: 4px;
+  --radius-lg: 12px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--f-body);
+  color: var(--c-ink);
+  background: var(--c-bone);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "ss01", "cv11";
+  line-height: 1.5;
+}
+
+/* Display utility */
+.display {
+  font-family: var(--f-display);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  font-family: var(--f-mono);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  font-weight: 500;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  font-family: var(--f-body);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .15s, box-shadow .15s, background .15s;
+  white-space: nowrap;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary {
+  background: var(--c-coral);
+  color: white;
+  box-shadow: 0 6px 18px -4px rgba(255,107,74,.55);
+}
+.btn-primary:hover { background: var(--c-coral-deep); }
+.btn-ghost {
+  background: transparent;
+  color: white;
+  border: 1.5px solid rgba(255,255,255,.4);
+  padding: 12.5px 22px;
+}
+.btn-ghost:hover { border-color: white; background: rgba(255,255,255,.08); }
+.btn-dark {
+  background: var(--c-deep);
+  color: white;
+}
+.btn-dark:hover { background: var(--c-abyss); }
+
+/* Image placeholder — striped, with caption */
+.ph {
+  position: relative;
+  background:
+    repeating-linear-gradient(135deg,
+      rgba(10,37,64,.06) 0 1px,
+      transparent 1px 14px),
+    linear-gradient(180deg, var(--c-aqua), var(--c-wave) 60%, var(--c-deep));
+  color: rgba(255,255,255,.85);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  overflow: hidden;
+  isolation: isolate;
+}
+.ph::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.18), transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(0,0,0,.25), transparent 60%);
+  pointer-events: none;
+}
+.ph .ph-cap {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 10px 12px;
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(4px);
+  border-top-right-radius: 4px;
+  position: relative;
+  z-index: 1;
+}
+.ph.ph-sand {
+  background:
+    repeating-linear-gradient(135deg,
+      rgba(10,37,64,.07) 0 1px,
+      transparent 1px 14px),
+    linear-gradient(180deg, var(--c-sand) 0%, var(--c-sand-warm) 100%);
+  color: rgba(11,26,38,.7);
+}
+.ph.ph-sand .ph-cap {
+  background: rgba(11,26,38,.18);
+  color: rgba(11,26,38,.85);
+}
+
+/* Page section */
+.section {
+  padding: 96px 48px;
+}
+.container {
+  max-width: var(--maxw);
+  margin: 0 auto;
+}
+
+/* Stats counter row */
+.stat-num {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 88px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--c-deep);
+}
+.stat-label {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(11,26,38,.6);
+  margin-top: 8px;
+}
+
+/* Mark / underline accent */
+.mark {
+  background: linear-gradient(transparent 60%, rgba(95,184,200,.45) 60%);
+  padding: 0 4px;
+}
+
+/* Selection */
+::selection { background: var(--c-coral); color: white; }
+
+:root{--c-coral:#e9bf26;--c-aqua:#26cbfb;--c-deep:#1b77a7;--c-sand:#e8d9b8;--f-display:"Big Shoulders Display",Impact,sans-serif;}
+html,body{background:#fff;}
+body{width:1440px;margin:0 auto;}
+.e0{background: var(--c-bone); color: var(--c-ink);}
+.e1{background: var(--c-deep); position: relative;}
+.e2{position: relative; top: 0px; left: 0px; right: 0px; z-index: 10; padding: 24px 48px; display: flex; align-items: center; justify-content: space-between;}
+.e3{display: flex; align-items: center; gap: 12px;}
+.e4{height: 44px; width: auto; display: block; filter: drop-shadow(rgba(0, 0, 0, 0.3) 0px 1px 2px);}
+.e5{display: flex; align-items: center; gap: 36px;}
+.e6{color: rgba(255, 255, 255, 0.85); text-decoration: none; font-size: 14px; font-weight: 500; letter-spacing: 0.01em; position: relative; padding-bottom: 4px; border-bottom: 1.5px solid transparent;}
+.e7{display: flex; gap: 12px; align-items: center;}
+.e8{color: rgba(255, 255, 255, 0.85); font-size: 13px; text-decoration: none;}
+.e9{padding: 10px 18px; font-size: 13px;}
+.e10{background: var(--c-deep); color: white; padding: 32px 48px 64px;}
+.e11{display: flex; align-items: center; gap: 8px; font-size: 12px; font-family: var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255, 255, 255, 0.55); margin-bottom: 48px;}
+.e12{color: inherit; text-decoration: none;}
+.e13{color: white;}
+.e14{display: grid; grid-template-columns: 1.4fr 1fr; gap: 80px; align-items: end; margin-bottom: 56px;}
+.e15{display: inline-flex; padding: 6px 14px; background: var(--c-coral); color: white; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 24px;}
+.e16{font-size: 144px; margin: 0px; line-height: 0.9; letter-spacing: -0.02em;}
+.e17{font-size: 30px; color: var(--c-aqua); margin-top: 16px; font-weight: 600;}
+.e18{font-size: 17px; line-height: 1.6; opacity: 0.85; margin: 0px;}
+.e19{height: 480px; border-radius: 12px; position: relative; overflow: hidden; background: rgb(10, 37, 64);}
+.e20{position: absolute; inset: 0px; width: 100%; height: 100%; object-fit: cover; object-position: center center;}
+.e21{position: absolute; bottom: 0px; left: 0px;}
+.e22{padding-top: 80px; padding-bottom: 96px;}
+.e23{display: grid; grid-template-columns: 1.5fr 1fr; gap: 64px; align-items: start;}
+.e24{display: flex; flex-direction: column; gap: 72px;}
+.e25{color: var(--c-wave); margin-bottom: 14px;}
+.e26{font-size: 56px; color: var(--c-deep); margin: 0px 0px 32px; line-height: 0.96;}
+.e27{font-size: 16px; line-height: 1.7; color: rgba(11, 26, 38, 0.78); margin: 0px 0px 32px; max-width: 640px;}
+.e28{list-style: none; padding: 0px; margin: 0px;}
+.e29{display: grid; grid-template-columns: 52px 1fr 90px; gap: 20px; padding: 24px 0px; border-top: 1px solid rgba(11, 26, 38, 0.1);}
+.e30{font-size: 28px; color: var(--c-coral); line-height: 1;}
+.e31{font-size: 24px; color: var(--c-deep); margin: 0px 0px 6px; line-height: 1.05;}
+.e32{font-size: 14px; line-height: 1.6; color: rgba(11, 26, 38, 0.72); margin: 0px;}
+.e33{font-family: var(--f-mono); font-size: 11px; color: var(--c-wave); letter-spacing: 0.08em; text-transform: uppercase; text-align: right; align-self: start; padding-top: 6px;}
+.e34{font-size: 48px; color: var(--c-deep); margin: 0px 0px 28px; line-height: 0.96;}
+.e35{display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px 32px;}
+.e36{display: flex; align-items: flex-start; gap: 12px; padding: 12px 0px; border-bottom: 1px solid rgba(11, 26, 38, 0.08);}
+.e37{color: var(--c-coral); font-size: 16px; line-height: 1.4; font-weight: 700; min-width: 14px;}
+.e38{font-size: 14px; line-height: 1.5; color: var(--c-ink);}
+.e39{font-size: 48px; color: var(--c-deep); margin: 0px 0px 24px; line-height: 0.96;}
+.e40{padding: 22px 0px; border-top: 1px solid rgba(11, 26, 38, 0.12); border-bottom: 1px solid rgba(11, 26, 38, 0.12);}
+.e41{display: flex; align-items: flex-start; justify-content: space-between; gap: 24px;}
+.e42{font-size: 17px; font-weight: 600; color: var(--c-deep); margin: 0px; line-height: 1.3; flex: 1 1 0%;}
+.e43{color: var(--c-coral); font-size: 22px; line-height: 1; font-family: var(--f-mono);}
+.e44{font-size: 15px; line-height: 1.65; color: rgba(11, 26, 38, 0.72); margin-top: 14px; margin-bottom: 0px; max-width: 720px;}
+.e45{padding: 22px 0px; border-top: medium; border-bottom: 1px solid rgba(11, 26, 38, 0.12);}
+.e46{background: var(--c-deep); color: white; border-radius: 14px; padding: 32px; position: sticky; top: 24px; display: flex; flex-direction: column; gap: 0px;}
+.e47{color: var(--c-aqua); margin-bottom: 12px;}
+.e48{font-size: 36px; color: white; line-height: 0.96; margin-bottom: 24px; letter-spacing: -0.01em;}
+.e49{margin-bottom: 32px;}
+.e50{display: flex; align-items: baseline; justify-content: space-between; padding: 14px 0px; border-top: 1px solid rgba(255, 255, 255, 0.12);}
+.e51{font-family: var(--f-mono); font-size: 11px; color: var(--c-aqua); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600;}
+.e52{font-size: 15px; color: white; font-weight: 600;}
+.e53{border-bottom: 1px solid rgba(255, 255, 255, 0.12);}
+.e54{margin-bottom: 28px;}
+.e55{font-family: var(--f-mono); font-size: 11px; color: var(--c-aqua); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; margin-bottom: 14px;}
+.e56{display: flex; align-items: center; justify-content: space-between; padding: 10px 0px; border-top: medium; opacity: 1;}
+.e57{font-size: 14px; color: white; font-weight: 500;}
+.e58{font-family: var(--f-mono); font-size: 11px; color: rgba(255, 255, 255, 0.6); letter-spacing: 0.04em;}
+.e59{display: flex; align-items: center; justify-content: space-between; padding: 10px 0px; border-top: 1px solid rgba(255, 255, 255, 0.08); opacity: 1;}
+.e60{font-family: var(--f-mono); font-size: 11px; color: var(--c-coral); letter-spacing: 0.04em;}
+.e61{display: flex; align-items: center; justify-content: space-between; padding: 10px 0px; border-top: 1px solid rgba(255, 255, 255, 0.08); opacity: 0.4;}
+.e62{font-family: var(--f-mono); font-size: 11px; color: rgba(255, 255, 255, 0.4); letter-spacing: 0.04em;}
+.e63{width: 100%; justify-content: center; margin-bottom: 12px;}
+.e64{width: 100%; padding: 12px 22px; background: transparent; color: white; border: 1.5px solid rgba(255, 255, 255, 0.3); border-radius: 999px; font-size: 14px; font-weight: 600; cursor: pointer;}
+.e65{background: var(--c-bone); padding-top: 80px; padding-bottom: 96px;}
+.e66{display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 40px; flex-wrap: wrap; gap: 24px;}
+.e67{font-size: 48px; color: var(--c-deep); margin: 0px; line-height: 0.96;}
+.e68{font-size: 14px; font-weight: 600; color: var(--c-deep); text-decoration: none; display: flex; align-items: center; gap: 6px;}
+.e69{display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;}
+.e70{background: white; border-radius: 14px; overflow: hidden; border: 1px solid rgba(11, 26, 38, 0.08); display: flex; flex-direction: column;}
+.e71{height: 160px; border-radius: 0px; position: relative; overflow: hidden; background: rgb(10, 37, 64);}
+.e72{padding: 24px; flex: 1 1 0%; display: flex; flex-direction: column;}
+.e73{display: inline-flex; padding: 4px 10px; background: rgba(29, 111, 156, 0.1); color: var(--c-wave); border-radius: 999px; font-size: 11px; font-weight: 600; align-self: flex-start; margin-bottom: 14px;}
+.e74{font-size: 26px; color: var(--c-deep); margin: 0px 0px 8px; line-height: 1;}
+.e75{font-size: 13px; color: rgba(11, 26, 38, 0.65); margin: 0px; flex: 1 1 0%;}
+.e76{margin-top: 18px; font-size: 13px; font-weight: 600; color: var(--c-coral); text-decoration: none; display: flex; align-items: center; gap: 6px;}
+.e77{background: var(--c-abyss); color: white; padding: 72px 48px 32px;}
+.e78{max-width: 1320px; margin: 0px auto;}
+.e79{display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 48px; padding-bottom: 56px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);}
+.e80{margin-top: 24px; opacity: 0.65; font-size: 14px; line-height: 1.65; max-width: 320px;}
+.e81{display: flex; gap: 12px; margin-top: 24px;}
+.e82{width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; color: rgba(255, 255, 255, 0.75);}
+.e83{opacity: 0.5; margin-bottom: 16px;}
+.e84{display: flex; flex-direction: column; gap: 10px;}
+.e85{color: rgba(255, 255, 255, 0.75); text-decoration: none; font-size: 14px;}
+.e86{display: flex; justify-content: space-between; padding-top: 24px; font-size: 12px; opacity: 0.5;}
+</style>
+</head>
+<body>
+<div class="e0"><div class="e1"><nav class="e2"><div class="e3"><img src="https://www.calypsosub.it/wp-content/uploads/2024/08/Logo-Calypso_2018_OK-1.png" alt="Calypso Sub Arezzo" class="e4"></div><div class="e5"><a href="#" class="e6">Corsi</a><a href="#" class="e6">Uscite</a><a href="#" class="e6">Istruttori</a><a href="#" class="e6">Storia</a><a href="#" class="e6">Contatti</a></div><div class="e7"><a href="#" class="e8">Accedi</a><button class="btn btn-primary e9">Iscriviti <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button></div></nav></div><section class="e10"><div class="container"><div class="e11"><a href="#" class="e12">Home</a><span>/</span><a href="#" class="e12">Corsi</a><span>/</span><span class="e13">Open Water Diver</span></div><div class="e14"><div><div class="e15">Base · Livello 1</div><h1 class="display e16">Open Water Diver</h1><div class="display e17">Il primo brevetto.</div></div><p class="e18">Quattro settimane per imparare a respirare sott'acqua. Si parte dall'aula del club in Borgunto, si prosegue nella piscina coperta di Arezzo, si finisce con quattro immersioni in mare aperto all'Argentario.</p></div><div class="ph e19"><img src="https://images.unsplash.com/photo-1530053969600-caed2596d242?auto=format&fit=crop&w=1600&q=80" alt="corso · open water diver · argentario" loading="lazy" class="e20"><div class="ph-cap e21">corso · open water diver · argentario</div></div></div></section><section class="section e22"><div class="container e23"><div class="e24"><div><div class="eyebrow e25">Il programma</div><h2 class="display e26">Quattro fasi, nove mesi.</h2><p class="e27">Non c'è fretta. Il brevetto dura per sempre, l'importante è arrivarci tranquilli. Ogni fase costruisce sulla precedente, senza esami a sorpresa.</p><ol class="e28"><li class="e29"><div class="display e30">01</div><div><h3 class="display e31">Aula</h3><p class="e32">Quattro lezioni teoriche da due ore: fisica e fisiologia, attrezzatura, pianificazione, sicurezza.</p></div><div class="e33">8 ore</div></li><li class="e29"><div class="display e30">02</div><div><h3 class="display e31">Piscina</h3><p class="e32">Quattro sessioni: erogatore, ARA, assetto, esercizi di emergenza. Piscina comunale di Arezzo.</p></div><div class="e33">12 ore</div></li><li class="e29"><div class="display e30">03</div><div><h3 class="display e31">Mare aperto</h3><p class="e32">Due weekend all'Argentario. Quattro immersioni con istruttore, profondità progressiva fino a 18m.</p></div><div class="e33">8 ore</div></li><li class="e29"><div class="display e30">04</div><div><h3 class="display e31">Brevetto</h3><p class="e32">Esame finale teorico e pratico. Rilascio brevetto FIAS/CMAS internazionale.</p></div><div class="e33">4 ore</div></li></ol></div><div><div class="eyebrow e25">Cosa imparerai</div><h2 class="display e34">Otto competenze da portare via.</h2><div class="e35"><div class="e36"><span class="e37">+</span><span class="e38">Assemblaggio e check completo dell'attrezzatura</span></div><div class="e36"><span class="e37">+</span><span class="e38">Tecniche di respirazione e gestione dell'aria</span></div><div class="e36"><span class="e37">+</span><span class="e38">Controllo dell'assetto neutro con il GAV</span></div><div class="e36"><span class="e37">+</span><span class="e38">Compensazione di orecchie e maschera</span></div><div class="e36"><span class="e37">+</span><span class="e38">Comunicazione subacquea standard</span></div><div class="e36"><span class="e37">+</span><span class="e38">Procedure di immersione in coppia</span></div><div class="e36"><span class="e37">+</span><span class="e38">Pianificazione con tabelle e computer</span></div><div class="e36"><span class="e37">+</span><span class="e38">Gestione delle emergenze e risalita</span></div></div></div><div><div class="eyebrow e25">Domande frequenti</div><h2 class="display e39">Le cose che ci chiedono tutti.</h2><div><div class="e40"><div class="e41"><h4 class="e42">Devo saper nuotare?</h4><div class="e43">−</div></div><p class="e44">Sì: si parte da una nuotata libera di 200m e un galleggiamento di 10 minuti. Non serve essere atleti.</p></div><div class="e45"><div class="e41"><h4 class="e42">Serve il certificato medico?</h4><div class="e43">+</div></div></div><div class="e45"><div class="e41"><h4 class="e42">Posso fare il corso d'inverno?</h4><div class="e43">+</div></div></div><div class="e45"><div class="e41"><h4 class="e42">Il brevetto è valido all'estero?</h4><div class="e43">+</div></div></div></div></div></div><aside class="e46"><div class="eyebrow e47">FIAS · riconosciuto CMAS in 130 paesi</div><div class="display e48">In sintesi</div><div class="e49"><div class="e50"><span class="e51">Durata</span><span class="e52">32 ore</span></div><div class="e50"><span class="e51">Immersioni</span><span class="e52">4 immersioni</span></div><div class="e50"><span class="e51">Profondità</span><span class="e52">18 m</span></div><div class="e50"><span class="e51">Periodo</span><span class="e52">Sett—Giu</span></div><div class="e53"></div></div><div class="e54"><div class="e55">Prossimi inizi</div><div class="e56"><span class="e57">15 Set</span><span class="e58">4 posti liberi</span></div><div class="e59"><span class="e57">13 Ott</span><span class="e58">8 posti liberi</span></div><div class="e59"><span class="e57">17 Nov</span><span class="e60">● 2 posti</span></div><div class="e61"><span class="e57">12 Gen</span><span class="e62">sold out</span></div></div><button class="btn btn-primary e63">Iscriviti al corso <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button><button class="e64">Chiamaci · 0575 123 456</button></aside></div></section><section class="section e65"><div class="container"><div class="e66"><div><div class="eyebrow e25">Continua a scendere</div><h2 class="display e67">Dopo l'Open Water.</h2></div><a href="#" class="e68">Tutti i corsi <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></div><div class="e69"><div class="e70"><div class="ph e71"><img src="https://images.unsplash.com/photo-1551244072-5d12893278ab?auto=format&fit=crop&w=1600&q=80" alt="corso · advanced open water" loading="lazy" class="e20"><div class="ph-cap e21">corso · advanced open water</div></div><div class="e72"><div class="e73">Avanzato</div><h3 class="display e74">Advanced Open Water</h3><p class="e75">24 ore · 5 immersioni · fino a 30m</p><a href="#" class="e76">Scopri il corso <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></div></div><div class="e70"><div class="ph e71"><img src="https://images.unsplash.com/photo-1682687982107-14492010e05e?auto=format&fit=crop&w=1600&q=80" alt="corso · nitrox ean32" loading="lazy" class="e20"><div class="ph-cap e21">corso · nitrox ean32</div></div><div class="e72"><div class="e73">Specialty</div><h3 class="display e74">Nitrox EAN32</h3><p class="e75">12 ore · aria arricchita</p><a href="#" class="e76">Scopri il corso <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></div></div><div class="e70"><div class="ph e71"><img src="https://images.unsplash.com/photo-1583212292454-1fe6229603b7?auto=format&fit=crop&w=1600&q=80" alt="corso · apnea livello 1" loading="lazy" class="e20"><div class="ph-cap e21">corso · apnea livello 1</div></div><div class="e72"><div class="e73">Specialty</div><h3 class="display e74">Apnea livello 1</h3><p class="e75">20 ore · respirazione e rilassamento</p><a href="#" class="e76">Scopri il corso <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></div></div></div></div></section><footer class="e77"><div class="e78"><div class="e79"><div><div class="e3"><img src="https://www.calypsosub.it/wp-content/uploads/2024/08/Logo-Calypso_2018_OK-1.png" alt="Calypso Sub Arezzo" class="e4"></div><p class="e80">Il club subacqueo di Arezzo dal 1978. Affiliato FIAS Federazione Italiana Attività Subacquee.</p><div class="e81"><a href="#" class="e82"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a><a href="#" class="e82"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a><a href="#" class="e82"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg></a></div></div><div><div class="eyebrow e83">Club</div><div class="e84"><a href="#" class="e85">Storia</a><a href="#" class="e85">Istruttori</a><a href="#" class="e85">Sede</a><a href="#" class="e85">Affiliazione FIAS</a></div></div><div><div class="eyebrow e83">Attività</div><div class="e84"><a href="#" class="e85">Corsi</a><a href="#" class="e85">Uscite in barca</a><a href="#" class="e85">Cene sociali</a><a href="#" class="e85">Eventi</a></div></div><div><div class="eyebrow e83">Contatti</div><div class="e84"><a href="#" class="e85">info@calypsosub.it</a><a href="#" class="e85">+39 0575 000 000</a><a href="#" class="e85">Via del Mare 12, Arezzo</a><a href="#" class="e85">Lun–Ven · 18–20</a></div></div></div><div class="e86"><span>© 2026 Calypso Sub Arezzo · A.S.D.</span><span>Privacy · Cookie · Statuto</span></div></div></footer></div>
+</body>
+</html>

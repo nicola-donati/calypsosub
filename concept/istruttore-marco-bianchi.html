@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calypso Sub Arezzo — Docente · Marco Bianchi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── Design tokens & base (sistema Calypso Sub) ── */
+:root{
+  --c-abyss:#061826; --c-deep:#0a2540; --c-wave:#1d6f9c; --c-aqua:#5fb8c8;
+  --c-foam:#cfe9ee; --c-sand:#e8d9b8; --c-sand-warm:#d9c391;
+  --c-coral:#ff6b4a; --c-coral-deep:#e04a2a; --c-bone:#f6f1e6; --c-ink:#0b1a26;
+  --f-display:"Big Shoulders Display","Anton",Impact,sans-serif;
+  --f-body:"DM Sans",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,monospace;
+  --maxw:1320px; --radius:12px;
+}
+/* palette attiva (come nelle altre pagine esportate) */
+:root{--c-coral:#e9bf26;--c-aqua:#26cbfb;--c-deep:#1b77a7;--c-sand:#e8d9b8;--f-display:"Big Shoulders Display",Impact,sans-serif;}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:#fff;}
+body{
+  font-family:var(--f-body); color:var(--c-ink); background:var(--c-bone);
+  -webkit-font-smoothing:antialiased; font-feature-settings:"ss01","cv11";
+  line-height:1.5; width:100%; max-width:1440px; margin:0 auto;
+}
+img{max-width:100%;}
+.display{font-family:var(--f-display);font-weight:800;letter-spacing:-.01em;line-height:.92;text-transform:uppercase;}
+.eyebrow{font-family:var(--f-mono);text-transform:uppercase;font-size:11px;letter-spacing:.18em;font-weight:500;}
+.container{max-width:var(--maxw);margin:0 auto;}
+.section{padding:96px 48px;}
+::selection{background:var(--c-coral);color:#fff;}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 22px;
+  font-family:var(--f-body);font-weight:600;font-size:14px;letter-spacing:.02em;border:none;
+  border-radius:999px;cursor:pointer;text-decoration:none;white-space:nowrap;
+  transition:transform .15s,box-shadow .15s,background .15s;}
+.btn:hover{transform:translateY(-1px);}
+.btn-primary{background:var(--c-coral);color:#fff;box-shadow:0 6px 18px -4px rgba(233,191,38,.55);}
+.btn-primary:hover{background:#cda81f;}
+
+/* image placeholder w/ real img */
+.ph{position:relative;background:linear-gradient(180deg,var(--c-aqua),var(--c-wave) 60%,var(--c-deep));
+  color:rgba(255,255,255,.85);display:flex;align-items:flex-end;overflow:hidden;isolation:isolate;}
+.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.ph .ph-cap{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  padding:10px 12px;background:rgba(0,0,0,.35);backdrop-filter:blur(4px);position:relative;z-index:1;border-top-right-radius:4px;}
+
+/* ── NAV ── */
+.nav{background:var(--c-deep);padding:24px 48px;display:flex;align-items:center;justify-content:space-between;}
+.brand{display:flex;align-items:center;gap:12px;}
+.brand img{height:44px;width:auto;display:block;filter:drop-shadow(0 1px 2px rgba(0,0,0,.3));}
+.nav-links{display:flex;align-items:center;gap:36px;}
+.nav-links a{color:rgba(255,255,255,.85);text-decoration:none;font-size:14px;font-weight:500;}
+.nav-links a:hover{color:#fff;}
+.nav-cta{display:flex;gap:12px;align-items:center;}
+.nav-cta .login{color:rgba(255,255,255,.85);font-size:13px;text-decoration:none;}
+
+/* ── HERO ── */
+.hero{background:var(--c-deep);color:#fff;padding:32px 48px 64px;}
+.crumbs{display:flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:12px;
+  letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:48px;flex-wrap:wrap;}
+.crumbs a{color:inherit;text-decoration:none;}
+.crumbs a:hover{color:#fff;}
+.crumbs .here{color:#fff;}
+.hero-grid{display:grid;grid-template-columns:1.25fr .95fr;gap:64px;align-items:end;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:var(--c-coral);color:#fff;
+  border-radius:999px;font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.06em;
+  text-transform:uppercase;margin-bottom:24px;}
+.hero h1{font-size:96px;margin:0;line-height:.94;letter-spacing:-.02em;overflow-wrap:break-word;}
+.hero h1 .sur{color:var(--c-aqua);display:block;}
+.hero-role{display:flex;align-items:center;gap:10px;font-size:24px;color:#fff;margin-top:16px;font-weight:600;opacity:.92;}
+.hero-exp{display:inline-flex;align-items:baseline;gap:12px;margin-top:32px;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:16px 22px;}
+.hero-exp .v{font-family:var(--f-display);font-weight:800;font-size:52px;line-height:.9;color:var(--c-aqua);}
+.hero-exp .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.75);}
+
+/* profile photos (1+) */
+.shots{display:flex;flex-direction:column;gap:12px;}
+.shots .main{height:380px;border-radius:14px;}
+.shots .thumbs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.shots .thumbs .ph{height:96px;border-radius:10px;}
+.shots .thumbs .ph .ph-cap{display:none;}
+
+/* ── DETAIL LAYOUT ── */
+.detail{padding-top:80px;padding-bottom:96px;}
+.detail-grid{display:grid;grid-template-columns:1fr 380px;gap:56px;align-items:start;}
+.content{display:flex;flex-direction:column;gap:64px;min-width:0;}
+.block .eyebrow{color:var(--c-wave);margin-bottom:14px;}
+.block h2{font-family:var(--f-display);font-weight:800;text-transform:uppercase;letter-spacing:-.01em;
+  line-height:.96;font-size:48px;color:var(--c-deep);margin:0 0 24px;}
+.prose p{font-size:16px;line-height:1.8;color:rgba(11,26,38,.8);margin:0 0 18px;max-width:660px;}
+.prose p:last-child{margin-bottom:0;}
+
+/* specializzazioni */
+.specs{display:flex;flex-wrap:wrap;gap:10px;}
+.specs span{display:inline-flex;align-items:center;gap:9px;background:#fff;border:1px solid rgba(11,26,38,.1);
+  border-radius:999px;padding:11px 18px;font-size:14px;font-weight:600;color:var(--c-deep);}
+.specs span i{width:7px;height:7px;border-radius:50%;background:var(--c-aqua);font-style:normal;flex:0 0 auto;}
+
+/* ── ASIDE — contatti ── */
+.aside{position:sticky;top:24px;display:flex;flex-direction:column;gap:16px;}
+.vcard{background:var(--c-deep);color:#fff;border-radius:18px;overflow:hidden;box-shadow:0 30px 80px -40px rgba(10,37,64,.6);}
+.vcard .ph{height:260px;}
+.vcard .ph .ph-cap{display:none;}
+.vcard .head{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.1);}
+.vcard .head .nm{font-family:var(--f-display);font-weight:700;text-transform:uppercase;font-size:28px;line-height:1;}
+.vcard .head .rl{font-size:13px;color:var(--c-aqua);margin-top:6px;font-weight:600;}
+.vcard .head .ex{font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;}
+.contact{padding:8px 14px 14px;}
+.crow{display:flex;align-items:center;gap:14px;padding:13px 10px;border-radius:10px;text-decoration:none;color:#fff;
+  transition:background .15s;min-height:52px;}
+.crow:hover{background:rgba(255,255,255,.06);}
+.crow .ic{width:36px;height:36px;border-radius:9px;flex:0 0 auto;background:rgba(38,203,251,.14);
+  display:flex;align-items:center;justify-content:center;color:var(--c-aqua);}
+.crow .tx{min-width:0;}
+.crow .tx .lab{display:block;font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:3px;line-height:1.3;}
+.crow .tx .val{display:block;font-size:14px;font-weight:600;line-height:1.35;overflow-wrap:anywhere;}
+.vcard .socials{display:flex;gap:10px;padding:6px 24px 22px;}
+.vcard .socials a{width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.8);transition:.15s;}
+.vcard .socials a:hover{border-color:var(--c-aqua);color:var(--c-aqua);}
+
+/* ── GALLERIA ── */
+.gallery-sec{background:var(--c-foam);padding-top:80px;padding-bottom:96px;}
+.gallery-sec .head{margin-bottom:40px;}
+.gallery-sec .head .eyebrow{color:var(--c-wave);margin-bottom:12px;}
+.gallery-sec .head h2{font-family:var(--f-display);font-weight:800;text-transform:uppercase;font-size:48px;color:var(--c-deep);margin:0;line-height:.96;}
+.gallery{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:200px;gap:12px;}
+.gallery .ph{border-radius:12px;}
+.gallery .wide{grid-column:span 2;}
+.gallery .tall{grid-row:span 2;}
+
+/* ── FOOTER ── */
+.footer{background:var(--c-abyss);color:#fff;padding:72px 48px 32px;}
+.footer .grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:48px;padding-bottom:56px;border-bottom:1px solid rgba(255,255,255,.1);}
+.footer .about{margin-top:24px;opacity:.65;font-size:14px;line-height:1.65;max-width:320px;}
+.fsocials{display:flex;gap:12px;margin-top:24px;}
+.fsocials a{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.75);}
+.fcol .eyebrow{opacity:.5;margin-bottom:16px;}
+.fcol .links{display:flex;flex-direction:column;gap:10px;}
+.fcol .links a{color:rgba(255,255,255,.75);text-decoration:none;font-size:14px;}
+.fcol .links a:hover{color:#fff;}
+.copy{display:flex;justify-content:space-between;padding-top:24px;font-size:12px;opacity:.5;flex-wrap:wrap;gap:8px;}
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+   ───────────────────────────────────────────── */
+@media (max-width:1040px){
+  .nav{padding:18px 28px;}
+  .hero{padding:28px 28px 56px;}
+  .section{padding:56px 28px;}
+  .hero-grid{grid-template-columns:1fr;gap:36px;}
+  .hero h1{font-size:78px;}
+  .shots{order:-1;}
+  .shots .main{height:340px;}
+  .detail{padding-top:48px;}
+  .detail-grid{grid-template-columns:1fr;gap:40px;}
+  .content{gap:48px;}
+  .aside{position:static;max-width:480px;}
+  .gallery-sec{padding-top:56px;}
+  .footer{padding:56px 28px 28px;}
+  .footer .grid{grid-template-columns:1fr 1fr;gap:40px 32px;}
+}
+@media (max-width:760px){
+  .nav{padding:16px 20px;}
+  .nav-links{display:none;}
+  .hero{padding:24px 20px 48px;}
+  .section{padding:44px 20px;}
+  .crumbs{margin-bottom:32px;}
+  .hero h1{font-size:54px;}
+  .hero-role{font-size:20px;}
+  .shots .main{height:300px;}
+  .block h2{font-size:36px;}
+  .aside{max-width:none;}
+  .gallery-sec .head h2{font-size:36px;}
+  .gallery{grid-template-columns:1fr 1fr;grid-auto-rows:150px;}
+  .gallery .wide{grid-column:span 2;}
+  .gallery .tall{grid-row:span 1;}
+  .footer .grid{grid-template-columns:1fr;gap:32px;}
+  .copy{flex-direction:column;}
+}
+@media (max-width:420px){
+  .hero h1{font-size:44px;}
+  .hero-exp .v{font-size:42px;}
+  .block h2{font-size:30px;}
+  .gallery{grid-template-columns:1fr;grid-auto-rows:200px;}
+  .gallery .wide{grid-column:span 1;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="brand"><img src="https://www.calypsosub.it/wp-content/uploads/2024/08/Logo-Calypso_2018_OK-1.png" alt="Calypso Sub Arezzo"></div>
+  <div class="nav-links">
+    <a href="corsi.html">Corsi</a>
+    <a href="uscite.html">Uscite</a>
+    <a href="istruttori.html">Istruttori</a>
+    <a href="storia.html">Storia</a>
+    <a href="#">Contatti</a>
+  </div>
+  <div class="nav-cta">
+    <a href="#" class="login">Accedi</a>
+    <a href="prenotazione.html" class="btn btn-primary" style="padding:10px 18px;font-size:13px;">Prenota
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="container">
+    <div class="crumbs">
+      <a href="home-desktop.html">Home</a><span>/</span>
+      <a href="istruttori.html">Istruttori</a><span>/</span>
+      <span class="here">Marco Bianchi</span>
+    </div>
+    <div class="hero-grid">
+      <div>
+        <div class="hero-badge">● Direttore tecnico</div>
+        <h1 class="display">Marco<span class="sur">Bianchi</span></h1>
+        <div class="hero-role">Direttore tecnico del club</div>
+        <div class="hero-exp">
+          <span class="v">32</span>
+          <span class="k">anni di<br>esperienza</span>
+        </div>
+      </div>
+      <div class="shots">
+        <div class="ph main">
+          <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=1000&q=80" alt="Marco Bianchi" loading="lazy">
+          <div class="ph-cap">Marco Bianchi · ritratto</div>
+        </div>
+        <div class="thumbs">
+          <div class="ph"><img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=600&q=80" alt="profilo 2" loading="lazy"></div>
+          <div class="ph"><img src="https://images.unsplash.com/photo-1502537745125-b5b94aac2fa1?auto=format&fit=crop&w=600&q=80" alt="profilo 3" loading="lazy"></div>
+          <div class="ph"><img src="https://images.unsplash.com/photo-1551244072-5d12893278ab?auto=format&fit=crop&w=600&q=80" alt="profilo 4" loading="lazy"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- DETAIL -->
+<section class="section detail">
+  <div class="container detail-grid">
+
+    <!-- LEFT -->
+    <div class="content">
+
+      <div class="block prose">
+        <div class="eyebrow">Bio</div>
+        <h2>Chi è Marco.</h2>
+        <p>Marco è entrato in Calypso nel 1992, quando il club aveva ancora la compressoria a mano e la sede era un garage in via Roma. Figlio di uno dei primi soci, è cresciuto tra bombole d'acciaio e tabelle di decompressione fotocopiate.</p>
+        <p>Ottenuto il brevetto di istruttore nei primi anni Novanta, ha costruito pezzo per pezzo la scuola del club: prima i corsi base, poi le specialità profonde, infine la didattica tecnica. Dal 2003 ne è il direttore tecnico, responsabile della formazione e della sicurezza delle uscite.</p>
+        <p>Lo riconosci dalla calma con cui parla prima di ogni immersione e dalla frase che ripete agli allievi nervosi: «Sott'acqua non comanda chi è più forte, comanda chi respira più piano».</p>
+      </div>
+
+      <div class="block">
+        <div class="eyebrow">Specializzazioni</div>
+        <h2>Cosa porta sotto.</h2>
+        <div class="specs">
+          <span><i></i>Immersione profonda</span>
+          <span><i></i>Trimix tecnico</span>
+          <span><i></i>Immersione sui relitti</span>
+          <span><i></i>Configurazione attrezzatura</span>
+          <span><i></i>Didattica istruttori</span>
+          <span><i></i>Sicurezza &amp; soccorso</span>
+          <span><i></i>Fotografia subacquea</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT — contatti / vcard -->
+    <aside class="aside">
+      <div class="vcard">
+        <div class="ph">
+          <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80" alt="Marco Bianchi" loading="lazy">
+        </div>
+        <div class="head">
+          <div class="nm">Marco Bianchi</div>
+          <div class="rl">Direttore tecnico</div>
+          <div class="ex">32 anni di esperienza · dal 1992</div>
+        </div>
+        <div class="contact">
+          <a class="crow" href="/cdn-cgi/l/email-protection#274a4655444809454e4649444f4e6744464b5e575448545245094e53">
+            <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg></span>
+            <span class="tx"><span class="lab">Email</span><span class="val"><span class="__cf_email__" data-cfemail="f09d9182939fde9299919e939899b093919c8980839f838592de9984">[email&#160;protected]</span></span></span>
+          </a>
+          <a class="crow" href="tel:+390575123456">
+            <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></span>
+            <span class="tx"><span class="lab">Telefono</span><span class="val">+39 0575 123 456</span></span>
+          </a>
+          <a class="crow" href="https://www.calypsosub.it/author/marco-bianchi" target="_blank" rel="noopener">
+            <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></span>
+            <span class="tx"><span class="lab">WordPress</span><span class="val">@marco.bianchi</span></span>
+          </a>
+        </div>
+        <div class="socials">
+          <a href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+          <a href="#" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+          <a href="#" aria-label="YouTube"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></a>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<!-- GALLERIA -->
+<section class="section gallery-sec">
+  <div class="container">
+    <div class="head">
+      <div class="eyebrow">Galleria foto</div>
+      <h2>Dal logbook di Marco.</h2>
+    </div>
+    <div class="gallery">
+      <div class="ph tall"><img src="https://images.unsplash.com/photo-1582967788606-a171c1080cb0?auto=format&fit=crop&w=1000&q=80" alt="tartaruga" loading="lazy"><div class="ph-cap">tartaruga · Argentario</div></div>
+      <div class="ph wide"><img src="https://images.unsplash.com/photo-1546026423-cc4642628d2b?auto=format&fit=crop&w=1200&q=80" alt="corallo rosso" loading="lazy"><div class="ph-cap">corallo rosso · −38m</div></div>
+      <div class="ph"><img src="https://images.unsplash.com/photo-1535591273668-578e31182c4f?auto=format&fit=crop&w=800&q=80" alt="murena" loading="lazy"><div class="ph-cap">murena</div></div>
+      <div class="ph"><img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80" alt="saraghi" loading="lazy"><div class="ph-cap">banco di saraghi</div></div>
+      <div class="ph wide"><img src="https://images.unsplash.com/photo-1582554671007-e3d56b21ddca?auto=format&fit=crop&w=1200&q=80" alt="gorgonia" loading="lazy"><div class="ph-cap">gorgonia gialla · −32m</div></div>
+      <div class="ph"><img src="https://images.unsplash.com/photo-1545671913-b89ac1b4ac10?auto=format&fit=crop&w=800&q=80" alt="polpo" loading="lazy"><div class="ph-cap">polpo</div></div>
+      <div class="ph"><img src="https://images.unsplash.com/photo-1551244072-5d12893278ab?auto=format&fit=crop&w=800&q=80" alt="tappa di sicurezza" loading="lazy"><div class="ph-cap">tappa · −5m</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="grid">
+      <div>
+        <div class="brand"><img src="https://www.calypsosub.it/wp-content/uploads/2024/08/Logo-Calypso_2018_OK-1.png" alt="Calypso Sub Arezzo"></div>
+        <p class="about">Il club subacqueo di Arezzo dal 1978. Affiliato FIAS Federazione Italiana Attività Subacquee.</p>
+        <div class="fsocials">
+          <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+          <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+          <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg></a>
+        </div>
+      </div>
+      <div class="fcol"><div class="eyebrow">Club</div><div class="links"><a href="storia.html">Storia</a><a href="istruttori.html">Istruttori</a><a href="#">Sede</a><a href="#">Affiliazione FIAS</a></div></div>
+      <div class="fcol"><div class="eyebrow">Attività</div><div class="links"><a href="corsi.html">Corsi</a><a href="uscite.html">Uscite in barca</a><a href="#">Cene sociali</a><a href="#">Eventi</a></div></div>
+      <div class="fcol"><div class="eyebrow">Contatti</div><div class="links"><a href="#"><span class="__cf_email__" data-cfemail="f1989f979eb192909d8881829e828493df9885">[email&#160;protected]</span></a><a href="#">+39 0575 000 000</a><a href="#">Via del Mare 12, Arezzo</a><a href="#">Lun–Ven · 18–20</a></div></div>
+    </div>
+    <div class="copy"><span>© 2026 Calypso Sub Arezzo · A.S.D.</span><span>Privacy · Cookie · Statuto</span></div>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+</html>

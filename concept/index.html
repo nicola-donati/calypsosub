@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calypso Sub Arezzo — Pagine statiche</title>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --deep:#0a2540; --aqua:#5fb8c8; --coral:#ff6b4a; --bone:#f6f1e6; --ink:#0b1a26;
+    --mono:"JetBrains Mono",monospace; --body:"DM Sans",sans-serif;
+    --disp:"Big Shoulders Display",Impact,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);background:var(--deep);color:#fff;min-height:100vh;padding:64px 40px 80px;}
+  .wrap{max-width:1080px;margin:0 auto;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--aqua);margin-bottom:18px;}
+  h1{font-family:var(--disp);font-weight:800;text-transform:uppercase;font-size:72px;line-height:.92;letter-spacing:-.01em;margin-bottom:20px;}
+  h1 em{font-style:normal;color:var(--coral);}
+  .lead{font-size:16px;line-height:1.6;opacity:.82;max-width:620px;margin-bottom:48px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  a.card{display:flex;flex-direction:column;gap:14px;text-decoration:none;color:inherit;
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;
+    padding:22px;transition:border-color .15s,transform .15s,background .15s;}
+  a.card:hover{border-color:var(--aqua);transform:translateY(-2px);background:rgba(255,255,255,.07);}
+  .num{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--coral);}
+  .name{font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:24px;line-height:.98;}
+  .meta{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:rgba(255,255,255,.5);text-transform:uppercase;margin-top:auto;}
+  .note{margin-top:48px;padding-top:28px;border-top:1px solid rgba(255,255,255,.1);
+    font-size:13px;line-height:1.7;opacity:.65;max-width:680px;}
+  .note code{font-family:var(--mono);font-size:12px;background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px;color:var(--aqua);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Export statico · HTML autonomo · senza JavaScript</div>
+  <h1>9 pagine,<br>9 file <em>indipendenti.</em></h1>
+  <p class="lead">Ogni pagina è un singolo file HTML con tutto il CSS incorporato inline e nessuno script. Layout e grafica pixel-perfect, pronti da analizzare e ricostruire dinamicamente.</p>
+
+  <div class="grid">
+    <a class="card" href="home-desktop.html"><span class="num">01</span><span class="name">Home<br>Desktop</span><span class="meta">1440px · landing completa</span></a>
+    <a class="card" href="home-mobile.html"><span class="num">02</span><span class="name">Home<br>Mobile</span><span class="meta">390px · versione mobile</span></a>
+    <a class="card" href="corsi.html"><span class="num">03</span><span class="name">Corsi</span><span class="meta">1440px · catalogo corsi</span></a>
+    <a class="card" href="corso-open-water-diver.html"><span class="num">04</span><span class="name">Corso<br>Dettaglio</span><span class="meta">1440px · Open Water Diver</span></a>
+    <a class="card" href="uscite.html"><span class="num">05</span><span class="name">Uscite</span><span class="meta">1440px · calendario stagione</span></a>
+    <a class="card" href="istruttori.html"><span class="num">06</span><span class="name">Istruttori</span><span class="meta">1440px · team</span></a>
+    <a class="card" href="storia.html"><span class="num">07</span><span class="name">Storia</span><span class="meta">1440px · timeline 1943—2024</span></a>
+    <a class="card" href="iscrizione.html"><span class="num">08</span><span class="name">Iscrizione</span><span class="meta">1440px · form socio</span></a>
+    <a class="card" href="prenotazione.html"><span class="num">09</span><span class="name">Prenotazione</span><span class="meta">1440px · uscite &amp; eventi</span></a>
+  </div>
+
+  <p class="note">Ogni file è autonomo: CSS inline nel <code>&lt;head&gt;</code>, nessuno <code>&lt;script&gt;</code>, font caricati da Google Fonts e immagini da URL remoti (Unsplash + logo del club). Gli stili generati a runtime dai componenti sono stati estratti in classi <code>.e0 … .eN</code> con dichiarazioni leggibili. Per scaricare tutto, usa il pulsante di download della cartella <code>pagine-html</code>.</p>
+</div>
+</body>
+</html>
