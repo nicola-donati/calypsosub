@@ -18,7 +18,11 @@ class Test_Tax_Media_Tag extends TestCase {
 	public function test_init_hooks_register_on_init_action(): void {
 		Functions\expect( 'add_action' )
 			->once()
-			->with( 'init', [ \Mockery::type( Calypsosub_Tax_Media_Tag::class ), 'register' ] );
+			->with( 'init', \Mockery::on( function ( $callback ) {
+				return is_array( $callback )
+					&& $callback[0] instanceof Calypsosub_Tax_Media_Tag
+					&& $callback[1] === 'register';
+			} ) );
 
 		( new Calypsosub_Tax_Media_Tag() )->init();
 	}
