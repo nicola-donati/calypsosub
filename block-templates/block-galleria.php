@@ -16,11 +16,18 @@ $row_height             = (int)    ( $a['row_height']              ?? 200 );
 $max_width              = (int)    ( $a['max_width']                ?? 1320 );
 $bg_color               = (string) ( $a['bg_color']                 ?? '' );
 $lightbox               = (bool)   ( $a['lightbox']                 ?? false );
-$overlay_bg             = (string) ( $a['overlay_bg']               ?? 'rgba(0,0,0,.35)' );
-$overlay_color          = (string) ( $a['overlay_color']            ?? '#ffffff' );
 $overlay_size           = (int)    ( $a['overlay_size']             ?? 10 );
 $overlay_font_weight    = (int)    ( $a['overlay_font_weight']      ?? 400 );
 $overlay_letter_spacing = (int)    ( $a['overlay_letter_spacing']   ?? 12 );
+
+$safe_css_color = function ( $value, $default ) {
+	$value = trim( (string) $value );
+	return preg_match( '/^(#[0-9a-fA-F]{3,8}|rgba?\([0-9.,%\s]+\)|hsla?\([0-9.,%\s]+\)|[a-zA-Z]+)$/', $value ) ? $value : $default;
+};
+
+$overlay_bg    = $safe_css_color( $a['overlay_bg'] ?? 'rgba(0,0,0,.35)', 'rgba(0,0,0,.35)' );
+$overlay_color = $safe_css_color( $a['overlay_color'] ?? '#ffffff', '#ffffff' );
+$bg_color_safe = $bg_color !== '' ? $safe_css_color( $bg_color, '' ) : '';
 
 $query_args = Calypsosub_Gallery_Helpers::build_query_args( $a );
 $items      = get_posts( $query_args );
@@ -42,14 +49,16 @@ $mobile_row_height = (int) round( $row_height * 0.8 );
 #<?php echo $uid; ?> .cso-gal__cell{cursor:zoom-in;}
 <?php endif; ?>
 @media(max-width:1024px){
-	#<?php echo $uid; ?> .cso-gal__wrap{grid-template-columns:1fr 1fr;grid-auto-rows:<?php echo $mobile_row_height; ?>px;}
+	#<?php echo $uid; ?> .cso-gal__wrap{grid-template-columns:1fr 1fr;grid-auto-rows:minmax(<?php echo $mobile_row_height; ?>px,auto);}
+	#<?php echo $uid; ?> .cso-gal__cell{grid-column:span var(--cso-mcol,1) !important;grid-row:span 1 !important;height:var(--cso-mh,<?php echo $mobile_row_height; ?>px);}
 }
 </style>
-<section <?php echo $bg_color ? 'style="background:' . esc_attr( $bg_color ) . ';"' : ''; ?> id="<?php echo $uid; ?>">
+<section <?php echo $bg_color_safe ? 'style="background:' . esc_attr( $bg_color_safe ) . ';"' : ''; ?> id="<?php echo $uid; ?>">
 	<div class="cso-gal__wrap">
 		<?php foreach ( $items as $index => $item ) :
 			$desktop_style = Calypsosub_Gallery_Helpers::cell_style( $index, false );
 			$mobile_style  = Calypsosub_Gallery_Helpers::cell_style( $index, true );
+			$mobile_height = $index % 8 === 0 ? (int) round( $mobile_row_height * 1.375 ) : $mobile_row_height;
 			$img_url       = wp_get_attachment_image_url( $item->ID, 'large' );
 			$overlay_text  = Calypsosub_Gallery_Helpers::resolve_overlay_text( $item->ID );
 			$alt           = get_post_meta( $item->ID, '_wp_attachment_image_alt', true ) ?: $overlay_text;
@@ -60,7 +69,7 @@ $mobile_row_height = (int) round( $row_height * 0.8 );
 		<div class="cso-gal__cell"
 		     data-index="<?php echo (int) $index; ?>"
 		     <?php if ( $lightbox ) : ?>data-lightbox-src="<?php echo esc_url( wp_get_attachment_image_url( $item->ID, 'full' ) ?: $img_url ); ?>"<?php endif; ?>
-		     style="grid-column:span <?php echo $desktop_style['col']; ?>;grid-row:span <?php echo $desktop_style['row']; ?>;">
+		     style="grid-column:span <?php echo $desktop_style['col']; ?>;grid-row:span <?php echo $desktop_style['row']; ?>;--cso-mcol:<?php echo $mobile_style['col']; ?>;--cso-mh:<?php echo $mobile_height; ?>px;">
 			<img src="<?php echo esc_url( $img_url ); ?>" alt="<?php echo esc_attr( $alt ); ?>" loading="lazy">
 			<?php if ( $overlay_text ) : ?>
 			<div class="cso-gal__cap"><?php echo esc_html( $overlay_text ); ?></div>
