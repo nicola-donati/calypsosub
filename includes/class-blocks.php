@@ -1255,6 +1255,227 @@ class Calypsosub_Blocks {
 		}
 
 		/* ════════════════════════════════════════════
+		   calypso/galleria — muro di foto con sorgente configurabile
+		   ════════════════════════════════════════════ */
+		if (info.name === 'calypso/galleria') {
+			var useState  = element.useState;
+			var useEffect = element.useEffect;
+
+			blocks.registerBlockType(info.name, {
+				title: info.title,
+				category: 'calypso',
+				icon: info.icon || 'format-gallery',
+				attributes: info.attributes || {},
+				edit: function (props) {
+					var a   = props.attributes;
+					var set = props.setAttributes;
+
+					var previewItems = useState([])[0];
+					var setPreviewItemsState = useState([])[1];
+					var loadingState = useState(false);
+
+					function colorRow(label, key) {
+						return el('div', { style: { marginBottom: '12px' } },
+							el('p', { style: { fontSize: '11px', fontWeight: 500, color: '#1e1e1e', margin: '0 0 6px' } }, label),
+							el(ColorPalette, {
+								colors: getThemeColors(),
+								value: a[key] || '',
+								onChange: function (v) { var u = {}; u[key] = v || ''; set(u); }
+							})
+						);
+					}
+
+					var fwOpts = [
+						{ value: '300', label: 'Light (300)' },
+						{ value: '400', label: 'Regular (400)' },
+						{ value: '500', label: 'Medium (500)' },
+						{ value: '600', label: 'SemiBold (600)' },
+						{ value: '700', label: 'Bold (700)' },
+						{ value: '800', label: 'ExtraBold (800)' },
+						{ value: '900', label: 'Black (900)' }
+					];
+					function weightRow(label, key, def) {
+						return SelectControl ? el(SelectControl, {
+							label: label,
+							value: String(a[key] || def),
+							options: fwOpts,
+							onChange: function (v) { var u = {}; u[key] = parseInt(v, 10); set(u); }
+						}) : null;
+					}
+
+					var mediaBtn = (MediaUploadCheck && MediaUpload)
+						? el(MediaUploadCheck, {},
+							el(MediaUpload, {
+								onSelect: function (media) {
+									var list = Array.isArray(media) ? media : [media];
+									set({ manual_ids: list.map(function (m) { return m.id; }) });
+									setPreviewItemsState(list.map(function (m) {
+										return { id: m.id, url: (m.sizes && m.sizes.medium ? m.sizes.medium.url : m.url) };
+									}));
+								},
+								allowedTypes: ['image'],
+								multiple: true,
+								gallery: true,
+								value: a.manual_ids || [],
+								render: function (ref) {
+									return el(Button, {
+										onClick: ref.open,
+										variant: 'primary',
+										style: { marginBottom: '8px' }
+									}, (a.manual_ids && a.manual_ids.length) ? 'Modifica selezione (' + a.manual_ids.length + ')' : 'Scegli immagini');
+								}
+							}))
+						: null;
+
+					var tagOptions = useState([])[0];
+					var setTagOptions = useState([])[1];
+
+					useEffect(function () {
+						if (!window.wp.apiFetch) return;
+						window.wp.apiFetch({ path: '/wp/v2/calypso_media_tag?per_page=100' }).then(function (terms) {
+							setTagOptions(terms.map(function (t) { return { value: String(t.id), label: t.name }; }));
+						}).catch(function () { setTagOptions([]); });
+					}, []);
+
+					useEffect(function () {
+						if (!window.wp.apiFetch) return;
+						loadingState[1](true);
+						var path = '/wp/v2/media?per_page=' + (a.max_items > 0 ? a.max_items : 24) + '&orderby=date&order=desc';
+						if (a.source_mode === 'tag' && a.tag_ids && a.tag_ids.length) {
+							path += '&calypso_media_tag=' + a.tag_ids.join(',');
+						}
+						window.wp.apiFetch({ path: path }).then(function (media) {
+							var filtered = media;
+							if (a.source_mode === 'all') {
+								filtered = media.filter(function (m) {
+									return m.calypso_media_tag && m.calypso_media_tag.length > 0;
+								});
+							}
+							setPreviewItemsState(filtered.map(function (m) {
+								return { id: m.id, url: (m.media_details && m.media_details.sizes && m.media_details.sizes.medium ? m.media_details.sizes.medium.source_url : m.source_url) };
+							}));
+						}).catch(function () { setPreviewItemsState([]); }).finally(function () { loadingState[1](false); });
+					}, [a.source_mode, JSON.stringify(a.tag_ids), a.max_items]);
+
+					var controls = InspectorControls ? el(InspectorControls, {},
+
+						el(PanelBody, { title: 'Sorgente immagini', initialOpen: true },
+							SelectControl ? el(SelectControl, {
+								label: 'Modalità',
+								value: a.source_mode || 'all',
+								options: [
+									{ value: 'all',    label: 'Tutti i media taggati' },
+									{ value: 'tag',    label: 'Per tag specifico' },
+									{ value: 'manual', label: 'Selezione manuale' }
+								],
+								onChange: function (v) { set({ source_mode: v }); }
+							}) : null,
+							(a.source_mode === 'tag' && SelectControl) ? el(SelectControl, {
+								label: 'Tag galleria',
+								multiple: true,
+								value: (a.tag_ids || []).map(String),
+								options: tagOptions,
+								onChange: function (v) { set({ tag_ids: (v || []).map(function (id) { return parseInt(id, 10); }) }); }
+							}) : null,
+							(a.source_mode === 'manual') ? mediaBtn : null
+						),
+
+						el(PanelBody, { title: 'Comportamento', initialOpen: false },
+							el(RangeControl, {
+								label: 'Numero massimo immagini (0 = tutte)',
+								value: a.max_items !== undefined ? a.max_items : 12,
+								min: 0, max: 60, step: 1,
+								onChange: function (v) { set({ max_items: v === undefined ? 12 : v }); }
+							}),
+							el(ToggleControl, {
+								label: 'Lightbox al click',
+								help: a.lightbox ? "Click sull'immagine apre l'anteprima a schermo intero." : 'Immagini non cliccabili.',
+								checked: !!a.lightbox,
+								onChange: function (v) { set({ lightbox: v }); }
+							})
+						),
+
+						el(PanelBody, { title: 'Aspetto', initialOpen: false },
+							el(RangeControl, {
+								label: 'Gap tra celle (px)',
+								value: a.gap !== undefined ? a.gap : 0,
+								min: 0, max: 40, step: 2,
+								onChange: function (v) { set({ gap: v === undefined ? 0 : v }); }
+							}),
+							el(RangeControl, {
+								label: 'Altezza riga base (px)',
+								value: a.row_height || 200,
+								min: 80, max: 360, step: 10,
+								onChange: function (v) { set({ row_height: v || 200 }); }
+							}),
+							el(RangeControl, {
+								label: 'Larghezza massima (px)',
+								value: a.max_width || 1320,
+								min: 400, max: 1920, step: 20,
+								onChange: function (v) { set({ max_width: v || 1320 }); }
+							}),
+							colorRow('Colore sfondo sezione', 'bg_color')
+						),
+
+						el(PanelBody, { title: 'Overlay didascalia', initialOpen: false },
+							colorRow('Colore testo', 'overlay_color'),
+							el(TextControl, {
+								label: 'Sfondo (CSS, rgba supportato)',
+								value: a.overlay_bg || 'rgba(0,0,0,.35)',
+								onChange: function (v) { set({ overlay_bg: v }); }
+							}),
+							el(RangeControl, {
+								label: 'Dimensione testo (px)',
+								value: a.overlay_size || 10,
+								min: 8, max: 24, step: 1,
+								onChange: function (v) { set({ overlay_size: v || 10 }); }
+							}),
+							weightRow('Peso font', 'overlay_font_weight', 400),
+							el(RangeControl, {
+								label: 'Letter spacing (em ×100)',
+								value: a.overlay_letter_spacing !== undefined ? a.overlay_letter_spacing : 12,
+								min: 0, max: 40, step: 1,
+								onChange: function (v) { set({ overlay_letter_spacing: v === undefined ? 12 : v }); }
+							})
+						)
+
+					) : null;
+
+					var DESKTOP_PATTERN = [
+						{ col: 3, row: 2 }, { col: 2, row: 1 }, { col: 1, row: 1 }, { col: 1, row: 1 },
+						{ col: 2, row: 1 }, { col: 2, row: 2 }, { col: 1, row: 1 }, { col: 1, row: 1 },
+						{ col: 1, row: 1 }, { col: 1, row: 1 }
+					];
+
+					var preview = el('div', {
+						style: {
+							display: 'grid',
+							gridTemplateColumns: 'repeat(6,1fr)',
+							gridAutoRows: (a.row_height || 200) / 2 + 'px',
+							gap: (a.gap !== undefined ? a.gap : 0) + 'px',
+							maxWidth: '100%'
+						}
+					},
+						previewItems.length
+							? previewItems.map(function (item, index) {
+								var style = DESKTOP_PATTERN[index % DESKTOP_PATTERN.length];
+								return el('div', {
+									key: item.id,
+									style: { gridColumn: 'span ' + style.col, gridRow: 'span ' + style.row, overflow: 'hidden', background: '#0a2540' }
+								}, item.url ? el('img', { src: item.url, style: { width: '100%', height: '100%', objectFit: 'cover' } }) : null);
+							})
+							: el('p', { style: { gridColumn: '1 / -1', fontSize: '12px', opacity: .6 } },
+								loadingState[0] ? 'Caricamento immagini…' : 'Nessuna immagine trovata per questa sorgente.')
+					);
+
+					return el(Fragment, {}, controls, preview);
+				},
+				save: function () { return null; },
+			});
+			return;
+		}
+
+		/* ════════════════════════════════════════════
 		   Blocchi generici
 		   ════════════════════════════════════════════ */
 		var hasInsideHero = info.attributes && info.attributes.inside_hero !== undefined;
