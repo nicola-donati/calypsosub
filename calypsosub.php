@@ -22,6 +22,7 @@ require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-brevetti.php';
 require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-livelli.php';
 require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-media-tag.php';
 require_once CALYPSOSUB_PATH . 'includes/media/class-media-overlay-field.php';
+require_once CALYPSOSUB_PATH . 'includes/blocks/class-gallery-helpers.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-docenti.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-uscite.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-eventi.php';
