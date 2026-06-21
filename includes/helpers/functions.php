@@ -216,3 +216,17 @@ function calypso_cancel_booking( int $booking_id, int $user_id ): bool|WP_Error 
 	}
 	return $calypsosub_booking_manager->cancel_booking( $booking_id, $user_id );
 }
+
+/**
+ * Prima data futura di un array di date stringa (Y-m-d o Y-m-d\TH:i),
+ * o l'ultima se tutte sono passate, o '' se l'array è vuoto.
+ */
+function calypso_next_future_date( array $dates ): string {
+	if ( empty( $dates ) ) return '';
+	sort( $dates );
+	$now = current_time( 'Y-m-d\TH:i' );
+	foreach ( $dates as $dt ) {
+		if ( $dt >= $now ) return $dt;
+	}
+	return (string) end( $dates );
+}
