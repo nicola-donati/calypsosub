@@ -174,6 +174,73 @@ class Calypsosub_Blocks {
 				'overlay_letter_spacing' => [ 'type' => 'integer', 'default' => 12 ],
 			],
 		],
+		'calypso/storia-club' => [
+			'file'  => 'block-storia-club.php',
+			'title' => 'Storia Club',
+			'icon'  => 'backup',
+			'attributes' => [
+				'source_mode'    => [ 'type' => 'string',  'default' => 'query' ],
+				'category_ids'   => [ 'type' => 'array',   'default' => [], 'items' => [ 'type' => 'integer' ] ],
+				'tag_ids'        => [ 'type' => 'array',   'default' => [], 'items' => [ 'type' => 'integer' ] ],
+				'manual_ids'     => [ 'type' => 'array',   'default' => [], 'items' => [ 'type' => 'integer' ] ],
+				'date_from'      => [ 'type' => 'string',  'default' => '' ],
+				'date_to'        => [ 'type' => 'string',  'default' => '' ],
+				'year_from'      => [ 'type' => 'integer', 'default' => 0 ],
+				'year_to'        => [ 'type' => 'integer', 'default' => 0 ],
+				'max_items'      => [ 'type' => 'integer', 'default' => 0 ],
+				'order_by'       => [ 'type' => 'string',  'default' => 'event_year' ],
+				'order'          => [ 'type' => 'string',  'default' => 'asc' ],
+				'title_source'   => [ 'type' => 'string',  'default' => 'post_title' ],
+				'text_source'    => [ 'type' => 'string',  'default' => 'excerpt' ],
+				'clickable'      => [ 'type' => 'boolean', 'default' => true ],
+				'link_new_tab'   => [ 'type' => 'boolean', 'default' => false ],
+				'columns'        => [ 'type' => 'integer', 'default' => 5 ],
+				'desktop_overflow' => [ 'type' => 'string', 'default' => 'hide' ],
+				'gap'            => [ 'type' => 'integer', 'default' => 32 ],
+				'max_width'      => [ 'type' => 'integer', 'default' => 1320 ],
+				'padding_y'      => [ 'type' => 'integer', 'default' => 0 ],
+				'padding_x'      => [ 'type' => 'integer', 'default' => 0 ],
+				'bg_color'       => [ 'type' => 'string',  'default' => '' ],
+				'line_color'     => [ 'type' => 'string',  'default' => 'rgba(95,184,200,.25)' ],
+				'line_thickness' => [ 'type' => 'integer', 'default' => 1 ],
+				'dot_color'      => [ 'type' => 'string',  'default' => '#5FB8C8' ],
+				'dot_color_last' => [ 'type' => 'string',  'default' => '#FF6B4A' ],
+				'dot_size'       => [ 'type' => 'integer', 'default' => 12 ],
+				'gap_dot_year'   => [ 'type' => 'integer', 'default' => 18 ],
+				'gap_year_title' => [ 'type' => 'integer', 'default' => 8 ],
+				'gap_title_text' => [ 'type' => 'integer', 'default' => 6 ],
+				'year_color'           => [ 'type' => 'string',  'default' => '#5FB8C8' ],
+				'year_size'            => [ 'type' => 'integer', 'default' => 36 ],
+				'year_font_weight'     => [ 'type' => 'integer', 'default' => 800 ],
+				'year_letter_spacing'  => [ 'type' => 'integer', 'default' => 0 ],
+				'year_font'            => [ 'type' => 'string',  'default' => '' ],
+				'title_color'          => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'title_size'           => [ 'type' => 'integer', 'default' => 18 ],
+				'title_font_weight'    => [ 'type' => 'integer', 'default' => 800 ],
+				'title_letter_spacing' => [ 'type' => 'integer', 'default' => 0 ],
+				'title_transform'      => [ 'type' => 'string',  'default' => 'uppercase' ],
+				'title_font'           => [ 'type' => 'string',  'default' => '' ],
+				'text_color'           => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'text_size'            => [ 'type' => 'integer', 'default' => 13 ],
+				'text_font_weight'     => [ 'type' => 'integer', 'default' => 400 ],
+				'text_line_height'     => [ 'type' => 'integer', 'default' => 150 ],
+			],
+		],
+		'calypso/prenotazione' => [
+			'file'  => 'block-prenotazione.php',
+			'title' => 'Prenotazione',
+			'icon'  => 'tickets-alt',
+			'attributes' => [
+				'enable_uscite'      => [ 'type' => 'boolean', 'default' => true ],
+				'enable_eventi'      => [ 'type' => 'boolean', 'default' => true ],
+				'enable_corsi'       => [ 'type' => 'boolean', 'default' => true ],
+				'cf7_form_uscite'    => [ 'type' => 'integer', 'default' => 0 ],
+				'cf7_form_eventi'    => [ 'type' => 'integer', 'default' => 0 ],
+				'cf7_form_corsi'     => [ 'type' => 'integer', 'default' => 0 ],
+				'max_items_per_tab'  => [ 'type' => 'integer', 'default' => 6 ],
+				'max_width'          => [ 'type' => 'integer', 'default' => 1320 ],
+			],
+		],
 	];
 
 	public function init(): void {
@@ -1270,8 +1337,9 @@ class Calypsosub_Blocks {
 					var a   = props.attributes;
 					var set = props.setAttributes;
 
-					var previewItems = useState([])[0];
-					var setPreviewItemsState = useState([])[1];
+					var previewItemsState = useState([]);
+					var previewItems = previewItemsState[0];
+					var setPreviewItemsState = previewItemsState[1];
 					var loadingState = useState(false);
 
 					function colorRow(label, key) {
@@ -1327,8 +1395,9 @@ class Calypsosub_Blocks {
 							}))
 						: null;
 
-					var tagOptions = useState([])[0];
-					var setTagOptions = useState([])[1];
+					var tagOptionsState = useState([]);
+					var tagOptions = tagOptionsState[0];
+					var setTagOptions = tagOptionsState[1];
 
 					useEffect(function () {
 						if (!window.wp.apiFetch) return;
@@ -1409,10 +1478,10 @@ class Calypsosub_Blocks {
 								onChange: function (v) { set({ row_height: v || 200 }); }
 							}),
 							el(RangeControl, {
-								label: 'Larghezza massima (px)',
-								value: a.max_width || 1320,
-								min: 400, max: 1920, step: 20,
-								onChange: function (v) { set({ max_width: v || 1320 }); }
+								label: 'Larghezza massima (px, 0 = adatta al contenitore)',
+								value: a.max_width !== undefined ? a.max_width : 1320,
+								min: 0, max: 1920, step: 20,
+								onChange: function (v) { set({ max_width: v === undefined ? 1320 : v }); }
 							}),
 							colorRow('Colore sfondo sezione', 'bg_color')
 						),
@@ -1467,6 +1536,543 @@ class Calypsosub_Blocks {
 							: el('p', { style: { gridColumn: '1 / -1', fontSize: '12px', opacity: .6 } },
 								loadingState[0] ? 'Caricamento immagini…' : 'Nessuna immagine trovata per questa sorgente.')
 					);
+
+					return el(Fragment, {}, controls, preview);
+				},
+				save: function () { return null; },
+			});
+			return;
+		}
+
+		/* ════════════════════════════════════════════
+		   calypso/storia-club — timeline storica configurabile
+		   ════════════════════════════════════════════ */
+		if (info.name === 'calypso/storia-club') {
+			var useState2  = element.useState;
+			var useEffect2 = element.useEffect;
+
+			blocks.registerBlockType(info.name, {
+				title: info.title,
+				category: 'calypso',
+				icon: info.icon || 'backup',
+				attributes: info.attributes || {},
+				edit: function (props) {
+					var a   = props.attributes;
+					var set = props.setAttributes;
+
+					function colorRow(label, key) {
+						return el('div', { style: { marginBottom: '12px' } },
+							el('p', { style: { fontSize: '11px', fontWeight: 500, color: '#1e1e1e', margin: '0 0 6px' } }, label),
+							el(ColorPalette, {
+								colors: getThemeColors(),
+								value: a[key] || '',
+								onChange: function (v) { var u = {}; u[key] = v || ''; set(u); }
+							})
+						);
+					}
+
+					var fwOpts2 = [
+						{ value: '300', label: 'Light (300)' },
+						{ value: '400', label: 'Regular (400)' },
+						{ value: '500', label: 'Medium (500)' },
+						{ value: '600', label: 'SemiBold (600)' },
+						{ value: '700', label: 'Bold (700)' },
+						{ value: '800', label: 'ExtraBold (800)' },
+						{ value: '900', label: 'Black (900)' }
+					];
+					function weightRow2(label, key, def) {
+						return SelectControl ? el(SelectControl, {
+							label: label,
+							value: String(a[key] || def),
+							options: fwOpts2,
+							onChange: function (v) { var u = {}; u[key] = parseInt(v, 10); set(u); }
+						}) : null;
+					}
+
+					var categoryOptionsState = useState2([]);
+					var categoryOptions = categoryOptionsState[0];
+					var setCategoryOptions = categoryOptionsState[1];
+					var tagOptionsState = useState2([]);
+					var tagOptions = tagOptionsState[0];
+					var setTagOptions = tagOptionsState[1];
+					var previewItemsState = useState2([]);
+					var previewItems = previewItemsState[0];
+					var setPreviewItems = previewItemsState[1];
+					var loadingState = useState2(false);
+					var searchTermState = useState2('');
+					var searchTerm = searchTermState[0];
+					var setSearchTerm = searchTermState[1];
+					var searchResultsState = useState2([]);
+					var searchResults = searchResultsState[0];
+					var setSearchResults = searchResultsState[1];
+					var manualTitlesState = useState2({});
+					var manualTitles = manualTitlesState[0];
+					var setManualTitles = manualTitlesState[1];
+
+					useEffect2(function () {
+						if (!window.wp.apiFetch) return;
+						window.wp.apiFetch({ path: '/wp/v2/categories?per_page=100' }).then(function (terms) {
+							setCategoryOptions(terms.map(function (t) { return { value: String(t.id), label: t.name }; }));
+						}).catch(function () { setCategoryOptions([]); });
+						window.wp.apiFetch({ path: '/wp/v2/tags?per_page=100' }).then(function (terms) {
+							setTagOptions(terms.map(function (t) { return { value: String(t.id), label: t.name }; }));
+						}).catch(function () { setTagOptions([]); });
+					}, []);
+
+					useEffect2(function () {
+						if (!window.wp.apiFetch || a.source_mode !== 'manual' || !(a.manual_ids || []).length) return;
+						window.wp.apiFetch({ path: '/wp/v2/posts?include=' + a.manual_ids.join(',') + '&per_page=100' }).then(function (posts) {
+							var map = {};
+							posts.forEach(function (p) { map[p.id] = p.title.rendered; });
+							setManualTitles(map);
+						}).catch(function () {});
+					}, [JSON.stringify(a.manual_ids), a.source_mode]);
+
+					useEffect2(function () {
+						if (!window.wp.apiFetch) return;
+						if (a.source_mode === 'manual') {
+							if (!(a.manual_ids || []).length) { setPreviewItems([]); return; }
+							loadingState[1](true);
+							window.wp.apiFetch({ path: '/wp/v2/posts?include=' + a.manual_ids.join(',') + '&per_page=100' }).then(function (posts) {
+								var byId = {};
+								posts.forEach(function (p) { byId[p.id] = p; });
+								setPreviewItems(a.manual_ids.map(function (id) { return byId[id]; }).filter(Boolean));
+							}).catch(function () { setPreviewItems([]); }).finally(function () { loadingState[1](false); });
+							return;
+						}
+						loadingState[1](true);
+						var path = '/wp/v2/posts?per_page=' + (a.max_items > 0 ? a.max_items : 20) + '&orderby=date&order=' + (a.order === 'desc' ? 'desc' : 'asc');
+						if (a.category_ids && a.category_ids.length) path += '&categories=' + a.category_ids.join(',');
+						if (a.tag_ids && a.tag_ids.length) path += '&tags=' + a.tag_ids.join(',');
+						if (a.date_from) path += '&after=' + a.date_from + 'T00:00:00';
+						if (a.date_to) path += '&before=' + a.date_to + 'T23:59:59';
+						window.wp.apiFetch({ path: path }).then(function (posts) {
+							setPreviewItems(posts);
+						}).catch(function () { setPreviewItems([]); }).finally(function () { loadingState[1](false); });
+					}, [a.source_mode, JSON.stringify(a.category_ids), JSON.stringify(a.tag_ids), JSON.stringify(a.manual_ids), a.date_from, a.date_to, a.max_items, a.order]);
+
+					function doSearch(term) {
+						setSearchTerm(term);
+						if (!window.wp.apiFetch || !term) { setSearchResults([]); return; }
+						window.wp.apiFetch({ path: '/wp/v2/posts?search=' + encodeURIComponent(term) + '&per_page=10' }).then(function (posts) {
+							setSearchResults(posts);
+						}).catch(function () { setSearchResults([]); });
+					}
+
+					function addManual(id) {
+						var current = a.manual_ids || [];
+						if (current.indexOf(id) === -1) set({ manual_ids: current.concat([id]) });
+					}
+					function removeManual(id) {
+						set({ manual_ids: (a.manual_ids || []).filter(function (mid) { return mid !== id; }) });
+					}
+
+					var manualPicker = el('div', {},
+						el(TextControl, {
+							label: 'Cerca articoli da aggiungere',
+							value: searchTerm,
+							onChange: doSearch
+						}),
+						searchResults.length ? el('ul', { style: { listStyle: 'none', margin: '0 0 12px', padding: 0 } },
+							searchResults.map(function (p) {
+								return el('li', { key: p.id, style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0' } },
+									el('span', { style: { fontSize: '12px' } }, p.title),
+									el(Button, { variant: 'secondary', isSmall: true, onClick: function () { addManual(p.id); } }, '+ Aggiungi')
+								);
+							})
+						) : null,
+						(a.manual_ids || []).length ? el('ul', { style: { listStyle: 'none', margin: 0, padding: 0 } },
+							a.manual_ids.map(function (id) {
+								return el('li', { key: id, style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderTop: '1px solid #eee' } },
+									el('span', { style: { fontSize: '12px' } }, manualTitles[id] || ('#' + id)),
+									el(Button, { variant: 'link', isDestructive: true, isSmall: true, onClick: function () { removeManual(id); } }, 'Rimuovi')
+								);
+							})
+						) : el('p', { style: { fontSize: '11px', opacity: .6 } }, 'Nessun articolo selezionato.')
+					);
+
+					var controls = InspectorControls ? el(InspectorControls, {},
+
+						el(PanelBody, { title: 'Sorgente articoli', initialOpen: true },
+							SelectControl ? el(SelectControl, {
+								label: 'Modalità',
+								value: a.source_mode || 'query',
+								options: [
+									{ value: 'query',  label: 'Per categoria/tag/data' },
+									{ value: 'manual', label: 'Selezione manuale' }
+								],
+								onChange: function (v) { set({ source_mode: v }); }
+							}) : null,
+							(a.source_mode === 'manual') ? manualPicker : el(Fragment, {},
+								SelectControl ? el(SelectControl, {
+									label: 'Categorie (combinate con AND su tag)',
+									multiple: true,
+									value: (a.category_ids || []).map(String),
+									options: categoryOptions,
+									onChange: function (v) { set({ category_ids: (v || []).map(function (id) { return parseInt(id, 10); }) }); }
+								}) : null,
+								SelectControl ? el(SelectControl, {
+									label: 'Tag',
+									multiple: true,
+									value: (a.tag_ids || []).map(String),
+									options: tagOptions,
+									onChange: function (v) { set({ tag_ids: (v || []).map(function (id) { return parseInt(id, 10); }) }); }
+								}) : null,
+								el(TextControl, {
+									label: 'Data pubblicazione da (YYYY-MM-DD)',
+									value: a.date_from || '',
+									type: 'date',
+									onChange: function (v) { set({ date_from: v }); }
+								}),
+								el(TextControl, {
+									label: 'Data pubblicazione a (YYYY-MM-DD)',
+									value: a.date_to || '',
+									type: 'date',
+									onChange: function (v) { set({ date_to: v }); }
+								}),
+								el(RangeControl, {
+									label: 'Anno evento da (0 = nessun limite)',
+									value: a.year_from || 0,
+									min: 0, max: 2100, step: 1,
+									onChange: function (v) { set({ year_from: v || 0 }); }
+								}),
+								el(RangeControl, {
+									label: 'Anno evento a (0 = nessun limite)',
+									value: a.year_to || 0,
+									min: 0, max: 2100, step: 1,
+									onChange: function (v) { set({ year_to: v || 0 }); }
+								})
+							)
+						),
+
+						el(PanelBody, { title: 'Comportamento', initialOpen: false },
+							el(RangeControl, {
+								label: 'Numero massimo articoli (0 = tutti)',
+								value: a.max_items !== undefined ? a.max_items : 0,
+								min: 0, max: 60, step: 1,
+								onChange: function (v) { set({ max_items: v === undefined ? 0 : v }); }
+							}),
+							SelectControl ? el(SelectControl, {
+								label: 'Ordina per',
+								value: a.order_by || 'event_year',
+								options: [
+									{ value: 'event_year', label: 'Anno evento' },
+									{ value: 'post_date',  label: 'Data pubblicazione' }
+								],
+								onChange: function (v) { set({ order_by: v }); }
+							}) : null,
+							SelectControl ? el(SelectControl, {
+								label: 'Direzione',
+								value: a.order || 'asc',
+								options: [
+									{ value: 'asc',  label: 'Crescente (cronologico)' },
+									{ value: 'desc', label: 'Decrescente' }
+								],
+								onChange: function (v) { set({ order: v }); }
+							}) : null,
+							SelectControl ? el(SelectControl, {
+								label: 'Titolo evento',
+								value: a.title_source || 'post_title',
+								options: [
+									{ value: 'post_title', label: 'Titolo articolo' },
+									{ value: 'custom',     label: 'Titolo breve timeline (custom)' }
+								],
+								onChange: function (v) { set({ title_source: v }); }
+							}) : null,
+							SelectControl ? el(SelectControl, {
+								label: 'Testo evento',
+								value: a.text_source || 'excerpt',
+								options: [
+									{ value: 'excerpt', label: 'Excerpt articolo' },
+									{ value: 'custom',  label: 'Testo breve timeline (custom)' }
+								],
+								onChange: function (v) { set({ text_source: v }); }
+							}) : null,
+							el(ToggleControl, {
+								label: 'Item cliccabili (link al permalink)',
+								checked: a.clickable !== false,
+								onChange: function (v) { set({ clickable: v }); }
+							}),
+							(a.clickable !== false) ? el(ToggleControl, {
+								label: 'Apri in nuova scheda',
+								checked: !!a.link_new_tab,
+								onChange: function (v) { set({ link_new_tab: v }); }
+							}) : null
+						),
+
+						el(PanelBody, { title: 'Aspetto', initialOpen: false },
+							el(RangeControl, {
+								label: 'Colonne (desktop)',
+								value: a.columns || 5,
+								min: 2, max: 8, step: 1,
+								onChange: function (v) { set({ columns: v || 5 }); }
+							}),
+							SelectControl ? el(SelectControl, {
+								label: 'Se gli articoli superano le colonne',
+								help: a.desktop_overflow === 'scroll' ? 'La riga scorre orizzontalmente.' : 'Gli elementi extra vengono nascosti, i rimanenti centrati (nessuna scrollbar).',
+								value: a.desktop_overflow || 'hide',
+								options: [
+									{ value: 'hide',   label: 'Nascondi extra e centra' },
+									{ value: 'scroll', label: 'Scorri orizzontalmente' }
+								],
+								onChange: function (v) { set({ desktop_overflow: v }); }
+							}) : null,
+							el(RangeControl, {
+								label: 'Gap (px)',
+								value: a.gap !== undefined ? a.gap : 32,
+								min: 0, max: 80, step: 4,
+								onChange: function (v) { set({ gap: v === undefined ? 32 : v }); }
+							}),
+						el(RangeControl, {
+								label: 'Larghezza massima (px)',
+								value: a.max_width !== undefined ? a.max_width : 1320,
+								min: 0, max: 1920, step: 20,
+								onChange: function (v) { set({ max_width: v === undefined ? 1320 : v }); }
+							}),
+							el(RangeControl, {
+								label: 'Padding verticale sezione (px)',
+								value: a.padding_y !== undefined ? a.padding_y : 0,
+								min: 0, max: 160, step: 4,
+								onChange: function (v) { set({ padding_y: v === undefined ? 0 : v }); }
+							}),
+							el(RangeControl, {
+								label: 'Padding orizzontale sezione (px)',
+								value: a.padding_x !== undefined ? a.padding_x : 0,
+								min: 0, max: 160, step: 4,
+								onChange: function (v) { set({ padding_x: v === undefined ? 0 : v }); }
+							}),
+							colorRow('Sfondo sezione', 'bg_color'),
+							colorRow('Linea timeline', 'line_color'),
+							el(RangeControl, {
+								label: 'Spessore linea (px)',
+								value: a.line_thickness !== undefined ? a.line_thickness : 1,
+								min: 1, max: 8, step: 1,
+								onChange: function (v) { set({ line_thickness: v === undefined ? 1 : v }); }
+							}),
+							colorRow('Pallino', 'dot_color'),
+							colorRow('Pallino ultimo item', 'dot_color_last'),
+							el(RangeControl, {
+								label: 'Dimensione pallino (px, desktop)',
+								value: a.dot_size !== undefined ? a.dot_size : 12,
+								min: 4, max: 32, step: 1,
+								onChange: function (v) { set({ dot_size: v === undefined ? 12 : v }); }
+							}),
+							el(RangeControl, {
+								label: 'Spazio pallino ↔ linea ↔ anno (px, simmetrico)',
+								help: 'Stesso spazio sopra e sotto la linea: tra pallino e linea, e tra linea e anno.',
+								value: a.gap_dot_year !== undefined ? a.gap_dot_year : 18,
+								min: 0, max: 60, step: 2,
+								onChange: function (v) { set({ gap_dot_year: v === undefined ? 18 : v }); }
+							}),
+							el(RangeControl, {
+								label: 'Spazio anno → titolo (px)',
+								value: a.gap_year_title !== undefined ? a.gap_year_title : 8,
+								min: 0, max: 40, step: 2,
+								onChange: function (v) { set({ gap_year_title: v === undefined ? 8 : v }); }
+							}),
+							el(RangeControl, {
+								label: 'Spazio titolo → testo (px)',
+								value: a.gap_title_text !== undefined ? a.gap_title_text : 6,
+								min: 0, max: 40, step: 2,
+								onChange: function (v) { set({ gap_title_text: v === undefined ? 6 : v }); }
+							})
+						),
+
+						el(PanelBody, { title: 'Tipografia — Anno', initialOpen: false },
+							colorRow('Colore', 'year_color'),
+							el(RangeControl, {
+								label: 'Dimensione (px)',
+								value: a.year_size || 36,
+								min: 14, max: 80, step: 2,
+								onChange: function (v) { set({ year_size: v || 36 }); }
+							}),
+							weightRow2('Peso font', 'year_font_weight', 800),
+							el(RangeControl, {
+								label: 'Letter spacing (em ×100)',
+								value: a.year_letter_spacing !== undefined ? a.year_letter_spacing : 0,
+								min: -10, max: 40, step: 1,
+								onChange: function (v) { set({ year_letter_spacing: v === undefined ? 0 : v }); }
+							}),
+							el(TextControl, {
+								label: 'Font family (vuoto = eredita tema)',
+								help: 'Es: "Big Shoulders Display", Impact, sans-serif',
+								value: a.year_font || '',
+								onChange: function (v) { set({ year_font: v }); }
+							})
+						),
+
+						el(PanelBody, { title: 'Tipografia — Titolo', initialOpen: false },
+							colorRow('Colore', 'title_color'),
+							el(RangeControl, {
+								label: 'Dimensione (px)',
+								value: a.title_size || 18,
+								min: 10, max: 48, step: 1,
+								onChange: function (v) { set({ title_size: v || 18 }); }
+							}),
+							weightRow2('Peso font', 'title_font_weight', 800),
+							el(RangeControl, {
+								label: 'Letter spacing (em ×100)',
+								value: a.title_letter_spacing !== undefined ? a.title_letter_spacing : 0,
+								min: -10, max: 40, step: 1,
+								onChange: function (v) { set({ title_letter_spacing: v === undefined ? 0 : v }); }
+							}),
+							SelectControl ? el(SelectControl, {
+								label: 'Text transform',
+								value: a.title_transform || 'uppercase',
+								options: [
+									{ value: 'uppercase',  label: 'MAIUSCOLO' },
+									{ value: 'none',       label: 'Normale' },
+									{ value: 'capitalize', label: 'Prima Lettera' }
+								],
+								onChange: function (v) { set({ title_transform: v }); }
+							}) : null,
+							el(TextControl, {
+								label: 'Font family (vuoto = eredita tema)',
+								help: 'Es: "Big Shoulders Display", Impact, sans-serif',
+								value: a.title_font || '',
+								onChange: function (v) { set({ title_font: v }); }
+							})
+						),
+
+						el(PanelBody, { title: 'Tipografia — Testo', initialOpen: false },
+							colorRow('Colore', 'text_color'),
+							el(RangeControl, {
+								label: 'Dimensione (px)',
+								value: a.text_size || 13,
+								min: 8, max: 24, step: 1,
+								onChange: function (v) { set({ text_size: v || 13 }); }
+							}),
+							weightRow2('Peso font', 'text_font_weight', 400),
+							el(RangeControl, {
+								label: 'Interlinea (×100, es. 150 = 1.5)',
+								value: a.text_line_height !== undefined ? a.text_line_height : 150,
+								min: 100, max: 250, step: 5,
+								onChange: function (v) { set({ text_line_height: v === undefined ? 150 : v }); }
+							})
+						)
+
+					) : null;
+
+					var isHideOverflow = (a.desktop_overflow || 'hide') === 'hide';
+					var visibleItems = (isHideOverflow && previewItems.length > (a.columns || 5))
+						? previewItems.slice(0, a.columns || 5)
+						: previewItems;
+
+					var preview = el('div', {
+						style: {
+							display: 'flex',
+							justifyContent: isHideOverflow ? 'center' : 'flex-start',
+							gap: (a.gap !== undefined ? a.gap : 32) + 'px',
+							overflowX: isHideOverflow ? 'hidden' : 'auto',
+							background: a.bg_color || '#061826',
+							padding: '20px',
+							fontFamily: 'system-ui,sans-serif'
+						}
+					},
+						visibleItems.length
+							? visibleItems.map(function (p, index) {
+								var isLast = index === visibleItems.length - 1;
+								var title = p.title && p.title.rendered ? p.title.rendered : '';
+								var excerpt = p.excerpt && p.excerpt.rendered ? p.excerpt.rendered.replace(/<[^>]+>/g, '').trim() : '';
+								return el('div', {
+									key: p.id,
+									style: { flex: '0 0 ' + (100 / (a.columns || 5)) + '%', minWidth: '140px' }
+								},
+									el('div', { style: { width: '12px', height: '12px', borderRadius: '50%', background: isLast ? (a.dot_color_last || '#FF6B4A') : (a.dot_color || '#5FB8C8'), marginBottom: '10px' } }),
+									el('div', { style: { fontSize: '22px', fontWeight: 800, textTransform: 'uppercase', color: a.year_color || '#5FB8C8', marginBottom: '4px' } }, new Date(p.date).getFullYear()),
+									el('div', { style: { fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', color: a.title_color || '#fff', marginBottom: '4px' } }, title),
+									el('div', { style: { fontSize: '11px', color: a.text_color || '#fff', opacity: .7 } }, excerpt.substring(0, 60))
+								);
+							})
+							: el('p', { style: { fontSize: '12px', color: '#fff', opacity: .6 } },
+								loadingState[0] ? 'Caricamento articoli…' : 'Nessun articolo trovato per questa sorgente.')
+					);
+
+					return el(Fragment, {}, controls, preview);
+				},
+				save: function () { return null; },
+			});
+			return;
+		}
+
+		/* ════════════════════════════════════════════
+		   calypso/prenotazione — selezione + form CF7
+		   ════════════════════════════════════════════ */
+		if (info.name === 'calypso/prenotazione') {
+			var useState3 = element.useState;
+
+			blocks.registerBlockType(info.name, {
+				title: info.title,
+				category: 'calypso',
+				icon: info.icon || 'tickets-alt',
+				attributes: info.attributes || {},
+				edit: function (props) {
+					var a   = props.attributes;
+					var set = props.setAttributes;
+
+					var formsState = useState3({ uscite: [], eventi: [], corsi: [] });
+					var forms = formsState[0];
+					var setForms = formsState[1];
+
+					element.useEffect(function () {
+						if (!window.wp.apiFetch) return;
+						['uscite', 'eventi', 'corsi'].forEach(function (tipo) {
+							window.wp.apiFetch({ path: '/calypso/v1/cf7-forms?category=' + tipo }).then(function (list) {
+								setForms(function (prev) {
+									var next = Object.assign({}, prev);
+									next[tipo] = list;
+									return next;
+								});
+							}).catch(function () {});
+						});
+					}, []);
+
+					function formSelect(tipo, enableKey, attrKey) {
+						var options = [{ value: 0, label: '— nessuno —' }].concat(
+							(forms[tipo] || []).map(function (f) { return { value: f.id, label: f.title }; })
+						);
+						return el(Fragment, {},
+							el(ToggleControl, {
+								label: 'Abilita ' + tipo,
+								checked: a[enableKey] !== false,
+								onChange: function (v) { var u = {}; u[enableKey] = v; set(u); }
+							}),
+							a[enableKey] !== false ? (SelectControl ? el(SelectControl, {
+								label: 'Form CF7 — ' + tipo,
+								value: a[attrKey] || 0,
+								options: options,
+								onChange: function (v) { var u = {}; u[attrKey] = parseInt(v, 10); set(u); }
+							}) : null) : null,
+							(a[enableKey] !== false && (forms[tipo] || []).length === 0) ? el('p', { style: { fontSize: '11px', color: '#b32d2e' } },
+								'Nessun form CF7 categorizzato come "' + tipo + '". Categorizzalo nel tab "Calypso" dell\'editor del form CF7.'
+							) : null
+						);
+					}
+
+					var controls = InspectorControls ? el(InspectorControls, {},
+						el(PanelBody, { title: 'Uscite', initialOpen: true }, formSelect('uscite', 'enable_uscite', 'cf7_form_uscite')),
+						el(PanelBody, { title: 'Eventi', initialOpen: false }, formSelect('eventi', 'enable_eventi', 'cf7_form_eventi')),
+						el(PanelBody, { title: 'Corsi', initialOpen: false }, formSelect('corsi', 'enable_corsi', 'cf7_form_corsi')),
+						el(PanelBody, { title: 'Comportamento', initialOpen: false },
+							el(RangeControl, {
+								label: 'Elementi per tab',
+								value: a.max_items_per_tab || 6,
+								min: 1, max: 20, step: 1,
+								onChange: function (v) { set({ max_items_per_tab: v || 6 }); }
+							}),
+							el(RangeControl, {
+								label: 'Larghezza massima (px)',
+								value: a.max_width || 1320,
+								min: 400, max: 1920, step: 20,
+								onChange: function (v) { set({ max_width: v || 1320 }); }
+							})
+						)
+					) : null;
+
+					var enabledCount = ['uscite', 'eventi', 'corsi'].filter(function (t) { return a['enable_' + t] !== false; }).length;
+					var preview = el('div', {
+						style: { padding: '20px', background: '#e8f4f8', borderRadius: '8px', fontFamily: 'monospace', fontSize: '12px' }
+					}, '🎫 Prenotazione · ' + enabledCount + ' tipologie abilitate');
 
 					return el(Fragment, {}, controls, preview);
 				},
