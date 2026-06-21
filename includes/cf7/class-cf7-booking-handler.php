@@ -31,9 +31,17 @@ class Calypsosub_CF7_Booking_Handler {
 		}
 
 		$post_type = get_post_type( $post_id );
+		$user_id   = get_current_user_id();
+
 		if ( in_array( $post_type, [ 'calypso_uscita', 'calypso_evento' ], true )
-			&& ! calypso_can_book( $post_id, get_current_user_id() ) ) {
+			&& ! calypso_can_book( $post_id, $user_id ) ) {
 			$result->invalidate( 'booking_post_id', __( 'Posti esauriti o richiesta già inviata.', 'calypsosub' ) );
+		} elseif ( $post_type === 'calypso_corso' ) {
+			global $calypsosub_booking_manager;
+			if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager
+				&& $calypsosub_booking_manager->user_has_booking( $post_id, $user_id ) ) {
+				$result->invalidate( 'booking_post_id', __( 'Hai già una richiesta per questo corso.', 'calypsosub' ) );
+			}
 		}
 
 		return $result;

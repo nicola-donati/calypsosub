@@ -207,9 +207,27 @@ Calypsosub_CF7_Booking_Handler::$active_post_id = null;
 		sidebar.innerHTML = html;
 	}
 
-	function setHiddenPostId(formPanel, id) {
-		var input = formPanel.querySelector('input[name="booking_post_id"]');
-		if (input) input.value = id;
+	function ensureHiddenField(form, name, value) {
+		var input = form.querySelector('input[name="' + name + '"]');
+		if (!input) {
+			input = document.createElement('input');
+			input.type = 'hidden';
+			input.name = name;
+			form.appendChild(input);
+		}
+		input.value = value;
+	}
+
+	// Mappa tipo card ('uscite'/'eventi'/'corsi') -> CPT slug, stesso formato
+	// restituito da get_post_type() e letto da
+	// Calypsosub_CF7_Booking_Handler::inject_hidden_fields()/create_booking().
+	var TIPO_TO_CPT = { uscite: 'calypso_uscita', eventi: 'calypso_evento', corsi: 'calypso_corso' };
+
+	function setHiddenPostId(formPanel, id, tipo) {
+		var form = formPanel.querySelector('form.wpcf7-form');
+		if (!form) return;
+		ensureHiddenField(form, 'booking_post_id', id);
+		ensureHiddenField(form, 'booking_post_type', TIPO_TO_CPT[tipo] || tipo);
 	}
 
 	function selectCard(btn) {
@@ -218,7 +236,7 @@ Calypsosub_CF7_Booking_Handler::$active_post_id = null;
 		btn.classList.add('is-selected');
 		renderSidebar(card);
 		var activeFormPanel = root.querySelector('.cso-pren__form-wrap:not(.is-hidden)');
-		if (activeFormPanel) setHiddenPostId(activeFormPanel, card.id);
+		if (activeFormPanel) setHiddenPostId(activeFormPanel, card.id, card.tipo);
 	}
 
 	root.addEventListener('click', function (e) {
