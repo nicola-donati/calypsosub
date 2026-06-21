@@ -26,6 +26,7 @@ require_once CALYPSOSUB_PATH . 'includes/blocks/class-gallery-helpers.php';
 require_once CALYPSOSUB_PATH . 'includes/blocks/class-storia-helpers.php';
 require_once CALYPSOSUB_PATH . 'includes/post/class-article-timeline-fields.php';
 require_once CALYPSOSUB_PATH . 'includes/cf7/class-cf7-booking-category.php';
+require_once CALYPSOSUB_PATH . 'includes/cf7/class-cf7-booking-handler.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-docenti.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-uscite.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-eventi.php';
@@ -63,6 +64,7 @@ add_filter( 'use_block_editor_for_post_type', function ( bool $use, string $post
 ( new Calypsosub_Media_Overlay_Field() )->init();
 ( new Calypsosub_Article_Timeline_Fields() )->init();
 ( new Calypsosub_CF7_Booking_Category() )->init();
+( new Calypsosub_CF7_Booking_Handler() )->init();
 ( new Calypsosub_CPT_Docenti() )->init();
 ( new Calypsosub_CPT_Uscite() )->init();
 ( new Calypsosub_CPT_Eventi() )->init();
