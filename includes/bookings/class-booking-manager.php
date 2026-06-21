@@ -88,22 +88,30 @@ class Calypsosub_Booking_Manager {
 	 *
 	 * @param int   $post_id
 	 * @param int   $user_id
-	 * @param array $data  { accompagnatori: int, allergie: string }
-	 * @return string|WP_Error  'confermata'|'lista_attesa'|WP_Error
+	 * @param array $form_data  Dati liberi dal form (CF7 o legacy AJAX).
+	 *                          Le chiavi 'accompagnatori' (int) e 'allergie'
+	 *                          (string) hanno significato speciale per la
+	 *                          logica di capacità; tutto il resto viene
+	 *                          salvato come-è in _booking_form_data.
+	 * @return string|WP_Error  'confermata'|'lista_attesa'|'in_attesa'|WP_Error
 	 */
-	public function book( int $post_id, int $user_id, array $data ): string|WP_Error {
+	public function book( int $post_id, int $user_id, array $form_data ): string|WP_Error {
 		$post_type = get_post_type( $post_id );
-		if ( ! in_array( $post_type, [ 'calypso_uscita', 'calypso_evento' ], true ) ) {
+		if ( ! in_array( $post_type, [ 'calypso_uscita', 'calypso_evento', 'calypso_corso' ], true ) ) {
 			return new WP_Error( 'invalid_post', __( 'Tipo di contenuto non prenotabile.', 'calypsosub' ) );
 		}
 
 		// Prenotazione già esistente?
 		if ( $this->user_has_booking( $post_id, $user_id ) ) {
-			return new WP_Error( 'already_booked', __( 'Hai già una prenotazione per questo evento.', 'calypsosub' ) );
+			return new WP_Error( 'already_booked', __( 'Hai già una richiesta per questo elemento.', 'calypsosub' ) );
 		}
 
-		$status = $this->resolve_booking_status( $post_id );
-		if ( is_wp_error( $status ) ) return $status;
+		if ( $post_type === 'calypso_corso' ) {
+			$status = 'in_attesa';
+		} else {
+			$status = $this->resolve_booking_status( $post_id );
+			if ( is_wp_error( $status ) ) return $status;
+		}
 
 		$booking_id = wp_insert_post( [
 			'post_type'   => 'calypso_prenotazione',
@@ -116,10 +124,11 @@ class Calypsosub_Booking_Manager {
 		update_post_meta( $booking_id, '_booking_post_id',      $post_id );
 		update_post_meta( $booking_id, '_booking_post_type',    $post_type );
 		update_post_meta( $booking_id, '_booking_user_id',      $user_id );
-		update_post_meta( $booking_id, '_booking_companions',   absint( $data['accompagnatori'] ?? 0 ) );
-		update_post_meta( $booking_id, '_booking_allergies',    $data['allergie'] ?? '' );
+		update_post_meta( $booking_id, '_booking_companions',   absint( $form_data['accompagnatori'] ?? 0 ) );
+		update_post_meta( $booking_id, '_booking_allergies',    $form_data['allergie'] ?? '' );
 		update_post_meta( $booking_id, '_booking_status',       $status );
 		update_post_meta( $booking_id, '_booking_date',         current_time( 'mysql' ) );
+		update_post_meta( $booking_id, '_booking_form_data',    $form_data );
 
 		$this->email->send_booking_received( $booking_id );
 		$this->email->send_admin_notification( $booking_id );
