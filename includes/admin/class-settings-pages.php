@@ -89,6 +89,9 @@ class Calypsosub_Settings_Pages {
 						'msg_accedi_cta'      => [ 'label' => 'Testo invito al login',           'default' => 'Accedi per prenotare questa uscita.' ],
 					],
 				],
+				'campi_prenotazione_default' => [
+					[ 'nome' => 'accompagnatori', 'label' => 'Accompagnatori', 'obbligatorio' => '1' ],
+				],
 			],
 
 			'corsi' => [
@@ -128,6 +131,7 @@ class Calypsosub_Settings_Pages {
 						'related_card_link' => [ 'label' => 'Link card corso',    'default' => 'Scopri il corso →' ],
 					],
 				],
+				'campi_prenotazione_default' => [],
 			],
 
 			'eventi' => [
@@ -153,6 +157,7 @@ class Calypsosub_Settings_Pages {
 						'msg_accedi_cta'     => [ 'label' => "Testo invito al login",            'default' => "Accedi per iscriverti all'evento." ],
 					],
 				],
+				'campi_prenotazione_default' => [],
 			],
 		];
 	}
@@ -245,6 +250,65 @@ class Calypsosub_Settings_Pages {
 				</div>
 				<?php endforeach; ?>
 
+				<div class="cso-settings-group">
+					<h3><?php esc_html_e( 'Campi prenotazione (per il form CF7 collegato)', 'calypsosub' ); ?></h3>
+					<div style="padding:14px 18px 4px">
+						<p class="description" style="margin:0 0 12px;font-size:12px;color:#666">
+							<?php esc_html_e( 'Elenca qui i nomi dei campi che il form CF7 categorizzato per questa sezione deve avere. Se segnati come "obbligatorio" e mancanti nel form CF7, vedrai un avviso nell\'editor di quel form.', 'calypsosub' ); ?>
+						</p>
+						<div id="cso-campi-pren-repeater">
+							<?php
+							$campi = (array) ( $opts['campi_prenotazione'] ?? $cfg['campi_prenotazione_default'] );
+							foreach ( $campi as $campo ) :
+							?>
+							<div class="cso-campo-pren-row" style="display:grid;grid-template-columns:1fr 1fr 140px 32px;gap:10px;align-items:end;margin-bottom:10px">
+								<div>
+									<label style="display:block;font-size:11px;font-weight:600;color:#444;margin-bottom:4px"><?php esc_html_e( 'Nome campo (CF7)', 'calypsosub' ); ?></label>
+									<input type="text" name="cso_campi_pren_nome[]" value="<?php echo esc_attr( $campo['nome'] ?? '' ); ?>" placeholder="es. accompagnatori">
+								</div>
+								<div>
+									<label style="display:block;font-size:11px;font-weight:600;color:#444;margin-bottom:4px"><?php esc_html_e( 'Etichetta', 'calypsosub' ); ?></label>
+									<input type="text" name="cso_campi_pren_label[]" value="<?php echo esc_attr( $campo['label'] ?? '' ); ?>" placeholder="es. Accompagnatori">
+								</div>
+								<div>
+									<label style="display:block;font-size:11px;font-weight:600;color:#444;margin-bottom:4px"><?php esc_html_e( 'Obbligatorio', 'calypsosub' ); ?></label>
+									<select name="cso_campi_pren_obbligatorio[]">
+										<option value="1" <?php selected( ( $campo['obbligatorio'] ?? '' ) === '1' ); ?>><?php esc_html_e( 'Sì', 'calypsosub' ); ?></option>
+										<option value="" <?php selected( ( $campo['obbligatorio'] ?? '' ) !== '1' ); ?>><?php esc_html_e( 'No', 'calypsosub' ); ?></option>
+									</select>
+								</div>
+								<button type="button" class="cso-campo-pren-remove button" style="height:30px">&#x2715;</button>
+							</div>
+							<?php endforeach; ?>
+						</div>
+						<button type="button" class="button" id="cso-campi-pren-add"><?php esc_html_e( '+ Aggiungi campo', 'calypsosub' ); ?></button>
+					</div>
+				</div>
+
+				<script>
+				(function () {
+					document.getElementById('cso-campi-pren-add').addEventListener('click', function () {
+						var row = document.createElement('div');
+						row.className = 'cso-campo-pren-row';
+						row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 140px 32px;gap:10px;align-items:end;margin-bottom:10px';
+						row.innerHTML =
+							'<div><label style="display:block;font-size:11px;font-weight:600;color:#444;margin-bottom:4px"><?php echo esc_js( __( 'Nome campo (CF7)', 'calypsosub' ) ); ?></label>'
+								+ '<input type="text" name="cso_campi_pren_nome[]" placeholder="es. accompagnatori"></div>'
+							+ '<div><label style="display:block;font-size:11px;font-weight:600;color:#444;margin-bottom:4px"><?php echo esc_js( __( 'Etichetta', 'calypsosub' ) ); ?></label>'
+								+ '<input type="text" name="cso_campi_pren_label[]" placeholder="es. Accompagnatori"></div>'
+							+ '<div><label style="display:block;font-size:11px;font-weight:600;color:#444;margin-bottom:4px"><?php echo esc_js( __( 'Obbligatorio', 'calypsosub' ) ); ?></label>'
+								+ '<select name="cso_campi_pren_obbligatorio[]"><option value="1"><?php echo esc_js( __( 'Sì', 'calypsosub' ) ); ?></option><option value="" selected><?php echo esc_js( __( 'No', 'calypsosub' ) ); ?></option></select></div>'
+							+ '<button type="button" class="cso-campo-pren-remove button" style="height:30px">✕</button>';
+						document.getElementById('cso-campi-pren-repeater').appendChild(row);
+					});
+					document.addEventListener('click', function (e) {
+						if (e.target.classList.contains('cso-campo-pren-remove')) {
+							e.target.closest('.cso-campo-pren-row').remove();
+						}
+					});
+				})();
+				</script>
+
 				<?php submit_button( 'Salva impostazioni', 'primary cso-settings-submit' ); ?>
 			</form>
 		</div>
@@ -268,6 +332,20 @@ class Calypsosub_Settings_Pages {
 			$clean[ $key ] = sanitize_textarea_field( wp_unslash( $val ) );
 		}
 
+		$campi_nome  = (array) ( $_POST['cso_campi_pren_nome'] ?? [] );
+		$campi_label = (array) ( $_POST['cso_campi_pren_label'] ?? [] );
+		$campi_obbl  = (array) ( $_POST['cso_campi_pren_obbligatorio'] ?? [] );
+		$campi_clean = [];
+		foreach ( $campi_nome as $i => $nome ) {
+			$nome = sanitize_key( wp_unslash( $nome ) );
+			if ( $nome === '' ) continue;
+			$campi_clean[] = [
+				'nome'         => $nome,
+				'label'        => sanitize_text_field( wp_unslash( $campi_label[ $i ] ?? '' ) ),
+				'obbligatorio' => ( $campi_obbl[ $i ] ?? '' ) === '1' ? '1' : '',
+			];
+		}
+		$clean['campi_prenotazione'] = $campi_clean;
 		update_option( 'calypsosub_opts_' . $section, $clean );
 
 		wp_redirect( add_query_arg( [ 'page' => 'calypsosub-settings-' . $section, 'saved' => '1' ],
