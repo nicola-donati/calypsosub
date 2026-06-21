@@ -258,7 +258,7 @@ class Calypsosub_Settings_Pages {
 						</p>
 						<div id="cso-campi-pren-repeater">
 							<?php
-							$campi = (array) ( $opts['campi_prenotazione'] ?? $cfg['campi_prenotazione_default'] );
+							$campi = (array) ( $opts['campi_prenotazione'] ?? ( $cfg['campi_prenotazione_default'] ?? [] ) );
 							foreach ( $campi as $campo ) :
 							?>
 							<div class="cso-campo-pren-row" style="display:grid;grid-template-columns:1fr 1fr 140px 32px;gap:10px;align-items:end;margin-bottom:10px">
