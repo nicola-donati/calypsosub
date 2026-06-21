@@ -26,24 +26,17 @@ class Calypsosub_CF7_Booking_Handler {
 		if ( ! $post_id ) return $result;
 
 		if ( ! is_user_logged_in() ) {
-			$result->invalidate( $this->find_tag( $tags, 'booking_post_id' ), __( 'Devi accedere per inviare questa richiesta.', 'calypsosub' ) );
+			$result->invalidate( 'booking_post_id', __( 'Devi accedere per inviare questa richiesta.', 'calypsosub' ) );
 			return $result;
 		}
 
 		$post_type = get_post_type( $post_id );
 		if ( in_array( $post_type, [ 'calypso_uscita', 'calypso_evento' ], true )
 			&& ! calypso_can_book( $post_id, get_current_user_id() ) ) {
-			$result->invalidate( $this->find_tag( $tags, 'booking_post_id' ), __( 'Posti esauriti o richiesta già inviata.', 'calypsosub' ) );
+			$result->invalidate( 'booking_post_id', __( 'Posti esauriti o richiesta già inviata.', 'calypsosub' ) );
 		}
 
 		return $result;
-	}
-
-	private function find_tag( array $tags, string $name ): ?WPCF7_FormTag {
-		foreach ( $tags as $tag ) {
-			if ( $tag->name === $name ) return $tag;
-		}
-		return $tags[0] ?? null;
 	}
 
 	public function create_booking( WPCF7_ContactForm $contact_form ): void {
@@ -61,9 +54,31 @@ class Calypsosub_CF7_Booking_Handler {
 			$upload_dir = wp_upload_dir();
 			$dest_dir   = trailingslashit( $upload_dir['basedir'] ) . 'calypso-prenotazioni/' . $post_id . '-' . get_current_user_id() . '/';
 			wp_mkdir_p( $dest_dir );
+
+			$htaccess = $dest_dir . '.htaccess';
+			if ( ! file_exists( $htaccess ) ) {
+				file_put_contents( $htaccess, "Deny from all\n" );
+			}
+
+			$allowed_extensions = [ 'pdf', 'jpg', 'jpeg', 'png', 'gif', 'doc', 'docx' ];
+			$forbidden_extensions = [ 'php', 'phtml', 'html', 'htm', 'svg', 'htaccess' ];
+
 			foreach ( $uploaded as $field_name => $tmp_path ) {
 				if ( ! is_string( $tmp_path ) || ! file_exists( $tmp_path ) ) continue;
-				$dest = $dest_dir . basename( $tmp_path );
+
+				$original_name = basename( $tmp_path );
+				$extension     = strtolower( pathinfo( $original_name, PATHINFO_EXTENSION ) );
+
+				if ( in_array( $extension, $forbidden_extensions, true ) || ! in_array( $extension, $allowed_extensions, true ) ) {
+					continue;
+				}
+
+				$random_suffix  = wp_generate_password( 8, false );
+				$filename_base  = pathinfo( $original_name, PATHINFO_FILENAME );
+				$randomized_name = sanitize_file_name( $filename_base . '-' . $random_suffix . '.' . $extension );
+				$unique_name     = wp_unique_filename( $dest_dir, $randomized_name );
+
+				$dest = $dest_dir . $unique_name;
 				if ( copy( $tmp_path, $dest ) ) {
 					$data[ $field_name ] = str_replace( $upload_dir['basedir'], '', $dest );
 				}
@@ -86,6 +101,8 @@ class Calypsosub_CF7_Booking_Handler {
 	}
 
 	public function ajax_render_form(): void {
+		check_ajax_referer( 'calypso_prenotazione_form', '_ajax_nonce' );
+
 		$form_id = absint( $_POST['cf7_form_id'] ?? 0 );
 		$post_id = absint( $_POST['post_id'] ?? 0 );
 		if ( ! $form_id ) {
