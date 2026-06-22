@@ -58,6 +58,7 @@ class Calypsosub_Admin_Menus {
 
 		$notification_emails = get_option( 'calypsosub_notification_emails', '' );
 		$account_page_id     = (int) get_option( 'calypsosub_account_page_id', 0 );
+		$prenotazioni_page_id = (int) get_option( 'calypsosub_prenotazioni_page_id', 0 );
 
 		/* Dati per ogni tab archivio */
 		$tabs_data = [];
@@ -112,6 +113,21 @@ class Calypsosub_Admin_Menus {
 								'show_option_none'  => __( '— seleziona pagina —', 'calypsosub' ),
 								'option_none_value' => 0,
 							] ); ?>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label for="calypsosub_prenotazioni_page_id"><?php _e( 'Pagina prenotazioni', 'calypsosub' ); ?></label>
+						</th>
+						<td>
+							<?php wp_dropdown_pages( [
+								'name'              => 'calypsosub_prenotazioni_page_id',
+								'id'                => 'calypsosub_prenotazioni_page_id',
+								'selected'          => $prenotazioni_page_id,
+								'show_option_none'  => __( '— seleziona pagina —', 'calypsosub' ),
+								'option_none_value' => 0,
+							] ); ?>
+							<p class="description"><?php _e( 'Pagina che contiene il blocco "Prenotazione" — usata per generare il link "Prenota" delle uscite.', 'calypsosub' ); ?></p>
 						</td>
 					</tr>
 				</table>
@@ -311,6 +327,8 @@ class Calypsosub_Admin_Menus {
 			sanitize_text_field( wp_unslash( $_POST['calypsosub_notification_emails'] ?? '' ) ) );
 		update_option( 'calypsosub_account_page_id',
 			absint( $_POST['calypsosub_account_page_id'] ?? 0 ) );
+		update_option( 'calypsosub_prenotazioni_page_id',
+			absint( $_POST['calypsosub_prenotazioni_page_id'] ?? 0 ) );
 
 		foreach ( array_keys( self::ARCHIVE_TABS ) as $slug ) {
 			update_option(
