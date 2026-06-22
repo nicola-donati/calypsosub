@@ -48,9 +48,6 @@ class Calypsosub_CPT_Uscite {
 		.calypso-meta-field label{display:block;font-weight:600;margin-bottom:4px}
 		.calypso-meta-field input,.calypso-meta-field textarea,.calypso-meta-field select{width:100%}
 		.calypso-meta-field textarea{min-height:80px}
-		.calypso-repeater-row{display:flex;gap:8px;align-items:center;margin-bottom:6px}
-		.calypso-repeater-row input{flex:1}
-		.calypso-btn-remove{background:#dc3545;color:#fff;border:none;border-radius:3px;padding:2px 8px;cursor:pointer}
 		.calypso-section-title{font-weight:700;font-size:13px;margin:16px 0 8px;border-bottom:1px solid #ddd;padding-bottom:4px}
 		</style>
 
@@ -71,44 +68,7 @@ class Calypsosub_CPT_Uscite {
 				<label><?php _e( 'Punto di ritrovo', 'calypsosub' ); ?></label>
 				<input type="text" name="calypso_ritrovo" value="<?php echo esc_attr( $d['ritrovo'] ); ?>">
 			</div>
-			<div class="calypso-meta-field">
-				<label><?php _e( 'Max partecipanti (vuoto = libera)', 'calypsosub' ); ?></label>
-				<input type="number" min="0" name="calypso_max_partecipanti"
-				       value="<?php echo esc_attr( $d['max_partecipanti'] ); ?>">
-			</div>
-			<div class="calypso-meta-field">
-				<label><?php _e( 'Max accompagnatori per prenotazione', 'calypsosub' ); ?></label>
-				<input type="number" min="0" name="calypso_max_accompagnatori"
-				       value="<?php echo esc_attr( $d['max_accompagnatori'] ); ?>">
-			</div>
 		</div>
-
-		<div class="calypso-meta-field" style="margin-bottom:12px">
-			<label>
-				<input type="checkbox" name="calypso_lista_attesa" value="1"
-				       <?php checked( $d['lista_attesa'], 1 ); ?>>
-				<?php _e( 'Abilita lista d\'attesa', 'calypsosub' ); ?>
-			</label>
-		</div>
-
-		<p class="calypso-section-title"><?php _e( 'Date', 'calypsosub' ); ?></p>
-		<div id="calypso-date-repeater">
-			<?php foreach ( $d['date'] as $i => $dt ) :
-				$dp = $dt ? substr( $dt, 0, 10 ) : '';
-				$tp = strlen( $dt ) > 10 ? substr( $dt, 11, 5 ) : '';
-			?>
-			<div class="calypso-repeater-row">
-				<input type="date" name="calypso_date_d[<?php echo (int) $i; ?>]"
-				       value="<?php echo esc_attr( $dp ); ?>" style="flex:2">
-				<input type="time" name="calypso_date_t[<?php echo (int) $i; ?>]"
-				       value="<?php echo esc_attr( $tp ); ?>" style="flex:1">
-				<button type="button" class="calypso-btn-remove">&#x2715;</button>
-			</div>
-			<?php endforeach; ?>
-		</div>
-		<button type="button" class="button" id="calypso-date-add">
-			<?php _e( '+ Aggiungi data', 'calypsosub' ); ?>
-		</button>
 
 		<p class="calypso-section-title"><?php _e( 'Testi opzionali', 'calypsosub' ); ?></p>
 		<div class="calypso-meta-grid">
@@ -125,41 +85,6 @@ class Calypsosub_CPT_Uscite {
 				<textarea name="calypso_note_cancellazione"><?php echo esc_textarea( $d['note_cancellazione'] ); ?></textarea>
 			</div>
 		</div>
-
-		<script>
-		(function () {
-			var idx = document.getElementById('calypso-date-repeater')
-			            .querySelectorAll('.calypso-repeater-row').length;
-
-			document.getElementById('calypso-date-add').addEventListener('click', function () {
-				var row = document.createElement('div');
-				row.className = 'calypso-repeater-row';
-				var inpD = document.createElement('input');
-				inpD.type = 'date';
-				inpD.name = 'calypso_date_d[' + idx + ']';
-				inpD.style.flex = '2';
-				var inpT = document.createElement('input');
-				inpT.type = 'time';
-				inpT.name = 'calypso_date_t[' + idx + ']';
-				inpT.style.flex = '1';
-				var btn = document.createElement('button');
-				btn.type = 'button';
-				btn.className = 'calypso-btn-remove';
-				btn.textContent = '✕';
-				row.appendChild(inpD);
-				row.appendChild(inpT);
-				row.appendChild(btn);
-				document.getElementById('calypso-date-repeater').appendChild(row);
-				idx++;
-			});
-
-			document.addEventListener('click', function (e) {
-				if (e.target.classList.contains('calypso-btn-remove')) {
-					e.target.closest('.calypso-repeater-row').remove();
-				}
-			});
-		})();
-		</script>
 		<?php
 	}
 
@@ -183,27 +108,6 @@ class Calypsosub_CPT_Uscite {
 				sanitize_textarea_field( wp_unslash( $_POST[ $post_key ] ?? '' ) ) );
 		}
 
-		$num_fields = [
-			'_uscita_max_partecipanti'  => 'calypso_max_partecipanti',
-			'_uscita_max_accompagnatori'=> 'calypso_max_accompagnatori',
-		];
-		foreach ( $num_fields as $meta_key => $post_key ) {
-			$val = $_POST[ $post_key ] ?? '';
-			update_post_meta( $post_id, $meta_key, $val === '' ? '' : absint( $val ) );
-		}
-
-		update_post_meta( $post_id, '_uscita_lista_attesa',
-			isset( $_POST['calypso_lista_attesa'] ) ? 1 : 0 );
-
-		$date    = [];
-		$dates_d = (array) ( $_POST['calypso_date_d'] ?? [] );
-		$dates_t = (array) ( $_POST['calypso_date_t'] ?? [] );
-		foreach ( $dates_d as $i => $dv ) {
-			$dv = sanitize_text_field( wp_unslash( $dv ) );
-			$tv = sanitize_text_field( wp_unslash( $dates_t[ $i ] ?? '' ) );
-			if ( $dv ) $date[] = $tv ? $dv . 'T' . $tv : $dv;
-		}
-		update_post_meta( $post_id, '_uscita_date', $date );
 	}
 
 	private function get_meta( int $post_id ): array {
@@ -212,10 +116,6 @@ class Calypsosub_CPT_Uscite {
 			'desc_breve'         => (string) get_post_meta( $post_id, '_uscita_desc_breve', true ),
 			'luogo'              => (string) get_post_meta( $post_id, '_uscita_luogo', true ),
 			'ritrovo'            => (string) get_post_meta( $post_id, '_uscita_ritrovo', true ),
-			'max_partecipanti'   => get_post_meta( $post_id, '_uscita_max_partecipanti', true ),
-			'max_accompagnatori' => get_post_meta( $post_id, '_uscita_max_accompagnatori', true ),
-			'lista_attesa'       => (int) get_post_meta( $post_id, '_uscita_lista_attesa', true ),
-			'date'               => (array) ( get_post_meta( $post_id, '_uscita_date', true ) ?: [] ),
 			'incluso'            => (string) get_post_meta( $post_id, '_uscita_incluso', true ),
 			'cosa_portare'       => (string) get_post_meta( $post_id, '_uscita_cosa_portare', true ),
 			'note_cancellazione' => (string) get_post_meta( $post_id, '_uscita_note_cancellazione', true ),
