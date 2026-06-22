@@ -57,11 +57,20 @@ class Calypsosub_Booking_Email {
 		$post_id = (int) get_post_meta( $booking_id, '_booking_post_id', true );
 		$user    = get_user_by( 'id', $user_id );
 
-		$post_type   = get_post_type( $post_id );
-		$meta_prefix = $post_type === 'calypso_uscita' ? '_uscita' : '_evento';
-		$luogo       = (string) get_post_meta( $post_id, $meta_prefix . '_luogo', true );
-		$date_raw    = (array) ( get_post_meta( $post_id, $meta_prefix . '_date', true ) ?: [] );
-		$prima_data  = ! empty( $date_raw ) ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date_raw[0] ) ) : '';
+		$post_type = get_post_type( $post_id );
+		$titolo    = get_the_title( $post_id );
+
+		if ( $post_type === 'calypso_occorrenza_uscita' ) {
+			$uscita_id  = (int) get_post_meta( $post_id, '_occorrenza_uscita_uscita_id', true );
+			$luogo      = (string) get_post_meta( $uscita_id, '_uscita_luogo', true );
+			$date_str   = (string) get_post_meta( $post_id, '_occorrenza_uscita_data', true );
+			$prima_data = $date_str ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date_str ) ) : '';
+			$titolo     = $uscita_id ? get_the_title( $uscita_id ) : $titolo;
+		} else {
+			$luogo      = (string) get_post_meta( $post_id, '_evento_luogo', true );
+			$date_raw   = (array) ( get_post_meta( $post_id, '_evento_date', true ) ?: [] );
+			$prima_data = ! empty( $date_raw ) ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date_raw[0] ) ) : '';
+		}
 
 		$accompagnatori = (int) get_post_meta( $booking_id, '_booking_companions', true );
 		$allergie       = (string) get_post_meta( $booking_id, '_booking_allergies', true );
@@ -73,7 +82,7 @@ class Calypsosub_Booking_Email {
 		return [
 			'{nome_utente}'        => $user ? $user->display_name : '',
 			'{email_utente}'       => $user ? $user->user_email : '',
-			'{titolo_evento}'      => get_the_title( $post_id ),
+			'{titolo_evento}'      => $titolo,
 			'{data_evento}'        => $prima_data,
 			'{luogo}'              => $luogo,
 			'{num_accompagnatori}' => (string) $accompagnatori,
