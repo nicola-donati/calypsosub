@@ -154,6 +154,27 @@ function calypso_get_occorrenze_by_corso( int $corso_id, array $args = [] ): arr
 }
 
 /**
+ * Occorrenze (date) di una scheda uscita, ordinate per data crescente.
+ */
+function calypso_get_occorrenze_by_uscita( int $uscita_id, array $args = [] ): array {
+	$query = new WP_Query( array_merge( [
+		'post_type'      => 'calypso_occorrenza_uscita',
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+		'orderby'        => 'meta_value',
+		'meta_key'       => '_occorrenza_uscita_data',
+		'order'          => 'ASC',
+		'meta_query'     => [ [
+			'key'     => '_occorrenza_uscita_uscita_id',
+			'value'   => $uscita_id,
+			'compare' => '=',
+			'type'    => 'NUMERIC',
+		] ],
+	], $args ) );
+	return $query->posts;
+}
+
+/**
  * Lista docenti.
  */
 function calypso_get_docenti( array $args = [] ): array {
@@ -189,7 +210,7 @@ function calypso_can_book( int $post_id, int $user_id ): bool {
 	if ( $remaining === null ) return true;
 	if ( $remaining > 0 ) return true;
 	$post_type   = get_post_type( $post_id );
-	$meta_prefix = $post_type === 'calypso_uscita' ? '_uscita' : '_evento';
+	$meta_prefix = $post_type === 'calypso_occorrenza_uscita' ? '_occorrenza_uscita' : '_evento';
 	return (bool) get_post_meta( $post_id, $meta_prefix . '_lista_attesa', true );
 }
 
