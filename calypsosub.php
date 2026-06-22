@@ -29,6 +29,7 @@ require_once CALYPSOSUB_PATH . 'includes/cf7/class-cf7-booking-category.php';
 require_once CALYPSOSUB_PATH . 'includes/cf7/class-cf7-booking-handler.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-docenti.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-uscite.php';
+require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-occorrenza-uscite.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-eventi.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-corsi.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-occorrenze.php';
@@ -67,6 +68,7 @@ add_filter( 'use_block_editor_for_post_type', function ( bool $use, string $post
 ( new Calypsosub_CF7_Booking_Handler() )->init();
 ( new Calypsosub_CPT_Docenti() )->init();
 ( new Calypsosub_CPT_Uscite() )->init();
+( new Calypsosub_CPT_Occorrenza_Uscite() )->init();
 ( new Calypsosub_CPT_Eventi() )->init();
 ( new Calypsosub_CPT_Corsi() )->init();
 ( new Calypsosub_CPT_Occorrenze() )->init();
