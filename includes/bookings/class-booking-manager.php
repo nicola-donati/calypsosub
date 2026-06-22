@@ -97,7 +97,7 @@ class Calypsosub_Booking_Manager {
 	 */
 	public function book( int $post_id, int $user_id, array $form_data ): string|WP_Error {
 		$post_type = get_post_type( $post_id );
-		if ( ! in_array( $post_type, [ 'calypso_uscita', 'calypso_evento', 'calypso_corso' ], true ) ) {
+		if ( ! in_array( $post_type, [ 'calypso_occorrenza_uscita', 'calypso_evento', 'calypso_corso' ], true ) ) {
 			return new WP_Error( 'invalid_post', __( 'Tipo di contenuto non prenotabile.', 'calypsosub' ) );
 		}
 
@@ -168,8 +168,9 @@ class Calypsosub_Booking_Manager {
 
 	private function resolve_booking_status( int $post_id ): string|WP_Error {
 		$post_type   = get_post_type( $post_id );
-		$meta_prefix = $post_type === 'calypso_uscita' ? '_uscita' : '_evento';
-		$max         = get_post_meta( $post_id, $meta_prefix . '_max_partecipanti', true );
+		$meta_prefix = $post_type === 'calypso_occorrenza_uscita' ? '_occorrenza_uscita' : '_evento';
+		$max_field   = $post_type === 'calypso_occorrenza_uscita' ? '_posti' : '_max_partecipanti';
+		$max         = get_post_meta( $post_id, $meta_prefix . $max_field, true );
 
 		if ( $max === '' || $max === null ) {
 			return 'in_attesa';
@@ -213,8 +214,9 @@ class Calypsosub_Booking_Manager {
 
 	public function get_remaining_spots( int $post_id ): int|null {
 		$post_type   = get_post_type( $post_id );
-		$meta_prefix = $post_type === 'calypso_uscita' ? '_uscita' : '_evento';
-		$max         = get_post_meta( $post_id, $meta_prefix . '_max_partecipanti', true );
+		$meta_prefix = $post_type === 'calypso_occorrenza_uscita' ? '_occorrenza_uscita' : '_evento';
+		$max_field   = $post_type === 'calypso_occorrenza_uscita' ? '_posti' : '_max_partecipanti';
+		$max         = get_post_meta( $post_id, $meta_prefix . $max_field, true );
 
 		if ( $max === '' || $max === null ) return null;
 
@@ -303,9 +305,15 @@ class Calypsosub_Booking_Manager {
 		$post_type  = (string) get_post_meta( $post->ID, '_booking_post_type', true );
 		$user       = get_user_by( 'id', $user_id );
 
-		$mp         = $post_type === 'calypso_uscita' ? '_uscita' : '_evento';
-		$date_raw   = (array) ( get_post_meta( $post_id, $mp . '_date', true ) ?: [] );
-		$data_evento = ! empty( $date_raw ) ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date_raw[0] ) ) : '—';
+		if ( $post_type === 'calypso_occorrenza_uscita' ) {
+			$date_str    = (string) get_post_meta( $post_id, '_occorrenza_uscita_data', true );
+			$data_evento = $date_str ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date_str ) ) : '—';
+			$uscita_id   = (int) get_post_meta( $post_id, '_occorrenza_uscita_uscita_id', true );
+		} else {
+			$date_raw    = (array) ( get_post_meta( $post_id, '_evento_date', true ) ?: [] );
+			$data_evento = ! empty( $date_raw ) ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date_raw[0] ) ) : '—';
+			$uscita_id   = 0;
+		}
 
 		$labels = [
 			'in_attesa'    => [ 'label' => __( 'In attesa di conferma', 'calypsosub' ), 'color' => '#92400e', 'bg' => '#fef3c7' ],
@@ -343,6 +351,12 @@ class Calypsosub_Booking_Manager {
 				<label><?php _e( 'Evento', 'calypsosub' ); ?></label>
 				<span class="val"><a href="<?php echo esc_url( get_edit_post_link( $post_id ) ); ?>"><?php echo esc_html( get_the_title( $post_id ) ); ?></a></span>
 			</div>
+			<?php if ( $uscita_id ) : ?>
+			<div class="calpren-field">
+				<label><?php _e( 'Scheda uscita', 'calypsosub' ); ?></label>
+				<span class="val"><a href="<?php echo esc_url( get_edit_post_link( $uscita_id ) ); ?>"><?php echo esc_html( get_the_title( $uscita_id ) ); ?></a></span>
+			</div>
+			<?php endif; ?>
 			<div class="calpren-field">
 				<label><?php _e( 'Data evento', 'calypsosub' ); ?></label>
 				<span class="val"><?php echo esc_html( $data_evento ); ?></span>
