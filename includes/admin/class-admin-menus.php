@@ -112,6 +112,7 @@ class Calypsosub_Admin_Menus {
 								'selected'          => $account_page_id,
 								'show_option_none'  => __( '— seleziona pagina —', 'calypsosub' ),
 								'option_none_value' => 0,
+								'post_status'       => [ 'publish', 'private' ],
 							] ); ?>
 						</td>
 					</tr>
@@ -126,6 +127,7 @@ class Calypsosub_Admin_Menus {
 								'selected'          => $prenotazioni_page_id,
 								'show_option_none'  => __( '— seleziona pagina —', 'calypsosub' ),
 								'option_none_value' => 0,
+								'post_status'       => [ 'publish', 'private' ],
 							] ); ?>
 							<p class="description"><?php _e( 'Pagina che contiene il blocco "Prenotazione" — usata per generare il link "Prenota" delle uscite.', 'calypsosub' ); ?></p>
 						</td>
