@@ -17,8 +17,8 @@ $filter_livello  = array_filter( $filter_livello );
 $filter_localita = array_filter( $filter_localita );
 $filter_avail    = array_filter( $filter_avail );
 
-/* ── Tutte le uscite pubblicate ── */
-$raw   = get_posts( [ 'post_type' => 'calypso_uscita', 'posts_per_page' => -1, 'post_status' => 'publish' ] );
+/* ── Tutte le occorrenze pubblicate ── */
+$raw   = get_posts( [ 'post_type' => 'calypso_occorrenza_uscita', 'posts_per_page' => -1, 'post_status' => 'publish' ] );
 $today = current_time( 'Y-m-d' );
 
 $cutoff          = date( 'Y-m-d', strtotime( '-3 months', strtotime( $today ) ) );
@@ -27,15 +27,13 @@ $uscite_past_win = [];
 $uscite_past_old = [];
 
 foreach ( $raw as $u ) {
-	$date_meta = get_post_meta( $u->ID, '_uscita_date', true );
-	$dates     = is_array( $date_meta ) ? array_filter( $date_meta ) : [];
-	sort( $dates );
-	if ( empty( $dates ) ) continue;
-	$prima_raw      = $dates[0];
+	$prima_raw = (string) get_post_meta( $u->ID, '_occorrenza_uscita_data', true );
+	$uscita_id = (int) get_post_meta( $u->ID, '_occorrenza_uscita_uscita_id', true );
+	if ( ! $prima_raw || ! $uscita_id ) continue;
 	$prima          = substr( $prima_raw, 0, 10 );
+	$u->_uscita_id  = $uscita_id;
 	$u->_prima_data = $prima;
 	$u->_prima_ora  = strlen( $prima_raw ) > 10 ? substr( $prima_raw, 11, 5 ) : '';
-	$u->_dates      = $dates;
 	$u->_passata    = $prima < $today;
 	if ( $prima >= $today ) {
 		$uscite_future[] = $u;
@@ -73,23 +71,23 @@ if ( ! empty( $uscite ) ) {
 	}
 }
 
-/* ── Posti, lista attesa per ogni uscita ── */
+/* ── Posti, lista attesa per ogni occorrenza ── */
 foreach ( $uscite as $u ) {
-	$max = get_post_meta( $u->ID, '_uscita_max_partecipanti', true );
+	$max = get_post_meta( $u->ID, '_occorrenza_uscita_posti', true );
 	if ( $max === '' || $max === false ) {
 		$u->_posti = null;
 	} else {
 		$u->_posti = max( 0, (int) $max - ( $booking_counts[ $u->ID ] ?? 0 ) );
 	}
-	$u->_lista_attesa = get_post_meta( $u->ID, '_uscita_lista_attesa', true ) === '1';
-	$u->_livelli      = wp_get_post_terms( $u->ID, 'calypso_livello', [ 'fields' => 'names' ] );
+	$u->_lista_attesa = get_post_meta( $u->ID, '_occorrenza_uscita_lista_attesa', true ) === '1';
+	$u->_livelli      = wp_get_post_terms( $u->_uscita_id, 'calypso_livello', [ 'fields' => 'names' ] );
 	$u->_livelli      = is_wp_error( $u->_livelli ) ? [] : $u->_livelli;
 }
 
 /* ── Filtro livello ── */
 if ( ! empty( $filter_livello ) ) {
 	$uscite = array_values( array_filter( $uscite, static function ( $u ) use ( $filter_livello ) {
-		$slugs = wp_get_post_terms( $u->ID, 'calypso_livello', [ 'fields' => 'slugs' ] );
+		$slugs = wp_get_post_terms( $u->_uscita_id, 'calypso_livello', [ 'fields' => 'slugs' ] );
 		return ! is_wp_error( $slugs ) && ! empty( array_intersect( $filter_livello, $slugs ) );
 	} ) );
 }
@@ -97,7 +95,7 @@ if ( ! empty( $filter_livello ) ) {
 /* ── Filtro località ── */
 if ( ! empty( $filter_localita ) ) {
 	$uscite = array_values( array_filter( $uscite, static function ( $u ) use ( $filter_localita ) {
-		return in_array( (string) get_post_meta( $u->ID, '_uscita_luogo', true ), $filter_localita, true );
+		return in_array( (string) get_post_meta( $u->_uscita_id, '_uscita_luogo', true ), $filter_localita, true );
 	} ) );
 }
 
@@ -135,8 +133,9 @@ $mesi_it  = [
 ];
 $giorni_it = [ 'Sun' => 'DOM', 'Mon' => 'LUN', 'Tue' => 'MAR', 'Wed' => 'MER', 'Thu' => 'GIO', 'Fri' => 'VEN', 'Sat' => 'SAB' ];
 
-$archive_url  = get_post_type_archive_link( 'calypso_uscita' );
-$first_row    = true;
+$archive_url          = get_post_type_archive_link( 'calypso_uscita' );
+$first_row            = true;
+$prenotazioni_page_id = (int) get_option( 'calypsosub_prenotazioni_page_id', 0 );
 
 $hero_img_id  = (int) get_option( 'calypsosub_hero_img_uscite', 0 );
 $hero_img_url = $hero_img_id ? wp_get_attachment_image_url( $hero_img_id, 'full' ) : '';
@@ -473,8 +472,8 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 			$ts       = strtotime( $u->_prima_data );
 			$giorno   = $giorni_it[ date( 'D', $ts ) ] ?? date( 'D', $ts );
 			$num      = date( 'j', $ts );
-			$luogo    = (string) get_post_meta( $u->ID, '_uscita_luogo',   true );
-			$ritrovo  = (string) get_post_meta( $u->ID, '_uscita_ritrovo', true );
+			$luogo    = (string) get_post_meta( $u->_uscita_id, '_uscita_luogo',   true );
+			$ritrovo  = (string) get_post_meta( $u->_uscita_id, '_uscita_ritrovo', true );
 			// Antepone orario al ritrovo se l'ora è disponibile
 			if ( $u->_prima_ora && $ritrovo ) $ritrovo = $u->_prima_ora . ' · ' . $ritrovo;
 			elseif ( $u->_prima_ora )          $ritrovo = $u->_prima_ora;
@@ -525,9 +524,9 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 			$first_row = $first_row && $u->_passata;
 
 			/* Link prenota */
-			$book_url = is_user_logged_in()
-				? add_query_arg( 'prenota', '1', get_permalink( $u->ID ) )
-				: wp_login_url( get_permalink( $u->ID ) );
+			$book_url = $prenotazioni_page_id
+				? add_query_arg( 'prenota_id', $u->ID, get_permalink( $prenotazioni_page_id ) )
+				: get_permalink( $u->_uscita_id );
 		?>
 		<div class="<?php echo esc_attr( $row_class ); ?>">
 
@@ -537,8 +536,8 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 			</div>
 
 			<div class="cso-uscita-row__info">
-				<a href="<?php echo esc_url( get_permalink( $u->ID ) ); ?>">
-					<p class="cso-uscita-row__title"><?php echo esc_html( get_the_title( $u->ID ) ); ?></p>
+				<a href="<?php echo esc_url( get_permalink( $u->_uscita_id ) ); ?>">
+					<p class="cso-uscita-row__title"><?php echo esc_html( get_the_title( $u->_uscita_id ) ); ?></p>
 				</a>
 				<?php if ( $luogo ) : ?>
 				<p class="cso-uscita-row__luogo">
