@@ -13,39 +13,33 @@ $id = get_the_ID();
 $sottotitolo        = (string) get_post_meta( $id, '_uscita_sottotitolo', true );
 $luogo              = (string) get_post_meta( $id, '_uscita_luogo', true );
 $ritrovo            = (string) get_post_meta( $id, '_uscita_ritrovo', true );
-$max_part           = get_post_meta( $id, '_uscita_max_partecipanti', true );
-$max_acc            = get_post_meta( $id, '_uscita_max_accompagnatori', true );
-$lista_attesa       = (int) get_post_meta( $id, '_uscita_lista_attesa', true );
-$date               = (array) ( get_post_meta( $id, '_uscita_date', true ) ?: [] );
 $incluso            = (string) get_post_meta( $id, '_uscita_incluso', true );
 $cosa_portare       = (string) get_post_meta( $id, '_uscita_cosa_portare', true );
 $note_cancellazione = (string) get_post_meta( $id, '_uscita_note_cancellazione', true );
-
-sort( $date );
-$now = current_time( 'Y-m-d\TH:i' );
-$prossima = '';
-foreach ( $date as $dt ) {
-	if ( $dt >= $now ) { $prossima = $dt; break; }
-}
-if ( ! $prossima && $date ) $prossima = end( $date );
 
 $fmt = static function ( string $dt ): string {
 	$ts = strtotime( $dt );
 	return $ts ? wp_date( 'j F Y — H:i', $ts ) : $dt;
 };
 
-global $calypsosub_booking_manager;
-$user_id     = get_current_user_id();
-$logged_in   = is_user_logged_in();
-$has_booking = false;
-$can_book    = false;
-$remaining   = null;
-
-if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
-	$remaining   = $calypsosub_booking_manager->get_remaining_spots( $id );
-	$has_booking = $logged_in && $calypsosub_booking_manager->user_has_booking( $id, $user_id );
-	$can_book    = $logged_in && calypso_can_book( $id, $user_id );
+$oggi = current_time( 'Y-m-d\TH:i' );
+$occorrenze = calypso_get_occorrenze_by_uscita( $id );
+$prossima_occ = null;
+foreach ( $occorrenze as $occ ) {
+	$occ_data = (string) get_post_meta( $occ->ID, '_occorrenza_uscita_data', true );
+	if ( $occ_data >= $oggi ) { $prossima_occ = $occ; break; }
 }
+if ( ! $prossima_occ && $occorrenze ) $prossima_occ = end( $occorrenze );
+$prossima = $prossima_occ ? (string) get_post_meta( $prossima_occ->ID, '_occorrenza_uscita_data', true ) : '';
+
+$prenotazioni_page_id = (int) get_option( 'calypsosub_prenotazioni_page_id', 0 );
+$prenotazioni_page_ok = $prenotazioni_page_id && get_post_status( $prenotazioni_page_id ) === 'publish';
+
+$booking_link = static function ( int $occorrenza_id ) use ( $prenotazioni_page_id ): string {
+	return add_query_arg( 'prenota_id', $occorrenza_id, get_permalink( $prenotazioni_page_id ) );
+};
+
+global $calypsosub_booking_manager;
 ?>
 <style>
 .cso{color:var(--c-ink,#0b1a26);--radius:4px;--radius-lg:12px}
@@ -71,8 +65,7 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 .cso-infobar__pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border-radius:20px;padding:6px 14px}
 
 /* Layout */
-.cso-body{max-width:1320px;margin:0 auto;padding:48px 24px;display:grid;grid-template-columns:1fr 360px;gap:48px;align-items:start}
-@media(max-width:1024px){.cso-body{grid-template-columns:1fr}}
+.cso-body{max-width:900px;margin:0 auto;padding:48px 24px}
 
 /* Sections */
 .cso-section{margin-bottom:40px}
@@ -84,9 +77,12 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 .cso-pill{background:var(--c-bone);border-radius:var(--radius);padding:6px 14px;font-size:14px;font-weight:500}
 
 .cso-dates-list{list-style:none;margin:0;padding:0}
-.cso-dates-list li{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--c-foam);font-size:15px}
+.cso-dates-list li{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--c-foam);font-size:15px;flex-wrap:wrap}
 .cso-dates-list li:last-child{border-bottom:none}
 .cso-dates-list__dot{width:8px;height:8px;background:var(--c-coral);border-radius:50%;flex-shrink:0}
+.cso-dates-list__spots{margin-left:auto;font-size:13px;color:#666}
+.cso-dates-list__cta{display:inline-block;padding:8px 18px;background:var(--c-coral);color:#fff;border-radius:999px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;text-decoration:none}
+.cso-dates-list__cta--disabled{background:#ccc;color:#666;cursor:default}
 
 /* Sidebar / card */
 .cso-card{background:#fff;border-radius:var(--radius-lg);box-shadow:0 4px 24px rgba(10,37,64,.1);overflow:hidden;position:sticky;top:24px}
@@ -163,34 +159,6 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 		</div>
 	</div>
 	<?php endif; ?>
-	<?php if ( $remaining !== null ) : ?>
-	<div class="cso-infobar__pill">
-		<span class="cso-infobar__icon">👥</span>
-		<div>
-			<span class="cso-infobar__label"><?php esc_html_e( 'Posti', 'calypsosub' ); ?></span>
-			<span class="cso-infobar__value">
-				<?php
-				if ( $remaining > 0 ) {
-					echo esc_html( sprintf( __( '%d disponibili', 'calypsosub' ), $remaining ) );
-				} elseif ( $lista_attesa ) {
-					esc_html_e( 'Lista d\'attesa aperta', 'calypsosub' );
-				} else {
-					esc_html_e( 'Posti esauriti', 'calypsosub' );
-				}
-				?>
-			</span>
-		</div>
-	</div>
-	<?php endif; ?>
-	<?php if ( $max_acc !== '' && $max_acc !== null ) : ?>
-	<div class="cso-infobar__pill">
-		<span class="cso-infobar__icon">🤿</span>
-		<div>
-			<span class="cso-infobar__label"><?php esc_html_e( 'Max accompagnatori', 'calypsosub' ); ?></span>
-			<span class="cso-infobar__value"><?php echo esc_html( $max_acc ); ?></span>
-		</div>
-	</div>
-	<?php endif; ?>
 </div>
 
 <!-- Body -->
@@ -204,14 +172,40 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 		</div>
 		<?php endif; ?>
 
-		<?php if ( $date ) : ?>
+		<?php if ( $occorrenze ) : ?>
 		<div class="cso-section">
 			<h2 class="cso-section__title"><?php echo esc_html( calypsosub_opt( 'uscite', 'sec_date', __( 'Date disponibili', 'calypsosub' ) ) ); ?></h2>
 			<ul class="cso-dates-list">
-				<?php foreach ( $date as $dt ) : ?>
+				<?php foreach ( $occorrenze as $occ ) :
+					$occ_data    = (string) get_post_meta( $occ->ID, '_occorrenza_uscita_data', true );
+					$remaining   = $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager
+						? $calypsosub_booking_manager->get_remaining_spots( $occ->ID )
+						: null;
+					$lista_attesa = (int) get_post_meta( $occ->ID, '_occorrenza_uscita_lista_attesa', true );
+				?>
 				<li>
 					<span class="cso-dates-list__dot"></span>
-					<?php echo esc_html( $fmt( $dt ) ); ?>
+					<span><?php echo esc_html( $fmt( $occ_data ) ); ?></span>
+					<?php if ( $remaining !== null ) : ?>
+						<span class="cso-dates-list__spots">
+						<?php
+						if ( $remaining > 0 ) {
+							echo esc_html( sprintf( __( '%d posti disponibili', 'calypsosub' ), $remaining ) );
+						} elseif ( $lista_attesa ) {
+							esc_html_e( "Lista d'attesa aperta", 'calypsosub' );
+						} else {
+							esc_html_e( 'Posti esauriti', 'calypsosub' );
+						}
+						?>
+						</span>
+					<?php endif; ?>
+					<?php if ( $prenotazioni_page_ok ) : ?>
+						<a class="cso-dates-list__cta" href="<?php echo esc_url( $booking_link( $occ->ID ) ); ?>">
+							<?php echo esc_html( calypsosub_opt( 'uscite', 'btn_prenota_ora', __( 'Prenota', 'calypsosub' ) ) ); ?>
+						</a>
+					<?php elseif ( current_user_can( 'edit_posts' ) ) : ?>
+						<span class="cso-dates-list__cta cso-dates-list__cta--disabled"><?php esc_html_e( 'Configura pagina prenotazioni', 'calypsosub' ); ?></span>
+					<?php endif; ?>
 				</li>
 				<?php endforeach; ?>
 			</ul>
@@ -248,121 +242,7 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 
 	</div><!-- .cso-main -->
 
-	<!-- Sidebar: prenotazione -->
-	<aside>
-		<div class="cso-card">
-			<div class="cso-card__head">
-				<p class="cso-card__head-title"><?php echo esc_html( calypsosub_opt( 'uscite', 'card_title', __( 'Prenota', 'calypsosub' ) ) ); ?></p>
-				<?php if ( $prossima ) : ?>
-				<p class="cso-card__head-sub"><?php echo esc_html( $fmt( $prossima ) ); ?></p>
-				<?php endif; ?>
-			</div>
-			<div class="cso-card__body">
-
-				<?php if ( $has_booking ) : ?>
-				<div class="cso-notice cso-notice--success">
-					<?php echo esc_html( calypsosub_opt( 'uscite', 'msg_gia_prenotato', __( '✓ Hai già una prenotazione attiva per questa uscita.', 'calypsosub' ) ) ); ?>
-				</div>
-				<a href="<?php echo esc_url( get_permalink( get_option( 'calypsosub_account_page_id' ) ) ); ?>" class="cso-btn cso-btn--secondary">
-					<?php echo esc_html( calypsosub_opt( 'uscite', 'btn_area_personale', __( 'Area personale', 'calypsosub' ) ) ); ?>
-				</a>
-
-				<?php elseif ( ! $logged_in ) : ?>
-				<div class="cso-login-cta">
-					<p><?php echo esc_html( calypsosub_opt( 'uscite', 'msg_accedi_cta', __( 'Accedi per prenotare questa uscita.', 'calypsosub' ) ) ); ?></p>
-					<a href="<?php echo esc_url( wp_login_url( get_permalink() ) ); ?>" class="cso-btn">
-						<?php esc_html_e( 'Accedi', 'calypsosub' ); ?>
-					</a>
-				</div>
-
-				<?php elseif ( $can_book ) : ?>
-
-				<?php if ( $remaining === 0 && $lista_attesa ) : ?>
-				<div class="cso-notice cso-notice--waitlist">
-					<?php echo esc_html( calypsosub_opt( 'uscite', 'msg_lista_avviso', __( "Posti esauriti — puoi iscriverti in lista d'attesa.", 'calypsosub' ) ) ); ?>
-				</div>
-				<?php elseif ( $remaining !== null ) : ?>
-				<div class="cso-spots">
-					<div class="cso-spots__num"><?php echo esc_html( $remaining ); ?></div>
-					<div class="cso-spots__label"><?php echo esc_html( calypsosub_opt( 'uscite', 'label_posti', __( 'posti disponibili', 'calypsosub' ) ) ); ?></div>
-				</div>
-				<?php endif; ?>
-
-				<div id="cso-booking-msg" class="cso-notice"></div>
-				<form id="cso-booking-form">
-					<?php if ( $max_acc && (int) $max_acc > 0 ) : ?>
-					<div class="cso-form-row">
-						<label for="cso-accompagnatori"><?php echo esc_html( calypsosub_opt( 'uscite', 'label_accompagnatori', __( 'N° accompagnatori', 'calypsosub' ) ) ); ?></label>
-						<input type="number" id="cso-accompagnatori" name="accompagnatori" min="0"
-						       max="<?php echo esc_attr( $max_acc ); ?>" value="0">
-					</div>
-					<?php endif; ?>
-					<div class="cso-form-row">
-						<label for="cso-allergie"><?php echo esc_html( calypsosub_opt( 'uscite', 'label_allergie', __( 'Allergie / note mediche', 'calypsosub' ) ) ); ?></label>
-						<textarea id="cso-allergie" name="allergie" placeholder="<?php esc_attr_e( 'Facoltativo', 'calypsosub' ); ?>"></textarea>
-					</div>
-					<button type="submit" class="cso-btn" id="cso-book-btn">
-						<?php echo esc_html( calypsosub_opt( 'uscite', 'btn_prenota_ora', __( 'Prenota ora', 'calypsosub' ) ) ); ?>
-					</button>
-				</form>
-
-				<?php else : ?>
-				<div class="cso-notice cso-notice--error">
-					<?php echo esc_html( calypsosub_opt( 'uscite', 'msg_esauriti', __( 'Posti esauriti per questa uscita.', 'calypsosub' ) ) ); ?>
-				</div>
-				<?php endif; ?>
-
-			</div><!-- .cso-card__body -->
-		</div><!-- .cso-card -->
-	</aside>
-
 </div><!-- .cso-body -->
 </div><!-- .cso -->
-
-<script>
-(function () {
-	var form = document.getElementById('cso-booking-form');
-	if (!form) return;
-
-	form.addEventListener('submit', function (e) {
-		e.preventDefault();
-		var btn = document.getElementById('cso-book-btn');
-		var msg = document.getElementById('cso-booking-msg');
-		btn.disabled = true;
-		btn.textContent = '<?php echo esc_js( __( 'Invio in corso…', 'calypsosub' ) ); ?>';
-
-		var data = new FormData();
-		data.append('action', 'calypso_book');
-		data.append('nonce', '<?php echo esc_js( wp_create_nonce( 'calypso_book_nonce' ) ); ?>');
-		data.append('post_id', '<?php echo esc_js( (string) $id ); ?>');
-		data.append('accompagnatori', form.querySelector('[name="accompagnatori"]') ? form.querySelector('[name="accompagnatori"]').value : '0');
-		data.append('allergie', form.querySelector('[name="allergie"]') ? form.querySelector('[name="allergie"]').value : '');
-
-		fetch('<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>', { method: 'POST', body: data })
-			.then(function (r) { return r.json(); })
-			.then(function (res) {
-				msg.style.display = 'block';
-				if (res.success) {
-					var status = res.data && res.data.status;
-					msg.className = 'cso-notice ' + (status === 'lista_attesa' ? 'cso-notice--waitlist' : 'cso-notice--success');
-					msg.textContent = res.data && res.data.message ? res.data.message : '<?php echo esc_js( __( 'Prenotazione effettuata!', 'calypsosub' ) ); ?>';
-					form.style.display = 'none';
-				} else {
-					msg.className = 'cso-notice cso-notice--error';
-					msg.textContent = res.data && res.data.message ? res.data.message : '<?php echo esc_js( __( 'Errore. Riprova.', 'calypsosub' ) ); ?>';
-					btn.disabled = false;
-					btn.textContent = '<?php echo esc_js( __( 'Prenota ora', 'calypsosub' ) ); ?>';
-				}
-			})
-			.catch(function () {
-				msg.style.display = 'block';
-				msg.className = 'cso-notice cso-notice--error';
-				msg.textContent = '<?php echo esc_js( __( 'Errore di rete. Riprova.', 'calypsosub' ) ); ?>';
-				btn.disabled = false;
-				btn.textContent = '<?php echo esc_js( __( 'Prenota ora', 'calypsosub' ) ); ?>';
-			});
-	});
-})();
-</script>
 
 <?php get_footer(); ?>
