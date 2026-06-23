@@ -24,7 +24,7 @@ $archive_url = get_post_type_archive_link( 'calypso_uscita' );
 $today       = current_time( 'Y-m-d' );
 
 /* ── Query (occorrenze) ── */
-$raw    = get_posts( [ 'post_type' => 'calypso_occorrenza_uscita', 'posts_per_page' => -1, 'post_status' => 'publish' ] );
+$raw    = get_posts( [ 'post_type' => 'calypso_occ_uscita', 'posts_per_page' => -1, 'post_status' => 'publish' ] );
 $uscite = [];
 foreach ( $raw as $u ) {
 	$prima_raw = (string) get_post_meta( $u->ID, '_occorrenza_uscita_data', true );

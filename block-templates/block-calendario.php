@@ -20,7 +20,7 @@ $prenotazioni_page_id = (int) get_option( 'calypsosub_prenotazioni_page_id', 0 )
 /* ── Uscite (occorrenze future) ── */
 if ( $show_uscite ) {
 	$occs_usc = get_posts( [
-		'post_type'      => 'calypso_occorrenza_uscita',
+		'post_type'      => 'calypso_occ_uscita',
 		'posts_per_page' => -1,
 		'post_status'    => 'publish',
 		'meta_key'       => '_occorrenza_uscita_data',

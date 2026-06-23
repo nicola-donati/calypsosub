@@ -18,7 +18,7 @@ $filter_localita = array_filter( $filter_localita );
 $filter_avail    = array_filter( $filter_avail );
 
 /* ── Tutte le occorrenze pubblicate ── */
-$raw   = get_posts( [ 'post_type' => 'calypso_occorrenza_uscita', 'posts_per_page' => -1, 'post_status' => 'publish' ] );
+$raw   = get_posts( [ 'post_type' => 'calypso_occ_uscita', 'posts_per_page' => -1, 'post_status' => 'publish' ] );
 $today = current_time( 'Y-m-d' );
 
 $cutoff          = date( 'Y-m-d', strtotime( '-3 months', strtotime( $today ) ) );

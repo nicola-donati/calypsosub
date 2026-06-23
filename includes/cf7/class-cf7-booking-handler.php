@@ -33,7 +33,7 @@ class Calypsosub_CF7_Booking_Handler {
 		$post_type = get_post_type( $post_id );
 		$user_id   = get_current_user_id();
 
-		if ( in_array( $post_type, [ 'calypso_occorrenza_uscita', 'calypso_evento' ], true )
+		if ( in_array( $post_type, [ 'calypso_occ_uscita', 'calypso_evento' ], true )
 			&& ! calypso_can_book( $post_id, $user_id ) ) {
 			$result->invalidate( 'booking_post_id', __( 'Posti esauriti o richiesta già inviata.', 'calypsosub' ) );
 		} elseif ( $post_type === 'calypso_corso' ) {

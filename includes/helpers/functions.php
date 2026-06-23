@@ -158,7 +158,7 @@ function calypso_get_occorrenze_by_corso( int $corso_id, array $args = [] ): arr
  */
 function calypso_get_occorrenze_by_uscita( int $uscita_id, array $args = [] ): array {
 	$query = new WP_Query( array_merge( [
-		'post_type'      => 'calypso_occorrenza_uscita',
+		'post_type'      => 'calypso_occ_uscita',
 		'post_status'    => 'publish',
 		'posts_per_page' => -1,
 		'orderby'        => 'meta_value',
@@ -210,7 +210,7 @@ function calypso_can_book( int $post_id, int $user_id ): bool {
 	if ( $remaining === null ) return true;
 	if ( $remaining > 0 ) return true;
 	$post_type   = get_post_type( $post_id );
-	$meta_prefix = $post_type === 'calypso_occorrenza_uscita' ? '_occorrenza_uscita' : '_evento';
+	$meta_prefix = $post_type === 'calypso_occ_uscita' ? '_occorrenza_uscita' : '_evento';
 	return (bool) get_post_meta( $post_id, $meta_prefix . '_lista_attesa', true );
 }
 

@@ -51,7 +51,7 @@ $title_html = implode( '<br>', array_map( 'esc_html', explode( "\n", $title ) ) 
 $pu = null;
 if ( $show_uscita ) {
 	$occs = get_posts( [
-		'post_type'      => 'calypso_occorrenza_uscita',
+		'post_type'      => 'calypso_occ_uscita',
 		'posts_per_page' => 1,
 		'post_status'    => 'publish',
 		'meta_key'       => '_occorrenza_uscita_data',

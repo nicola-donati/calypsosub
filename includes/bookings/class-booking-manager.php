@@ -97,7 +97,7 @@ class Calypsosub_Booking_Manager {
 	 */
 	public function book( int $post_id, int $user_id, array $form_data ): string|WP_Error {
 		$post_type = get_post_type( $post_id );
-		if ( ! in_array( $post_type, [ 'calypso_occorrenza_uscita', 'calypso_evento', 'calypso_corso' ], true ) ) {
+		if ( ! in_array( $post_type, [ 'calypso_occ_uscita', 'calypso_evento', 'calypso_corso' ], true ) ) {
 			return new WP_Error( 'invalid_post', __( 'Tipo di contenuto non prenotabile.', 'calypsosub' ) );
 		}
 
@@ -168,8 +168,8 @@ class Calypsosub_Booking_Manager {
 
 	private function resolve_booking_status( int $post_id ): string|WP_Error {
 		$post_type   = get_post_type( $post_id );
-		$meta_prefix = $post_type === 'calypso_occorrenza_uscita' ? '_occorrenza_uscita' : '_evento';
-		$max_field   = $post_type === 'calypso_occorrenza_uscita' ? '_posti' : '_max_partecipanti';
+		$meta_prefix = $post_type === 'calypso_occ_uscita' ? '_occorrenza_uscita' : '_evento';
+		$max_field   = $post_type === 'calypso_occ_uscita' ? '_posti' : '_max_partecipanti';
 		$max         = get_post_meta( $post_id, $meta_prefix . $max_field, true );
 
 		if ( $max === '' || $max === null ) {
@@ -214,8 +214,8 @@ class Calypsosub_Booking_Manager {
 
 	public function get_remaining_spots( int $post_id ): int|null {
 		$post_type   = get_post_type( $post_id );
-		$meta_prefix = $post_type === 'calypso_occorrenza_uscita' ? '_occorrenza_uscita' : '_evento';
-		$max_field   = $post_type === 'calypso_occorrenza_uscita' ? '_posti' : '_max_partecipanti';
+		$meta_prefix = $post_type === 'calypso_occ_uscita' ? '_occorrenza_uscita' : '_evento';
+		$max_field   = $post_type === 'calypso_occ_uscita' ? '_posti' : '_max_partecipanti';
 		$max         = get_post_meta( $post_id, $meta_prefix . $max_field, true );
 
 		if ( $max === '' || $max === null ) return null;
@@ -305,7 +305,7 @@ class Calypsosub_Booking_Manager {
 		$post_type  = (string) get_post_meta( $post->ID, '_booking_post_type', true );
 		$user       = get_user_by( 'id', $user_id );
 
-		if ( $post_type === 'calypso_occorrenza_uscita' ) {
+		if ( $post_type === 'calypso_occ_uscita' ) {
 			$date_str    = (string) get_post_meta( $post_id, '_occorrenza_uscita_data', true );
 			$data_evento = $date_str ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date_str ) ) : '—';
 			$uscita_id   = (int) get_post_meta( $post_id, '_occorrenza_uscita_uscita_id', true );

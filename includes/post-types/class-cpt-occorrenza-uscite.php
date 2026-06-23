@@ -6,11 +6,11 @@ class Calypsosub_CPT_Occorrenza_Uscite {
 	public function init(): void {
 		add_action( 'init',                                [ $this, 'register_post_type' ] );
 		add_action( 'add_meta_boxes',                       [ $this, 'add_meta_boxes' ] );
-		add_action( 'save_post_calypso_occorrenza_uscita',  [ $this, 'save_meta' ], 10, 2 );
+		add_action( 'save_post_calypso_occ_uscita',  [ $this, 'save_meta' ], 10, 2 );
 	}
 
 	public function register_post_type(): void {
-		register_post_type( 'calypso_occorrenza_uscita', [
+		register_post_type( 'calypso_occ_uscita', [
 			'label'           => __( 'Occorrenze uscite', 'calypsosub' ),
 			'labels'          => [
 				'name'          => __( 'Occorrenze', 'calypsosub' ),
@@ -32,10 +32,10 @@ class Calypsosub_CPT_Occorrenza_Uscite {
 
 	public function add_meta_boxes(): void {
 		add_meta_box(
-			'calypso_occorrenza_uscita_meta',
+			'calypso_occ_uscita_meta',
 			__( 'Dettagli occorrenza', 'calypsosub' ),
 			[ $this, 'render_meta_box' ],
-			'calypso_occorrenza_uscita',
+			'calypso_occ_uscita',
 			'normal',
 			'high'
 		);
@@ -43,7 +43,7 @@ class Calypsosub_CPT_Occorrenza_Uscite {
 
 	public function render_meta_box( WP_Post $post ): void {
 		$d = $this->get_meta( $post->ID );
-		wp_nonce_field( 'calypso_occorrenza_uscita_meta', 'calypso_occorrenza_uscita_nonce' );
+		wp_nonce_field( 'calypso_occ_uscita_meta', 'calypso_occ_uscita_nonce' );
 
 		$all_uscite = get_posts( [
 			'post_type'      => 'calypso_uscita',
@@ -110,8 +110,8 @@ class Calypsosub_CPT_Occorrenza_Uscite {
 	}
 
 	public function save_meta( int $post_id, WP_Post $post ): void {
-		if ( ! isset( $_POST['calypso_occorrenza_uscita_nonce'] ) ) return;
-		if ( ! wp_verify_nonce( sanitize_key( $_POST['calypso_occorrenza_uscita_nonce'] ), 'calypso_occorrenza_uscita_meta' ) ) return;
+		if ( ! isset( $_POST['calypso_occ_uscita_nonce'] ) ) return;
+		if ( ! wp_verify_nonce( sanitize_key( $_POST['calypso_occ_uscita_nonce'] ), 'calypso_occ_uscita_meta' ) ) return;
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
 		if ( ! current_user_can( 'edit_post', $post_id ) ) return;
 

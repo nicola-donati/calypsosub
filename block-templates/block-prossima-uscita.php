@@ -14,7 +14,7 @@ $inside_hero = ! empty( $attributes['inside_hero'] );
 
 /* ── Trova la prossima occorrenza futura (su tutte le uscite) ── */
 $occs = get_posts( [
-	'post_type'      => 'calypso_occorrenza_uscita',
+	'post_type'      => 'calypso_occ_uscita',
 	'posts_per_page' => 1,
 	'post_status'    => 'publish',
 	'meta_key'       => '_occorrenza_uscita_data',

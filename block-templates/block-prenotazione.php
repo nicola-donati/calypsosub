@@ -37,7 +37,7 @@ $preselect_id   = absint( $_GET['prenota_id'] ?? 0 );
 $preselect_type = $preselect_id ? get_post_type( $preselect_id ) : '';
 $preselect_tab  = '';
 foreach ( $tipi as $tipo => $form_id ) {
-	$cpt = [ 'uscite' => 'calypso_occorrenza_uscita', 'eventi' => 'calypso_evento', 'corsi' => 'calypso_corso' ][ $tipo ];
+	$cpt = [ 'uscite' => 'calypso_occ_uscita', 'eventi' => 'calypso_evento', 'corsi' => 'calypso_corso' ][ $tipo ];
 	if ( $preselect_type === $cpt && get_post_status( $preselect_id ) === 'publish' ) {
 		$preselect_tab = $tipo;
 		break;
@@ -98,7 +98,7 @@ $build_card = static function ( WP_Post $post, string $tipo ) use ( $calypsosub_
 $items_by_tipo = [];
 if ( isset( $tipi['uscite'] ) ) {
 	$occorrenze_uscite = get_posts( [
-		'post_type'      => 'calypso_occorrenza_uscita',
+		'post_type'      => 'calypso_occ_uscita',
 		'post_status'    => 'publish',
 		'posts_per_page' => -1,
 		'orderby'        => 'meta_value',

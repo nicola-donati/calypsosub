@@ -60,7 +60,7 @@ class Calypsosub_Booking_Email {
 		$post_type = get_post_type( $post_id );
 		$titolo    = get_the_title( $post_id );
 
-		if ( $post_type === 'calypso_occorrenza_uscita' ) {
+		if ( $post_type === 'calypso_occ_uscita' ) {
 			$uscita_id  = (int) get_post_meta( $post_id, '_occorrenza_uscita_uscita_id', true );
 			$luogo      = (string) get_post_meta( $uscita_id, '_uscita_luogo', true );
 			$date_str   = (string) get_post_meta( $post_id, '_occorrenza_uscita_data', true );

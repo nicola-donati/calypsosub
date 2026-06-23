@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  * Migrazione one-shot: converte le date dentro _uscita_date[] in post
- * calypso_occorrenza_uscita separati, e ri-punta le prenotazioni esistenti
+ * calypso_occ_uscita separati, e ri-punta le prenotazioni esistenti
  * dalla scheda uscita alla nuova occorrenza generata.
  */
 class Calypsosub_Migrate_Occorrenze_Uscite {
@@ -41,7 +41,7 @@ class Calypsosub_Migrate_Occorrenze_Uscite {
 			$occorrenza_ids = [];
 			foreach ( $dates as $date_str ) {
 				$occ_id = wp_insert_post( [
-					'post_type'   => 'calypso_occorrenza_uscita',
+					'post_type'   => 'calypso_occ_uscita',
 					'post_title'  => get_the_title( $uscita_id ) . ' — ' . $date_str,
 					'post_status' => 'publish',
 				] );
@@ -93,7 +93,7 @@ class Calypsosub_Migrate_Occorrenze_Uscite {
 		$target = $occorrenza_ids[0];
 		foreach ( $bookings as $booking_id ) {
 			update_post_meta( $booking_id, '_booking_post_id', $target );
-			update_post_meta( $booking_id, '_booking_post_type', 'calypso_occorrenza_uscita' );
+			update_post_meta( $booking_id, '_booking_post_type', 'calypso_occ_uscita' );
 			if ( count( $occorrenza_ids ) > 1 ) {
 				error_log( sprintf(
 					'[calypsosub] Migrazione occorrenze uscite: prenotazione #%d (uscita #%d) assegnata alla prima di %d occorrenze generate — verificare a mano la data corretta.',
