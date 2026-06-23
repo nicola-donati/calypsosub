@@ -10,6 +10,8 @@ if ( function_exists( 'block_template_part' ) ) {
 
 $id = get_the_ID();
 
+$prenotazioni_page_id = (int) get_option( 'calypsosub_prenotazioni_page_id', 0 );
+
 $sottotitolo  = (string) get_post_meta( $id, '_evento_sottotitolo', true );
 $luogo        = (string) get_post_meta( $id, '_evento_luogo', true );
 $max_part     = get_post_meta( $id, '_evento_max_partecipanti', true );
@@ -77,14 +79,8 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 .cso-spots{text-align:center;margin-bottom:20px}
 .cso-spots__num{font-size:48px;font-weight:900;color:var(--c-wave);line-height:1}
 .cso-spots__label{font-size:13px;color:#666;margin-top:4px}
-.cso-form-row{margin-bottom:16px}
-.cso-form-row label{display:block;font-size:13px;font-weight:600;color:var(--c-deep);margin-bottom:6px}
-.cso-form-row input,.cso-form-row textarea{width:100%;padding:10px 14px;border:1.5px solid var(--c-foam);border-radius:var(--radius);font-size:14px;color:var(--c-ink);transition:border-color .2s}
-.cso-form-row input:focus,.cso-form-row textarea:focus{outline:none;border-color:var(--c-wave)}
-.cso-form-row textarea{min-height:80px;resize:vertical}
-.cso-btn{display:block;width:100%;padding:14px;background:var(--c-wave);color:#fff;border:none;border-radius:999px;font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;transition:background .2s,transform .15s}
+.cso-btn{display:block;width:100%;padding:14px;background:var(--c-wave);color:#fff;border:none;border-radius:999px;font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;text-decoration:none;text-align:center;transition:background .2s,transform .15s}
 .cso-btn:hover{background:#165c82;transform:translateY(-1px)}
-.cso-btn:disabled{background:#ccc;cursor:not-allowed;transform:none}
 .cso-btn--secondary{background:var(--c-deep)}
 .cso-btn--secondary:hover{background:#061826}
 .cso-notice{text-align:center;padding:16px;border-radius:var(--radius);font-size:14px;margin-bottom:16px}
@@ -93,7 +89,6 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 .cso-notice--error{background:#f8d7da;color:#721c24}
 .cso-login-cta{text-align:center;padding:24px}
 .cso-login-cta p{margin:0 0 16px;font-size:14px;color:#666}
-#cso-booking-msg{display:none;margin-bottom:16px}
 </style>
 
 <div class="cso">
@@ -205,15 +200,11 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 				<?php elseif ( $remaining !== null ) : ?>
 				<div class="cso-spots"><div class="cso-spots__num"><?php echo esc_html( $remaining ); ?></div><div class="cso-spots__label"><?php echo esc_html( calypsosub_opt( 'eventi', 'label_posti', __( 'posti disponibili', 'calypsosub' ) ) ); ?></div></div>
 				<?php endif; ?>
-
-				<div id="cso-booking-msg" class="cso-notice"></div>
-				<form id="cso-booking-form">
-					<div class="cso-form-row">
-						<label for="cso-allergie"><?php echo esc_html( calypsosub_opt( 'eventi', 'label_allergie', __( 'Allergie / note', 'calypsosub' ) ) ); ?></label>
-						<textarea id="cso-allergie" name="allergie" placeholder="<?php esc_attr_e( 'Facoltativo', 'calypsosub' ); ?>"></textarea>
-					</div>
-					<button type="submit" class="cso-btn" id="cso-book-btn"><?php echo esc_html( calypsosub_opt( 'eventi', 'btn_iscriviti', __( 'Iscriviti', 'calypsosub' ) ) ); ?></button>
-				</form>
+				<?php if ( $prenotazioni_page_id ) : ?>
+				<a href="<?php echo esc_url( add_query_arg( 'prenota_id', $id, get_permalink( $prenotazioni_page_id ) ) ); ?>" class="cso-btn">
+					<?php echo esc_html( calypsosub_opt( 'eventi', 'btn_iscriviti', __( 'Iscriviti', 'calypsosub' ) ) ); ?>
+				</a>
+				<?php endif; ?>
 
 				<?php else : ?>
 				<div class="cso-notice cso-notice--error"><?php echo esc_html( calypsosub_opt( 'eventi', 'msg_esauriti', __( 'Posti esauriti.', 'calypsosub' ) ) ); ?></div>
@@ -224,40 +215,5 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 	</aside>
 </div>
 </div>
-
-<script>
-(function () {
-	var form = document.getElementById('cso-booking-form');
-	if (!form) return;
-	form.addEventListener('submit', function (e) {
-		e.preventDefault();
-		var btn = document.getElementById('cso-book-btn');
-		var msg = document.getElementById('cso-booking-msg');
-		btn.disabled = true;
-		btn.textContent = '<?php echo esc_js( __( 'Invio…', 'calypsosub' ) ); ?>';
-		var data = new FormData();
-		data.append('action', 'calypso_book');
-		data.append('nonce', '<?php echo esc_js( wp_create_nonce( 'calypso_book_nonce' ) ); ?>');
-		data.append('post_id', '<?php echo esc_js( (string) $id ); ?>');
-		data.append('accompagnatori', '0');
-		data.append('allergie', form.querySelector('[name="allergie"]').value);
-		fetch('<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>', { method: 'POST', body: data })
-			.then(function (r) { return r.json(); })
-			.then(function (res) {
-				msg.style.display = 'block';
-				if (res.success) {
-					msg.className = 'cso-notice ' + (res.data.status === 'lista_attesa' ? 'cso-notice--waitlist' : 'cso-notice--success');
-					msg.textContent = res.data.message;
-					form.style.display = 'none';
-				} else {
-					msg.className = 'cso-notice cso-notice--error';
-					msg.textContent = res.data.message;
-					btn.disabled = false;
-					btn.textContent = '<?php echo esc_js( __( 'Iscriviti', 'calypsosub' ) ); ?>';
-				}
-			});
-	});
-})();
-</script>
 
 <?php get_footer(); ?>

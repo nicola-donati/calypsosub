@@ -19,7 +19,7 @@ $stat_durata     = (string) get_post_meta( $id, '_corso_stat_durata',     true )
 $stat_pratica    = (string) get_post_meta( $id, '_corso_stat_pratica',    true );
 $stat_profondita = (string) get_post_meta( $id, '_corso_stat_profondita', true );
 $periodo         = (string) get_post_meta( $id, '_corso_periodo',         true );
-$link_iscrizione = (string) get_post_meta( $id, '_corso_link_iscrizione', true );
+$prenotazioni_page_id = (int) get_option( 'calypsosub_prenotazioni_page_id', 0 );
 $contatto        = (string) get_post_meta( $id, '_corso_contatto',        true );
 $contatto_nome   = (string) get_post_meta( $id, '_corso_contatto_nome',   true );
 $materiale       = (string) get_post_meta( $id, '_corso_materiale',       true );
@@ -396,9 +396,9 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 	<?php endif; ?>
 
 	<div class="cso-sintesi__cta">
-		<?php if ( $link_iscrizione ) : ?>
-			<a href="<?php echo esc_url( $link_iscrizione ); ?>"
-			   class="cso-btn-primary" target="_blank" rel="noopener">
+		<?php if ( $prenotazioni_page_id ) : ?>
+			<a href="<?php echo esc_url( add_query_arg( 'prenota_id', $id, get_permalink( $prenotazioni_page_id ) ) ); ?>"
+			   class="cso-btn-primary">
 				<?php echo esc_html( calypsosub_opt( 'corsi', 'btn_iscrivi', __( 'Iscriviti al corso →', 'calypsosub' ) ) ); ?>
 			</a>
 		<?php endif; ?>
