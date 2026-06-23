@@ -23,17 +23,16 @@ $attr_empty_title  = (string)  ( $attributes['empty_title']      ?? 'Nessuna usc
 $archive_url = get_post_type_archive_link( 'calypso_uscita' );
 $today       = current_time( 'Y-m-d' );
 
-/* ── Query ── */
-$raw    = get_posts( [ 'post_type' => 'calypso_uscita', 'posts_per_page' => -1, 'post_status' => 'publish' ] );
+/* ── Query (occorrenze) ── */
+$raw    = get_posts( [ 'post_type' => 'calypso_occorrenza_uscita', 'posts_per_page' => -1, 'post_status' => 'publish' ] );
 $uscite = [];
 foreach ( $raw as $u ) {
-	$date_meta = get_post_meta( $u->ID, '_uscita_date', true );
-	$dates     = is_array( $date_meta ) ? array_filter( $date_meta ) : [];
-	sort( $dates );
-	if ( empty( $dates ) ) continue;
-	$prima_raw      = $dates[0];
-	$prima          = substr( $prima_raw, 0, 10 );
+	$prima_raw = (string) get_post_meta( $u->ID, '_occorrenza_uscita_data', true );
+	$uscita_id = (int) get_post_meta( $u->ID, '_occorrenza_uscita_uscita_id', true );
+	if ( ! $prima_raw || ! $uscita_id ) continue;
+	$prima = substr( $prima_raw, 0, 10 );
 	if ( ! $attr_show_past && $prima < $today ) continue;
+	$u->_uscita_id  = $uscita_id;
 	$u->_prima_data = $prima;
 	$u->_prima_ora  = strlen( $prima_raw ) > 10 ? substr( $prima_raw, 11, 5 ) : '';
 	$u->_passata    = $prima < $today;
@@ -63,14 +62,16 @@ if ( ! empty( $uscite ) ) {
 	}
 }
 
-/* ── Meta per ogni uscita ── */
+/* ── Meta per ogni occorrenza ── */
 foreach ( $uscite as $u ) {
-	$max              = get_post_meta( $u->ID, '_uscita_max_partecipanti', true );
+	$max              = get_post_meta( $u->ID, '_occorrenza_uscita_posti', true );
 	$u->_posti        = ( $max === '' || $max === false ) ? null : max( 0, (int) $max - ( $booking_counts[ $u->ID ] ?? 0 ) );
-	$u->_lista_attesa = get_post_meta( $u->ID, '_uscita_lista_attesa', true ) === '1';
-	$livelli          = wp_get_post_terms( $u->ID, 'calypso_livello', [ 'fields' => 'names' ] );
+	$u->_lista_attesa = get_post_meta( $u->ID, '_occorrenza_uscita_lista_attesa', true ) === '1';
+	$livelli          = wp_get_post_terms( $u->_uscita_id, 'calypso_livello', [ 'fields' => 'names' ] );
 	$u->_livelli      = is_wp_error( $livelli ) ? [] : $livelli;
 }
+
+$prenotazioni_page_id = (int) get_option( 'calypsosub_prenotazioni_page_id', 0 );
 
 /* ── Grid columns dinamica ── */
 $gcols = [ '90px', '1fr' ];
@@ -226,8 +227,8 @@ $giorni_it = ['Sun'=>'DOM','Mon'=>'LUN','Tue'=>'MAR','Wed'=>'MER','Thu'=>'GIO','
 		$giorno  = $giorni_it[ date( 'D', $ts ) ] ?? date( 'D', $ts );
 		$num     = date( 'j', $ts );
 		$mese_ab = $mesi_short[ $mm ] ?? strtoupper( date( 'M', $ts ) );
-		$luogo   = (string) get_post_meta( $u->ID, '_uscita_luogo',   true );
-		$ritrovo = (string) get_post_meta( $u->ID, '_uscita_ritrovo', true );
+		$luogo   = (string) get_post_meta( $u->_uscita_id, '_uscita_luogo',   true );
+		$ritrovo = (string) get_post_meta( $u->_uscita_id, '_uscita_ritrovo', true );
 		if ( $u->_prima_ora && $ritrovo ) $ritrovo = $u->_prima_ora . ' · ' . $ritrovo;
 		elseif ( $u->_prima_ora )          $ritrovo = $u->_prima_ora;
 
@@ -259,9 +260,9 @@ $giorni_it = ['Sun'=>'DOM','Mon'=>'LUN','Tue'=>'MAR','Wed'=>'MER','Thu'=>'GIO','
 			$btn_label = $attr_btn_esaurito; $btn_disabled = true;
 		}
 
-		$book_url = is_user_logged_in()
-			? add_query_arg( 'prenota', '1', get_permalink( $u->ID ) )
-			: wp_login_url( get_permalink( $u->ID ) );
+		$book_url = $prenotazioni_page_id
+			? add_query_arg( 'prenota_id', $u->ID, get_permalink( $prenotazioni_page_id ) )
+			: get_permalink( $u->_uscita_id );
 	?>
 	<div class="cso-lu__row<?php echo $u->_passata ? ' cso-lu__row--passata' : ''; ?>">
 
@@ -274,8 +275,8 @@ $giorni_it = ['Sun'=>'DOM','Mon'=>'LUN','Tue'=>'MAR','Wed'=>'MER','Thu'=>'GIO','
 
 		<!-- Info -->
 		<div class="cso-lu__info">
-			<a href="<?php echo esc_url( get_permalink( $u->ID ) ); ?>" class="cso-lu__name display">
-				<?php echo esc_html( get_the_title( $u->ID ) ); ?>
+			<a href="<?php echo esc_url( get_permalink( $u->_uscita_id ) ); ?>" class="cso-lu__name display">
+				<?php echo esc_html( get_the_title( $u->_uscita_id ) ); ?>
 			</a>
 			<?php if ( $luogo ) : ?>
 			<p class="cso-lu__luogo">
