@@ -37,7 +37,7 @@ $preselect_id   = absint( $_GET['prenota_id'] ?? 0 );
 $preselect_type = $preselect_id ? get_post_type( $preselect_id ) : '';
 $preselect_tab  = '';
 foreach ( $tipi as $tipo => $form_id ) {
-	$cpt = [ 'uscite' => 'calypso_uscita', 'eventi' => 'calypso_evento', 'corsi' => 'calypso_corso' ][ $tipo ];
+	$cpt = [ 'uscite' => 'calypso_occorrenza_uscita', 'eventi' => 'calypso_evento', 'corsi' => 'calypso_corso' ][ $tipo ];
 	if ( $preselect_type === $cpt && get_post_status( $preselect_id ) === 'publish' ) {
 		$preselect_tab = $tipo;
 		break;
@@ -56,14 +56,29 @@ $build_card = static function ( WP_Post $post, string $tipo ) use ( $calypsosub_
 	$card = [ 'id' => $id, 'tipo' => $tipo, 'title' => get_the_title( $id ), 'img' => get_the_post_thumbnail_url( $id, 'large' ) ?: '' ];
 
 	if ( $tipo === 'uscite' ) {
-		$date = (array) ( get_post_meta( $id, '_uscita_date', true ) ?: [] );
-		$card['data']      = calypso_next_future_date( $date );
-		$card['luogo']     = (string) get_post_meta( $id, '_uscita_luogo', true );
-		$card['incluso']   = (string) get_post_meta( $id, '_uscita_incluso', true );
-		$card['portare']   = (string) get_post_meta( $id, '_uscita_cosa_portare', true );
-		$card['cancellazione'] = (string) get_post_meta( $id, '_uscita_note_cancellazione', true );
-		$card['ritrovo']   = (string) get_post_meta( $id, '_uscita_ritrovo', true );
+		$uscita_id = (int) get_post_meta( $id, '_occorrenza_uscita_uscita_id', true );
+		$card['id']        = $id; // l'ID prenotabile resta quello dell'occorrenza
+		$card['title']     = $uscita_id ? get_the_title( $uscita_id ) : $card['title'];
+		if ( $uscita_id && get_post_thumbnail_id( $uscita_id ) ) {
+			$src = wp_get_attachment_image_src( get_post_thumbnail_id( $uscita_id ), 'large' );
+			$card['img']   = $src ? $src[0] : '';
+			$card['img_w'] = $src ? (int) $src[1] : 0;
+			$card['img_h'] = $src ? (int) $src[2] : 0;
+		}
+		$card['data']      = (string) get_post_meta( $id, '_occorrenza_uscita_data', true );
+		$card['luogo']     = $uscita_id ? (string) get_post_meta( $uscita_id, '_uscita_luogo', true ) : '';
+		$card['incluso']   = $uscita_id ? (string) get_post_meta( $uscita_id, '_uscita_incluso', true ) : '';
+		$card['portare']   = $uscita_id ? (string) get_post_meta( $uscita_id, '_uscita_cosa_portare', true ) : '';
+		$card['cancellazione'] = $uscita_id ? (string) get_post_meta( $uscita_id, '_uscita_note_cancellazione', true ) : '';
+		$card['ritrovo']   = $uscita_id ? (string) get_post_meta( $uscita_id, '_uscita_ritrovo', true ) : '';
+		$max               = get_post_meta( $id, '_occorrenza_uscita_posti', true );
+		$card['max']       = ( $max !== '' && $max !== false ) ? (int) $max : null;
 		$card['posti']     = $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ? $calypsosub_booking_manager->get_remaining_spots( $id ) : null;
+		$card['badge']     = __( 'Uscita', 'calypsosub' );
+		$card['livello']   = __( 'Tutti i livelli', 'calypsosub' );
+		$card['sottotitolo'] = (string) $card['luogo'];
+		$card['mese_key']  = $card['data'] ? date( 'Y-m', strtotime( $card['data'] ) ) : '';
+		$card['disponibile'] = $card['posti'] === null ? true : ( $card['posti'] > 0 );
 	} elseif ( $tipo === 'eventi' ) {
 		$date = (array) ( get_post_meta( $id, '_evento_date', true ) ?: [] );
 		$card['data']  = calypso_next_future_date( $date );
@@ -82,9 +97,22 @@ $build_card = static function ( WP_Post $post, string $tipo ) use ( $calypsosub_
 
 $items_by_tipo = [];
 if ( isset( $tipi['uscite'] ) ) {
+	$occorrenze_uscite = get_posts( [
+		'post_type'      => 'calypso_occorrenza_uscita',
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+		'orderby'        => 'meta_value',
+		'meta_key'       => '_occorrenza_uscita_data',
+		'order'          => 'ASC',
+		'meta_query'     => [ [
+			'key'     => '_occorrenza_uscita_data',
+			'value'   => current_time( 'Y-m-d\TH:i' ),
+			'compare' => '>=',
+		] ],
+	] );
 	$items_by_tipo['uscite'] = array_map(
 		static fn( $p ) => $build_card( $p, 'uscite' ),
-		array_slice( calypso_get_uscite(), 0, $max_items_per_tab )
+		array_slice( $occorrenze_uscite, 0, $max_items_per_tab )
 	);
 }
 if ( isset( $tipi['eventi'] ) ) {
