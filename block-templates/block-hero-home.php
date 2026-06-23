@@ -50,24 +50,31 @@ $title_html = implode( '<br>', array_map( 'esc_html', explode( "\n", $title ) ) 
 /* ── Prossima uscita ── */
 $pu = null;
 if ( $show_uscita ) {
-	$today = current_time( 'Y-m-d' );
-	foreach ( get_posts( [ 'post_type' => 'calypso_uscita', 'posts_per_page' => -1, 'post_status' => 'publish' ] ) as $u ) {
-		$dates = array_filter( (array) ( get_post_meta( $u->ID, '_uscita_date', true ) ?: [] ) );
-		sort( $dates );
-		if ( empty( $dates ) ) continue;
-		$prima = substr( $dates[0], 0, 10 );
-		if ( $prima >= $today && ( ! $pu || $prima < $pu->_prima ) ) {
-			$u->_prima = $prima;
-			$pu        = $u;
+	$occs = get_posts( [
+		'post_type'      => 'calypso_occorrenza_uscita',
+		'posts_per_page' => 1,
+		'post_status'    => 'publish',
+		'meta_key'       => '_occorrenza_uscita_data',
+		'orderby'        => 'meta_value',
+		'order'          => 'ASC',
+		'meta_query'     => [ [ 'key' => '_occorrenza_uscita_data', 'value' => current_time( 'Y-m-d\TH:i' ), 'compare' => '>=' ] ],
+	] );
+	$pu = $occs ? $occs[0] : null;
+	if ( $pu ) {
+		$pu->_data = (string) get_post_meta( $pu->ID, '_occorrenza_uscita_data', true );
+		$pid       = (int) get_post_meta( $pu->ID, '_occorrenza_uscita_uscita_id', true );
+		if ( ! $pu->_data || ! $pid ) {
+			$pu = null;
 		}
 	}
 	if ( $pu ) {
-		$pid           = $pu->ID;
 		$pu_luogo      = (string) get_post_meta( $pid, '_uscita_luogo', true );
 		$pu_nimm       = (int)    get_post_meta( $pid, '_uscita_n_immersioni', true );
-		$pu_max        = get_post_meta( $pid, '_uscita_max_partecipanti', true );
-		$pu_link       = get_permalink( $pid );
-		$ts            = strtotime( $pu->_prima );
+		$prenotazioni_page_id = (int) get_option( 'calypsosub_prenotazioni_page_id', 0 );
+		$pu_link       = $prenotazioni_page_id
+			? add_query_arg( 'prenota_id', $pu->ID, get_permalink( $prenotazioni_page_id ) )
+			: get_permalink( $pid );
+		$ts            = strtotime( $pu->_data );
 		$pu_set        = strtoupper( date_i18n( 'D', $ts ) );
 		$pu_num        = date_i18n( 'j', $ts );
 		$pu_mes        = strtoupper( date_i18n( 'M', $ts ) );
@@ -78,16 +85,15 @@ if ( $show_uscita ) {
 		$pu_meta       = implode( ' · ', $pu_meta_parts );
 		$pu_warn       = false;
 		$pu_posti      = '';
-		if ( $pu_max !== '' && $pu_max !== false ) {
-			$bm      = $GLOBALS['calypsosub_booking_manager'] ?? null;
-			$conf    = $bm ? $bm->count_confirmed( $pid ) : 0;
-			$liberi  = max( 0, (int) $pu_max - $conf );
+		$bm            = $GLOBALS['calypsosub_booking_manager'] ?? null;
+		$liberi        = $bm instanceof Calypsosub_Booking_Manager ? $bm->get_remaining_spots( $pu->ID ) : null;
+		if ( $liberi !== null ) {
 			if ( $liberi === 0 ) {
 				$pu_posti = __( 'Sold out', 'calypsosub' ); $pu_warn = true;
 			} elseif ( $liberi <= 3 ) {
 				$pu_posti = '● ' . $liberi . ' ' . _n( 'posto', 'posti', $liberi, 'calypsosub' ); $pu_warn = true;
 			} else {
-				$pu_posti = $liberi . ' / ' . (int) $pu_max . ' ' . __( 'posti', 'calypsosub' );
+				$pu_posti = $liberi . ' ' . __( 'posti', 'calypsosub' );
 			}
 		}
 	}
@@ -306,7 +312,7 @@ body:has(.csh-hero) .entry-content>*{margin-top:0!important;margin-block-start:0
       </div>
       <?php if ( $pu_meta ) : ?>
         <div class="csh-pu__meta">
-          <?php echo nl2br( esc_html( $pu->post_title . "\n" . $pu_meta ) ); ?>
+          <?php echo nl2br( esc_html( get_the_title( $pid ) . "\n" . $pu_meta ) ); ?>
         </div>
       <?php endif; ?>
       <?php if ( $pu_posti ) : ?>
