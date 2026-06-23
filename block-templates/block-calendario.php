@@ -15,27 +15,34 @@ $today = current_time( 'Y-m-d' );
 $bm    = $GLOBALS['calypsosub_booking_manager'] ?? null;
 $items = [];
 
-/* ── Uscite ── */
-if ( $show_uscite ) {
-	foreach ( get_posts( [ 'post_type' => 'calypso_uscita', 'posts_per_page' => -1, 'post_status' => 'publish' ] ) as $u ) {
-		$dates = array_values( array_filter( (array) ( get_post_meta( $u->ID, '_uscita_date', true ) ?: [] ) ) );
-		sort( $dates );
-		$prima = null;
-		foreach ( $dates as $d ) {
-			if ( substr( $d, 0, 10 ) >= $today ) { $prima = $d; break; }
-		}
-		if ( ! $prima ) continue;
+$prenotazioni_page_id = (int) get_option( 'calypsosub_prenotazioni_page_id', 0 );
 
-		$livelli = wp_get_post_terms( $u->ID, 'calypso_livello', [ 'fields' => 'names' ] );
+/* ── Uscite (occorrenze future) ── */
+if ( $show_uscite ) {
+	$occs_usc = get_posts( [
+		'post_type'      => 'calypso_occorrenza_uscita',
+		'posts_per_page' => -1,
+		'post_status'    => 'publish',
+		'meta_key'       => '_occorrenza_uscita_data',
+		'orderby'        => 'meta_value',
+		'order'          => 'ASC',
+		'meta_query'     => [ [ 'key' => '_occorrenza_uscita_data', 'value' => current_time( 'Y-m-d\TH:i' ), 'compare' => '>=' ] ],
+	] );
+	foreach ( $occs_usc as $occ ) {
+		$prima     = (string) get_post_meta( $occ->ID, '_occorrenza_uscita_data', true );
+		$uscita_id = (int) get_post_meta( $occ->ID, '_occorrenza_uscita_uscita_id', true );
+		if ( ! $prima || ! $uscita_id ) continue;
+
+		$livelli = wp_get_post_terms( $uscita_id, 'calypso_livello', [ 'fields' => 'names' ] );
 		$badge   = ( ! is_wp_error( $livelli ) && ! empty( $livelli ) ) ? $livelli[0] : __( 'Tutti i livelli', 'calypsosub' );
-		$ritrovo = (string) get_post_meta( $u->ID, '_uscita_ritrovo', true );
+		$ritrovo = (string) get_post_meta( $uscita_id, '_uscita_ritrovo', true );
 		$ora     = strlen( $prima ) > 10 ? substr( $prima, 11, 5 ) : '';
 		if ( $ora && $ritrovo ) $ritrovo = $ora . ' · ' . $ritrovo;
 		elseif ( $ora )          $ritrovo = $ora;
 
 		if ( $bm instanceof Calypsosub_Booking_Manager ) {
-			$spots        = $bm->get_remaining_spots( $u->ID );
-			$lista_attesa = (bool) get_post_meta( $u->ID, '_uscita_lista_attesa', true );
+			$spots        = $bm->get_remaining_spots( $occ->ID );
+			$lista_attesa = (bool) get_post_meta( $occ->ID, '_occorrenza_uscita_lista_attesa', true );
 		} else {
 			$spots        = null;
 			$lista_attesa = false;
@@ -45,13 +52,16 @@ if ( $show_uscite ) {
 			'ts'           => strtotime( $prima ),
 			'date_str'     => substr( $prima, 0, 10 ),
 			'type'         => 'uscita',
-			'title'        => $u->post_title,
-			'luogo'        => (string) get_post_meta( $u->ID, '_uscita_luogo', true ),
+			'title'        => get_the_title( $uscita_id ),
+			'luogo'        => (string) get_post_meta( $uscita_id, '_uscita_luogo', true ),
 			'ritrovo'      => $ritrovo,
 			'badge'        => $badge,
 			'spots'        => $spots,
 			'lista_attesa' => $lista_attesa,
-			'url'          => get_permalink( $u->ID ),
+			'url'          => get_permalink( $uscita_id ),
+			'cta_url'      => $prenotazioni_page_id
+				? add_query_arg( 'prenota_id', $occ->ID, get_permalink( $prenotazioni_page_id ) )
+				: get_permalink( $uscita_id ),
 		];
 	}
 }
@@ -404,7 +414,7 @@ $mesi_it   = [
 				<?php echo esc_html( $btn_label ); ?>
 			</span>
 			<?php else : ?>
-			<a href="<?php echo esc_url( $item['url'] ); ?>" class="cso-cal-btn">
+			<a href="<?php echo esc_url( $item['cta_url'] ?? $item['url'] ); ?>" class="cso-cal-btn">
 				<?php echo esc_html( $btn_label ); ?>
 			</a>
 			<?php endif; ?>

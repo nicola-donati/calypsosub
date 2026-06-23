@@ -12,48 +12,39 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 $inside_hero = ! empty( $attributes['inside_hero'] );
 
-/* ── Trova la prossima uscita futura ── */
-$today = current_time( 'Y-m-d' );
-$raw   = get_posts( [
-	'post_type'      => 'calypso_uscita',
-	'posts_per_page' => -1,
+/* ── Trova la prossima occorrenza futura (su tutte le uscite) ── */
+$occs = get_posts( [
+	'post_type'      => 'calypso_occorrenza_uscita',
+	'posts_per_page' => 1,
 	'post_status'    => 'publish',
+	'meta_key'       => '_occorrenza_uscita_data',
+	'orderby'        => 'meta_value',
+	'order'          => 'ASC',
+	'meta_query'     => [ [ 'key' => '_occorrenza_uscita_data', 'value' => current_time( 'Y-m-d\TH:i' ), 'compare' => '>=' ] ],
 ] );
 
-$prossima = null;
-foreach ( $raw as $u ) {
-	$date_meta = get_post_meta( $u->ID, '_uscita_date', true );
-	$dates     = is_array( $date_meta ) ? array_filter( $date_meta ) : [];
-	sort( $dates );
-	if ( empty( $dates ) ) continue;
-	$prima = substr( $dates[0], 0, 10 );
-	if ( $prima >= $today ) {
-		if ( ! $prossima || $prima < $prossima->_prima ) {
-			$u->_prima = $prima;
-			$prossima  = $u;
-		}
-	}
-}
+$prossima_occ = $occs ? $occs[0] : null;
+if ( ! $prossima_occ ) return;
 
-if ( ! $prossima ) return;
+$occ_data = (string) get_post_meta( $prossima_occ->ID, '_occorrenza_uscita_data', true );
+$pid      = (int) get_post_meta( $prossima_occ->ID, '_occorrenza_uscita_uscita_id', true );
+if ( ! $occ_data || ! $pid ) return;
 
-/* ── Meta uscita ── */
-$pid   = $prossima->ID;
-$luogo = (string) get_post_meta( $pid, '_uscita_luogo',            true );
-$n_imm = (int)    get_post_meta( $pid, '_uscita_n_immersioni',     true );
-$max_p = get_post_meta( $pid, '_uscita_max_partecipanti', true );
-$link  = get_permalink( $pid );
+/* ── Meta uscita (scheda padre) ── */
+$luogo = (string) get_post_meta( $pid, '_uscita_luogo',        true );
+$n_imm = (int)    get_post_meta( $pid, '_uscita_n_immersioni', true );
+
+$prenotazioni_page_id = (int) get_option( 'calypsosub_prenotazioni_page_id', 0 );
+$link = $prenotazioni_page_id
+	? add_query_arg( 'prenota_id', $prossima_occ->ID, get_permalink( $prenotazioni_page_id ) )
+	: get_permalink( $pid );
 
 /* Posti rimasti */
-$posti_liberi = null;
-if ( $max_p !== '' && $max_p !== false ) {
-	$bm           = $GLOBALS['calypsosub_booking_manager'] ?? null;
-	$confermati   = $bm ? $bm->count_confirmed( $pid ) : 0;
-	$posti_liberi = max( 0, (int) $max_p - $confermati );
-}
+$bm           = $GLOBALS['calypsosub_booking_manager'] ?? null;
+$posti_liberi = $bm instanceof Calypsosub_Booking_Manager ? $bm->get_remaining_spots( $prossima_occ->ID ) : null;
 
 /* Formato data */
-$ts         = strtotime( $prossima->_prima );
+$ts         = strtotime( $occ_data );
 $giorno_num = date_i18n( 'j', $ts );
 $giorno_set = strtoupper( date_i18n( 'D', $ts ) );
 $mese_abr   = strtoupper( date_i18n( 'M', $ts ) );
@@ -190,7 +181,7 @@ $meta_str = implode( ' · ', $meta_parts );
     <?php echo esc_html( $giorno_num . ' ' . $mese_abr ); ?>
   </div>
   <?php if ( $meta_str ) : ?>
-  <div class="csou-ph__meta"><?php echo nl2br( esc_html( $prossima->post_title . "\n" . $meta_str ) ); ?></div>
+  <div class="csou-ph__meta"><?php echo nl2br( esc_html( get_the_title( $pid ) . "\n" . $meta_str ) ); ?></div>
   <?php endif; ?>
   <?php if ( $posti_str ) : ?>
   <div class="csou-ph__posti<?php echo $posti_warn ? ' csou-ph__posti--warn' : ''; ?>">
@@ -212,7 +203,7 @@ $meta_str = implode( ' · ', $meta_parts );
     </div>
     <div class="csou-strip__info">
       <div class="csou-strip__eyebrow">● <?php _e( 'PROSSIMA USCITA', 'calypsosub' ); ?></div>
-      <div class="csou-strip__titolo"><?php echo esc_html( $prossima->post_title ); ?></div>
+      <div class="csou-strip__titolo"><?php echo esc_html( get_the_title( $pid ) ); ?></div>
       <?php $sub = array_filter( [ $luogo, $posti_str ] ); if ( $sub ) : ?>
       <div class="csou-strip__meta<?php echo $posti_warn ? ' csou-strip__meta--warn' : ''; ?>">
         <?php echo esc_html( implode( ' · ', $sub ) ); ?>
