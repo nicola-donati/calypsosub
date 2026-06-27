@@ -217,6 +217,10 @@ class Calypsosub_Blocks {
 				'overlay_size'           => [ 'type' => 'integer', 'default' => 10 ],
 				'overlay_font_weight'    => [ 'type' => 'integer', 'default' => 400 ],
 				'overlay_letter_spacing' => [ 'type' => 'integer', 'default' => 12 ],
+				'margin_top'             => [ 'type' => 'integer', 'default' => 0 ],
+				'margin_right'           => [ 'type' => 'integer', 'default' => 0 ],
+				'margin_bottom'          => [ 'type' => 'integer', 'default' => 0 ],
+				'margin_left'            => [ 'type' => 'integer', 'default' => 0 ],
 			],
 		],
 		'calypso/storia-club' => [
@@ -1764,6 +1768,33 @@ class Calypsosub_Blocks {
 								onChange: function (v) { set({ max_width: v === undefined ? 1320 : v }); }
 							}),
 							colorRow('Colore sfondo sezione', 'bg_color')
+						),
+
+						el(PanelBody, { title: 'Margini blocco', initialOpen: false },
+							el(RangeControl, {
+								label: 'Margine superiore (px)',
+								value: a.margin_top !== undefined ? a.margin_top : 0,
+								min: 0, max: 200, step: 4,
+								onChange: function (v) { set({ margin_top: v === undefined ? 0 : v }); }
+							}),
+							el(RangeControl, {
+								label: 'Margine inferiore (px)',
+								value: a.margin_bottom !== undefined ? a.margin_bottom : 0,
+								min: 0, max: 200, step: 4,
+								onChange: function (v) { set({ margin_bottom: v === undefined ? 0 : v }); }
+							}),
+							el(RangeControl, {
+								label: 'Margine sinistro (px)',
+								value: a.margin_left !== undefined ? a.margin_left : 0,
+								min: 0, max: 200, step: 4,
+								onChange: function (v) { set({ margin_left: v === undefined ? 0 : v }); }
+							}),
+							el(RangeControl, {
+								label: 'Margine destro (px)',
+								value: a.margin_right !== undefined ? a.margin_right : 0,
+								min: 0, max: 200, step: 4,
+								onChange: function (v) { set({ margin_right: v === undefined ? 0 : v }); }
+							})
 						),
 
 						el(PanelBody, { title: 'Overlay didascalia', initialOpen: false },

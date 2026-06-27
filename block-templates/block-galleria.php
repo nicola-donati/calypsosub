@@ -23,6 +23,10 @@ $overlay_size           = (int)    ( $a['overlay_size']             ?? 10 );
 $overlay_font_weight    = (int)    ( $a['overlay_font_weight']      ?? 400 );
 $overlay_letter_spacing = (int)    ( $a['overlay_letter_spacing']   ?? 12 );
 $source_mode            = (string) ( $a['source_mode']              ?? 'all' );
+$margin_top             = (int)    ( $a['margin_top']                ?? 0 );
+$margin_right           = (int)    ( $a['margin_right']              ?? 0 );
+$margin_bottom          = (int)    ( $a['margin_bottom']             ?? 0 );
+$margin_left            = (int)    ( $a['margin_left']               ?? 0 );
 
 $safe_css_color = function ( $value, $default ) {
 	$value = trim( (string) $value );
@@ -95,7 +99,18 @@ $units = Calypsosub_Gallery_Helpers::build_units( $cells );
 	#<?php echo $uid; ?> .cso-gal__wrap{--a:<?php echo $mobile_row_height; ?>px;grid-template-columns:repeat(<?php echo $mobile_cols; ?>, 1fr);}
 }
 </style>
-<section <?php echo $bg_color_safe ? 'style="background:' . esc_attr( $bg_color_safe ) . ';"' : ''; ?> id="<?php echo $uid; ?>">
+<?php
+$section_style = [];
+if ( $bg_color_safe ) {
+	$section_style[] = 'background:' . esc_attr( $bg_color_safe );
+}
+$margin_css = $margin_top . 'px ' . $margin_right . 'px ' . $margin_bottom . 'px ' . $margin_left . 'px';
+if ( $margin_css !== '0px 0px 0px 0px' ) {
+	$section_style[] = 'margin:' . $margin_css;
+}
+$section_style_attr = $section_style ? ' style="' . implode( ';', $section_style ) . '"' : '';
+?>
+<section<?php echo $section_style_attr; ?> id="<?php echo $uid; ?>">
 	<div class="cso-gal__wrap">
 		<?php foreach ( $units as $index => $unit ) :
 			$cell = $unit['cell'];
