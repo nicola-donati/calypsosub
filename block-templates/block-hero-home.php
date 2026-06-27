@@ -19,7 +19,39 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *   marquee_on      (boolean)  — mostra ticker luoghi sotto hero
  *   marquee_items   (string)   — luoghi separati da virgola
  *   marquee_mobile  (boolean)  — mostra ticker anche su mobile
+ *
+ *   text_color, overlay_color                                    — colori sfondo/testo generali
+ *   eyebrow_color, eyebrow_size, eyebrow_weight                   — stile eyebrow
+ *   title_color, title_em_color, title_size, title_weight, title_font — stile titolo
+ *   desc_color, desc_opacity, desc_size, desc_font                — stile descrizione
+ *   btn1_bg, btn1_color, btn1_hover_bg, btn1_size, btn1_weight     — stile bottone primario
+ *   btn2_bg, btn2_hover_bg, btn2_border, btn2_color, btn2_size, btn2_weight — stile bottone secondario
+ *   scroll_color                                                  — colore indicatore scroll
+ *   pu_bg, pu_border, pu_dot_color, pu_text_color,
+ *   pu_accent_color, pu_warn_color                                — stile card prossima uscita
+ *   marquee_bg, marquee_color, marquee_size, marquee_weight,
+ *   marquee_sep_color                                             — stile ticker
  */
+
+if ( ! function_exists( 'csh_css_raw' ) ) {
+	/* Sanitizza valori CSS liberi (colori/rgba) per uso sicuro dentro style="" e <style> */
+	function csh_css_raw( $v ) {
+		return preg_replace( '/[^#a-zA-Z0-9.,()%\s\-]/', '', (string) $v );
+	}
+}
+if ( ! function_exists( 'csh_hex2rgba' ) ) {
+	function csh_hex2rgba( $hex, $alpha ) {
+		$hex = trim( (string) $hex, '#' );
+		if ( strlen( $hex ) === 3 ) {
+			$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+		}
+		if ( strlen( $hex ) !== 6 || ! ctype_xdigit( $hex ) ) {
+			$hex = '061826';
+		}
+		list( $r, $g, $b ) = array_map( function ( $c ) { return hexdec( $c ); }, [ substr( $hex, 0, 2 ), substr( $hex, 2, 2 ), substr( $hex, 4, 2 ) ] );
+		return "rgba($r,$g,$b,$alpha)";
+	}
+}
 
 $attr = $attributes ?? [];
 
@@ -37,6 +69,54 @@ $show_uscita   = (bool)   ( $attr['show_uscita']  ?? true );
 $marquee_on    = (bool)   ( $attr['marquee_on']   ?? true );
 $marquee_items = (string) ( $attr['marquee_items'] ?? 'Argentario,Elba,Giglio,Giannutri,Croazia,Egadi' );
 $marquee_mob   = (bool)   ( $attr['marquee_mobile'] ?? false );
+
+/* ── Stile configurabile ── */
+$text_color      = csh_css_raw( $attr['text_color']      ?? '#ffffff' );
+$overlay_color   = csh_css_raw( $attr['overlay_color']   ?? '#061826' );
+
+$eyebrow_color   = csh_css_raw( $attr['eyebrow_color']   ?? '#26CBFB' );
+$eyebrow_size    = (int)        ( $attr['eyebrow_size']    ?? 14 );
+$eyebrow_weight  = (int)        ( $attr['eyebrow_weight']  ?? 600 );
+
+$title_color     = csh_css_raw( $attr['title_color']     ?? '#ffffff' );
+$title_em_color  = csh_css_raw( $attr['title_em_color']  ?? '#26CBFB' );
+$title_size      = (int)        ( $attr['title_size']      ?? 108 );
+$title_weight    = (int)        ( $attr['title_weight']    ?? 700 );
+$title_font      = preg_replace( '/[^a-zA-Z0-9 ,\"\'\-]/', '', (string) ( $attr['title_font'] ?? '' ) );
+
+$desc_color      = csh_css_raw( $attr['desc_color']      ?? '#ffffff' );
+$desc_opacity    = (int)        ( $attr['desc_opacity']    ?? 92 );
+$desc_size       = (int)        ( $attr['desc_size']       ?? 0 );
+$desc_font       = preg_replace( '/[^a-zA-Z0-9 ,\"\'\-]/', '', (string) ( $attr['desc_font']  ?? '' ) );
+
+$btn1_bg         = csh_css_raw( $attr['btn1_bg']         ?? '#ff6b4a' );
+$btn1_color      = csh_css_raw( $attr['btn1_color']      ?? '#ffffff' );
+$btn1_hover_bg   = csh_css_raw( $attr['btn1_hover_bg']   ?? '#e04a2a' );
+$btn1_size       = (int)        ( $attr['btn1_size']       ?? 15 );
+$btn1_weight     = (int)        ( $attr['btn1_weight']     ?? 700 );
+
+$btn2_bg         = csh_css_raw( $attr['btn2_bg']         ?? 'rgba(255,255,255,.1)' );
+$btn2_hover_bg   = csh_css_raw( $attr['btn2_hover_bg']   ?? 'rgba(255,255,255,.18)' );
+$btn2_border     = csh_css_raw( $attr['btn2_border']     ?? 'rgba(255,255,255,.25)' );
+$btn2_color      = csh_css_raw( $attr['btn2_color']      ?? '#ffffff' );
+$btn2_size       = (int)        ( $attr['btn2_size']       ?? 15 );
+$btn2_weight     = (int)        ( $attr['btn2_weight']     ?? 600 );
+
+$scroll_color    = csh_css_raw( $attr['scroll_color']    ?? 'rgba(255,255,255,.7)' );
+
+$pu_bg           = csh_css_raw( $attr['pu_bg']           ?? 'rgba(255,255,255,.08)' );
+$pu_border       = csh_css_raw( $attr['pu_border']       ?? 'rgba(255,255,255,.18)' );
+$pu_dot_color    = csh_css_raw( $attr['pu_dot_color']    ?? '#54e09a' );
+$pu_text_color   = csh_css_raw( $attr['pu_text_color']   ?? '#ffffff' );
+$pu_accent_color = csh_css_raw( $attr['pu_accent_color'] ?? '#26CBFB' );
+$pu_warn_color   = csh_css_raw( $attr['pu_warn_color']   ?? '#ff6b4a' );
+$pu_dot_glow     = csh_hex2rgba( $pu_dot_color, .25 );
+
+$marquee_bg        = csh_css_raw( $attr['marquee_bg']        ?? '#0a2540' );
+$marquee_color     = csh_css_raw( $attr['marquee_color']     ?? '#ffffff' );
+$marquee_size      = (int)        ( $attr['marquee_size']      ?? 28 );
+$marquee_weight    = (int)        ( $attr['marquee_weight']    ?? 700 );
+$marquee_sep_color = csh_css_raw( $attr['marquee_sep_color'] ?? '#ff6b4a' );
 
 /* ── Immagine sfondo ── */
 $bg_url = '';
@@ -111,7 +191,7 @@ $mq_dur  = max( 12, count( $places ) * 3 ); /* 3s per voce */
   margin-right:calc(-50vw + 50%);
 }
 /* Altezza hero-home: totale meno il marquee (72px) — segue i breakpoint globali */
-.csh-hero{position:relative;color:#fff;overflow:hidden;height:calc(800px - 72px);box-sizing:border-box}
+.csh-hero{position:relative;color:<?php echo $text_color; ?>;overflow:hidden;height:calc(800px - 72px);box-sizing:border-box}
 .csh-marquee{height:72px;box-sizing:border-box;overflow:hidden}
 @media(max-width:1024px){.csh-hero{height:calc(720px - 72px)}}
 @media(max-width:768px){.csh-hero{height:calc(640px - 72px)}}
@@ -131,11 +211,11 @@ body:has(.csh-hero) .wp-site-blocks>.wp-block-template-part:first-child>header{
 /* Azzera block gap WP tra i blocchi della pagina home */
 body:has(.csh-hero) .wp-block-post-content>*,
 body:has(.csh-hero) .entry-content>*{margin-top:0!important;margin-block-start:0!important}
-.csh-hero__bg{position:absolute;inset:0;background:var(--c-abyss,#061826);overflow:hidden}
+.csh-hero__bg{position:absolute;inset:0;background:<?php echo $overlay_color; ?>;overflow:hidden}
 .csh-hero__bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
 .csh-hero__overlay{
   position:absolute;inset:0;
-  background:linear-gradient(rgba(6,24,38,.55) 0%,rgba(6,24,38,.15) 40%,rgba(6,24,38,.85) 100%);
+  background:linear-gradient(<?php echo csh_hex2rgba( $overlay_color, .55 ); ?> 0%,<?php echo csh_hex2rgba( $overlay_color, .15 ); ?> 40%,<?php echo csh_hex2rgba( $overlay_color, .85 ); ?> 100%);
 }
 .csh-hero__content{
   position:absolute;left:48px;right:48px;bottom:80px;
@@ -143,40 +223,45 @@ body:has(.csh-hero) .entry-content>*{margin-top:0!important;margin-block-start:0
 }
 .csh-hero__left{max-width:820px;flex:1;min-width:0}
 .csh-hero__eyebrow{
-  color:var(--c-aqua,#26CBFB);display:flex;align-items:center;gap:10px;
-  font-size:14px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:<?php echo $eyebrow_color; ?>;display:flex;align-items:center;gap:10px;
+  font-size:<?php echo $eyebrow_size; ?>px;font-weight:<?php echo $eyebrow_weight; ?>;letter-spacing:.08em;text-transform:uppercase;
 }
 .csh-hero__title{
-  font-size:clamp(48px,7vw,108px);
+  color:<?php echo $title_color; ?>;
+  font-size:clamp(48px,7vw,<?php echo $title_size; ?>px);
+  font-weight:<?php echo $title_weight; ?>;
+  <?php if ( $title_font ) : ?>font-family:<?php echo $title_font; ?>;<?php endif; ?>
   margin-top:20px;
 }
-.csh-hero__title em{font-style:normal;color:var(--c-aqua,#26CBFB)}
+.csh-hero__title em{font-style:normal;color:<?php echo $title_em_color; ?>}
 .csh-hero__desc{
-  max-width:540px;
-  opacity:.92;margin-top:28px;
+  max-width:540px;color:<?php echo $desc_color; ?>;
+  <?php if ( $desc_size ) : ?>font-size:<?php echo $desc_size; ?>px;<?php endif; ?>
+  <?php if ( $desc_font ) : ?>font-family:<?php echo $desc_font; ?>;<?php endif; ?>
+  opacity:<?php echo $desc_opacity / 100; ?>;margin-top:28px;
 }
 .csh-hero__btns{display:flex;gap:12px;margin-top:36px;flex-wrap:wrap}
 .csh-btn-primary{
   display:inline-flex;align-items:center;gap:8px;
-  padding:14px 22px;background:var(--c-coral,#ff6b4a);color:#fff;
-  font-size:15px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  padding:14px 22px;background:<?php echo $btn1_bg; ?>;color:<?php echo $btn1_color; ?>;
+  font-size:<?php echo $btn1_size; ?>px;font-weight:<?php echo $btn1_weight; ?>;letter-spacing:.04em;text-transform:uppercase;
   border-radius:999px;text-decoration:none;border:none;cursor:pointer;
   transition:background .15s;box-shadow:0 6px 18px -4px rgba(255,107,74,.55);
 }
-.csh-btn-primary:hover{background:#e04a2a;color:#fff}
+.csh-btn-primary:hover{background:<?php echo $btn1_hover_bg; ?>;color:<?php echo $btn1_color; ?>}
 .csh-btn-ghost{
   display:inline-flex;align-items:center;gap:8px;
-  padding:14px 20px;background:rgba(255,255,255,.1);color:#fff;
-  font-size:15px;font-weight:600;border-radius:999px;text-decoration:none;
-  border:1px solid rgba(255,255,255,.25);cursor:pointer;
+  padding:14px 20px;background:<?php echo $btn2_bg; ?>;color:<?php echo $btn2_color; ?>;
+  font-size:<?php echo $btn2_size; ?>px;font-weight:<?php echo $btn2_weight; ?>;border-radius:999px;text-decoration:none;
+  border:1px solid <?php echo $btn2_border; ?>;cursor:pointer;
   transition:background .15s;backdrop-filter:blur(4px);
 }
-.csh-btn-ghost:hover{background:rgba(255,255,255,.18);color:#fff}
+.csh-btn-ghost:hover{background:<?php echo $btn2_hover_bg; ?>;color:<?php echo $btn2_color; ?>}
 
 /* Scroll indicator */
 .csh-hero__scroll{
   position:absolute;bottom:24px;left:50%;
-  color:rgba(255,255,255,.7);font-size:14px;
+  color:<?php echo $scroll_color; ?>;font-size:14px;
   letter-spacing:.18em;text-transform:uppercase;
   display:flex;flex-direction:column;align-items:center;gap:10px;
   pointer-events:none;
@@ -186,32 +271,32 @@ body:has(.csh-hero) .entry-content>*{margin-top:0!important;margin-block-start:0
 /* Card prossima uscita */
 .csh-pu{
   flex:0 0 auto;width:280px;
-  background:rgba(255,255,255,.08);
+  background:<?php echo $pu_bg; ?>;
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,.18);
-  border-radius:14px;padding:20px;color:#fff;
+  border:1px solid <?php echo $pu_border; ?>;
+  border-radius:14px;padding:20px;color:<?php echo $pu_text_color; ?>;
 }
 .csh-pu__head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
 .csh-pu__dot{
   width:8px;height:8px;border-radius:50%;flex:0 0 auto;
-  background:#54e09a;box-shadow:0 0 0 4px rgba(84,224,154,.25);
+  background:<?php echo $pu_dot_color; ?>;box-shadow:0 0 0 4px <?php echo $pu_dot_glow; ?>;
 }
-.csh-pu__eyebrow{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.csh-pu__eyebrow{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:<?php echo $pu_text_color; ?>;opacity:.7}
 .csh-pu__date{
-  font-size:38px;font-weight:900;line-height:.95;letter-spacing:-.02em;color:#fff;
+  font-size:38px;font-weight:900;line-height:.95;letter-spacing:-.02em;color:<?php echo $pu_text_color; ?>;
 }
-.csh-pu__meta{font-size:13px;opacity:.85;margin-top:12px;line-height:1.5;color:#fff}
-.csh-pu__posti{margin-top:14px;font-size:12px;opacity:.7;color:#fff}
-.csh-pu__posti--warn{opacity:1;color:#ff6b4a}
+.csh-pu__meta{font-size:13px;opacity:.85;margin-top:12px;line-height:1.5;color:<?php echo $pu_text_color; ?>}
+.csh-pu__posti{margin-top:14px;font-size:12px;opacity:.7;color:<?php echo $pu_text_color; ?>}
+.csh-pu__posti--warn{opacity:1;color:<?php echo $pu_warn_color; ?>}
 .csh-pu__cta{
   margin-top:14px;display:inline-flex;align-items:center;gap:6px;
-  color:var(--c-aqua,#26CBFB);font-size:13px;font-weight:600;text-decoration:none;
+  color:<?php echo $pu_accent_color; ?>;font-size:13px;font-weight:600;text-decoration:none;
 }
 .csh-pu__cta:hover{opacity:.8}
 
 /* ── Marquee ────────────────────────────────────────────────── */
 .csh-marquee{
-  background:var(--c-deep,#0a2540);color:#fff;
+  background:<?php echo $marquee_bg; ?>;color:<?php echo $marquee_color; ?>;
   display:flex;align-items:center;
   border-top:1px solid rgba(255,255,255,.06);
   margin:0!important;
@@ -219,7 +304,7 @@ body:has(.csh-hero) .entry-content>*{margin-top:0!important;margin-block-start:0
 .csh-hero{margin:0!important}
 .csh-marquee__track{
   display:flex;gap:56px;white-space:nowrap;
-  font-size:28px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  font-size:<?php echo $marquee_size; ?>px;font-weight:<?php echo $marquee_weight; ?>;letter-spacing:.04em;text-transform:uppercase;
   animation:csh-scroll <?php echo (int) $mq_dur; ?>s linear infinite;
   will-change:transform;
 }
@@ -227,7 +312,7 @@ body:has(.csh-hero) .entry-content>*{margin-top:0!important;margin-block-start:0
   from{transform:translateX(0)}
   to{transform:translateX(-50%)}
 }
-.csh-marquee__sep{color:var(--c-coral,#ff6b4a)}
+.csh-marquee__sep{color:<?php echo $marquee_sep_color; ?>}
 
 /* ── Mobile (≤1024px) ───────────────────────────────────────── */
 @media(max-width:1024px){
@@ -236,7 +321,7 @@ body:has(.csh-hero) .entry-content>*{margin-top:0!important;margin-block-start:0
     flex-direction:column;align-items:flex-start;gap:0;
   }
   .csh-hero__title{font-size:clamp(48px,13vw,72px);margin:14px 0 0}
-  .csh-hero__desc{font-size:15px;margin-top:18px}
+  .csh-hero__desc{font-size:<?php echo $desc_size ?: 15; ?>px;margin-top:18px}
   .csh-hero__btns{flex-direction:column;align-items:stretch;margin-top:24px}
   .csh-btn-primary,.csh-btn-ghost{justify-content:center}
   .csh-pu{display:none}

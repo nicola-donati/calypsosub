@@ -77,6 +77,51 @@ class Calypsosub_Blocks {
 				'marquee_on'     => [ 'type' => 'boolean', 'default' => true ],
 				'marquee_items'  => [ 'type' => 'string',  'default' => 'Argentario,Elba,Giglio,Giannutri,Croazia,Egadi' ],
 				'marquee_mobile' => [ 'type' => 'boolean', 'default' => false ],
+				/* ── Colori sfondo ── */
+				'text_color'      => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'overlay_color'   => [ 'type' => 'string',  'default' => '#061826' ],
+				/* ── Tipografia eyebrow ── */
+				'eyebrow_color'   => [ 'type' => 'string',  'default' => '#26CBFB' ],
+				'eyebrow_size'    => [ 'type' => 'integer', 'default' => 14 ],
+				'eyebrow_weight'  => [ 'type' => 'integer', 'default' => 600 ],
+				/* ── Tipografia titolo ── */
+				'title_color'     => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'title_em_color'  => [ 'type' => 'string',  'default' => '#26CBFB' ],
+				'title_size'      => [ 'type' => 'integer', 'default' => 108 ],
+				'title_weight'    => [ 'type' => 'integer', 'default' => 700 ],
+				'title_font'      => [ 'type' => 'string',  'default' => '' ],
+				/* ── Tipografia descrizione ── */
+				'desc_color'      => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'desc_opacity'    => [ 'type' => 'integer', 'default' => 92 ],
+				'desc_size'       => [ 'type' => 'integer', 'default' => 0 ],
+				'desc_font'       => [ 'type' => 'string',  'default' => '' ],
+				/* ── Bottoni ── */
+				'btn1_bg'         => [ 'type' => 'string',  'default' => '#ff6b4a' ],
+				'btn1_color'      => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'btn1_hover_bg'   => [ 'type' => 'string',  'default' => '#e04a2a' ],
+				'btn1_size'       => [ 'type' => 'integer', 'default' => 15 ],
+				'btn1_weight'     => [ 'type' => 'integer', 'default' => 700 ],
+				'btn2_bg'         => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.1)' ],
+				'btn2_hover_bg'   => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.18)' ],
+				'btn2_border'     => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.25)' ],
+				'btn2_color'      => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'btn2_size'       => [ 'type' => 'integer', 'default' => 15 ],
+				'btn2_weight'     => [ 'type' => 'integer', 'default' => 600 ],
+				/* ── Scroll indicator ── */
+				'scroll_color'    => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.7)' ],
+				/* ── Card prossima uscita ── */
+				'pu_bg'           => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.08)' ],
+				'pu_border'       => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.18)' ],
+				'pu_dot_color'    => [ 'type' => 'string',  'default' => '#54e09a' ],
+				'pu_text_color'   => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'pu_accent_color' => [ 'type' => 'string',  'default' => '#26CBFB' ],
+				'pu_warn_color'   => [ 'type' => 'string',  'default' => '#ff6b4a' ],
+				/* ── Ticker luoghi ── */
+				'marquee_bg'        => [ 'type' => 'string',  'default' => '#0a2540' ],
+				'marquee_color'     => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'marquee_size'      => [ 'type' => 'integer', 'default' => 28 ],
+				'marquee_weight'    => [ 'type' => 'integer', 'default' => 700 ],
+				'marquee_sep_color' => [ 'type' => 'string',  'default' => '#ff6b4a' ],
 			],
 		],
 		'calypso/sezione' => [
@@ -172,6 +217,10 @@ class Calypsosub_Blocks {
 				'overlay_size'           => [ 'type' => 'integer', 'default' => 10 ],
 				'overlay_font_weight'    => [ 'type' => 'integer', 'default' => 400 ],
 				'overlay_letter_spacing' => [ 'type' => 'integer', 'default' => 12 ],
+				'margin_top'             => [ 'type' => 'integer', 'default' => 0 ],
+				'margin_right'           => [ 'type' => 'integer', 'default' => 0 ],
+				'margin_bottom'          => [ 'type' => 'integer', 'default' => 0 ],
+				'margin_left'            => [ 'type' => 'integer', 'default' => 0 ],
 			],
 		],
 		'calypso/storia-club' => [
@@ -237,8 +286,79 @@ class Calypsosub_Blocks {
 				'cf7_form_uscite'    => [ 'type' => 'integer', 'default' => 0 ],
 				'cf7_form_eventi'    => [ 'type' => 'integer', 'default' => 0 ],
 				'cf7_form_corsi'     => [ 'type' => 'integer', 'default' => 0 ],
-				'max_items_per_tab'  => [ 'type' => 'integer', 'default' => 6 ],
+				'max_items_per_tab'  => [ 'type' => 'integer', 'default' => 60 ],
+				'cards_per_page'     => [ 'type' => 'integer', 'default' => 12 ],
+				'card_columns'       => [ 'type' => 'integer', 'default' => 4 ],
 				'max_width'          => [ 'type' => 'integer', 'default' => 1320 ],
+
+				/* Sezione selezione — sfondo & layout */
+				'select_bg_color'        => [ 'type' => 'string',  'default' => '#f6f1e6' ],
+				'select_padding_y'       => [ 'type' => 'integer', 'default' => 40 ],
+
+				/* Selettore tab */
+				'tabs_track_bg_color'          => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'tab_text_color'               => [ 'type' => 'string',  'default' => '#0a2540' ],
+				'tab_active_bg_color'          => [ 'type' => 'string',  'default' => '#0a2540' ],
+				'tab_active_text_color'        => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'tab_count_bg_color'           => [ 'type' => 'string',  'default' => '#eef1f4' ],
+				'tab_count_text_color'         => [ 'type' => 'string',  'default' => '#0a2540' ],
+				'tab_count_active_bg_color'    => [ 'type' => 'string',  'default' => '#2f87b3' ],
+				'tab_count_active_text_color'  => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'tab_font_size'                => [ 'type' => 'integer', 'default' => 14 ],
+				'tab_font_weight'              => [ 'type' => 'integer', 'default' => 600 ],
+
+				/* Card evento */
+				'card_bg_color'                  => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'card_img_bg_color'              => [ 'type' => 'string',  'default' => '#0a2540' ],
+				'card_media_height'              => [ 'type' => 'integer', 'default' => 220 ],
+				'card_radius'                     => [ 'type' => 'integer', 'default' => 16 ],
+				'card_selected_border_color'      => [ 'type' => 'string',  'default' => '#ff6b4a' ],
+				'card_selected_badge_bg_color'    => [ 'type' => 'string',  'default' => '#f5a623' ],
+				'card_selected_badge_text_color'  => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'card_date_bg_color'              => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'card_date_num_color'             => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'card_date_label_color'           => [ 'type' => 'string',  'default' => '#5c6b75' ],
+				'card_media_title_bg_color'       => [ 'type' => 'string',  'default' => 'rgba(10,37,64,.6)' ],
+				'card_media_title_color'          => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'card_type_badge_bg_color'        => [ 'type' => 'string',  'default' => '#e6f1fa' ],
+				'card_type_badge_text_color'      => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'card_title_color'                => [ 'type' => 'string',  'default' => '#0a2540' ],
+				'card_title_size'                 => [ 'type' => 'integer', 'default' => 18 ],
+				'card_title_font_weight'          => [ 'type' => 'integer', 'default' => 700 ],
+				'card_meta_text_color'            => [ 'type' => 'string',  'default' => '#5c6b75' ],
+				'card_divider_color'              => [ 'type' => 'string',  'default' => '#e9edf0' ],
+				'card_level_text_color'           => [ 'type' => 'string',  'default' => '#5c6b75' ],
+				'card_spots_text_color'           => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'card_spots_warn_color'           => [ 'type' => 'string',  'default' => '#ff6b4a' ],
+
+				/* Filtri (button-group stile radio) */
+				'filter_active_border_color' => [ 'type' => 'string', 'default' => '#f5a623' ],
+				'filter_active_bg_color'     => [ 'type' => 'string', 'default' => '#fff7e8' ],
+				'filter_active_text_color'   => [ 'type' => 'string', 'default' => '#b9790a' ],
+
+				/* Sezione dati — sfondo & layout */
+				'data_bg_color'          => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'data_padding_y'         => [ 'type' => 'integer', 'default' => 48 ],
+
+				/* Form prenotazione */
+				'form_bg_color'             => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'form_radius'               => [ 'type' => 'integer', 'default' => 18 ],
+				'form_step_bg_color'        => [ 'type' => 'string',  'default' => '#ff6b4a' ],
+				'form_title_color'          => [ 'type' => 'string',  'default' => '#0a2540' ],
+				'form_title_size'           => [ 'type' => 'integer', 'default' => 20 ],
+				'form_title_font_weight'    => [ 'type' => 'integer', 'default' => 800 ],
+
+				/* Sidebar riepilogo */
+				'sidebar_bg_color'    => [ 'type' => 'string',  'default' => '#0a2540' ],
+				'sidebar_text_color'  => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'sidebar_radius'      => [ 'type' => 'integer', 'default' => 18 ],
+				'side_badge_bg_color' => [ 'type' => 'string',  'default' => '#ff6b4a' ],
+				'side_title_color'        => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'side_title_size'         => [ 'type' => 'integer', 'default' => 18 ],
+				'side_title_font_weight'  => [ 'type' => 'integer', 'default' => 800 ],
+				'side_luogo_color'        => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.75)' ],
+				'side_label_color'        => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.55)' ],
+				'side_value_color'        => [ 'type' => 'string',  'default' => '#ffffff' ],
 			],
 		],
 	];
@@ -310,7 +430,7 @@ class Calypsosub_Blocks {
 	var ToggleControl   = components.ToggleControl;
 	var RangeControl    = components.RangeControl;
 	var Button          = components.Button;
-	var Divider         = components.Divider;
+	var Divider         = components.Divider || function() { return el('hr', { style: { margin: '12px 0', border: 'none', borderTop: '1px solid #e0e0e0' } }); };
 	var SelectControl   = components.SelectControl;
 	var ColorPalette    = components.ColorPalette;
 
@@ -625,6 +745,17 @@ class Calypsosub_Blocks {
 						? 'Immagine: ID ' + a.image_id
 						: 'Nessuna immagine';
 
+					function colorRow(label, key) {
+						return el('div', { style: { marginBottom: '12px' } },
+							el('p', { style: { fontSize: '11px', fontWeight: 500, color: '#1e1e1e', margin: '0 0 6px' } }, label),
+							el(ColorPalette, {
+								colors: getThemeColors(),
+								value: a[key] || '',
+								onChange: function (v) { var u = {}; u[key] = v || ''; set(u); }
+							})
+						);
+					}
+
 					var mediaBtn = (MediaUploadCheck && MediaUpload)
 						? el(MediaUploadCheck, {},
 							el(MediaUpload, {
@@ -704,13 +835,135 @@ class Calypsosub_Blocks {
 									onChange: function (v) { set({ btn2_url: v }); }
 								})
 							),
+							el(PanelBody, { title: 'Colori sfondo', initialOpen: false },
+								colorRow('Colore testo hero', 'text_color'),
+								colorRow('Colore overlay/sfondo', 'overlay_color')
+							),
+							el(PanelBody, { title: 'Tipografia — Eyebrow', initialOpen: false },
+								colorRow('Colore', 'eyebrow_color'),
+								el(RangeControl, {
+									label: 'Font size (px)',
+									value: a.eyebrow_size || 14,
+									min: 8, max: 32, step: 1,
+									onChange: function (v) { set({ eyebrow_size: v || 14 }); }
+								}),
+								el(RangeControl, {
+									label: 'Font weight',
+									value: a.eyebrow_weight || 600,
+									min: 100, max: 900, step: 100,
+									onChange: function (v) { set({ eyebrow_weight: v || 600 }); }
+								})
+							),
+							el(PanelBody, { title: 'Tipografia — Titolo', initialOpen: false },
+								colorRow('Colore', 'title_color'),
+								colorRow('Colore parte in evidenza', 'title_em_color'),
+								el(RangeControl, {
+									label: 'Font size massimo (px)',
+									value: a.title_size || 108,
+									min: 32, max: 160, step: 2,
+									onChange: function (v) { set({ title_size: v || 108 }); }
+								}),
+								el(RangeControl, {
+									label: 'Font weight',
+									value: a.title_weight || 700,
+									min: 100, max: 900, step: 100,
+									onChange: function (v) { set({ title_weight: v || 700 }); }
+								}),
+								el(TextControl, {
+									label: 'Font family (vuoto = eredita tema)',
+									help: 'Es: "Montserrat", sans-serif',
+									value: a.title_font || '',
+									onChange: function (v) { set({ title_font: v }); }
+								})
+							),
+							el(PanelBody, { title: 'Tipografia — Descrizione', initialOpen: false },
+								colorRow('Colore', 'desc_color'),
+								el(RangeControl, {
+									label: 'Opacità (%)',
+									value: a.desc_opacity !== undefined ? a.desc_opacity : 92,
+									min: 30, max: 100, step: 1,
+									onChange: function (v) { set({ desc_opacity: v }); }
+								}),
+								el(RangeControl, {
+									label: 'Font size (px, 0 = eredita tema)',
+									value: a.desc_size || 0,
+									min: 0, max: 32, step: 1,
+									onChange: function (v) { set({ desc_size: v }); }
+								}),
+								el(TextControl, {
+									label: 'Font family (vuoto = eredita tema)',
+									value: a.desc_font || '',
+									onChange: function (v) { set({ desc_font: v }); }
+								})
+							),
+							el(PanelBody, { title: 'Bottoni — stile', initialOpen: false },
+								colorRow('Bottone primario — sfondo', 'btn1_bg'),
+								colorRow('Bottone primario — testo', 'btn1_color'),
+								colorRow('Bottone primario — sfondo hover', 'btn1_hover_bg'),
+								el(RangeControl, {
+									label: 'Bottone primario — font size (px)',
+									value: a.btn1_size || 15,
+									min: 10, max: 24, step: 1,
+									onChange: function (v) { set({ btn1_size: v || 15 }); }
+								}),
+								el(RangeControl, {
+									label: 'Bottone primario — font weight',
+									value: a.btn1_weight || 700,
+									min: 100, max: 900, step: 100,
+									onChange: function (v) { set({ btn1_weight: v || 700 }); }
+								}),
+								el(Divider, {}),
+								el(TextControl, {
+									label: 'Bottone secondario — sfondo (CSS, rgba OK)',
+									value: a.btn2_bg || '',
+									onChange: function (v) { set({ btn2_bg: v }); }
+								}),
+								el(TextControl, {
+									label: 'Bottone secondario — sfondo hover (CSS, rgba OK)',
+									value: a.btn2_hover_bg || '',
+									onChange: function (v) { set({ btn2_hover_bg: v }); }
+								}),
+								el(TextControl, {
+									label: 'Bottone secondario — bordo (CSS, rgba OK)',
+									value: a.btn2_border || '',
+									onChange: function (v) { set({ btn2_border: v }); }
+								}),
+								colorRow('Bottone secondario — testo', 'btn2_color'),
+								el(RangeControl, {
+									label: 'Bottone secondario — font size (px)',
+									value: a.btn2_size || 15,
+									min: 10, max: 24, step: 1,
+									onChange: function (v) { set({ btn2_size: v || 15 }); }
+								}),
+								el(RangeControl, {
+									label: 'Bottone secondario — font weight',
+									value: a.btn2_weight || 600,
+									min: 100, max: 900, step: 100,
+									onChange: function (v) { set({ btn2_weight: v || 600 }); }
+								})
+							),
 							el(PanelBody, { title: 'Prossima uscita', initialOpen: false },
 								el(ToggleControl, {
 									label: 'Mostra card prossima uscita',
 									help: 'Visibile solo su desktop, auto-aggiornata dal database',
 									checked: !!a.show_uscita,
 									onChange: function (v) { set({ show_uscita: v }); }
-								})
+								}),
+								a.show_uscita ? el(Divider, {}) : null,
+								a.show_uscita ? el(TextControl, {
+									label: 'Sfondo card (CSS, rgba OK)',
+									value: a.pu_bg || '',
+									onChange: function (v) { set({ pu_bg: v }); }
+								}) : null,
+								a.show_uscita ? el(TextControl, {
+									label: 'Bordo card (CSS, rgba OK)',
+									value: a.pu_border || '',
+									onChange: function (v) { set({ pu_border: v }); }
+								}) : null,
+								a.show_uscita ? colorRow('Colore indicatore (pallino)', 'pu_dot_color') : null,
+								a.show_uscita ? colorRow('Colore testo', 'pu_text_color') : null,
+								a.show_uscita ? colorRow('Colore accento (link/CTA)', 'pu_accent_color') : null,
+								a.show_uscita ? colorRow('Colore avviso (posti pochi/sold out)', 'pu_warn_color') : null
 							),
 							el(PanelBody, { title: 'Ticker luoghi', initialOpen: false },
 								el(ToggleControl, {
@@ -727,7 +980,28 @@ class Calypsosub_Blocks {
 									label: 'Visibile su mobile',
 									checked: !!a.marquee_mobile,
 									onChange: function (v) { set({ marquee_mobile: v }); }
-								}) : null
+								}) : null,
+								a.marquee_on ? el(Divider, {}) : null,
+								a.marquee_on ? colorRow('Colore sfondo', 'marquee_bg') : null,
+								a.marquee_on ? colorRow('Colore testo', 'marquee_color') : null,
+								a.marquee_on ? colorRow('Colore separatore (★)', 'marquee_sep_color') : null,
+								a.marquee_on ? el(RangeControl, {
+									label: 'Font size (px)',
+									value: a.marquee_size || 28,
+									min: 12, max: 48, step: 1,
+									onChange: function (v) { set({ marquee_size: v || 28 }); }
+								}) : null,
+								a.marquee_on ? el(RangeControl, {
+									label: 'Font weight',
+									value: a.marquee_weight || 700,
+									min: 100, max: 900, step: 100,
+									onChange: function (v) { set({ marquee_weight: v || 700 }); }
+								}) : null,
+								el(TextControl, {
+									label: 'Colore indicatore scroll (CSS, rgba OK)',
+									value: a.scroll_color || '',
+									onChange: function (v) { set({ scroll_color: v }); }
+								})
 							)
 						)
 						: null;
@@ -1378,7 +1652,11 @@ class Calypsosub_Blocks {
 									var list = Array.isArray(media) ? media : [media];
 									set({ manual_ids: list.map(function (m) { return m.id; }) });
 									setPreviewItemsState(list.map(function (m) {
-										return { id: m.id, url: (m.sizes && m.sizes.medium ? m.sizes.medium.url : m.url) };
+										return {
+											id: m.id,
+											url: (m.sizes && m.sizes.medium ? m.sizes.medium.url : m.url),
+											ratio: (m.width && m.height) ? (m.width / m.height) : 1
+										};
 									}));
 								},
 								allowedTypes: ['image'],
@@ -1421,7 +1699,13 @@ class Calypsosub_Blocks {
 								});
 							}
 							setPreviewItemsState(filtered.map(function (m) {
-								return { id: m.id, url: (m.media_details && m.media_details.sizes && m.media_details.sizes.medium ? m.media_details.sizes.medium.source_url : m.source_url) };
+								var w = m.media_details && m.media_details.width;
+								var h = m.media_details && m.media_details.height;
+								return {
+									id: m.id,
+									url: (m.media_details && m.media_details.sizes && m.media_details.sizes.medium ? m.media_details.sizes.medium.source_url : m.source_url),
+									ratio: (w && h) ? (w / h) : 1
+								};
 							}));
 						}).catch(function () { setPreviewItemsState([]); }).finally(function () { loadingState[1](false); });
 					}, [a.source_mode, JSON.stringify(a.tag_ids), a.max_items]);
@@ -1486,6 +1770,33 @@ class Calypsosub_Blocks {
 							colorRow('Colore sfondo sezione', 'bg_color')
 						),
 
+						el(PanelBody, { title: 'Margini blocco', initialOpen: false },
+							el(RangeControl, {
+								label: 'Margine superiore (px)',
+								value: a.margin_top !== undefined ? a.margin_top : 0,
+								min: 0, max: 200, step: 4,
+								onChange: function (v) { set({ margin_top: v === undefined ? 0 : v }); }
+							}),
+							el(RangeControl, {
+								label: 'Margine inferiore (px)',
+								value: a.margin_bottom !== undefined ? a.margin_bottom : 0,
+								min: 0, max: 200, step: 4,
+								onChange: function (v) { set({ margin_bottom: v === undefined ? 0 : v }); }
+							}),
+							el(RangeControl, {
+								label: 'Margine sinistro (px)',
+								value: a.margin_left !== undefined ? a.margin_left : 0,
+								min: 0, max: 200, step: 4,
+								onChange: function (v) { set({ margin_left: v === undefined ? 0 : v }); }
+							}),
+							el(RangeControl, {
+								label: 'Margine destro (px)',
+								value: a.margin_right !== undefined ? a.margin_right : 0,
+								min: 0, max: 200, step: 4,
+								onChange: function (v) { set({ margin_right: v === undefined ? 0 : v }); }
+							})
+						),
+
 						el(PanelBody, { title: 'Overlay didascalia', initialOpen: false },
 							colorRow('Colore testo', 'overlay_color'),
 							el(TextControl, {
@@ -1510,32 +1821,37 @@ class Calypsosub_Blocks {
 
 					) : null;
 
-					var DESKTOP_PATTERN = [
-						{ col: 3, row: 2 }, { col: 2, row: 1 }, { col: 1, row: 1 }, { col: 1, row: 1 },
-						{ col: 2, row: 1 }, { col: 2, row: 2 }, { col: 1, row: 1 }, { col: 1, row: 1 },
-						{ col: 1, row: 1 }, { col: 1, row: 1 }
-					];
+					var previewRowH = ((a.row_height || 200) / 2) + 'px';
+					var fillerEls = [0, 1, 2, 3, 4, 5].map(function (i) {
+						return el('div', { key: 'filler-' + i, style: { flexGrow: 999, height: 0, minWidth: 1 } });
+					});
 
-					var preview = el('div', {
-						style: {
-							display: 'grid',
-							gridTemplateColumns: 'repeat(6,1fr)',
-							gridAutoRows: (a.row_height || 200) / 2 + 'px',
-							gap: (a.gap !== undefined ? a.gap : 0) + 'px',
-							maxWidth: '100%'
-						}
-					},
-						previewItems.length
-							? previewItems.map(function (item, index) {
-								var style = DESKTOP_PATTERN[index % DESKTOP_PATTERN.length];
+					var preview = previewItems.length
+						? el('div', {
+							style: {
+								display: 'flex',
+								flexWrap: 'wrap',
+								gap: (a.gap !== undefined ? a.gap : 0) + 'px',
+								maxWidth: '100%'
+							}
+						},
+							previewItems.map(function (item) {
+								var ratio = item.ratio || 1;
 								return el('div', {
 									key: item.id,
-									style: { gridColumn: 'span ' + style.col, gridRow: 'span ' + style.row, overflow: 'hidden', background: '#0a2540' }
-								}, item.url ? el('img', { src: item.url, style: { width: '100%', height: '100%', objectFit: 'cover' } }) : null);
-							})
-							: el('p', { style: { gridColumn: '1 / -1', fontSize: '12px', opacity: .6 } },
-								loadingState[0] ? 'Caricamento immagini…' : 'Nessuna immagine trovata per questa sorgente.')
-					);
+									style: {
+										height: previewRowH,
+										flexGrow: ratio,
+										flexBasis: 'calc(' + ratio + ' * ' + previewRowH + ')',
+										overflow: 'hidden',
+										background: '#0a2540',
+										position: 'relative'
+									}
+								}, item.url ? el('img', { src: item.url, style: { width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 } }) : null);
+							}).concat(fillerEls)
+						)
+						: el('p', { style: { fontSize: '12px', opacity: .6 } },
+							loadingState[0] ? 'Caricamento immagini…' : 'Nessuna immagine trovata per questa sorgente.');
 
 					return el(Fragment, {}, controls, preview);
 				},
@@ -2049,16 +2365,63 @@ class Calypsosub_Blocks {
 						);
 					}
 
+					function colorRow(label, key) {
+						return el('div', { style: { marginBottom: '12px' } },
+							el('p', { style: { fontSize: '11px', fontWeight: 500, color: '#1e1e1e', margin: '0 0 6px' } }, label),
+							el(ColorPalette, {
+								colors: getThemeColors(),
+								value: a[key] || '',
+								onChange: function (v) { var u = {}; u[key] = v || ''; set(u); }
+							})
+						);
+					}
+
+					var fwOpts = [
+						{ value: '300', label: 'Light (300)' },
+						{ value: '400', label: 'Regular (400)' },
+						{ value: '500', label: 'Medium (500)' },
+						{ value: '600', label: 'SemiBold (600)' },
+						{ value: '700', label: 'Bold (700)' },
+						{ value: '800', label: 'ExtraBold (800)' },
+						{ value: '900', label: 'Black (900)' }
+					];
+					function weightRow(label, key, def) {
+						return SelectControl ? el(SelectControl, {
+							label: label,
+							value: String(a[key] || def),
+							options: fwOpts,
+							onChange: function (v) { var u = {}; u[key] = parseInt(v, 10); set(u); }
+						}) : null;
+					}
+					function subHead(text) {
+						return el('p', { style: { fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#757575', margin: '12px 0 6px', borderBottom: '1px solid #e0e0e0', paddingBottom: '5px' } }, text);
+					}
+
 					var controls = InspectorControls ? el(InspectorControls, {},
 						el(PanelBody, { title: 'Uscite', initialOpen: true }, formSelect('uscite', 'enable_uscite', 'cf7_form_uscite')),
 						el(PanelBody, { title: 'Eventi', initialOpen: false }, formSelect('eventi', 'enable_eventi', 'cf7_form_eventi')),
 						el(PanelBody, { title: 'Corsi', initialOpen: false }, formSelect('corsi', 'enable_corsi', 'cf7_form_corsi')),
+
 						el(PanelBody, { title: 'Comportamento', initialOpen: false },
 							el(RangeControl, {
-								label: 'Elementi per tab',
-								value: a.max_items_per_tab || 6,
-								min: 1, max: 20, step: 1,
-								onChange: function (v) { set({ max_items_per_tab: v || 6 }); }
+								label: 'Elementi totali per tab (cap query)',
+								help: 'Massimo elementi caricati per tab, prima dei filtri/paginazione.',
+								value: a.max_items_per_tab || 60,
+								min: 1, max: 200, step: 1,
+								onChange: function (v) { set({ max_items_per_tab: v || 60 }); }
+							}),
+							el(RangeControl, {
+								label: 'Card per pagina',
+								help: 'Quante card mostrare per pagina (paginazione client-side).',
+								value: a.cards_per_page || 12,
+								min: 2, max: 48, step: 1,
+								onChange: function (v) { set({ cards_per_page: v || 12 }); }
+							}),
+							el(RangeControl, {
+								label: 'Colonne card (desktop)',
+								value: a.card_columns || 4,
+								min: 2, max: 5, step: 1,
+								onChange: function (v) { set({ card_columns: v || 4 }); }
 							}),
 							el(RangeControl, {
 								label: 'Larghezza massima (px)',
@@ -2066,6 +2429,146 @@ class Calypsosub_Blocks {
 								min: 400, max: 1920, step: 20,
 								onChange: function (v) { set({ max_width: v || 1320 }); }
 							})
+						),
+
+						el(PanelBody, { title: 'Sezione selezione — sfondo', initialOpen: false },
+							colorRow('Colore sfondo', 'select_bg_color'),
+							el(RangeControl, {
+								label: 'Padding verticale (px)',
+								value: a.select_padding_y !== undefined ? a.select_padding_y : 40,
+								min: 0, max: 120, step: 4,
+								onChange: function (v) { set({ select_padding_y: v === undefined ? 40 : v }); }
+							})
+						),
+
+						el(PanelBody, { title: 'Selettore tab', initialOpen: false },
+							colorRow('Sfondo barra (track)', 'tabs_track_bg_color'),
+							colorRow('Testo tab inattivo', 'tab_text_color'),
+							colorRow('Sfondo tab attivo', 'tab_active_bg_color'),
+							colorRow('Testo tab attivo', 'tab_active_text_color'),
+							colorRow('Sfondo contatore inattivo', 'tab_count_bg_color'),
+							colorRow('Testo contatore inattivo', 'tab_count_text_color'),
+							colorRow('Sfondo contatore attivo', 'tab_count_active_bg_color'),
+							colorRow('Testo contatore attivo', 'tab_count_active_text_color'),
+							el(RangeControl, {
+								label: 'Dimensione testo (px)',
+								value: a.tab_font_size || 14,
+								min: 10, max: 20, step: 1,
+								onChange: function (v) { set({ tab_font_size: v || 14 }); }
+							}),
+							weightRow('Peso font', 'tab_font_weight', 600)
+						),
+
+						el(PanelBody, { title: 'Card evento', initialOpen: false },
+							subHead('Card'),
+							colorRow('Sfondo card', 'card_bg_color'),
+							colorRow('Sfondo immagine (segnaposto)', 'card_img_bg_color'),
+							el(RangeControl, {
+								label: 'Altezza immagine (px)',
+								value: a.card_media_height !== undefined ? a.card_media_height : 220,
+								min: 120, max: 400, step: 10,
+								onChange: function (v) { set({ card_media_height: v === undefined ? 220 : v }); }
+							}),
+							el(RangeControl, {
+								label: 'Raggio bordo card (px)',
+								value: a.card_radius !== undefined ? a.card_radius : 16,
+								min: 0, max: 40, step: 1,
+								onChange: function (v) { set({ card_radius: v === undefined ? 16 : v }); }
+							}),
+							subHead('Stato selezionata'),
+							colorRow('Bordo card selezionata', 'card_selected_border_color'),
+							colorRow('Sfondo badge "Selezionata"', 'card_selected_badge_bg_color'),
+							colorRow('Testo badge "Selezionata"', 'card_selected_badge_text_color'),
+							subHead('Badge data (sull\'immagine)'),
+							colorRow('Sfondo', 'card_date_bg_color'),
+							colorRow('Colore numero giorno', 'card_date_num_color'),
+							colorRow('Colore mese/giorno settimana', 'card_date_label_color'),
+							subHead('Overlay titolo (sull\'immagine)'),
+							el(TextControl, {
+								label: 'Sfondo overlay (CSS — rgba OK)',
+								value: a.card_media_title_bg_color || 'rgba(10,37,64,.6)',
+								onChange: function (v) { set({ card_media_title_bg_color: v }); }
+							}),
+							colorRow('Colore testo titolo overlay', 'card_media_title_color'),
+							subHead('Badge tipologia (Uscita/Evento/Corso)'),
+							colorRow('Sfondo', 'card_type_badge_bg_color'),
+							colorRow('Testo', 'card_type_badge_text_color'),
+							subHead('Titolo card'),
+							colorRow('Colore', 'card_title_color'),
+							el(RangeControl, {
+								label: 'Dimensione (px)',
+								value: a.card_title_size || 18,
+								min: 10, max: 28, step: 1,
+								onChange: function (v) { set({ card_title_size: v || 18 }); }
+							}),
+							weightRow('Peso font', 'card_title_font_weight', 700),
+							subHead('Meta (luogo · dettagli)'),
+							colorRow('Colore testo', 'card_meta_text_color'),
+							subHead('Footer (livello + posti)'),
+							colorRow('Colore separatore', 'card_divider_color'),
+							colorRow('Colore testo livello', 'card_level_text_color'),
+							colorRow('Colore testo posti', 'card_spots_text_color'),
+							colorRow('Colore testo posti — allerta (pochi posti)', 'card_spots_warn_color')
+						),
+
+						el(PanelBody, { title: 'Filtri (mese/luogo/livello)', initialOpen: false },
+							colorRow('Bordo opzione selezionata', 'filter_active_border_color'),
+							colorRow('Sfondo opzione selezionata', 'filter_active_bg_color'),
+							colorRow('Testo opzione selezionata', 'filter_active_text_color')
+						),
+
+						el(PanelBody, { title: 'Sezione dati — sfondo', initialOpen: false },
+							colorRow('Colore sfondo', 'data_bg_color'),
+							el(RangeControl, {
+								label: 'Padding verticale (px)',
+								value: a.data_padding_y !== undefined ? a.data_padding_y : 48,
+								min: 0, max: 140, step: 4,
+								onChange: function (v) { set({ data_padding_y: v === undefined ? 48 : v }); }
+							})
+						),
+
+						el(PanelBody, { title: 'Form prenotazione', initialOpen: false },
+							colorRow('Sfondo card form', 'form_bg_color'),
+							colorRow('Sfondo pallino step "01"', 'form_step_bg_color'),
+							colorRow('Colore titolo form', 'form_title_color'),
+							el(RangeControl, {
+								label: 'Dimensione titolo form (px)',
+								value: a.form_title_size || 20,
+								min: 14, max: 36, step: 1,
+								onChange: function (v) { set({ form_title_size: v || 20 }); }
+							}),
+							weightRow('Peso titolo form', 'form_title_font_weight', 800),
+							el(RangeControl, {
+								label: 'Raggio bordo form (px)',
+								value: a.form_radius !== undefined ? a.form_radius : 18,
+								min: 0, max: 40, step: 1,
+								onChange: function (v) { set({ form_radius: v === undefined ? 18 : v }); }
+							})
+						),
+
+						el(PanelBody, { title: 'Sidebar riepilogo', initialOpen: false },
+							colorRow('Sfondo sidebar', 'sidebar_bg_color'),
+							colorRow('Colore testo sidebar (default)', 'sidebar_text_color'),
+							colorRow('Sfondo badge (tipologia)', 'side_badge_bg_color'),
+							el(RangeControl, {
+								label: 'Raggio bordo sidebar (px)',
+								value: a.sidebar_radius !== undefined ? a.sidebar_radius : 18,
+								min: 0, max: 40, step: 1,
+								onChange: function (v) { set({ sidebar_radius: v === undefined ? 18 : v }); }
+							}),
+							subHead('Titolo (nome elemento)'),
+							colorRow('Colore titolo', 'side_title_color'),
+							el(RangeControl, {
+								label: 'Dimensione titolo (px)',
+								value: a.side_title_size || 18,
+								min: 12, max: 32, step: 1,
+								onChange: function (v) { set({ side_title_size: v || 18 }); }
+							}),
+							weightRow('Peso titolo', 'side_title_font_weight', 800),
+							subHead('Testi'),
+							colorRow('Colore luogo (sotto il titolo)', 'side_luogo_color'),
+							colorRow('Colore etichette (Data, Posti, ecc.)', 'side_label_color'),
+							colorRow('Colore valori', 'side_value_color')
 						)
 					) : null;
 

@@ -3,35 +3,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class Calypsosub_Gallery_Helpers {
 
-	private const DESKTOP_PATTERN = [
-		[ 'col' => 3, 'row' => 2 ],
-		[ 'col' => 2, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 2, 'row' => 1 ],
-		[ 'col' => 2, 'row' => 2 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-	];
-
-	private const MOBILE_PATTERN = [
-		[ 'col' => 2, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-	];
-
-	public static function cell_style( int $index, bool $mobile = false ): array {
-		$pattern = $mobile ? self::MOBILE_PATTERN : self::DESKTOP_PATTERN;
-		return $pattern[ $index % count( $pattern ) ];
-	}
-
 	public static function build_query_args( array $attrs ): array {
 		$mode      = (string) ( $attrs['source_mode'] ?? 'all' );
 		$max_items = (int) ( $attrs['max_items'] ?? 12 );
@@ -70,6 +41,64 @@ class Calypsosub_Gallery_Helpers {
 			],
 		];
 		return $args;
+	}
+
+	/**
+	 * Determina la "forma" di un'immagine in base al suo aspect ratio reale,
+	 * scegliendo il bucket più vicino fra orizzontale (2:1), verticale (1:2)
+	 * o quadrata — così la cella assegnata avrà proporzioni simili
+	 * all'immagine invece di forzarla in uno spazio sbagliato.
+	 */
+	public static function shape_for_ratio( float $ratio ): string {
+		if ( $ratio >= 1.35 ) {
+			return 'horizontal';
+		}
+		if ( $ratio <= 0.74 ) {
+			return 'vertical';
+		}
+		return 'square';
+	}
+
+	/**
+	 * Span della cella in unità di modulo "a" (= row_height), per forma e
+	 * taglia. Le celle "big" sono il doppio in ogni dimensione rispetto alle
+	 * normali, mantenendo le stesse proporzioni forma/orientamento.
+	 */
+	public static function cell_span( string $shape, bool $big ): array {
+		switch ( $shape ) {
+			case 'horizontal':
+				return $big ? [ 'col' => 4, 'row' => 2 ] : [ 'col' => 2, 'row' => 1 ];
+			case 'vertical':
+				return $big ? [ 'col' => 2, 'row' => 4 ] : [ 'col' => 1, 'row' => 2 ];
+			default:
+				return $big ? [ 'col' => 2, 'row' => 2 ] : [ 'col' => 1, 'row' => 1 ];
+		}
+	}
+
+	/**
+	 * Assegna a ogni cella la propria forma e taglia (big ogni tanto, per
+	 * varietà visiva). $rng riceve (min,max) e ritorna un intero;
+	 * iniettabile nei test.
+	 */
+	public static function build_units( array $cells, ?callable $rng = null ): array {
+		$rng = $rng ?? static function ( int $min, int $max ): int {
+			return function_exists( 'wp_rand' ) ? wp_rand( $min, $max ) : mt_rand( $min, $max );
+		};
+
+		$units = [];
+		foreach ( $cells as $cell ) {
+			$shape = self::shape_for_ratio( (float) $cell['ratio'] );
+			$big   = $rng( 1, 100 ) <= 35;
+			$span  = self::cell_span( $shape, $big );
+
+			$units[] = [
+				'cell' => $cell,
+				'col'  => $span['col'],
+				'row'  => $span['row'],
+			];
+		}
+
+		return $units;
 	}
 
 	public static function resolve_overlay_text( int $attachment_id ): string {

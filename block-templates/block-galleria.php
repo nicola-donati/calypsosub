@@ -2,11 +2,14 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /*
- * Block calypso/galleria — muro di foto masonry con didascalia in overlay.
+ * Block calypso/galleria — muro di foto a grid con didascalia in overlay.
  *
- * Sorgente immagini configurabile (tutti i media taggati / tag specifico /
- * selezione manuale), pattern di griglia fisso e automatico, lightbox
- * opzionale al click.
+ * Ogni immagine viene categorizzata per forma (orizzontale 2:1, verticale
+ * 1:2, o quadrata) in base al proprio aspect ratio reale, e riceve una cella
+ * CSS Grid con proporzioni coerenti (mai un'immagine rettangolare forzata in
+ * uno spazio quadrato). Ogni tanto (35% delle volte) la cella è "big" — il
+ * doppio in entrambe le dimensioni — per dare un punto focale al layout.
+ * grid-auto-flow:dense impacca le celle minimizzando i buchi residui.
  */
 
 $a = $attributes ?? [];
@@ -19,6 +22,11 @@ $lightbox               = (bool)   ( $a['lightbox']                 ?? false );
 $overlay_size           = (int)    ( $a['overlay_size']             ?? 10 );
 $overlay_font_weight    = (int)    ( $a['overlay_font_weight']      ?? 400 );
 $overlay_letter_spacing = (int)    ( $a['overlay_letter_spacing']   ?? 12 );
+$source_mode            = (string) ( $a['source_mode']              ?? 'all' );
+$margin_top             = (int)    ( $a['margin_top']                ?? 0 );
+$margin_right           = (int)    ( $a['margin_right']              ?? 0 );
+$margin_bottom          = (int)    ( $a['margin_bottom']             ?? 0 );
+$margin_left            = (int)    ( $a['margin_left']               ?? 0 );
 
 $safe_css_color = function ( $value, $default ) {
 	$value = trim( (string) $value );
@@ -36,12 +44,51 @@ if ( empty( $items ) ) {
 	return;
 }
 
+if ( $source_mode !== 'manual' ) {
+	shuffle( $items );
+}
+
 $uid = 'cso-gal-' . sprintf( '%08x', crc32( implode( ',', [ $max_width, $row_height, $gap, count( $items ) ] ) ) );
 
 $mobile_row_height = (int) round( $row_height * 0.8 );
+// max_width è spesso solo un tetto CSS generoso: il contenitore reale è
+// quasi sempre quello del tema (tipicamente ~1320px), non il valore
+// configurato. Le colonne si calcolano sul più stretto dei due per evitare
+// celle troppo lontane dal quadrato quando il cap è molto più largo del
+// reale — le colonne restano comunque a "1fr" quindi non vanno mai in
+// overflow indipendentemente da questa stima.
+$desktop_cols = max( 4, (int) floor( min( $max_width, 1320 ) / max( 1, $row_height ) ) );
+$mobile_cols  = 4;
+
+$cells = [];
+foreach ( $items as $item ) {
+	$img = wp_get_attachment_image_src( $item->ID, 'large' );
+	if ( ! $img ) {
+		continue;
+	}
+	[ $img_url, $img_w, $img_h ] = $img;
+	$ratio        = $img_w > 0 && $img_h > 0 ? $img_w / $img_h : 1;
+	$overlay_text = Calypsosub_Gallery_Helpers::resolve_overlay_text( $item->ID );
+	$alt          = get_post_meta( $item->ID, '_wp_attachment_image_alt', true ) ?: $overlay_text;
+
+	$cells[] = [
+		'id'      => $item->ID,
+		'url'     => $img_url,
+		'full'    => wp_get_attachment_image_url( $item->ID, 'full' ) ?: $img_url,
+		'ratio'   => $ratio,
+		'alt'     => $alt,
+		'caption' => $overlay_text,
+	];
+}
+
+if ( empty( $cells ) ) {
+	return;
+}
+
+$units = Calypsosub_Gallery_Helpers::build_units( $cells );
 ?>
 <style>
-#<?php echo $uid; ?> .cso-gal__wrap{max-width:<?php echo $max_width; ?>px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:<?php echo $row_height; ?>px;gap:<?php echo $gap; ?>px;}
+#<?php echo $uid; ?> .cso-gal__wrap{--a:<?php echo $row_height; ?>px;max-width:<?php echo $max_width > 0 ? $max_width . 'px' : 'none'; ?>;width:100%;margin:0 auto;display:grid;grid-template-columns:repeat(<?php echo $desktop_cols; ?>, 1fr);grid-auto-rows:var(--a);grid-auto-flow:dense;gap:<?php echo $gap; ?>px;}
 #<?php echo $uid; ?> .cso-gal__cell{position:relative;overflow:hidden;background:#0a2540;}
 #<?php echo $uid; ?> .cso-gal__cell img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center;display:block;}
 #<?php echo $uid; ?> .cso-gal__cap{position:absolute;bottom:0;left:0;font-family:monospace;font-size:<?php echo $overlay_size; ?>px;letter-spacing:<?php echo $overlay_letter_spacing / 100; ?>em;text-transform:uppercase;font-weight:<?php echo $overlay_font_weight; ?>;padding:10px 12px;background:<?php echo esc_attr( $overlay_bg ); ?>;color:<?php echo esc_attr( $overlay_color ); ?>;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border-top-right-radius:4px;}
@@ -49,30 +96,32 @@ $mobile_row_height = (int) round( $row_height * 0.8 );
 #<?php echo $uid; ?> .cso-gal__cell{cursor:zoom-in;}
 <?php endif; ?>
 @media(max-width:1024px){
-	#<?php echo $uid; ?> .cso-gal__wrap{grid-template-columns:1fr 1fr;grid-auto-rows:minmax(<?php echo $mobile_row_height; ?>px,auto);}
-	#<?php echo $uid; ?> .cso-gal__cell{grid-column:span var(--cso-mcol,1) !important;grid-row:span 1 !important;height:var(--cso-mh,<?php echo $mobile_row_height; ?>px);}
+	#<?php echo $uid; ?> .cso-gal__wrap{--a:<?php echo $mobile_row_height; ?>px;grid-template-columns:repeat(<?php echo $mobile_cols; ?>, 1fr);}
 }
 </style>
-<section <?php echo $bg_color_safe ? 'style="background:' . esc_attr( $bg_color_safe ) . ';"' : ''; ?> id="<?php echo $uid; ?>">
+<?php
+$section_style = [];
+if ( $bg_color_safe ) {
+	$section_style[] = 'background:' . esc_attr( $bg_color_safe );
+}
+$margin_css = $margin_top . 'px ' . $margin_right . 'px ' . $margin_bottom . 'px ' . $margin_left . 'px';
+if ( $margin_css !== '0px 0px 0px 0px' ) {
+	$section_style[] = 'margin:' . $margin_css;
+}
+$section_style_attr = $section_style ? ' style="' . implode( ';', $section_style ) . '"' : '';
+?>
+<section<?php echo $section_style_attr; ?> id="<?php echo $uid; ?>">
 	<div class="cso-gal__wrap">
-		<?php foreach ( $items as $index => $item ) :
-			$desktop_style = Calypsosub_Gallery_Helpers::cell_style( $index, false );
-			$mobile_style  = Calypsosub_Gallery_Helpers::cell_style( $index, true );
-			$mobile_height = $index % 8 === 0 ? (int) round( $mobile_row_height * 1.375 ) : $mobile_row_height;
-			$img_url       = wp_get_attachment_image_url( $item->ID, 'large' );
-			$overlay_text  = Calypsosub_Gallery_Helpers::resolve_overlay_text( $item->ID );
-			$alt           = get_post_meta( $item->ID, '_wp_attachment_image_alt', true ) ?: $overlay_text;
-			if ( ! $img_url ) {
-				continue;
-			}
+		<?php foreach ( $units as $index => $unit ) :
+			$cell = $unit['cell'];
 		?>
 		<div class="cso-gal__cell"
 		     data-index="<?php echo (int) $index; ?>"
-		     <?php if ( $lightbox ) : ?>data-lightbox-src="<?php echo esc_url( wp_get_attachment_image_url( $item->ID, 'full' ) ?: $img_url ); ?>"<?php endif; ?>
-		     style="grid-column:span <?php echo $desktop_style['col']; ?>;grid-row:span <?php echo $desktop_style['row']; ?>;--cso-mcol:<?php echo $mobile_style['col']; ?>;--cso-mh:<?php echo $mobile_height; ?>px;">
-			<img src="<?php echo esc_url( $img_url ); ?>" alt="<?php echo esc_attr( $alt ); ?>" loading="lazy">
-			<?php if ( $overlay_text ) : ?>
-			<div class="cso-gal__cap"><?php echo esc_html( $overlay_text ); ?></div>
+		     <?php if ( $lightbox ) : ?>data-lightbox-src="<?php echo esc_url( $cell['full'] ); ?>"<?php endif; ?>
+		     style="grid-column:span <?php echo (int) $unit['col']; ?>;grid-row:span <?php echo (int) $unit['row']; ?>;">
+			<img src="<?php echo esc_url( $cell['url'] ); ?>" alt="<?php echo esc_attr( $cell['alt'] ); ?>" loading="lazy">
+			<?php if ( $cell['caption'] ) : ?>
+			<div class="cso-gal__cap"><?php echo esc_html( $cell['caption'] ); ?></div>
 			<?php endif; ?>
 		</div>
 		<?php endforeach; ?>
