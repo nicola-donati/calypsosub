@@ -32,6 +32,19 @@ class Calypsosub_Gallery_Helpers {
 		return $pattern[ $index % count( $pattern ) ];
 	}
 
+	public static function resolve_overlay_text( int $attachment_id ): string {
+		$caption = wp_get_attachment_caption( $attachment_id );
+		return $caption !== '' ? $caption : (string) get_the_title( $attachment_id );
+	}
+
+	public static function build_units( array $cells ): array {
+		$units = [];
+		foreach ( $cells as $i => $cell ) {
+			$units[] = [ 'cell' => $cell ] + self::cell_style( $i );
+		}
+		return $units;
+	}
+
 	public static function build_query_args( array $attrs ): array {
 		$mode      = (string) ( $attrs['source_mode'] ?? 'all' );
 		$max_items = (int) ( $attrs['max_items'] ?? 12 );
