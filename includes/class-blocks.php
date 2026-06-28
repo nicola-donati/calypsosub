@@ -1300,11 +1300,7 @@ class Calypsosub_Blocks {
 								value: a.overlay_text || '',
 								onChange: function (v) { set({ overlay_text: v }); }
 							}),
-							el(TextControl, {
-								label: 'Sfondo overlay (CSS — rgba OK)',
-								value: a.overlay_bg || 'rgba(6,24,38,0.6)',
-								onChange: function (v) { set({ overlay_bg: v }); }
-							}),
+							colorRow('Sfondo overlay', 'overlay_bg'),
 							colorRow('Colore testo overlay', 'overlay_color'),
 							el(RangeControl, {
 								label: 'Font size overlay (px)',
@@ -1960,11 +1956,7 @@ class Calypsosub_Blocks {
 
 						el(PanelBody, { title: 'Overlay didascalia', initialOpen: false },
 							colorRow('Colore testo', 'overlay_color'),
-							el(TextControl, {
-								label: 'Sfondo (CSS, rgba supportato)',
-								value: a.overlay_bg || 'rgba(0,0,0,.35)',
-								onChange: function (v) { set({ overlay_bg: v }); }
-							}),
+							colorRow('Sfondo overlay', 'overlay_bg'),
 							el(RangeControl, {
 								label: 'Dimensione testo (px)',
 								value: a.overlay_size || 10,
@@ -2893,7 +2885,7 @@ class Calypsosub_Blocks {
 							}) : null,
 							a.arrows_show !== false ? colorRow('Sfondo freccia', 'arrow_bg') : null,
 							a.arrows_show !== false ? colorRow('Icona freccia', 'arrow_color') : null,
-							a.arrows_show !== false ? el(TextControl, { label: 'Bordo freccia (CSS)', value: a.arrow_border || 'rgba(10,37,64,.15)', onChange: function (v) { set({ arrow_border: v }); } }) : null,
+							a.arrows_show !== false ? colorRow('Colore bordo freccia', 'arrow_border') : null,
 							a.arrows_show !== false ? colorRow('Sfondo freccia hover', 'arrow_hover_bg') : null,
 							a.arrows_show !== false ? colorRow('Icona freccia hover', 'arrow_hover_col') : null,
 							a.arrows_show !== false ? rangeRow('Dimensione freccia (px)', 'arrow_size', 44, 28, 80, 2) : null,
@@ -2916,7 +2908,7 @@ class Calypsosub_Blocks {
 							colorRow('Sfondo card', 'card_bg'),
 							rangeRow('Border radius card (px)', 'card_radius', 16, 0, 40, 2),
 							el(TextControl, { label: 'Box-shadow card (CSS)', value: a.card_shadow || '0 8px 28px -10px rgba(10,37,64,.18)', onChange: function (v) { set({ card_shadow: v }); } }),
-							el(TextControl, { label: 'Bordo card (CSS color)', value: a.card_border || 'rgba(10,37,64,.06)', onChange: function (v) { set({ card_border: v }); } }),
+							colorRow('Colore bordo card', 'card_border'),
 							rangeRow('Padding body orizzontale (px)', 'card_body_px', 20, 8, 60, 2),
 							rangeRow('Padding body verticale (px)',   'card_body_py', 18, 8, 60, 2)
 						),
@@ -2932,7 +2924,7 @@ class Calypsosub_Blocks {
 								],
 								onChange: function (v) { set({ photo_ratio: v }); }
 							}),
-							el(TextControl, { label: 'Sfondo label foto (CSS)', value: a.photo_label_bg || 'rgba(10,37,64,.72)', onChange: function (v) { set({ photo_label_bg: v }); } }),
+							colorRow('Sfondo label foto', 'photo_label_bg'),
 							colorRow('Colore testo label foto', 'photo_label_color'),
 							rangeRow('Font size label foto (px)', 'photo_label_size', 9, 7, 16, 1)
 						),
@@ -2956,14 +2948,14 @@ class Calypsosub_Blocks {
 						),
 
 						el(PanelBody, { title: 'Stile bio', initialOpen: false },
-							el(TextControl, { label: 'Colore bio (CSS)', value: a.bio_color || 'rgba(10,37,64,.7)', onChange: function (v) { set({ bio_color: v }); } }),
+							colorRow('Colore bio', 'bio_color'),
 							rangeRow('Font size bio (px)', 'bio_size', 14, 10, 22, 1)
 						),
 
 						el(PanelBody, { title: 'Stile stats', initialOpen: false },
-							el(TextControl, { label: 'Colore stats (CSS)', value: a.stats_color || 'rgba(10,37,64,.55)', onChange: function (v) { set({ stats_color: v }); } }),
+							colorRow('Colore stats', 'stats_color'),
 							rangeRow('Font size stats (px)', 'stats_size', 12, 9, 20, 1),
-							el(TextControl, { label: 'Colore separatore · (CSS)', value: a.stats_sep_color || 'rgba(10,37,64,.2)', onChange: function (v) { set({ stats_sep_color: v }); } })
+							colorRow('Colore separatore ·', 'stats_sep_color')
 						)
 
 					) : null;
@@ -3261,27 +3253,11 @@ class Calypsosub_Blocks {
 							a.featured_enabled !== false ? rangeRow('Indice riga evidenziata (0 = prima)', 'featured_index', 0, 0, 20, 1) : null,
 							a.featured_enabled !== false ? colorRow('Sfondo featured', 'feat_bg') : null,
 							a.featured_enabled !== false ? colorRow('Testo featured', 'feat_text_color') : null,
-							a.featured_enabled !== false ? el(TextControl, {
-								label: 'Badge bg featured (CSS)',
-								value: a.feat_badge_bg || 'rgba(255,255,255,.15)',
-								onChange: function (v) { set({ feat_badge_bg: v }); }
-							}) : null,
+							a.featured_enabled !== false ? colorRow('Sfondo badge featured', 'feat_badge_bg') : null,
 							a.featured_enabled !== false ? colorRow('Colore testo badge featured', 'feat_badge_color') : null,
-							a.featured_enabled !== false ? el(TextControl, {
-								label: 'Bordo badge featured (CSS)',
-								value: a.feat_badge_border || 'rgba(255,255,255,.3)',
-								onChange: function (v) { set({ feat_badge_border: v }); }
-							}) : null,
-							a.featured_enabled !== false ? el(TextControl, {
-								label: 'Colore stats featured (CSS)',
-								value: a.feat_stats_color || 'rgba(255,255,255,.7)',
-								onChange: function (v) { set({ feat_stats_color: v }); }
-							}) : null,
-							a.featured_enabled !== false ? el(TextControl, {
-								label: 'Etichetta destra featured (CSS)',
-								value: a.feat_right_label_color || 'rgba(255,255,255,.55)',
-								onChange: function (v) { set({ feat_right_label_color: v }); }
-							}) : null,
+							a.featured_enabled !== false ? colorRow('Colore bordo badge featured', 'feat_badge_border') : null,
+							a.featured_enabled !== false ? colorRow('Colore stats featured', 'feat_stats_color') : null,
+							a.featured_enabled !== false ? colorRow('Colore etichetta destra featured', 'feat_right_label_color') : null,
 							a.featured_enabled !== false ? colorRow('Valore destra featured', 'feat_right_value_color') : null
 						),
 
@@ -3300,11 +3276,7 @@ class Calypsosub_Blocks {
 						el(PanelBody, { title: 'Stile righe', initialOpen: false },
 							colorRow('Sfondo riga', 'row_bg'),
 							colorRow('Colore testo riga', 'row_text_color'),
-							el(TextControl, {
-								label: 'Colore bordo riga (CSS)',
-								value: a.row_border_color || 'rgba(10,37,64,.08)',
-								onChange: function (v) { set({ row_border_color: v }); }
-							}),
+							colorRow('Colore bordo riga', 'row_border_color'),
 							el(TextControl, {
 								label: 'Box-shadow riga (CSS)',
 								value: a.row_shadow || '0 4px 16px -8px rgba(10,37,64,.15)',
@@ -3318,11 +3290,7 @@ class Calypsosub_Blocks {
 						el(PanelBody, { title: 'Stile badge livello', initialOpen: false },
 							colorRow('Sfondo badge', 'badge_bg'),
 							colorRow('Testo badge', 'badge_color'),
-							el(TextControl, {
-								label: 'Bordo badge (CSS)',
-								value: a.badge_border || 'rgba(10,37,64,.2)',
-								onChange: function (v) { set({ badge_border: v }); }
-							}),
+							colorRow('Colore bordo badge', 'badge_border'),
 							rangeRow('Font size badge (px)', 'badge_size', 12, 8, 20, 1),
 							rangeRow('Font weight badge', 'badge_weight', 600, 300, 900, 100),
 							rangeRow('Border radius badge (px)', 'badge_radius', 999, 0, 999, 4),
@@ -3341,20 +3309,12 @@ class Calypsosub_Blocks {
 
 						el(PanelBody, { title: 'Stile stats/sottotitolo', initialOpen: false },
 							rangeRow('Font size stats (px)', 'stats_size', 14, 10, 24, 1),
-							el(TextControl, {
-								label: 'Colore stats (CSS)',
-								value: a.stats_color || 'rgba(10,37,64,.6)',
-								onChange: function (v) { set({ stats_color: v }); }
-							})
+							colorRow('Colore stats', 'stats_color')
 						),
 
 						el(PanelBody, { title: 'Stile colonna destra', initialOpen: false },
 							rangeRow('Font size etichetta (px)', 'right_label_size', 10, 8, 20, 1),
-							el(TextControl, {
-								label: 'Colore etichetta (CSS)',
-								value: a.right_label_color || 'rgba(10,37,64,.5)',
-								onChange: function (v) { set({ right_label_color: v }); }
-							}),
+							colorRow('Colore etichetta', 'right_label_color'),
 							rangeRow('Font size valore (px)', 'right_value_size', 28, 14, 60, 2),
 							rangeRow('Font weight valore', 'right_value_weight', 800, 300, 900, 100),
 							colorRow('Colore valore', 'right_value_color')
