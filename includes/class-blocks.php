@@ -194,6 +194,10 @@ class Calypsosub_Blocks {
 				'name_size'   => [ 'type' => 'integer', 'default' => 22 ],
 				'name_weight' => [ 'type' => 'integer', 'default' => 800 ],
 				'name_upper'  => [ 'type' => 'boolean', 'default' => true ],
+				/* ── Soprannome ── */
+				'show_soprannome' => [ 'type' => 'boolean', 'default' => true ],
+				'sopr_color'      => [ 'type' => 'string',  'default' => 'rgba(10,37,64,.6)' ],
+				'sopr_size'       => [ 'type' => 'integer', 'default' => 15 ],
 				/* ── Ruolo ── */
 				'ruolo_color'  => [ 'type' => 'string',  'default' => '#b9790a' ],
 				'ruolo_size'   => [ 'type' => 'integer', 'default' => 15 ],
@@ -2800,6 +2804,7 @@ class Calypsosub_Blocks {
 									color: a.name_color || '#1B77A7', lineHeight: 1.1,
 									textTransform: a.name_upper !== false ? 'uppercase' : 'none',
 								} }, name),
+								a.show_soprannome !== false ? el('p', { style: { margin: '4px 0 0', fontSize: (a.sopr_size || 15) + 'px', color: a.sopr_color || 'rgba(10,37,64,.6)', fontStyle: 'italic' } }, 'detto "Oceano"') : null,
 								a.show_ruolo !== false ? el('p', { style: { margin: '4px 0 0', fontSize: (a.ruolo_size || 15) + 'px', fontWeight: a.ruolo_weight || 600, color: a.ruolo_color || '#b9790a' } }, 'Istruttore') : null,
 								a.show_stats !== false ? el('ul', { style: { margin: '10px 0 0', padding: 0, listStyle: 'none', fontSize: (a.stats_size || 12) + 'px', color: a.stats_color || 'rgba(10,37,64,.55)', display: 'flex', flexWrap: 'wrap' } },
 									el('li', {}, (a.stat_anno_label || 'dal') + ' 2008'),
@@ -2857,6 +2862,7 @@ class Calypsosub_Blocks {
 							}) : null,
 							el(ToggleControl, { label: 'Label foto (RITRATTO · NOME)', checked: a.show_photo_label !== false, onChange: function (v) { set({ show_photo_label: v }); } }),
 							a.show_photo_label !== false ? textRow('Prefisso label foto', 'photo_label_prefix') : null,
+							el(ToggleControl, { label: 'Mostra soprannome (detto "...")', checked: a.show_soprannome !== false, onChange: function (v) { set({ show_soprannome: v }); } }),
 							el(ToggleControl, { label: 'Mostra ruolo', checked: a.show_ruolo !== false, onChange: function (v) { set({ show_ruolo: v }); } }),
 							el(ToggleControl, { label: 'Mostra bio', checked: !!a.show_bio, onChange: function (v) { set({ show_bio: v }); } }),
 							a.show_bio ? rangeRow('Righe bio (line-clamp)', 'bio_lines', 2, 1, 6, 1) : null,
@@ -2936,6 +2942,11 @@ class Calypsosub_Blocks {
 							rangeRow('Font size nome (px)', 'name_size', 22, 12, 48, 1),
 							rangeRow('Font weight nome', 'name_weight', 800, 300, 900, 100),
 							el(ToggleControl, { label: 'Nome maiuscolo', checked: a.name_upper !== false, onChange: function (v) { set({ name_upper: v }); } })
+						),
+
+						el(PanelBody, { title: 'Stile soprannome', initialOpen: false },
+							colorRow('Colore soprannome', 'sopr_color'),
+							rangeRow('Font size soprannome (px)', 'sopr_size', 15, 10, 28, 1)
 						),
 
 						el(PanelBody, { title: 'Stile ruolo', initialOpen: false },

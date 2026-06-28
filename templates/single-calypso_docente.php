@@ -13,6 +13,7 @@ $id = get_the_ID();
 
 $nome         = (string) get_post_meta( $id, '_docente_nome',             true );
 $cognome      = (string) get_post_meta( $id, '_docente_cognome',          true );
+$soprannome   = (string) get_post_meta( $id, '_docente_soprannome',       true );
 $ruolo        = (string) get_post_meta( $id, '_docente_ruolo',            true );
 $bio          = (string) get_post_meta( $id, '_docente_bio',              true );
 $anni         = (int)    get_post_meta( $id, '_docente_anni_esperienza',  true );
@@ -106,6 +107,8 @@ function cso_social_icon( string $nome ): string {
 .cso-doc-hero__name .sur{display:block}
 .cso-doc .cso-doc-hero__name .sur{color:var(--c-aqua,#26CBFB)}
 
+.cso-doc-hero__soprannome{margin:12px 0 0;font-style:italic;opacity:.85}
+.cso-doc .cso-doc-hero__soprannome{font-size:24px;color:#fff}
 .cso-doc-hero__role{display:flex;align-items:center;gap:10px;font-weight:600;margin-top:16px;opacity:.92}
 .cso-doc .cso-doc-hero__role{font-size:24px;color:#fff}
 
@@ -187,6 +190,8 @@ function cso_social_icon( string $nome ): string {
 .cso-doc-vcard__head{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.1)}
 .cso-doc-vcard__name{font-weight:700;text-transform:uppercase;line-height:1;margin:0}
 .cso-doc .cso-doc-vcard__name{font-size:28px;color:#fff}
+.cso-doc-vcard__soprannome{font-style:italic;margin:4px 0 0}
+.cso-doc .cso-doc-vcard__soprannome{font-size:15px;color:rgba(255,255,255,.75)}
 .cso-doc-vcard__role{font-weight:600;margin:6px 0 0}
 .cso-doc .cso-doc-vcard__role{font-size:15px;color:var(--c-aqua,#26CBFB)}
 .cso-doc-vcard__exp{margin:4px 0 0}
@@ -318,6 +323,9 @@ function cso_social_icon( string $nome ): string {
 				<?php endif; ?>
 			</h1>
 
+			<?php if ( $soprannome ) : ?>
+			<div class="cso-doc-hero__soprannome">detto &ldquo;<?php echo esc_html( $soprannome ); ?>&rdquo;</div>
+			<?php endif; ?>
 			<?php if ( $ruolo ) : ?>
 			<div class="cso-doc-hero__role"><?php echo esc_html( $ruolo ); ?></div>
 			<?php endif; ?>
@@ -422,6 +430,9 @@ function cso_social_icon( string $nome ): string {
 			<div class="cso-doc-vcard__name">
 				<?php echo esc_html( trim( "$nome $cognome" ) ?: get_the_title() ); ?>
 			</div>
+			<?php if ( $soprannome ) : ?>
+			<div class="cso-doc-vcard__soprannome">detto &ldquo;<?php echo esc_html( $soprannome ); ?>&rdquo;</div>
+			<?php endif; ?>
 			<?php if ( $ruolo ) : ?>
 			<div class="cso-doc-vcard__role"><?php echo esc_html( $ruolo ); ?></div>
 			<?php endif; ?>

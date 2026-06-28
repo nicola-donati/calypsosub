@@ -62,6 +62,7 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 .cso-docente-card__img img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
 .cso-docente-card__body{padding:22px;flex:1;display:flex;flex-direction:column}
 .cso-docente-card__name{font-size:28px;color:var(--c-deep,#1B77A7);margin:0 0 6px;line-height:1}
+.cso-docente-card__soprannome{font-size:16px;color:rgba(11,26,38,.6);font-style:italic;margin:0 0 8px}
 .cso-docente-card__ruolo{font-size:16px;color:var(--c-wave,#1B77A7);font-weight:600;margin:0 0 12px}
 .cso-docente-card__bio{font-size:15px;line-height:1.55;color:rgba(11,26,38,.7);margin:0;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .cso-docente-card__footer{margin-top:14px;padding-top:14px;border-top:1px solid rgba(11,26,38,.08);font-family:var(--f-mono,monospace);font-size:12px;color:rgba(11,26,38,.55);letter-spacing:.06em;text-transform:uppercase;line-height:1.6}
@@ -137,9 +138,10 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 	<!-- Griglia -->
 	<div class="cso-docenti-grid" id="cso-docenti-grid">
 	<?php foreach ( $docenti as $docente ) :
-		$nome    = (string) get_post_meta( $docente->ID, '_docente_nome',            true );
-		$cognome = (string) get_post_meta( $docente->ID, '_docente_cognome',         true );
-		$ruolo   = (string) get_post_meta( $docente->ID, '_docente_ruolo',           true );
+		$nome       = (string) get_post_meta( $docente->ID, '_docente_nome',           true );
+		$cognome    = (string) get_post_meta( $docente->ID, '_docente_cognome',        true );
+		$soprannome = (string) get_post_meta( $docente->ID, '_docente_soprannome',     true );
+		$ruolo      = (string) get_post_meta( $docente->ID, '_docente_ruolo',          true );
 		$bio     = (string) get_post_meta( $docente->ID, '_docente_bio',             true );
 		$anni    = (int)    get_post_meta( $docente->ID, '_docente_anni_esperienza', true );
 		$specs   = (array) ( get_post_meta( $docente->ID, '_docente_specializzazioni', true ) ?: [] );
@@ -166,6 +168,9 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 
 		<div class="cso-docente-card__body">
 			<div class="cso-docente-card__name display"><?php echo esc_html( $full_name ); ?></div>
+			<?php if ( $soprannome ) : ?>
+			<div class="cso-docente-card__soprannome">detto &ldquo;<?php echo esc_html( $soprannome ); ?>&rdquo;</div>
+			<?php endif; ?>
 			<?php if ( $ruolo ) : ?>
 			<div class="cso-docente-card__ruolo"><?php echo esc_html( $ruolo ); ?></div>
 			<?php endif; ?>

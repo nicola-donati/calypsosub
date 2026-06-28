@@ -74,6 +74,11 @@ $name_size   = (int)    ( $a['name_size']   ?? 22 );
 $name_weight = (int)    ( $a['name_weight'] ?? 800 );
 $name_upper  = (bool)   ( $a['name_upper']  ?? true );
 
+/* ── Soprannome ── */
+$show_soprannome = (bool)   ( $a['show_soprannome'] ?? true );
+$sopr_color      = (string) ( $a['sopr_color']      ?? 'rgba(10,37,64,.6)' );
+$sopr_size       = (int)    ( $a['sopr_size']       ?? 15 );
+
 /* ── Ruolo ── */
 $ruolo_color  = (string) ( $a['ruolo_color']  ?? '#b9790a' );
 $ruolo_size   = (int)    ( $a['ruolo_size']   ?? 15 );
@@ -190,6 +195,10 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
   text-transform:<?php echo $name_upper ? 'uppercase' : 'none'; ?>;
   letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
+#<?php echo $uid; ?> .dcar__soprannome{
+  margin:4px 0 0;font-size:<?php echo $sopr_size; ?>px;
+  color:<?php echo $css( $sopr_color ); ?>;font-style:italic;
+}
 #<?php echo $uid; ?> .dcar__ruolo{
   margin:4px 0 0;font-size:<?php echo $ruolo_size; ?>px;font-weight:<?php echo $ruolo_weight; ?>;
   color:<?php echo $css( $ruolo_color ); ?>;
@@ -257,9 +266,10 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
 			<div class="dcar__track" data-carousel="<?php echo $uid; ?>">
 			<?php foreach ( $docenti as $post ) :
 				$id      = $post->ID;
-				$nome    = (string) get_post_meta( $id, '_docente_nome',    true );
-				$cognome = (string) get_post_meta( $id, '_docente_cognome', true );
-				$ruolo   = (string) get_post_meta( $id, '_docente_ruolo',   true );
+				$nome        = (string) get_post_meta( $id, '_docente_nome',        true );
+				$cognome     = (string) get_post_meta( $id, '_docente_cognome',     true );
+				$soprannome  = (string) get_post_meta( $id, '_docente_soprannome',  true );
+				$ruolo       = (string) get_post_meta( $id, '_docente_ruolo',       true );
 				$bio     = (string) get_post_meta( $id, '_docente_bio',     true );
 				$anni    = (int)    get_post_meta( $id, '_docente_anni_esperienza', true );
 				$spec    = get_post_meta( $id, '_docente_specializzazioni', true );
@@ -289,6 +299,9 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
 				</div>
 				<div class="dcar__body">
 					<p class="dcar__name"><?php echo esc_html( $display_name ); ?></p>
+					<?php if ( $show_soprannome && $soprannome ) : ?>
+					<p class="dcar__soprannome">detto &ldquo;<?php echo esc_html( $soprannome ); ?>&rdquo;</p>
+					<?php endif; ?>
 					<?php if ( $show_ruolo && $ruolo ) : ?>
 					<p class="dcar__ruolo"><?php echo esc_html( $ruolo ); ?></p>
 					<?php endif; ?>

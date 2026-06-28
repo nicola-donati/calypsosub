@@ -11,6 +11,7 @@ $docenti = calypso_get_docenti();
 .calypso-docente-card__photo-label{position:absolute;bottom:0;left:0;background:rgba(11,26,38,.72);color:var(--c-sand);font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;padding:6px 12px;backdrop-filter:blur(2px)}
 .calypso-docente-card__name{font-size:26px;font-weight:800;color:var(--c-wave)!important;margin:0 0 4px;line-height:1.1;text-transform:uppercase;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .calypso-docente-card__name:hover{color:var(--c-deep)!important}
+.calypso-docente-card__soprannome{font-size:16px;color:rgba(10,37,64,.6)!important;font-style:italic;margin:0 0 6px}
 .calypso-docente-card__ruolo{font-size:18px;font-weight:600;color:var(--c-gold)!important;text-transform:capitalize;margin:0 0 12px;letter-spacing:.01em}
 .calypso-docente-card__bio{font-size:18px;color:#444!important;line-height:1.6;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .calypso-docente-card__stats{background:#fff;font-size:11px;font-weight:400;letter-spacing:.05em;padding:12px 20px;line-height:1.6;position:relative}
@@ -31,6 +32,7 @@ $docenti = calypso_get_docenti();
 			$post_id         = $post->ID;
 			$nome            = get_post_meta( $post_id, '_docente_nome', true );
 			$cognome         = get_post_meta( $post_id, '_docente_cognome', true );
+			$soprannome      = (string) get_post_meta( $post_id, '_docente_soprannome', true );
 			$ruolo           = get_post_meta( $post_id, '_docente_ruolo', true );
 			$bio             = get_post_meta( $post_id, '_docente_bio', true );
 			$specializzazioni= get_post_meta( $post_id, '_docente_specializzazioni', true );
@@ -64,6 +66,9 @@ $docenti = calypso_get_docenti();
 				</div>
 				<div class="calypso-docente-card__body">
 					<h3 class="calypso-docente-card__name"><?php echo esc_html( $display_upper ); ?></h3>
+					<?php if ( $soprannome ) : ?>
+						<p class="calypso-docente-card__soprannome">detto &ldquo;<?php echo esc_html( $soprannome ); ?>&rdquo;</p>
+					<?php endif; ?>
 					<?php if ( $ruolo ) : ?>
 						<p class="calypso-docente-card__ruolo"><?php echo esc_html( $ruolo ); ?></p>
 					<?php endif; ?>

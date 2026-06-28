@@ -71,6 +71,11 @@ class Calypsosub_CPT_Docenti {
 				<input type="text" name="calypso_cognome" value="<?php echo esc_attr( $d['cognome'] ); ?>">
 			</div>
 			<div class="calypso-meta-field">
+				<label><?php _e( 'Soprannome', 'calypsosub' ); ?></label>
+				<input type="text" name="calypso_soprannome" value="<?php echo esc_attr( $d['soprannome'] ); ?>"
+				       placeholder="<?php esc_attr_e( 'es. Oceano', 'calypsosub' ); ?>">
+			</div>
+			<div class="calypso-meta-field">
 				<label><?php _e( 'Ruolo nel club', 'calypsosub' ); ?></label>
 				<input type="text" name="calypso_ruolo" value="<?php echo esc_attr( $d['ruolo'] ); ?>">
 			</div>
@@ -329,12 +334,13 @@ class Calypsosub_CPT_Docenti {
 		if ( ! current_user_can( 'edit_post', $post_id ) ) return;
 
 		$text_fields = [
-			'_docente_nome'    => 'calypso_nome',
-			'_docente_cognome' => 'calypso_cognome',
-			'_docente_ruolo'   => 'calypso_ruolo',
-			'_docente_email'   => 'calypso_email',
-			'_docente_telefono'=> 'calypso_telefono',
-			'_docente_bio'     => 'calypso_bio',
+			'_docente_nome'        => 'calypso_nome',
+			'_docente_cognome'     => 'calypso_cognome',
+			'_docente_soprannome'  => 'calypso_soprannome',
+			'_docente_ruolo'       => 'calypso_ruolo',
+			'_docente_email'       => 'calypso_email',
+			'_docente_telefono'    => 'calypso_telefono',
+			'_docente_bio'         => 'calypso_bio',
 		];
 
 		// Specializzazioni: repeater → array di stringhe
@@ -383,6 +389,7 @@ class Calypsosub_CPT_Docenti {
 		return [
 			'nome'             => (string) get_post_meta( $post_id, '_docente_nome', true ),
 			'cognome'          => (string) get_post_meta( $post_id, '_docente_cognome', true ),
+			'soprannome'       => (string) get_post_meta( $post_id, '_docente_soprannome', true ),
 			'ruolo'            => (string) get_post_meta( $post_id, '_docente_ruolo', true ),
 			'specializzazioni' => $specializzazioni,
 			'email'            => (string) get_post_meta( $post_id, '_docente_email', true ),
