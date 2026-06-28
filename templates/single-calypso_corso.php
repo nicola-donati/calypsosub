@@ -199,6 +199,30 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 .cso .cso-thumb__desc{color:rgba(11,26,38,.65)}
 .cso-thumb__link{font-size:16px;font-weight:600;color:var(--c-coral,#ff6b4a);display:flex;align-items:center;gap:6px}
 </style>
+<?php
+$_cd = [
+	'hero_bg'        => calypsosub_opt( 'corsi', 'design_hero_bg',        '#0a2540' ),
+	'badge_bg'       => calypsosub_opt( 'corsi', 'design_badge_bg',        '#ff6b4a' ),
+	'eyebrow'        => calypsosub_opt( 'corsi', 'design_eyebrow',         '#1B77A7' ),
+	'sidebar_accent' => calypsosub_opt( 'corsi', 'design_sidebar_accent',  '#26CBFB' ),
+	'related_bg'     => calypsosub_opt( 'corsi', 'design_related_bg',      '#f6f1e6' ),
+];
+?>
+<style>
+.cso-hero{background:<?php echo esc_attr($_cd['hero_bg']); ?>}
+.cso-hero__badge{background:<?php echo esc_attr($_cd['badge_bg']); ?>}
+.cso .cso-eyebrow{color:<?php echo esc_attr($_cd['eyebrow']); ?>}
+.cso .cso-fase__titolo{color:<?php echo esc_attr($_cd['eyebrow']); ?>}
+.cso .cso-fase__ore{color:<?php echo esc_attr($_cd['eyebrow']); ?>}
+.cso-sintesi{background:<?php echo esc_attr($_cd['hero_bg']); ?>}
+.cso-sintesi .cso-sintesi__cert{color:<?php echo esc_attr($_cd['sidebar_accent']); ?>}
+.cso-sintesi .cso-stat-row__label{color:<?php echo esc_attr($_cd['sidebar_accent']); ?>}
+.cso-sintesi .cso-sintesi__requisiti-label{color:<?php echo esc_attr($_cd['sidebar_accent']); ?>}
+.cso-sintesi .cso-inizi-label{color:<?php echo esc_attr($_cd['sidebar_accent']); ?>}
+.cso-btn-primary{background:<?php echo esc_attr($_cd['badge_bg']); ?>}
+.cso-thumb__link{color:<?php echo esc_attr($_cd['badge_bg']); ?>}
+.cso-related{background:<?php echo esc_attr($_cd['related_bg']); ?>}
+</style>
 
 <div class="cso">
 

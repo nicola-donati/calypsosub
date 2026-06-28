@@ -115,6 +115,27 @@ global $calypsosub_booking_manager;
 .cso-link:hover{text-decoration:underline}
 #cso-booking-msg{display:none;margin-bottom:16px}
 </style>
+<?php
+$_ud = [
+	'accent'          => calypsosub_opt( 'uscite', 'design_accent',          '#ff6b4a' ),
+	'deep'            => calypsosub_opt( 'uscite', 'design_deep',             '#0a2540' ),
+	'section_heading' => calypsosub_opt( 'uscite', 'design_section_heading',  '#0a2540' ),
+	'section_border'  => calypsosub_opt( 'uscite', 'design_section_border',   'rgba(11,26,38,.12)' ),
+	'body_bg'         => calypsosub_opt( 'uscite', 'design_body_bg',          '#ffffff' ),
+];
+?>
+<style>
+.cso{background:<?php echo esc_attr($_ud['body_bg']); ?>}
+.cso-badge{background:<?php echo esc_attr($_ud['accent']); ?>}
+.cso-infobar{background:<?php echo esc_attr($_ud['deep']); ?>}
+.cso-card__head{background:<?php echo esc_attr($_ud['deep']); ?>}
+.cso-spots__num{color:<?php echo esc_attr($_ud['accent']); ?>}
+.cso-dates-list__dot{background:<?php echo esc_attr($_ud['accent']); ?>}
+.cso-dates-list__cta{background:<?php echo esc_attr($_ud['accent']); ?>}
+.cso-btn{background:<?php echo esc_attr($_ud['accent']); ?>}
+.cso-btn--secondary{background:<?php echo esc_attr($_ud['deep']); ?>}
+.cso-section__title{color:<?php echo esc_attr($_ud['section_heading']); ?>;border-bottom-color:<?php echo esc_attr($_ud['section_border']); ?>}
+</style>
 
 <div class="cso">
 

@@ -12,29 +12,73 @@ class Calypsosub_Settings_Pages {
 				'cpt'   => 'calypso_docente',
 				'label' => 'Docenti',
 				'groups' => [
-					'Hero' => [
-						'hero_badge'       => [ 'label' => 'Badge nel hero (testo, es. "Istruttore")', 'default' => 'Istruttore' ],
+					'Hero — Testi' => [
+						'hero_badge'       => [ 'label' => 'Badge ruolo (testo, es. "Istruttore")', 'default' => 'Istruttore' ],
 					],
-					'Sezione Bio' => [
-						'bio_eyebrow'      => [ 'label' => 'Eyebrow',                          'default' => 'Bio' ],
-						'bio_heading'      => [ 'label' => 'Titolo  (usa {nome} come segnaposto)', 'default' => 'Chi è {nome}.' ],
+					'Hero — Design' => [
+						'design_hero_bg'           => [ 'label' => 'Sfondo hero',                    'default' => '#1B77A7',             'type' => 'color' ],
+						'design_hero_badge_bg'     => [ 'label' => 'Sfondo badge ruolo',             'default' => '#ff6b4a',             'type' => 'color' ],
+						'design_hero_badge_color'  => [ 'label' => 'Testo badge ruolo',              'default' => '#ffffff',             'type' => 'color' ],
+						'design_hero_sopr_bg'      => [ 'label' => 'Sfondo badge soprannome (CSS)',  'default' => 'rgba(255,255,255,.15)' ],
+						'design_hero_sopr_color'   => [ 'label' => 'Testo badge soprannome',         'default' => '#ffffff',             'type' => 'color' ],
+						'design_hero_name_size'    => [ 'label' => 'Font size nome (px)',            'default' => '96',                  'type' => 'number' ],
+						'design_hero_name_color'   => [ 'label' => 'Colore nome',                   'default' => '#ffffff',             'type' => 'color' ],
+						'design_hero_sur_color'    => [ 'label' => 'Colore cognome',                 'default' => '#26CBFB',             'type' => 'color' ],
+						'design_hero_role_color'   => [ 'label' => 'Colore ruolo',                  'default' => '#ffffff',             'type' => 'color' ],
+						'design_hero_exp_color'    => [ 'label' => 'Colore valore anni esp.',        'default' => '#26CBFB',             'type' => 'color' ],
 					],
-					'Sezione Specializzazioni' => [
+					'Sezione Bio — Testi' => [
+						'bio_eyebrow'      => [ 'label' => 'Eyebrow',                             'default' => 'Bio' ],
+						'bio_heading'      => [ 'label' => 'Titolo (usa {nome} come segnaposto)',  'default' => 'Chi è {nome}.' ],
+					],
+					'Sezione Specializzazioni — Testi' => [
 						'specs_eyebrow'    => [ 'label' => 'Eyebrow',  'default' => 'Specializzazioni' ],
 						'specs_heading'    => [ 'label' => 'Titolo',   'default' => 'Cosa porta sotto.' ],
 					],
-					'Sezione Certificazioni' => [
+					'Sezione Certificazioni — Testi' => [
 						'certs_eyebrow'    => [ 'label' => 'Eyebrow',  'default' => 'Certificazioni' ],
 						'certs_heading'    => [ 'label' => 'Titolo',   'default' => 'Brevetti.' ],
 					],
-					'Galleria foto' => [
-						'gallery_eyebrow'  => [ 'label' => 'Eyebrow',  'default' => 'Galleria foto' ],
-						'gallery_heading'  => [ 'label' => 'Titolo  (usa {nome} come segnaposto)', 'default' => 'Dal logbook di {nome}.' ],
+					'Sezione dettaglio — Design' => [
+						'design_detail_bg'       => [ 'label' => 'Sfondo sezione',        'default' => '#f6f1e6',            'type' => 'color' ],
+						'design_detail_eyebrow'  => [ 'label' => 'Colore eyebrow',        'default' => '#1B77A7',            'type' => 'color' ],
+						'design_detail_heading'  => [ 'label' => 'Colore heading',        'default' => '#1B77A7',            'type' => 'color' ],
+						'design_detail_prose'    => [ 'label' => 'Colore testo bio (CSS)','default' => 'rgba(11,26,38,.8)' ],
+						'design_spec_bg'         => [ 'label' => 'Sfondo chip spec.',     'default' => '#ffffff',            'type' => 'color' ],
+						'design_spec_color'      => [ 'label' => 'Testo chip spec.',      'default' => '#1B77A7',            'type' => 'color' ],
+						'design_spec_dot'        => [ 'label' => 'Puntino chip spec.',    'default' => '#26CBFB',            'type' => 'color' ],
+						'design_brev_bg'         => [ 'label' => 'Sfondo chip brevetti',  'default' => '#1B77A7',            'type' => 'color' ],
+						'design_brev_color'      => [ 'label' => 'Testo chip brevetti',   'default' => '#ffffff',            'type' => 'color' ],
 					],
-					'VCard — etichette contatti' => [
-						'vcard_label_email'   => [ 'label' => 'Etichetta Email',    'default' => 'Email' ],
-						'vcard_label_phone'   => [ 'label' => 'Etichetta Telefono', 'default' => 'Telefono' ],
+					'VCard — Testi' => [
+						'vcard_label_email'   => [ 'label' => 'Etichetta Email',      'default' => 'Email' ],
+						'vcard_label_phone'   => [ 'label' => 'Etichetta Telefono',   'default' => 'Telefono' ],
 						'vcard_label_wp'      => [ 'label' => 'Etichetta Account WP', 'default' => 'WordPress' ],
+					],
+					'VCard — Design' => [
+						'design_vcard_bg'         => [ 'label' => 'Sfondo vcard',         'default' => '#1B77A7',  'type' => 'color' ],
+						'design_vcard_name_size'  => [ 'label' => 'Font size nome (px)',   'default' => '28',       'type' => 'number' ],
+						'design_vcard_name_color' => [ 'label' => 'Colore nome',           'default' => '#ffffff',  'type' => 'color' ],
+						'design_vcard_role_color' => [ 'label' => 'Colore ruolo',          'default' => '#26CBFB',  'type' => 'color' ],
+					],
+					'Galleria foto — Testi' => [
+						'gallery_eyebrow'  => [ 'label' => 'Eyebrow',                                'default' => 'Galleria foto' ],
+						'gallery_heading'  => [ 'label' => 'Titolo (usa {nome} come segnaposto)',     'default' => 'Dal logbook di {nome}.' ],
+					],
+					'Galleria foto — Design' => [
+						'design_gallery_bg'      => [ 'label' => 'Sfondo sezione',   'default' => '#cfe9ee',  'type' => 'color' ],
+						'design_gallery_eyebrow' => [ 'label' => 'Colore eyebrow',   'default' => '#1B77A7',  'type' => 'color' ],
+						'design_gallery_heading' => [ 'label' => 'Colore heading',   'default' => '#1B77A7',  'type' => 'color' ],
+					],
+					'Archivio — Design' => [
+						'overlay_color'          => [ 'label' => 'Colore overlay hero archivio',         'default' => '#061826',  'type' => 'color' ],
+						'overlay_opacity'        => [ 'label' => 'Opacità overlay hero archivio (0-100)', 'default' => '88',       'type' => 'number' ],
+						'design_arch_body_bg'    => [ 'label' => 'Sfondo corpo archivio',                'default' => '#f6f1e6',  'type' => 'color' ],
+						'design_arch_card_bg'    => [ 'label' => 'Sfondo card docente',                  'default' => '#ffffff',  'type' => 'color' ],
+						'design_arch_card_radius'=> [ 'label' => 'Border radius card (px)',              'default' => '12',       'type' => 'number' ],
+						'design_arch_name_color' => [ 'label' => 'Colore nome in card',                  'default' => '#1B77A7',  'type' => 'color' ],
+						'design_arch_role_color' => [ 'label' => 'Colore ruolo in card',                 'default' => '#1B77A7',  'type' => 'color' ],
+						'design_arch_bio_color'  => [ 'label' => 'Colore bio in card (CSS)',             'default' => 'rgba(11,26,38,.7)' ],
 					],
 				],
 			],
@@ -43,6 +87,13 @@ class Calypsosub_Settings_Pages {
 				'cpt'   => 'calypso_uscita',
 				'label' => 'Uscite',
 				'groups' => [
+					'Design — Colori principali' => [
+						'design_accent'          => [ 'label' => 'Colore accento (badge, bottoni, dot, posti)',   'default' => '#ff6b4a',  'type' => 'color' ],
+						'design_deep'            => [ 'label' => 'Colore primario scuro (infobar, card head)',    'default' => '#0a2540',  'type' => 'color' ],
+						'design_section_heading' => [ 'label' => 'Colore titolo sezioni',                        'default' => '#0a2540',  'type' => 'color' ],
+						'design_section_border'  => [ 'label' => 'Colore bordo titolo sezioni (CSS)',            'default' => 'rgba(11,26,38,.12)' ],
+						'design_body_bg'         => [ 'label' => 'Sfondo corpo pagina',                          'default' => '#ffffff',  'type' => 'color' ],
+					],
 					'Archivio — Hero' => [
 						'archive_eyebrow'       => [ 'label' => 'Eyebrow  (usa {anno} come segnaposto)', 'default' => 'Calendario · stagione {anno}' ],
 						'archive_h1'            => [ 'label' => 'Titolo H1 (HTML consentito: &lt;em&gt; &lt;br&gt;)', 'default' => 'Ogni sabato,<br>da aprile<br>a <em>ottobre.</em>', 'type' => 'textarea' ],
@@ -98,6 +149,13 @@ class Calypsosub_Settings_Pages {
 				'cpt'   => 'calypso_corso',
 				'label' => 'Corsi',
 				'groups' => [
+					'Design — Colori principali' => [
+						'design_hero_bg'         => [ 'label' => 'Sfondo hero e sidebar',           'default' => '#0a2540',  'type' => 'color' ],
+						'design_badge_bg'        => [ 'label' => 'Sfondo badge e bottone principale','default' => '#ff6b4a',  'type' => 'color' ],
+						'design_eyebrow'         => [ 'label' => 'Colore eyebrow e titoli sezione', 'default' => '#1B77A7',  'type' => 'color' ],
+						'design_sidebar_accent'  => [ 'label' => 'Colore accento sidebar (labels)', 'default' => '#26CBFB',  'type' => 'color' ],
+						'design_related_bg'      => [ 'label' => 'Sfondo sezione corsi correlati',  'default' => '#f6f1e6',  'type' => 'color' ],
+					],
 					'Hero' => [
 						'breadcrumb_archive' => [ 'label' => 'Voce breadcrumb archivio', 'default' => 'Corsi' ],
 					],
@@ -138,6 +196,11 @@ class Calypsosub_Settings_Pages {
 				'cpt'   => 'calypso_evento',
 				'label' => 'Eventi',
 				'groups' => [
+					'Design — Colori principali' => [
+						'design_accent'  => [ 'label' => 'Colore accento (badge, card head, bottone, posti)', 'default' => '#1B77A7',  'type' => 'color' ],
+						'design_deep'    => [ 'label' => 'Colore primario scuro (infobar, bottone secondario)', 'default' => '#0a2540',  'type' => 'color' ],
+						'design_body_bg' => [ 'label' => 'Sfondo corpo pagina',                                'default' => '#ffffff',  'type' => 'color' ],
+					],
 					'Hero' => [
 						'badge' => [ 'label' => 'Badge hero', 'default' => 'Evento' ],
 					],
@@ -195,6 +258,8 @@ class Calypsosub_Settings_Pages {
 			.cso-settings-table td{padding:10px 18px}
 			.cso-settings-table input[type=text],.cso-settings-table textarea{width:100%;font-size:13px}
 			.cso-settings-table textarea{min-height:72px}
+			.cso-settings-table input[type=color]{width:44px;height:34px;padding:2px 3px;border:1px solid #ddd;border-radius:4px;cursor:pointer;vertical-align:middle}
+			.cso-settings-table input[type=number]{width:110px;font-size:13px}
 			.cso-settings-submit{margin-top:8px}
 		' );
 	}
@@ -233,6 +298,17 @@ class Calypsosub_Settings_Pages {
 								<textarea id="cso-<?php echo esc_attr( $key ); ?>"
 								          name="cso_opts[<?php echo esc_attr( $key ); ?>]"
 								          placeholder="<?php echo esc_attr( $field['default'] ); ?>"><?php echo esc_textarea( $val ); ?></textarea>
+								<?php elseif ( $type === 'color' ) : ?>
+								<input type="color"
+								       id="cso-<?php echo esc_attr( $key ); ?>"
+								       name="cso_opts[<?php echo esc_attr( $key ); ?>]"
+								       value="<?php echo esc_attr( $val ?: $field['default'] ); ?>">
+								<?php elseif ( $type === 'number' ) : ?>
+								<input type="number"
+								       id="cso-<?php echo esc_attr( $key ); ?>"
+								       name="cso_opts[<?php echo esc_attr( $key ); ?>]"
+								       value="<?php echo esc_attr( $val ); ?>"
+								       placeholder="<?php echo esc_attr( $field['default'] ); ?>">
 								<?php else : ?>
 								<input type="text"
 								       id="cso-<?php echo esc_attr( $key ); ?>"

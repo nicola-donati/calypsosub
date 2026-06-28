@@ -90,6 +90,23 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 .cso-login-cta{text-align:center;padding:24px}
 .cso-login-cta p{margin:0 0 16px;font-size:14px;color:#666}
 </style>
+<?php
+$_evd = [
+	'accent'  => calypsosub_opt( 'eventi', 'design_accent',  '#1B77A7' ),
+	'deep'    => calypsosub_opt( 'eventi', 'design_deep',    '#0a2540' ),
+	'body_bg' => calypsosub_opt( 'eventi', 'design_body_bg', '#ffffff' ),
+];
+?>
+<style>
+.cso{background:<?php echo esc_attr($_evd['body_bg']); ?>}
+.cso-badge{background:<?php echo esc_attr($_evd['accent']); ?>}
+.cso-infobar{background:<?php echo esc_attr($_evd['deep']); ?>}
+.cso-card__head{background:<?php echo esc_attr($_evd['accent']); ?>}
+.cso-spots__num{color:<?php echo esc_attr($_evd['accent']); ?>}
+.cso-dates-list__dot{background:<?php echo esc_attr($_evd['accent']); ?>}
+.cso-btn{background:<?php echo esc_attr($_evd['accent']); ?>}
+.cso-btn--secondary{background:<?php echo esc_attr($_evd['deep']); ?>}
+</style>
 
 <div class="cso">
 

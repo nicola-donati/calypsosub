@@ -47,6 +47,36 @@ $wp_user_name = $user_id ? get_the_author_meta( 'display_name', $user_id ) : '';
 /* pattern galleria: tall | wide | normal | normal | wide | normal | normal … */
 $gp = [ 'tall', 'wide', '', '', 'wide', '', '' ];
 
+/* Design settings */
+$d = [
+	'hero_bg'          => calypsosub_opt( 'docenti', 'design_hero_bg',           '#1B77A7' ),
+	'hero_badge_bg'    => calypsosub_opt( 'docenti', 'design_hero_badge_bg',      '#ff6b4a' ),
+	'hero_badge_color' => calypsosub_opt( 'docenti', 'design_hero_badge_color',   '#ffffff' ),
+	'hero_sopr_bg'     => calypsosub_opt( 'docenti', 'design_hero_sopr_bg',       'rgba(255,255,255,.15)' ),
+	'hero_sopr_color'  => calypsosub_opt( 'docenti', 'design_hero_sopr_color',    '#ffffff' ),
+	'hero_name_size'   => max( 32, (int) calypsosub_opt( 'docenti', 'design_hero_name_size',  '96' ) ),
+	'hero_name_color'  => calypsosub_opt( 'docenti', 'design_hero_name_color',    '#ffffff' ),
+	'hero_sur_color'   => calypsosub_opt( 'docenti', 'design_hero_sur_color',     '#26CBFB' ),
+	'hero_role_color'  => calypsosub_opt( 'docenti', 'design_hero_role_color',    '#ffffff' ),
+	'hero_exp_color'   => calypsosub_opt( 'docenti', 'design_hero_exp_color',     '#26CBFB' ),
+	'detail_bg'        => calypsosub_opt( 'docenti', 'design_detail_bg',          '#f6f1e6' ),
+	'detail_eyebrow'   => calypsosub_opt( 'docenti', 'design_detail_eyebrow',     '#1B77A7' ),
+	'detail_heading'   => calypsosub_opt( 'docenti', 'design_detail_heading',     '#1B77A7' ),
+	'detail_prose'     => calypsosub_opt( 'docenti', 'design_detail_prose',       'rgba(11,26,38,.8)' ),
+	'spec_bg'          => calypsosub_opt( 'docenti', 'design_spec_bg',            '#ffffff' ),
+	'spec_color'       => calypsosub_opt( 'docenti', 'design_spec_color',         '#1B77A7' ),
+	'spec_dot'         => calypsosub_opt( 'docenti', 'design_spec_dot',           '#26CBFB' ),
+	'brev_bg'          => calypsosub_opt( 'docenti', 'design_brev_bg',            '#1B77A7' ),
+	'brev_color'       => calypsosub_opt( 'docenti', 'design_brev_color',         '#ffffff' ),
+	'vcard_bg'         => calypsosub_opt( 'docenti', 'design_vcard_bg',           '#1B77A7' ),
+	'vcard_name_size'  => max( 16, (int) calypsosub_opt( 'docenti', 'design_vcard_name_size', '28' ) ),
+	'vcard_name_color' => calypsosub_opt( 'docenti', 'design_vcard_name_color',   '#ffffff' ),
+	'vcard_role_color' => calypsosub_opt( 'docenti', 'design_vcard_role_color',   '#26CBFB' ),
+	'gallery_bg'       => calypsosub_opt( 'docenti', 'design_gallery_bg',         '#cfe9ee' ),
+	'gallery_eyebrow'  => calypsosub_opt( 'docenti', 'design_gallery_eyebrow',    '#1B77A7' ),
+	'gallery_heading'  => calypsosub_opt( 'docenti', 'design_gallery_heading',    '#1B77A7' ),
+];
+
 /* mappa slug social → icona svg inline */
 function cso_social_icon( string $nome ): string {
 	$s = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">';
@@ -94,21 +124,20 @@ function cso_social_icon( string $nome ): string {
 
 .cso-doc-hero__grid{display:grid;grid-template-columns:1.25fr .95fr;gap:64px;align-items:end}
 
+.cso-doc-hero__badges{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px}
 .cso-doc-hero__badge{
 	display:inline-flex;align-items:center;gap:8px;
 	padding:6px 14px;background:var(--c-coral-deep,#ff6b4a);
 	border-radius:999px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
-	margin-bottom:24px;
 }
 .cso-doc .cso-doc-hero__badge{font-size:11px;color:#fff}
+.cso-doc-hero__badge--sopr{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);font-style:italic}
 
 .cso-doc-hero__name{margin:0;line-height:.94;letter-spacing:-.02em;overflow-wrap:break-word}
 .cso-doc .cso-doc-hero__name{font-size:96px;color:#fff}
 .cso-doc-hero__name .sur{display:block}
 .cso-doc .cso-doc-hero__name .sur{color:var(--c-aqua,#26CBFB)}
 
-.cso-doc-hero__soprannome{margin:12px 0 0;font-style:italic;opacity:.85}
-.cso-doc .cso-doc-hero__soprannome{font-size:24px;color:#fff}
 .cso-doc-hero__role{display:flex;align-items:center;gap:10px;font-weight:600;margin-top:16px;opacity:.92}
 .cso-doc .cso-doc-hero__role{font-size:24px;color:#fff}
 
@@ -295,6 +324,32 @@ function cso_social_icon( string $nome ): string {
 	.cso-doc-gallery-item--wide{grid-column:span 1}
 }
 </style>
+<style>
+.cso-doc-hero{background:<?php echo esc_attr($d['hero_bg']); ?>}
+.cso-doc-hero__badge{background:<?php echo esc_attr($d['hero_badge_bg']); ?>}
+.cso-doc .cso-doc-hero__badge{color:<?php echo esc_attr($d['hero_badge_color']); ?>}
+.cso-doc-hero__badge--sopr{background:<?php echo esc_attr($d['hero_sopr_bg']); ?>}
+.cso-doc .cso-doc-hero__badge--sopr{color:<?php echo esc_attr($d['hero_sopr_color']); ?>}
+.cso-doc .cso-doc-hero__name{font-size:<?php echo $d['hero_name_size']; ?>px;color:<?php echo esc_attr($d['hero_name_color']); ?>}
+.cso-doc .cso-doc-hero__name .sur{color:<?php echo esc_attr($d['hero_sur_color']); ?>}
+.cso-doc .cso-doc-hero__role{color:<?php echo esc_attr($d['hero_role_color']); ?>}
+.cso-doc .cso-doc-hero__exp-val{color:<?php echo esc_attr($d['hero_exp_color']); ?>}
+.cso-doc-detail{background:<?php echo esc_attr($d['detail_bg']); ?>}
+.cso-doc .cso-doc-block__eyebrow{color:<?php echo esc_attr($d['detail_eyebrow']); ?>}
+.cso-doc .cso-doc-block__heading{color:<?php echo esc_attr($d['detail_heading']); ?>}
+.cso-doc-prose p{color:<?php echo esc_attr($d['detail_prose']); ?>}
+.cso-doc-spec{background:<?php echo esc_attr($d['spec_bg']); ?>}
+.cso-doc .cso-doc-spec{color:<?php echo esc_attr($d['spec_color']); ?>}
+.cso-doc-spec__dot{background:<?php echo esc_attr($d['spec_dot']); ?>}
+.cso-doc-brevetto{background:<?php echo esc_attr($d['brev_bg']); ?>}
+.cso-doc .cso-doc-brevetto{color:<?php echo esc_attr($d['brev_color']); ?>}
+.cso-doc-vcard{background:<?php echo esc_attr($d['vcard_bg']); ?>}
+.cso-doc .cso-doc-vcard__name{font-size:<?php echo $d['vcard_name_size']; ?>px;color:<?php echo esc_attr($d['vcard_name_color']); ?>}
+.cso-doc .cso-doc-vcard__role{color:<?php echo esc_attr($d['vcard_role_color']); ?>}
+.cso-doc-gallery{background:<?php echo esc_attr($d['gallery_bg']); ?>}
+.cso-doc .cso-doc-gallery__eyebrow{color:<?php echo esc_attr($d['gallery_eyebrow']); ?>}
+.cso-doc .cso-doc-gallery__heading{color:<?php echo esc_attr($d['gallery_heading']); ?>}
+</style>
 
 <div class="cso-doc">
 
@@ -314,7 +369,12 @@ function cso_social_icon( string $nome ): string {
 
 		<!-- Sinistra: dati -->
 		<div>
-			<div class="cso-doc-hero__badge">● <?php echo esc_html( $ruolo ?: calypsosub_opt( 'docenti', 'hero_badge', __( 'Istruttore', 'calypsosub' ) ) ); ?></div>
+			<div class="cso-doc-hero__badges">
+				<div class="cso-doc-hero__badge">● <?php echo esc_html( $ruolo ?: calypsosub_opt( 'docenti', 'hero_badge', __( 'Istruttore', 'calypsosub' ) ) ); ?></div>
+				<?php if ( $soprannome ) : ?>
+				<div class="cso-doc-hero__badge cso-doc-hero__badge--sopr">detto &ldquo;<?php echo esc_html( $soprannome ); ?>&rdquo;</div>
+				<?php endif; ?>
+			</div>
 
 			<h1 class="cso-doc-hero__name display">
 				<?php echo esc_html( $nome ?: get_the_title() ); ?>
@@ -323,9 +383,6 @@ function cso_social_icon( string $nome ): string {
 				<?php endif; ?>
 			</h1>
 
-			<?php if ( $soprannome ) : ?>
-			<div class="cso-doc-hero__soprannome">detto &ldquo;<?php echo esc_html( $soprannome ); ?>&rdquo;</div>
-			<?php endif; ?>
 			<?php if ( $ruolo ) : ?>
 			<div class="cso-doc-hero__role"><?php echo esc_html( $ruolo ); ?></div>
 			<?php endif; ?>
