@@ -29,7 +29,7 @@ $_ad = [
 	'card_radius' => max( 0, (int) calypsosub_opt( 'docenti', 'design_arch_card_radius', '12' ) ),
 	'name_color'  => calypsosub_opt( 'docenti', 'design_arch_name_color', '#1B77A7' ),
 	'role_color'  => calypsosub_opt( 'docenti', 'design_arch_role_color', '#1B77A7' ),
-	'bio_color'   => calypsosub_opt( 'docenti', 'design_arch_bio_color',  'rgba(11,26,38,.7)' ),
+	'bio_color'   => calypsosub_opt( 'docenti', 'design_arch_bio_color',  '#283d4d' ),
 ];
 list( $_r, $_g, $_b ) = array_map( 'hexdec', str_split( ltrim( $_ov_c, '#' ), 2 ) );
 $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d,%d,%.3f) 40%%,rgba(%d,%d,%d,%.3f) 100%%)', $_r, $_g, $_b, round( $_ov_o / 100 * 0.682, 3 ), $_r, $_g, $_b, round( $_ov_o / 100 * 0.170, 3 ), $_r, $_g, $_b, round( $_ov_o / 100, 3 ) );

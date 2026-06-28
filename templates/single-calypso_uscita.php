@@ -120,7 +120,7 @@ $_ud = [
 	'accent'          => calypsosub_opt( 'uscite', 'design_accent',          '#ff6b4a' ),
 	'deep'            => calypsosub_opt( 'uscite', 'design_deep',             '#0a2540' ),
 	'section_heading' => calypsosub_opt( 'uscite', 'design_section_heading',  '#0a2540' ),
-	'section_border'  => calypsosub_opt( 'uscite', 'design_section_border',   'rgba(11,26,38,.12)' ),
+	'section_border'  => calypsosub_opt( 'uscite', 'design_section_border',   '#dce1e6' ),
 	'body_bg'         => calypsosub_opt( 'uscite', 'design_body_bg',          '#ffffff' ),
 ];
 ?>
