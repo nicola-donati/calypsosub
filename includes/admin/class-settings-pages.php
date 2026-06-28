@@ -399,13 +399,28 @@ class Calypsosub_Settings_Pages {
 		if ( ! current_user_can( 'calypsosub_manage' ) ) wp_die( 'Permesso negato.' );
 		check_admin_referer( 'calypsosub_settings_' . $section, '_cso_nonce' );
 
-		$cfg      = self::config()[ $section ];
-		$all_keys = array_merge( ...array_values( array_map( 'array_keys', $cfg['groups'] ) ) );
-		$raw      = (array) ( $_POST['cso_opts'] ?? [] );
-		$clean    = [];
-		foreach ( $all_keys as $key ) {
-			$val = $raw[ $key ] ?? '';
-			$clean[ $key ] = sanitize_textarea_field( wp_unslash( $val ) );
+		$cfg        = self::config()[ $section ];
+		$all_fields = array_merge( ...array_values( $cfg['groups'] ) );
+		$raw        = (array) ( $_POST['cso_opts'] ?? [] );
+		$clean      = [];
+		foreach ( $all_fields as $key => $field ) {
+			$val  = wp_unslash( $raw[ $key ] ?? '' );
+			$type = $field['type'] ?? 'text';
+			if ( $type === 'color' ) {
+				$clean[ $key ] = sanitize_hex_color( $val ) ?? '';
+			} elseif ( $type === 'number' ) {
+				$clean[ $key ] = (string) (int) $val;
+			} elseif ( $type === 'textarea' ) {
+				$clean[ $key ] = sanitize_textarea_field( $val );
+			} else {
+				$s = sanitize_text_field( $val );
+				// free-form CSS color fields (defaults start with # or rgba/hsla): strict allowlist
+				if ( $s !== '' && preg_match( '/^(#|rgba?|hsla?)/i', $field['default'] ) ) {
+					$clean[ $key ] = preg_match( '/^(#[0-9a-fA-F]{3,8}|rgba?\([\d.,\s%]+\)|hsla?\([\d.,\s%]+\))$/i', $s ) ? $s : '';
+				} else {
+					$clean[ $key ] = $s;
+				}
+			}
 		}
 
 		$campi_nome  = (array) ( $_POST['cso_campi_pren_nome'] ?? [] );
