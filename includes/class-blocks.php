@@ -2979,6 +2979,9 @@ class Calypsosub_Blocks {
 		   calypso/corsi-strip — lista corsi a righe
 		   ════════════════════════════════════════════ */
 		if (info.name === 'calypso/corsi-strip') {
+			var useStateCS  = element.useState;
+			var useEffectCS = element.useEffect;
+
 			blocks.registerBlockType(info.name, {
 				title: info.title,
 				category: 'calypso',
@@ -2987,6 +2990,62 @@ class Calypsosub_Blocks {
 				edit: function (props) {
 					var a   = props.attributes;
 					var set = props.setAttributes;
+
+					var csAllState    = useStateCS([]);
+					var csAll         = csAllState[0]; var setCsAll = csAllState[1];
+					var csFilterState = useStateCS('');
+					var csFilter      = csFilterState[0]; var setCsFilter = csFilterState[1];
+
+					useEffectCS(function () {
+						if (a.source_mode !== 'manual') return;
+						if (csAll.length) return;
+						window.wp.apiFetch({ path: '/wp/v2/calypso_corso?per_page=100&_fields=id,title&orderby=title&order=asc' })
+							.then(function (posts) {
+								setCsAll(posts.map(function (p) { return { id: p.id, title: p.title.rendered }; }));
+							}).catch(function () {});
+					}, [a.source_mode]);
+
+					var csManualPicker = el('div', {},
+						csAll.length === 0
+							? el('p', { style: { fontSize: '12px', color: '#888', margin: '6px 0' } }, 'Caricamento corsi...')
+							: el('div', {},
+								el('input', {
+									type: 'search',
+									placeholder: 'Filtra corsi…',
+									value: csFilter,
+									onInput: function (e) { setCsFilter(e.target.value); },
+									style: { width: '100%', padding: '6px 10px', marginBottom: '6px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '12px', boxSizing: 'border-box' }
+								}),
+								el('div', { style: { maxHeight: '220px', overflowY: 'auto', border: '1px solid #e0e0e0', borderRadius: '4px' } },
+									csAll
+										.filter(function (c) { return !csFilter || c.title.toLowerCase().indexOf(csFilter.toLowerCase()) !== -1; })
+										.map(function (c) {
+											var sel = (a.manual_ids || []).indexOf(c.id) !== -1;
+											var pos = sel ? ((a.manual_ids || []).indexOf(c.id) + 1) : null;
+											return el('div', {
+												key: c.id,
+												onClick: function () {
+													var cur = a.manual_ids || [];
+													set({ manual_ids: sel ? cur.filter(function (id) { return id !== c.id; }) : cur.concat([c.id]) });
+												},
+												style: {
+													padding: '7px 10px', cursor: 'pointer', fontSize: '12px',
+													background: sel ? '#0a2540' : '#fff',
+													color: sel ? '#fff' : '#1e1e1e',
+													borderBottom: '1px solid #f0f0f0',
+													display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+												}
+											},
+												el('span', {}, c.title),
+												sel ? el('span', { style: { fontSize: '10px', opacity: .65 } }, '✓ ' + pos) : null
+											);
+										})
+								),
+								(a.manual_ids || []).length
+									? el('p', { style: { fontSize: '11px', color: '#888', margin: '5px 0 0' } }, (a.manual_ids.length) + ' selezionati · clicca per rimuovere')
+									: null
+							)
+					);
 
 					function colorRow(label, key) {
 						return el('div', { style: { marginBottom: '12px' } },
@@ -3105,14 +3164,7 @@ class Calypsosub_Blocks {
 								],
 								onChange: function (v) { set({ source_mode: v }); }
 							}),
-							(a.source_mode === 'manual') ? el(TextControl, {
-								label: 'ID corsi separati da virgola',
-								value: (a.manual_ids || []).join(','),
-								onChange: function (v) {
-									var ids = v.split(',').map(function(x){ return parseInt(x.trim(),10); }).filter(function(n){ return !isNaN(n); });
-									set({ manual_ids: ids });
-								}
-							}) : null,
+							(a.source_mode === 'manual') ? csManualPicker : null,
 							(a.source_mode === 'livello') ? el(TextControl, {
 								label: 'Slug livelli separati da virgola',
 								value: (a.livello_slugs || []).join(','),
