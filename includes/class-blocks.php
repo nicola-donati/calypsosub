@@ -49,7 +49,164 @@ class Calypsosub_Blocks {
 			],
 		],
 		'calypso/lista-corsi'     => [ 'file' => 'block-corsi-lista.php',      'title' => 'Lista Corsi' ],
+		'calypso/corsi-strip' => [
+			'file'  => 'block-corsi-strip.php',
+			'title' => 'Corsi Strip',
+			'icon'  => 'excerpt-view',
+			'attributes' => [
+				/* ── Sorgente ── */
+				'source_mode'   => [ 'type' => 'string',  'default' => 'all' ],
+				'manual_ids'    => [ 'type' => 'array',   'default' => [], 'items' => [ 'type' => 'integer' ] ],
+				'livello_slugs' => [ 'type' => 'array',   'default' => [], 'items' => [ 'type' => 'string' ] ],
+				'max_items'     => [ 'type' => 'integer', 'default' => 0 ],
+				'order'         => [ 'type' => 'string',  'default' => 'menu_order' ],
+				/* ── Comportamento ── */
+				'show_link'            => [ 'type' => 'boolean', 'default' => true ],
+				'link_target'          => [ 'type' => 'string',  'default' => '_self' ],
+				'show_badge'           => [ 'type' => 'boolean', 'default' => true ],
+				'show_stats'           => [ 'type' => 'boolean', 'default' => true ],
+				'show_stat_durata'     => [ 'type' => 'boolean', 'default' => true ],
+				'show_stat_pratica'    => [ 'type' => 'boolean', 'default' => true ],
+				'show_stat_profondita' => [ 'type' => 'boolean', 'default' => false ],
+				'show_stat_badge'      => [ 'type' => 'boolean', 'default' => false ],
+				'show_right'           => [ 'type' => 'boolean', 'default' => true ],
+				'right_meta_key'       => [ 'type' => 'string',  'default' => '_corso_stat_durata' ],
+				'right_label'          => [ 'type' => 'string',  'default' => 'DURATA' ],
+				'right_unit'           => [ 'type' => 'string',  'default' => '' ],
+				/* ── Featured ── */
+				'featured_enabled' => [ 'type' => 'boolean', 'default' => true ],
+				'featured_index'   => [ 'type' => 'integer', 'default' => 0 ],
+				/* ── Layout sezione ── */
+				'bg_color'      => [ 'type' => 'string',  'default' => '#f6f1e6' ],
+				'max_width'     => [ 'type' => 'integer', 'default' => 900 ],
+				'padding_y'     => [ 'type' => 'integer', 'default' => 48 ],
+				'padding_x'     => [ 'type' => 'integer', 'default' => 24 ],
+				'gap'           => [ 'type' => 'integer', 'default' => 12 ],
+				'margin_top'    => [ 'type' => 'integer', 'default' => 0 ],
+				'margin_right'  => [ 'type' => 'integer', 'default' => 0 ],
+				'margin_bottom' => [ 'type' => 'integer', 'default' => 0 ],
+				'margin_left'   => [ 'type' => 'integer', 'default' => 0 ],
+				/* ── Righe normali ── */
+				'row_bg'           => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'row_text_color'   => [ 'type' => 'string',  'default' => '#0a2540' ],
+				'row_border_color' => [ 'type' => 'string',  'default' => 'rgba(10,37,64,.08)' ],
+				'row_radius'       => [ 'type' => 'integer', 'default' => 16 ],
+				'row_padding_y'    => [ 'type' => 'integer', 'default' => 20 ],
+				'row_padding_x'    => [ 'type' => 'integer', 'default' => 28 ],
+				'row_shadow'       => [ 'type' => 'string',  'default' => '0 4px 16px -8px rgba(10,37,64,.15)' ],
+				/* ── Riga featured ── */
+				'feat_bg'                => [ 'type' => 'string',  'default' => '#0a2540' ],
+				'feat_text_color'        => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'feat_badge_bg'          => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.15)' ],
+				'feat_badge_color'       => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'feat_badge_border'      => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.3)' ],
+				'feat_stats_color'       => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.7)' ],
+				'feat_right_label_color' => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.55)' ],
+				'feat_right_value_color' => [ 'type' => 'string',  'default' => '#ffffff' ],
+				/* ── Badge livello ── */
+				'badge_bg'        => [ 'type' => 'string',  'default' => 'transparent' ],
+				'badge_color'     => [ 'type' => 'string',  'default' => '#0a2540' ],
+				'badge_border'    => [ 'type' => 'string',  'default' => 'rgba(10,37,64,.2)' ],
+				'badge_size'      => [ 'type' => 'integer', 'default' => 12 ],
+				'badge_weight'    => [ 'type' => 'integer', 'default' => 600 ],
+				'badge_radius'    => [ 'type' => 'integer', 'default' => 999 ],
+				'badge_min_width' => [ 'type' => 'integer', 'default' => 72 ],
+				/* ── Titolo ── */
+				'title_size'   => [ 'type' => 'integer', 'default' => 22 ],
+				'title_weight' => [ 'type' => 'integer', 'default' => 800 ],
+				'title_upper'  => [ 'type' => 'boolean', 'default' => true ],
+				/* ── Stats ── */
+				'stats_size'  => [ 'type' => 'integer', 'default' => 14 ],
+				'stats_color' => [ 'type' => 'string',  'default' => 'rgba(10,37,64,.6)' ],
+				/* ── Colonna destra ── */
+				'right_label_size'   => [ 'type' => 'integer', 'default' => 10 ],
+				'right_label_color'  => [ 'type' => 'string',  'default' => 'rgba(10,37,64,.5)' ],
+				'right_value_size'   => [ 'type' => 'integer', 'default' => 28 ],
+				'right_value_color'  => [ 'type' => 'string',  'default' => '#0a2540' ],
+				'right_value_weight' => [ 'type' => 'integer', 'default' => 800 ],
+			],
+		],
 		'calypso/lista-docenti'   => [ 'file' => 'block-docenti-lista.php',    'title' => 'Lista Docenti' ],
+		'calypso/docenti-carousel' => [
+			'file'  => 'block-docenti-carousel.php',
+			'title' => 'Docenti Carosello',
+			'icon'  => 'groups',
+			'attributes' => [
+				/* ── Sorgente ── */
+				'source_mode'  => [ 'type' => 'string',  'default' => 'all' ],
+				'manual_ids'   => [ 'type' => 'array',   'default' => [], 'items' => [ 'type' => 'integer' ] ],
+				'priority_ids' => [ 'type' => 'array',   'default' => [], 'items' => [ 'type' => 'integer' ] ],
+				'order'        => [ 'type' => 'string',  'default' => 'title' ],
+				'max_items'    => [ 'type' => 'integer', 'default' => 0 ],
+				/* ── Comportamento ── */
+				'show_link'          => [ 'type' => 'boolean', 'default' => true ],
+				'link_target'        => [ 'type' => 'string',  'default' => '_self' ],
+				'show_photo_label'   => [ 'type' => 'boolean', 'default' => true ],
+				'photo_label_prefix' => [ 'type' => 'string',  'default' => 'RITRATTO' ],
+				'show_ruolo'         => [ 'type' => 'boolean', 'default' => true ],
+				'show_bio'           => [ 'type' => 'boolean', 'default' => false ],
+				'bio_lines'          => [ 'type' => 'integer', 'default' => 2 ],
+				'show_stats'         => [ 'type' => 'boolean', 'default' => true ],
+				'show_stat_anno'     => [ 'type' => 'boolean', 'default' => true ],
+				'show_stat_brevetti' => [ 'type' => 'boolean', 'default' => true ],
+				'show_stat_spec'     => [ 'type' => 'boolean', 'default' => false ],
+				'stat_anno_label'    => [ 'type' => 'string',  'default' => 'dal' ],
+				/* ── Carosello ── */
+				'desktop_cols' => [ 'type' => 'integer', 'default' => 3 ],
+				'tablet_cols'  => [ 'type' => 'integer', 'default' => 2 ],
+				'mobile_cols'  => [ 'type' => 'integer', 'default' => 1 ],
+				'gap'          => [ 'type' => 'integer', 'default' => 24 ],
+				'peek'         => [ 'type' => 'integer', 'default' => 40 ],
+				/* ── Frecce ── */
+				'arrows_show'    => [ 'type' => 'boolean', 'default' => true ],
+				'arrows_position'=> [ 'type' => 'string',  'default' => 'sides' ],
+				'arrow_bg'       => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'arrow_color'    => [ 'type' => 'string',  'default' => '#0a2540' ],
+				'arrow_border'   => [ 'type' => 'string',  'default' => 'rgba(10,37,64,.15)' ],
+				'arrow_hover_bg' => [ 'type' => 'string',  'default' => '#0a2540' ],
+				'arrow_hover_col'=> [ 'type' => 'string',  'default' => '#ffffff' ],
+				'arrow_size'     => [ 'type' => 'integer', 'default' => 44 ],
+				'arrow_radius'   => [ 'type' => 'integer', 'default' => 999 ],
+				'arrow_shadow'   => [ 'type' => 'string',  'default' => '0 2px 12px -4px rgba(10,37,64,.25)' ],
+				/* ── Sezione ── */
+				'bg_color'      => [ 'type' => 'string',  'default' => '' ],
+				'max_width'     => [ 'type' => 'integer', 'default' => 1320 ],
+				'padding_y'     => [ 'type' => 'integer', 'default' => 48 ],
+				'padding_x'     => [ 'type' => 'integer', 'default' => 24 ],
+				'margin_top'    => [ 'type' => 'integer', 'default' => 0 ],
+				'margin_right'  => [ 'type' => 'integer', 'default' => 0 ],
+				'margin_bottom' => [ 'type' => 'integer', 'default' => 0 ],
+				'margin_left'   => [ 'type' => 'integer', 'default' => 0 ],
+				/* ── Card ── */
+				'card_bg'      => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'card_radius'  => [ 'type' => 'integer', 'default' => 16 ],
+				'card_shadow'  => [ 'type' => 'string',  'default' => '0 8px 28px -10px rgba(10,37,64,.18)' ],
+				'card_border'  => [ 'type' => 'string',  'default' => 'rgba(10,37,64,.06)' ],
+				'card_body_px' => [ 'type' => 'integer', 'default' => 20 ],
+				'card_body_py' => [ 'type' => 'integer', 'default' => 18 ],
+				/* ── Foto ── */
+				'photo_ratio'       => [ 'type' => 'string',  'default' => '3/4' ],
+				'photo_label_bg'    => [ 'type' => 'string',  'default' => 'rgba(10,37,64,.72)' ],
+				'photo_label_color' => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'photo_label_size'  => [ 'type' => 'integer', 'default' => 9 ],
+				/* ── Nome ── */
+				'name_color'  => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'name_size'   => [ 'type' => 'integer', 'default' => 22 ],
+				'name_weight' => [ 'type' => 'integer', 'default' => 800 ],
+				'name_upper'  => [ 'type' => 'boolean', 'default' => true ],
+				/* ── Ruolo ── */
+				'ruolo_color'  => [ 'type' => 'string',  'default' => '#b9790a' ],
+				'ruolo_size'   => [ 'type' => 'integer', 'default' => 15 ],
+				'ruolo_weight' => [ 'type' => 'integer', 'default' => 600 ],
+				/* ── Bio ── */
+				'bio_color' => [ 'type' => 'string',  'default' => 'rgba(10,37,64,.7)' ],
+				'bio_size'  => [ 'type' => 'integer', 'default' => 14 ],
+				/* ── Stats ── */
+				'stats_color'     => [ 'type' => 'string',  'default' => 'rgba(10,37,64,.55)' ],
+				'stats_size'      => [ 'type' => 'integer', 'default' => 12 ],
+				'stats_sep_color' => [ 'type' => 'string',  'default' => 'rgba(10,37,64,.2)' ],
+			],
+		],
 		'calypso/lista-eventi'    => [ 'file' => 'block-eventi-lista.php',     'title' => 'Lista Eventi' ],
 		'calypso/area-personale'  => [ 'file' => 'block-area-personale.php',   'title' => 'Area Personale' ],
 		'calypso/prossima-uscita' => [
@@ -2576,6 +2733,571 @@ class Calypsosub_Blocks {
 					var preview = el('div', {
 						style: { padding: '20px', background: '#e8f4f8', borderRadius: '8px', fontFamily: 'monospace', fontSize: '12px' }
 					}, '🎫 Prenotazione · ' + enabledCount + ' tipologie abilitate');
+
+					return el(Fragment, {}, controls, preview);
+				},
+				save: function () { return null; },
+			});
+			return;
+		}
+
+		/* ════════════════════════════════════════════
+		   calypso/docenti-carousel — carosello docenti
+		   ════════════════════════════════════════════ */
+		if (info.name === 'calypso/docenti-carousel') {
+			blocks.registerBlockType(info.name, {
+				title: info.title,
+				category: 'calypso',
+				icon: info.icon || 'groups',
+				attributes: info.attributes || {},
+				edit: function (props) {
+					var a   = props.attributes;
+					var set = props.setAttributes;
+
+					function colorRow(label, key) {
+						return el('div', { style: { marginBottom: '12px' } },
+							el('p', { style: { fontSize: '11px', fontWeight: 500, color: '#1e1e1e', margin: '0 0 6px' } }, label),
+							el(ColorPalette, {
+								colors: getThemeColors(),
+								value: a[key] || '',
+								onChange: function (v) { var u = {}; u[key] = v || ''; set(u); }
+							})
+						);
+					}
+					function rangeRow(label, key, def, min, max, step) {
+						return el(RangeControl, { label: label, value: a[key] !== undefined ? a[key] : def, min: min, max: max, step: step || 1, onChange: function (v) { var u = {}; u[key] = v === undefined ? def : v; set(u); } });
+					}
+					function textRow(label, key) {
+						return el(TextControl, { label: label, value: a[key] !== undefined ? String(a[key]) : '', onChange: function (v) { var u = {}; u[key] = v; set(u); } });
+					}
+
+					/* ── Anteprima statica ── */
+					var previewCards = ['Marco Bianchi', 'Elena Conti', 'Luca Pieri'].map(function (name, idx) {
+						return el('div', {
+							key: idx,
+							style: {
+								flex: '0 0 calc(' + (100 / (a.desktop_cols || 3)) + '% - ' + ((a.gap || 24) * ((a.desktop_cols || 3) - 1) / (a.desktop_cols || 3)) + 'px)',
+								background: a.card_bg || '#fff',
+								borderRadius: (a.card_radius || 16) + 'px',
+								overflow: 'hidden',
+								boxShadow: '0 4px 16px -8px rgba(10,37,64,.18)',
+								fontSize: '13px',
+							}
+						},
+							el('div', { style: { background: '#bcc8d2', paddingTop: '100%', position: 'relative' } },
+								el('span', { style: {
+									position: 'absolute', bottom: 0, left: 0, right: 0,
+									background: a.photo_label_bg || 'rgba(10,37,64,.72)',
+									color: a.photo_label_color || '#fff',
+									fontSize: (a.photo_label_size || 9) + 'px',
+									fontWeight: 500, letterSpacing: '.12em', textTransform: 'uppercase',
+									padding: '5px 10px',
+								} }, (a.photo_label_prefix || 'RITRATTO') + ' · ' + name.toUpperCase())
+							),
+							el('div', { style: { padding: (a.card_body_py || 18) + 'px ' + (a.card_body_px || 20) + 'px' } },
+								el('p', { style: {
+									margin: 0, fontSize: (a.name_size || 22) + 'px', fontWeight: a.name_weight || 800,
+									color: a.name_color || '#1B77A7', lineHeight: 1.1,
+									textTransform: a.name_upper !== false ? 'uppercase' : 'none',
+								} }, name),
+								a.show_ruolo !== false ? el('p', { style: { margin: '4px 0 0', fontSize: (a.ruolo_size || 15) + 'px', fontWeight: a.ruolo_weight || 600, color: a.ruolo_color || '#b9790a' } }, 'Istruttore') : null,
+								a.show_stats !== false ? el('ul', { style: { margin: '10px 0 0', padding: 0, listStyle: 'none', fontSize: (a.stats_size || 12) + 'px', color: a.stats_color || 'rgba(10,37,64,.55)', display: 'flex', flexWrap: 'wrap' } },
+									el('li', {}, (a.stat_anno_label || 'dal') + ' 2008'),
+									el('li', { style: { paddingLeft: '6px' } }, ' · AIDA Master')
+								) : null
+							)
+						);
+					});
+
+					var preview = el('div', { style: { padding: '16px', background: a.bg_color || '#f5f5f5', borderRadius: '4px', position: 'relative' } },
+						el('div', { style: { display: 'flex', gap: (a.gap || 24) + 'px', overflow: 'hidden' } }, previewCards),
+						el('div', { style: { display: 'flex', justifyContent: 'space-between', marginTop: '12px' } },
+							el('span', { style: { background: a.arrow_bg || '#fff', color: a.arrow_color || '#0a2540', borderRadius: (a.arrow_radius || 999) + 'px', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(10,37,64,.15)', fontSize: '18px', cursor: 'default' } }, '←'),
+							el('span', { style: { background: a.arrow_bg || '#fff', color: a.arrow_color || '#0a2540', borderRadius: (a.arrow_radius || 999) + 'px', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(10,37,64,.15)', fontSize: '18px', cursor: 'default' } }, '→')
+						)
+					);
+
+					var controls = InspectorControls ? el(InspectorControls, {},
+
+						el(PanelBody, { title: 'Sorgente', initialOpen: true },
+							el(SelectControl, { label: 'Modalità', value: a.source_mode || 'all',
+								options: [{ value: 'all', label: 'Tutti i docenti' }, { value: 'manual', label: 'Selezione manuale (IDs)' }],
+								onChange: function (v) { set({ source_mode: v }); }
+							}),
+							a.source_mode === 'manual' ? textRow('ID docenti separati da virgola (nell\'ordine desiderato)', 'manual_ids_str') : null,
+							a.source_mode !== 'manual' ? el(SelectControl, { label: 'Ordinamento base', value: a.order || 'title',
+								options: [
+									{ value: 'title',      label: 'Titolo A→Z' },
+									{ value: 'menu_order', label: 'Ordine menu (drag WP)' },
+									{ value: 'date',       label: 'Data aggiunta (recente)' },
+									{ value: 'rand',       label: 'Casuale' },
+								],
+								onChange: function (v) { set({ order: v }); }
+							}) : null,
+							a.source_mode !== 'manual' ? el('div', {},
+								el('p', { style: { fontSize: '11px', fontWeight: 600, margin: '12px 0 4px', color: '#1e1e1e' } }, 'IDs priorità (vengono prima, in ordine)'),
+								el('p', { style: { fontSize: '11px', color: '#666', margin: '0 0 6px' } }, 'Inserisci gli ID separati da virgola. Es: 42,17,8'),
+								el(TextControl, {
+									label: '',
+									value: (a.priority_ids || []).join(','),
+									onChange: function (v) {
+										var ids = v.split(',').map(function(x){ return parseInt(x.trim(),10); }).filter(function(n){ return !isNaN(n) && n > 0; });
+										set({ priority_ids: ids });
+									}
+								})
+							) : null,
+							rangeRow('Max docenti (0 = tutti)', 'max_items', 0, 0, 50, 1)
+						),
+
+						el(PanelBody, { title: 'Comportamento', initialOpen: false },
+							el(ToggleControl, { label: 'Card cliccabile', checked: a.show_link !== false, onChange: function (v) { set({ show_link: v }); } }),
+							a.show_link !== false ? el(SelectControl, { label: 'Apri link in', value: a.link_target || '_self',
+								options: [{ value: '_self', label: 'Stessa finestra' }, { value: '_blank', label: 'Nuova scheda' }],
+								onChange: function (v) { set({ link_target: v }); }
+							}) : null,
+							el(ToggleControl, { label: 'Label foto (RITRATTO · NOME)', checked: a.show_photo_label !== false, onChange: function (v) { set({ show_photo_label: v }); } }),
+							a.show_photo_label !== false ? textRow('Prefisso label foto', 'photo_label_prefix') : null,
+							el(ToggleControl, { label: 'Mostra ruolo', checked: a.show_ruolo !== false, onChange: function (v) { set({ show_ruolo: v }); } }),
+							el(ToggleControl, { label: 'Mostra bio', checked: !!a.show_bio, onChange: function (v) { set({ show_bio: v }); } }),
+							a.show_bio ? rangeRow('Righe bio (line-clamp)', 'bio_lines', 2, 1, 6, 1) : null,
+							el(ToggleControl, { label: 'Mostra stats (anno · brevetti)', checked: a.show_stats !== false, onChange: function (v) { set({ show_stats: v }); } }),
+							a.show_stats !== false ? el(ToggleControl, { label: '  · Anno inizio', checked: a.show_stat_anno !== false, onChange: function (v) { set({ show_stat_anno: v }); } }) : null,
+							a.show_stats !== false && a.show_stat_anno !== false ? textRow('  Etichetta anno (es. "dal")', 'stat_anno_label') : null,
+							a.show_stats !== false ? el(ToggleControl, { label: '  · Brevetti', checked: a.show_stat_brevetti !== false, onChange: function (v) { set({ show_stat_brevetti: v }); } }) : null,
+							a.show_stats !== false ? el(ToggleControl, { label: '  · Specializzazioni', checked: !!a.show_stat_spec, onChange: function (v) { set({ show_stat_spec: v }); } }) : null
+						),
+
+						el(PanelBody, { title: 'Layout carosello', initialOpen: false },
+							rangeRow('Card visibili — desktop', 'desktop_cols', 3, 1, 6, 1),
+							rangeRow('Card visibili — tablet (≤1024px)', 'tablet_cols', 2, 1, 4, 1),
+							rangeRow('Card visibili — mobile (≤640px)', 'mobile_cols', 1, 1, 3, 1),
+							rangeRow('Gap tra card (px)', 'gap', 24, 0, 80, 4),
+							rangeRow('Peek card successiva (px)', 'peek', 40, 0, 120, 8)
+						),
+
+						el(PanelBody, { title: 'Frecce navigazione', initialOpen: false },
+							el(ToggleControl, { label: 'Mostra frecce', checked: a.arrows_show !== false, onChange: function (v) { set({ arrows_show: v }); } }),
+							a.arrows_show !== false ? el(SelectControl, { label: 'Posizione frecce', value: a.arrows_position || 'sides',
+								options: [
+									{ value: 'sides',   label: 'Lati (floating)' },
+									{ value: 'inside',  label: 'Dentro la viewport' },
+									{ value: 'outside', label: 'Fuori la viewport' },
+								],
+								onChange: function (v) { set({ arrows_position: v }); }
+							}) : null,
+							a.arrows_show !== false ? colorRow('Sfondo freccia', 'arrow_bg') : null,
+							a.arrows_show !== false ? colorRow('Icona freccia', 'arrow_color') : null,
+							a.arrows_show !== false ? el(TextControl, { label: 'Bordo freccia (CSS)', value: a.arrow_border || 'rgba(10,37,64,.15)', onChange: function (v) { set({ arrow_border: v }); } }) : null,
+							a.arrows_show !== false ? colorRow('Sfondo freccia hover', 'arrow_hover_bg') : null,
+							a.arrows_show !== false ? colorRow('Icona freccia hover', 'arrow_hover_col') : null,
+							a.arrows_show !== false ? rangeRow('Dimensione freccia (px)', 'arrow_size', 44, 28, 80, 2) : null,
+							a.arrows_show !== false ? rangeRow('Border radius freccia (px)', 'arrow_radius', 999, 0, 999, 4) : null,
+							a.arrows_show !== false ? el(TextControl, { label: 'Box-shadow freccia (CSS)', value: a.arrow_shadow || '0 2px 12px -4px rgba(10,37,64,.25)', onChange: function (v) { set({ arrow_shadow: v }); } }) : null
+						),
+
+						el(PanelBody, { title: 'Layout sezione', initialOpen: false },
+							colorRow('Sfondo sezione', 'bg_color'),
+							rangeRow('Larghezza massima (px)', 'max_width', 1320, 400, 1920, 20),
+							rangeRow('Padding verticale (px)', 'padding_y', 48, 0, 200, 4),
+							rangeRow('Padding orizzontale (px)', 'padding_x', 24, 0, 120, 4),
+							rangeRow('Margine superiore (px)',  'margin_top',    0, 0, 200, 4),
+							rangeRow('Margine inferiore (px)',  'margin_bottom', 0, 0, 200, 4),
+							rangeRow('Margine sinistro (px)',   'margin_left',   0, 0, 200, 4),
+							rangeRow('Margine destro (px)',     'margin_right',  0, 0, 200, 4)
+						),
+
+						el(PanelBody, { title: 'Stile card', initialOpen: false },
+							colorRow('Sfondo card', 'card_bg'),
+							rangeRow('Border radius card (px)', 'card_radius', 16, 0, 40, 2),
+							el(TextControl, { label: 'Box-shadow card (CSS)', value: a.card_shadow || '0 8px 28px -10px rgba(10,37,64,.18)', onChange: function (v) { set({ card_shadow: v }); } }),
+							el(TextControl, { label: 'Bordo card (CSS color)', value: a.card_border || 'rgba(10,37,64,.06)', onChange: function (v) { set({ card_border: v }); } }),
+							rangeRow('Padding body orizzontale (px)', 'card_body_px', 20, 8, 60, 2),
+							rangeRow('Padding body verticale (px)',   'card_body_py', 18, 8, 60, 2)
+						),
+
+						el(PanelBody, { title: 'Stile foto', initialOpen: false },
+							el(SelectControl, { label: 'Aspect ratio foto', value: a.photo_ratio || '3/4',
+								options: [
+									{ value: '1/1',  label: 'Quadrato 1:1' },
+									{ value: '4/3',  label: 'Orizzontale 4:3' },
+									{ value: '3/4',  label: 'Verticale 3:4' },
+									{ value: '2/3',  label: 'Verticale 2:3' },
+									{ value: '9/16', label: 'Verticale 9:16' },
+								],
+								onChange: function (v) { set({ photo_ratio: v }); }
+							}),
+							el(TextControl, { label: 'Sfondo label foto (CSS)', value: a.photo_label_bg || 'rgba(10,37,64,.72)', onChange: function (v) { set({ photo_label_bg: v }); } }),
+							colorRow('Colore testo label foto', 'photo_label_color'),
+							rangeRow('Font size label foto (px)', 'photo_label_size', 9, 7, 16, 1)
+						),
+
+						el(PanelBody, { title: 'Stile nome', initialOpen: false },
+							colorRow('Colore nome', 'name_color'),
+							rangeRow('Font size nome (px)', 'name_size', 22, 12, 48, 1),
+							rangeRow('Font weight nome', 'name_weight', 800, 300, 900, 100),
+							el(ToggleControl, { label: 'Nome maiuscolo', checked: a.name_upper !== false, onChange: function (v) { set({ name_upper: v }); } })
+						),
+
+						el(PanelBody, { title: 'Stile ruolo', initialOpen: false },
+							colorRow('Colore ruolo', 'ruolo_color'),
+							rangeRow('Font size ruolo (px)', 'ruolo_size', 15, 10, 28, 1),
+							rangeRow('Font weight ruolo', 'ruolo_weight', 600, 300, 900, 100)
+						),
+
+						el(PanelBody, { title: 'Stile bio', initialOpen: false },
+							el(TextControl, { label: 'Colore bio (CSS)', value: a.bio_color || 'rgba(10,37,64,.7)', onChange: function (v) { set({ bio_color: v }); } }),
+							rangeRow('Font size bio (px)', 'bio_size', 14, 10, 22, 1)
+						),
+
+						el(PanelBody, { title: 'Stile stats', initialOpen: false },
+							el(TextControl, { label: 'Colore stats (CSS)', value: a.stats_color || 'rgba(10,37,64,.55)', onChange: function (v) { set({ stats_color: v }); } }),
+							rangeRow('Font size stats (px)', 'stats_size', 12, 9, 20, 1),
+							el(TextControl, { label: 'Colore separatore · (CSS)', value: a.stats_sep_color || 'rgba(10,37,64,.2)', onChange: function (v) { set({ stats_sep_color: v }); } })
+						)
+
+					) : null;
+
+					return el(Fragment, {}, controls, preview);
+				},
+				save: function () { return null; },
+			});
+			return;
+		}
+
+		/* ════════════════════════════════════════════
+		   calypso/corsi-strip — lista corsi a righe
+		   ════════════════════════════════════════════ */
+		if (info.name === 'calypso/corsi-strip') {
+			blocks.registerBlockType(info.name, {
+				title: info.title,
+				category: 'calypso',
+				icon: info.icon || 'excerpt-view',
+				attributes: info.attributes || {},
+				edit: function (props) {
+					var a   = props.attributes;
+					var set = props.setAttributes;
+
+					function colorRow(label, key) {
+						return el('div', { style: { marginBottom: '12px' } },
+							el('p', { style: { fontSize: '11px', fontWeight: 500, color: '#1e1e1e', margin: '0 0 6px' } }, label),
+							el(ColorPalette, {
+								colors: getThemeColors(),
+								value: a[key] || '',
+								onChange: function (v) { var u = {}; u[key] = v || ''; set(u); }
+							})
+						);
+					}
+
+					function textRow(label, key) {
+						return el(TextControl, {
+							label: label,
+							value: a[key] !== undefined ? a[key] : '',
+							onChange: function (v) { var u = {}; u[key] = v; set(u); }
+						});
+					}
+
+					function rangeRow(label, key, def, min, max, step) {
+						return el(RangeControl, {
+							label: label,
+							value: a[key] !== undefined ? a[key] : def,
+							min: min, max: max, step: step || 1,
+							onChange: function (v) { var u = {}; u[key] = v === undefined ? def : v; set(u); }
+						});
+					}
+
+					/* ── Anteprima statica ── */
+					var previewRows = ['OPEN WATER DIVER', 'ADVANCED OPEN WATER', 'RESCUE DIVER'].map(function (title, idx) {
+						var isFeat = a.featured_enabled && idx === (a.featured_index || 0);
+						var rowBg      = isFeat ? (a.feat_bg || '#0a2540')      : (a.row_bg || '#fff');
+						var rowColor   = isFeat ? (a.feat_text_color || '#fff') : (a.row_text_color || '#0a2540');
+						var badgeBg    = isFeat ? (a.feat_badge_bg    || 'rgba(255,255,255,.15)') : (a.badge_bg || 'transparent');
+						var badgeColor = isFeat ? (a.feat_badge_color || '#fff') : (a.badge_color || '#0a2540');
+						var badgeBorder= isFeat ? (a.feat_badge_border|| 'rgba(255,255,255,.3)')  : (a.badge_border || 'rgba(10,37,64,.2)');
+						var statsColor = isFeat ? (a.feat_stats_color || 'rgba(255,255,255,.7)') : (a.stats_color || 'rgba(10,37,64,.6)');
+						var rlColor    = isFeat ? (a.feat_right_label_color || 'rgba(255,255,255,.55)') : (a.right_label_color || 'rgba(10,37,64,.5)');
+						var rvColor    = isFeat ? (a.feat_right_value_color || '#fff') : (a.right_value_color || '#0a2540');
+						return el('div', {
+							key: idx,
+							style: {
+								display: 'flex', alignItems: 'center',
+								gap: '16px',
+								background: rowBg,
+								color: rowColor,
+								borderRadius: (a.row_radius || 16) + 'px',
+								padding: '16px 22px',
+								border: isFeat ? 'none' : ('1px solid ' + (a.row_border_color || 'rgba(10,37,64,.08)')),
+								boxShadow: isFeat ? 'none' : (a.row_shadow || '0 4px 16px -8px rgba(10,37,64,.15)'),
+							}
+						},
+							a.show_badge !== false ? el('span', {
+								style: {
+									flex: '0 0 auto', minWidth: (a.badge_min_width || 72) + 'px',
+									display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+									padding: '5px 12px',
+									borderRadius: (a.badge_radius || 999) + 'px',
+									border: '1.5px solid ' + badgeBorder,
+									background: badgeBg, color: badgeColor,
+									fontSize: (a.badge_size || 12) + 'px',
+									fontWeight: a.badge_weight || 600,
+									whiteSpace: 'nowrap',
+								}
+							}, ['Base', 'Avanzato', 'Pro'][idx]) : null,
+							el('div', { style: { flex: '1 1 0', minWidth: 0 } },
+								el('p', { style: {
+									margin: 0, padding: 0,
+									fontSize: (a.title_size || 22) + 'px',
+									fontWeight: a.title_weight || 800,
+									lineHeight: 1.1,
+									textTransform: a.title_upper !== false ? 'uppercase' : 'none',
+									color: 'inherit',
+								} }, title),
+								a.show_stats !== false ? el('p', { style: {
+									margin: '4px 0 0', fontSize: (a.stats_size || 14) + 'px',
+									color: statsColor, lineHeight: 1.4,
+								} }, '32 ore · 8 lezioni · brevetto FIAS') : null
+							),
+							a.show_right !== false ? el('div', { style: { flex: '0 0 auto', textAlign: 'right', minWidth: '70px' } },
+								el('span', { style: {
+									display: 'block', fontSize: (a.right_label_size || 10) + 'px',
+									fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase',
+									color: rlColor, marginBottom: '2px',
+								} }, a.right_label || 'DURATA'),
+								el('span', { style: {
+									display: 'block', fontSize: (a.right_value_size || 28) + 'px',
+									fontWeight: a.right_value_weight || 800, lineHeight: 1,
+									color: rvColor, letterSpacing: '-.02em',
+								} }, [8, 5, 10][idx] + (a.right_unit ? ' ' + a.right_unit : ' SETT.'))
+							) : null
+						);
+					});
+
+					var preview = el('div', {
+						style: {
+							background: a.bg_color || '#f6f1e6',
+							padding: '24px',
+							borderRadius: '4px',
+							display: 'flex', flexDirection: 'column',
+							gap: (a.gap || 12) + 'px',
+						}
+					}, previewRows);
+
+					var controls = InspectorControls ? el(InspectorControls, {},
+
+						el(PanelBody, { title: 'Sorgente', initialOpen: true },
+							el(SelectControl, {
+								label: 'Modalità',
+								value: a.source_mode || 'all',
+								options: [
+									{ value: 'all',     label: 'Tutti i corsi' },
+									{ value: 'livello', label: 'Per livello' },
+									{ value: 'manual',  label: 'Selezione manuale (IDs)' },
+								],
+								onChange: function (v) { set({ source_mode: v }); }
+							}),
+							(a.source_mode === 'manual') ? el(TextControl, {
+								label: 'ID corsi separati da virgola',
+								value: (a.manual_ids || []).join(','),
+								onChange: function (v) {
+									var ids = v.split(',').map(function(x){ return parseInt(x.trim(),10); }).filter(function(n){ return !isNaN(n); });
+									set({ manual_ids: ids });
+								}
+							}) : null,
+							(a.source_mode === 'livello') ? el(TextControl, {
+								label: 'Slug livelli separati da virgola',
+								value: (a.livello_slugs || []).join(','),
+								onChange: function (v) {
+									var slugs = v.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+									set({ livello_slugs: slugs });
+								}
+							}) : null,
+							rangeRow('Max corsi (0 = tutti)', 'max_items', 0, 0, 30, 1),
+							el(SelectControl, {
+								label: 'Ordinamento',
+								value: a.order || 'menu_order',
+								options: [
+									{ value: 'menu_order', label: 'Ordine menu' },
+									{ value: 'title',      label: 'Titolo A→Z' },
+									{ value: 'date',       label: 'Data recente' },
+								],
+								onChange: function (v) { set({ order: v }); }
+							})
+						),
+
+						el(PanelBody, { title: 'Comportamento', initialOpen: false },
+							el(ToggleControl, {
+								label: 'Riga cliccabile',
+								checked: a.show_link !== false,
+								onChange: function (v) { set({ show_link: v }); }
+							}),
+							a.show_link !== false ? el(SelectControl, {
+								label: 'Apri link in',
+								value: a.link_target || '_self',
+								options: [
+									{ value: '_self',  label: 'Stessa finestra' },
+									{ value: '_blank', label: 'Nuova scheda' },
+								],
+								onChange: function (v) { set({ link_target: v }); }
+							}) : null,
+							el(ToggleControl, {
+								label: 'Mostra badge livello',
+								checked: a.show_badge !== false,
+								onChange: function (v) { set({ show_badge: v }); }
+							}),
+							el(ToggleControl, {
+								label: 'Mostra stats/sottotitolo',
+								checked: a.show_stats !== false,
+								onChange: function (v) { set({ show_stats: v }); }
+							}),
+							a.show_stats !== false ? el(ToggleControl, {
+								label: '  · Durata (_corso_stat_durata)',
+								checked: a.show_stat_durata !== false,
+								onChange: function (v) { set({ show_stat_durata: v }); }
+							}) : null,
+							a.show_stats !== false ? el(ToggleControl, {
+								label: '  · Pratica/Immersioni',
+								checked: a.show_stat_pratica !== false,
+								onChange: function (v) { set({ show_stat_pratica: v }); }
+							}) : null,
+							a.show_stats !== false ? el(ToggleControl, {
+								label: '  · Profondità',
+								checked: !!a.show_stat_profondita,
+								onChange: function (v) { set({ show_stat_profondita: v }); }
+							}) : null,
+							a.show_stats !== false ? el(ToggleControl, {
+								label: '  · Badge/brevetto (_corso_badge)',
+								checked: !!a.show_stat_badge,
+								onChange: function (v) { set({ show_stat_badge: v }); }
+							}) : null,
+							el(ToggleControl, {
+								label: 'Mostra colonna destra',
+								checked: a.show_right !== false,
+								onChange: function (v) { set({ show_right: v }); }
+							}),
+							a.show_right !== false ? el(SelectControl, {
+								label: 'Meta field colonna destra',
+								value: a.right_meta_key || '_corso_stat_durata',
+								options: [
+									{ value: '_corso_stat_durata',     label: 'Durata (_corso_stat_durata)' },
+									{ value: '_corso_stat_pratica',    label: 'Pratica (_corso_stat_pratica)' },
+									{ value: '_corso_stat_profondita', label: 'Profondità (_corso_stat_profondita)' },
+									{ value: '_corso_periodo',         label: 'Periodo (_corso_periodo)' },
+									{ value: '_corso_badge',           label: 'Badge (_corso_badge)' },
+								],
+								onChange: function (v) { set({ right_meta_key: v }); }
+							}) : null,
+							a.show_right !== false ? textRow('Etichetta colonna destra', 'right_label') : null,
+							a.show_right !== false ? textRow('Unità di misura (es. SETT.)', 'right_unit') : null
+						),
+
+						el(PanelBody, { title: 'Riga in evidenza (Featured)', initialOpen: false },
+							el(ToggleControl, {
+								label: 'Abilita riga in evidenza',
+								checked: a.featured_enabled !== false,
+								onChange: function (v) { set({ featured_enabled: v }); }
+							}),
+							a.featured_enabled !== false ? rangeRow('Indice riga evidenziata (0 = prima)', 'featured_index', 0, 0, 20, 1) : null,
+							a.featured_enabled !== false ? colorRow('Sfondo featured', 'feat_bg') : null,
+							a.featured_enabled !== false ? colorRow('Testo featured', 'feat_text_color') : null,
+							a.featured_enabled !== false ? el(TextControl, {
+								label: 'Badge bg featured (CSS)',
+								value: a.feat_badge_bg || 'rgba(255,255,255,.15)',
+								onChange: function (v) { set({ feat_badge_bg: v }); }
+							}) : null,
+							a.featured_enabled !== false ? colorRow('Colore testo badge featured', 'feat_badge_color') : null,
+							a.featured_enabled !== false ? el(TextControl, {
+								label: 'Bordo badge featured (CSS)',
+								value: a.feat_badge_border || 'rgba(255,255,255,.3)',
+								onChange: function (v) { set({ feat_badge_border: v }); }
+							}) : null,
+							a.featured_enabled !== false ? el(TextControl, {
+								label: 'Colore stats featured (CSS)',
+								value: a.feat_stats_color || 'rgba(255,255,255,.7)',
+								onChange: function (v) { set({ feat_stats_color: v }); }
+							}) : null,
+							a.featured_enabled !== false ? el(TextControl, {
+								label: 'Etichetta destra featured (CSS)',
+								value: a.feat_right_label_color || 'rgba(255,255,255,.55)',
+								onChange: function (v) { set({ feat_right_label_color: v }); }
+							}) : null,
+							a.featured_enabled !== false ? colorRow('Valore destra featured', 'feat_right_value_color') : null
+						),
+
+						el(PanelBody, { title: 'Layout sezione', initialOpen: false },
+							colorRow('Sfondo sezione', 'bg_color'),
+							rangeRow('Larghezza massima (px)', 'max_width', 900, 400, 1920, 20),
+							rangeRow('Padding verticale (px)', 'padding_y', 48, 0, 200, 4),
+							rangeRow('Padding orizzontale (px)', 'padding_x', 24, 0, 120, 4),
+							rangeRow('Gap tra righe (px)', 'gap', 12, 0, 60, 2),
+							rangeRow('Margine superiore (px)', 'margin_top', 0, 0, 200, 4),
+							rangeRow('Margine inferiore (px)', 'margin_bottom', 0, 0, 200, 4),
+							rangeRow('Margine sinistro (px)', 'margin_left', 0, 0, 200, 4),
+							rangeRow('Margine destro (px)', 'margin_right', 0, 0, 200, 4)
+						),
+
+						el(PanelBody, { title: 'Stile righe', initialOpen: false },
+							colorRow('Sfondo riga', 'row_bg'),
+							colorRow('Colore testo riga', 'row_text_color'),
+							el(TextControl, {
+								label: 'Colore bordo riga (CSS)',
+								value: a.row_border_color || 'rgba(10,37,64,.08)',
+								onChange: function (v) { set({ row_border_color: v }); }
+							}),
+							el(TextControl, {
+								label: 'Box-shadow riga (CSS)',
+								value: a.row_shadow || '0 4px 16px -8px rgba(10,37,64,.15)',
+								onChange: function (v) { set({ row_shadow: v }); }
+							}),
+							rangeRow('Raggio bordi (px)', 'row_radius', 16, 0, 40, 2),
+							rangeRow('Padding verticale riga (px)', 'row_padding_y', 20, 8, 60, 2),
+							rangeRow('Padding orizzontale riga (px)', 'row_padding_x', 28, 8, 80, 4)
+						),
+
+						el(PanelBody, { title: 'Stile badge livello', initialOpen: false },
+							colorRow('Sfondo badge', 'badge_bg'),
+							colorRow('Testo badge', 'badge_color'),
+							el(TextControl, {
+								label: 'Bordo badge (CSS)',
+								value: a.badge_border || 'rgba(10,37,64,.2)',
+								onChange: function (v) { set({ badge_border: v }); }
+							}),
+							rangeRow('Font size badge (px)', 'badge_size', 12, 8, 20, 1),
+							rangeRow('Font weight badge', 'badge_weight', 600, 300, 900, 100),
+							rangeRow('Border radius badge (px)', 'badge_radius', 999, 0, 999, 4),
+							rangeRow('Larghezza minima badge (px)', 'badge_min_width', 72, 40, 200, 4)
+						),
+
+						el(PanelBody, { title: 'Stile titolo', initialOpen: false },
+							rangeRow('Font size titolo (px)', 'title_size', 22, 12, 60, 1),
+							rangeRow('Font weight titolo', 'title_weight', 800, 300, 900, 100),
+							el(ToggleControl, {
+								label: 'Testo maiuscolo',
+								checked: a.title_upper !== false,
+								onChange: function (v) { set({ title_upper: v }); }
+							})
+						),
+
+						el(PanelBody, { title: 'Stile stats/sottotitolo', initialOpen: false },
+							rangeRow('Font size stats (px)', 'stats_size', 14, 10, 24, 1),
+							el(TextControl, {
+								label: 'Colore stats (CSS)',
+								value: a.stats_color || 'rgba(10,37,64,.6)',
+								onChange: function (v) { set({ stats_color: v }); }
+							})
+						),
+
+						el(PanelBody, { title: 'Stile colonna destra', initialOpen: false },
+							rangeRow('Font size etichetta (px)', 'right_label_size', 10, 8, 20, 1),
+							el(TextControl, {
+								label: 'Colore etichetta (CSS)',
+								value: a.right_label_color || 'rgba(10,37,64,.5)',
+								onChange: function (v) { set({ right_label_color: v }); }
+							}),
+							rangeRow('Font size valore (px)', 'right_value_size', 28, 14, 60, 2),
+							rangeRow('Font weight valore', 'right_value_weight', 800, 300, 900, 100),
+							colorRow('Colore valore', 'right_value_color')
+						)
+
+					) : null;
 
 					return el(Fragment, {}, controls, preview);
 				},
