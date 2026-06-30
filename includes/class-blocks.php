@@ -31,6 +31,50 @@ class Calypsosub_Blocks {
 				'lbl_liberi'    => [ 'type' => 'string', 'default' => 'Posti liberi' ],
 				/* ── Stato vuoto ── */
 				'empty_title' => [ 'type' => 'string', 'default' => 'Nessuna uscita in programma.' ],
+				/* ── Layout sezione ── */
+				'bg_color'  => [ 'type' => 'string',  'default' => '#dff4f8' ],
+				'max_width' => [ 'type' => 'integer', 'default' => 1320 ],
+				'padding_y' => [ 'type' => 'integer', 'default' => 80 ],
+				'padding_x' => [ 'type' => 'integer', 'default' => 48 ],
+				/* ── Colori ── */
+				'color_accent' => [ 'type' => 'string', 'default' => '#1B77A7' ],
+				'color_ink'    => [ 'type' => 'string', 'default' => '#0b1a26' ],
+				/* ── Card ── */
+				'card_bg'     => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'card_radius' => [ 'type' => 'integer', 'default' => 16 ],
+				'card_shadow' => [ 'type' => 'string',  'default' => '0 4px 32px -8px rgba(10,37,64,.12)' ],
+				/* ── Righe ── */
+				'row_padding_y'    => [ 'type' => 'integer', 'default' => 28 ],
+				'row_padding_x'    => [ 'type' => 'integer', 'default' => 32 ],
+				'row_border_color' => [ 'type' => 'string',  'default' => 'rgba(11,26,38,.07)' ],
+				/* ── Bottone ── */
+				'btn_bg'    => [ 'type' => 'string', 'default' => '#061826' ],
+				'btn_color' => [ 'type' => 'string', 'default' => '#ffffff' ],
+				/* ── Testo intestazione ── */
+				'eyebrow_size'      => [ 'type' => 'integer', 'default' => 13 ],
+				'eyebrow_weight'    => [ 'type' => 'integer', 'default' => 600 ],
+				'title_size'        => [ 'type' => 'integer', 'default' => 76 ],
+				'title_weight'      => [ 'type' => 'integer', 'default' => 900 ],
+				'title_line_height' => [ 'type' => 'string',  'default' => '.95' ],
+				'head_link_size'    => [ 'type' => 'integer', 'default' => 14 ],
+				'head_link_weight'  => [ 'type' => 'integer', 'default' => 600 ],
+				/* ── Testo righe ── */
+				'dayname_size'      => [ 'type' => 'integer', 'default' => 10 ],
+				'daynum_size'       => [ 'type' => 'integer', 'default' => 58 ],
+				'daynum_weight'     => [ 'type' => 'integer', 'default' => 900 ],
+				'month_size'        => [ 'type' => 'integer', 'default' => 10 ],
+				'name_size'         => [ 'type' => 'integer', 'default' => 20 ],
+				'name_weight'       => [ 'type' => 'integer', 'default' => 700 ],
+				'luogo_size'        => [ 'type' => 'integer', 'default' => 13 ],
+				'ritrovo_label_size'=> [ 'type' => 'integer', 'default' => 9 ],
+				'ritrovo_val_size'  => [ 'type' => 'integer', 'default' => 11 ],
+				'posti_size'        => [ 'type' => 'integer', 'default' => 13 ],
+				'badge_size'        => [ 'type' => 'integer', 'default' => 12 ],
+				'badge_weight'      => [ 'type' => 'integer', 'default' => 600 ],
+				/* ── Bottone/Vuoto ── */
+				'btn_size'    => [ 'type' => 'integer', 'default' => 13 ],
+				'btn_weight'  => [ 'type' => 'integer', 'default' => 700 ],
+				'empty_size'  => [ 'type' => 'integer', 'default' => 16 ],
 			],
 		],
 		'calypso/calendario' => [
@@ -384,6 +428,65 @@ class Calypsosub_Blocks {
 				'margin_left'            => [ 'type' => 'integer', 'default' => 0 ],
 			],
 		],
+		'calypso/lista-articoli' => [
+			'file'  => 'block-lista-articoli.php',
+			'title' => 'Lista Articoli',
+			'icon'  => 'list-view',
+			'attributes' => [
+				/* ── Sorgente ── */
+				'source_mode'        => [ 'type' => 'string',  'default' => 'all' ],
+				'category_ids'       => [ 'type' => 'array',   'default' => [], 'items' => [ 'type' => 'integer' ] ],
+				'tag_ids'            => [ 'type' => 'array',   'default' => [], 'items' => [ 'type' => 'integer' ] ],
+				'manual_ids'         => [ 'type' => 'array',   'default' => [], 'items' => [ 'type' => 'integer' ] ],
+				'order_by'           => [ 'type' => 'string',  'default' => 'date' ],
+				'order'              => [ 'type' => 'string',  'default' => 'DESC' ],
+				'max_items'          => [ 'type' => 'integer', 'default' => 0 ],
+				/* ── Comportamento ── */
+				'show_link'          => [ 'type' => 'boolean', 'default' => true ],
+				'link_target'        => [ 'type' => 'string',  'default' => '_self' ],
+				'show_image'         => [ 'type' => 'boolean', 'default' => true ],
+				'image_size'         => [ 'type' => 'string',  'default' => 'medium_large' ],
+				'image_label_prefix' => [ 'type' => 'string',  'default' => 'ARCHIVIO' ],
+				'show_excerpt'       => [ 'type' => 'boolean', 'default' => true ],
+				'excerpt_length'     => [ 'type' => 'integer', 'default' => 30 ],
+				/* ── Colonna sinistra ── */
+				'left_field'        => [ 'type' => 'string',  'default' => 'post_date' ],
+				'left_format'       => [ 'type' => 'string',  'default' => 'Y' ],
+				'left_custom_field' => [ 'type' => 'string',  'default' => '' ],
+				/* ── Layout sezione ── */
+				'bg_color'      => [ 'type' => 'string',  'default' => '#f6f1e6' ],
+				'max_width'     => [ 'type' => 'integer', 'default' => 1100 ],
+				'padding_y'     => [ 'type' => 'integer', 'default' => 60 ],
+				'padding_x'     => [ 'type' => 'integer', 'default' => 24 ],
+				'row_gap_y'     => [ 'type' => 'integer', 'default' => 40 ],
+				'margin_top'    => [ 'type' => 'integer', 'default' => 0 ],
+				'margin_right'  => [ 'type' => 'integer', 'default' => 0 ],
+				'margin_bottom' => [ 'type' => 'integer', 'default' => 0 ],
+				'margin_left'   => [ 'type' => 'integer', 'default' => 0 ],
+				/* ── Separatore ── */
+				'separator_color' => [ 'type' => 'string', 'default' => 'rgba(10,37,64,.12)' ],
+				/* ── Colonna sinistra stile ── */
+				'left_color'     => [ 'type' => 'string',  'default' => '#c8a84b' ],
+				'left_size'      => [ 'type' => 'integer', 'default' => 80 ],
+				'left_weight'    => [ 'type' => 'integer', 'default' => 900 ],
+				'left_col_width' => [ 'type' => 'integer', 'default' => 140 ],
+				/* ── Titolo ── */
+				'title_color'  => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'title_size'   => [ 'type' => 'integer', 'default' => 22 ],
+				'title_weight' => [ 'type' => 'integer', 'default' => 800 ],
+				'title_upper'  => [ 'type' => 'boolean', 'default' => true ],
+				/* ── Testo corpo ── */
+				'text_color' => [ 'type' => 'string',  'default' => '#3d5265' ],
+				'text_size'  => [ 'type' => 'integer', 'default' => 15 ],
+				/* ── Immagine ── */
+				'image_col_width'   => [ 'type' => 'integer', 'default' => 360 ],
+				'image_ratio'       => [ 'type' => 'string',  'default' => '16/9' ],
+				'image_radius'      => [ 'type' => 'integer', 'default' => 8 ],
+				'image_label_bg'    => [ 'type' => 'string',  'default' => 'rgba(10,37,64,.6)' ],
+				'image_label_color' => [ 'type' => 'string',  'default' => '#ffffff' ],
+				'image_label_size'  => [ 'type' => 'integer', 'default' => 10 ],
+			],
+		],
 		'calypso/storia-club' => [
 			'file'  => 'block-storia-club.php',
 			'title' => 'Storia Club',
@@ -619,6 +722,25 @@ class Calypsosub_Blocks {
 					var a   = props.attributes;
 					var set = props.setAttributes;
 
+					function colorRow(label, key) {
+						return el('div', { style: { marginBottom: '12px' } },
+							el('p', { style: { fontSize: '11px', fontWeight: 500, color: '#1e1e1e', margin: '0 0 6px' } }, label),
+							el(ColorPalette, {
+								colors: getThemeColors(),
+								value: a[key] || '',
+								onChange: function (v) { var u = {}; u[key] = v || ''; set(u); }
+							})
+						);
+					}
+					function rangeRow(label, key, def, min, max, step) {
+						return el(RangeControl, {
+							label: label,
+							value: a[key] !== undefined ? a[key] : def,
+							min: min, max: max, step: step || 1,
+							onChange: function (v) { var u = {}; u[key] = v === undefined ? def : v; set(u); }
+						});
+					}
+
 					var controls = InspectorControls ? el(InspectorControls, {},
 
 						/* ── Intestazione sezione ── */
@@ -733,6 +855,82 @@ class Calypsosub_Blocks {
 								value: a.empty_title || '',
 								onChange: function (v) { set({ empty_title: v }); }
 							})
+						),
+
+						/* ── Layout sezione ── */
+						el(PanelBody, { title: 'Layout sezione', initialOpen: false },
+							colorRow('Sfondo sezione', 'bg_color'),
+							rangeRow('Larghezza massima (px)', 'max_width', 1320, 400, 1920, 20),
+							rangeRow('Padding verticale (px)', 'padding_y', 80, 0, 200, 4),
+							rangeRow('Padding orizzontale (px)', 'padding_x', 48, 0, 120, 4)
+						),
+
+						/* ── Colori accento ── */
+						el(PanelBody, { title: 'Colori accento', initialOpen: false },
+							colorRow('Colore accento (titoli, date, badge)', 'color_accent'),
+							colorRow('Colore testo principale', 'color_ink')
+						),
+
+						/* ── Stile card ── */
+						el(PanelBody, { title: 'Stile card', initialOpen: false },
+							colorRow('Sfondo card', 'card_bg'),
+							rangeRow('Raggio bordi (px)', 'card_radius', 16, 0, 40, 2),
+							el(TextControl, {
+								label: 'Box-shadow card (CSS)',
+								value: a.card_shadow !== undefined ? a.card_shadow : '0 4px 32px -8px rgba(10,37,64,.12)',
+								onChange: function (v) { set({ card_shadow: v }); }
+							})
+						),
+
+						/* ── Stile righe ── */
+						el(PanelBody, { title: 'Stile righe', initialOpen: false },
+							rangeRow('Padding verticale riga (px)', 'row_padding_y', 28, 8, 60, 2),
+							rangeRow('Padding orizzontale riga (px)', 'row_padding_x', 32, 8, 80, 4),
+							colorRow('Colore bordo separatore', 'row_border_color')
+						),
+
+						/* ── Stile bottone ── */
+						el(PanelBody, { title: 'Stile bottone', initialOpen: false },
+							colorRow('Sfondo bottone', 'btn_bg'),
+							colorRow('Testo bottone', 'btn_color')
+						),
+
+						/* ── Testo intestazione ── */
+						el(PanelBody, { title: 'Testo intestazione', initialOpen: false },
+							rangeRow('Font size eyebrow (px)', 'eyebrow_size', 13, 8, 24, 1),
+							rangeRow('Font weight eyebrow', 'eyebrow_weight', 600, 300, 900, 100),
+							rangeRow('Font size titolo (px)', 'title_size', 76, 20, 120, 2),
+							rangeRow('Font weight titolo', 'title_weight', 900, 300, 900, 100),
+							el(TextControl, {
+								label: 'Line-height titolo',
+								value: a.title_line_height !== undefined ? a.title_line_height : '.95',
+								onChange: function (v) { set({ title_line_height: v }); }
+							}),
+							rangeRow('Font size link header (px)', 'head_link_size', 14, 10, 24, 1),
+							rangeRow('Font weight link header', 'head_link_weight', 600, 300, 900, 100)
+						),
+
+						/* ── Testo righe ── */
+						el(PanelBody, { title: 'Testo righe', initialOpen: false },
+							rangeRow('Font size giorno abbreviato (px)', 'dayname_size', 10, 7, 16, 1),
+							rangeRow('Font size numero data (px)', 'daynum_size', 58, 24, 100, 2),
+							rangeRow('Font weight numero data', 'daynum_weight', 900, 300, 900, 100),
+							rangeRow('Font size mese abbreviato (px)', 'month_size', 10, 7, 16, 1),
+							rangeRow('Font size nome uscita (px)', 'name_size', 20, 12, 40, 1),
+							rangeRow('Font weight nome uscita', 'name_weight', 700, 300, 900, 100),
+							rangeRow('Font size luogo (px)', 'luogo_size', 13, 9, 20, 1),
+							rangeRow('Font size etichetta ritrovo (px)', 'ritrovo_label_size', 9, 7, 16, 1),
+							rangeRow('Font size valore ritrovo (px)', 'ritrovo_val_size', 11, 8, 18, 1),
+							rangeRow('Font size posti (px)', 'posti_size', 13, 9, 20, 1),
+							rangeRow('Font size badge livello (px)', 'badge_size', 12, 8, 20, 1),
+							rangeRow('Font weight badge livello', 'badge_weight', 600, 300, 900, 100)
+						),
+
+						/* ── Testo bottone e vuoto ── */
+						el(PanelBody, { title: 'Testo bottone / vuoto', initialOpen: false },
+							rangeRow('Font size bottone (px)', 'btn_size', 13, 9, 20, 1),
+							rangeRow('Font weight bottone', 'btn_weight', 700, 300, 900, 100),
+							rangeRow('Font size testo stato vuoto (px)', 'empty_size', 16, 10, 28, 1)
 						)
 
 					) : null;
@@ -2782,12 +2980,12 @@ class Calypsosub_Blocks {
 						},
 							el('div', { style: { background: '#bcc8d2', paddingTop: '100%', position: 'relative' } },
 								el('span', { style: {
-									position: 'absolute', bottom: 0, left: 0, right: 0,
+									position: 'absolute', bottom: 0, left: 0,
 									background: a.photo_label_bg || 'rgba(10,37,64,.72)',
 									color: a.photo_label_color || '#fff',
 									fontSize: (a.photo_label_size || 9) + 'px',
-									fontWeight: 500, letterSpacing: '.12em', textTransform: 'uppercase',
-									padding: '5px 10px',
+									fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase',
+									padding: '10px 14px', borderTopRightRadius: '8px',
 								} }, (a.photo_label_prefix || 'RITRATTO') + ' · ' + name.toUpperCase())
 							),
 							el('div', { style: { padding: (a.card_body_py || 18) + 'px ' + (a.card_body_px || 20) + 'px' } },
@@ -3321,6 +3519,340 @@ class Calypsosub_Blocks {
 						)
 
 					) : null;
+
+					return el(Fragment, {}, controls, preview);
+				},
+				save: function () { return null; },
+			});
+			return;
+		}
+
+		/* ════════════════════════════════════════════
+		   calypso/lista-articoli — lista magazine con filtri
+		   ════════════════════════════════════════════ */
+		if (info.name === 'calypso/lista-articoli') {
+			var useStateLA  = element.useState;
+			var useEffectLA = element.useEffect;
+
+			blocks.registerBlockType(info.name, {
+				title: info.title,
+				category: 'calypso',
+				icon: info.icon || 'list-view',
+				attributes: info.attributes || {},
+				edit: function (props) {
+					var a   = props.attributes;
+					var set = props.setAttributes;
+
+					var catsState  = useStateLA([]);
+					var cats       = catsState[0];
+					var setCats    = catsState[1];
+					var tagsState  = useStateLA([]);
+					var tagsArr    = tagsState[0];
+					var setTagsArr = tagsState[1];
+
+					useEffectLA(function () {
+						if (!window.wp || !window.wp.apiFetch) return;
+						window.wp.apiFetch({ path: '/wp/v2/categories?per_page=100&hide_empty=false' })
+							.then(function (res) { setCats(res.map(function (c) { return { value: c.id, label: c.name }; })); })
+							.catch(function () {});
+						window.wp.apiFetch({ path: '/wp/v2/tags?per_page=100&hide_empty=false' })
+							.then(function (res) { setTagsArr(res.map(function (t) { return { value: t.id, label: t.name }; })); })
+							.catch(function () {});
+					}, []);
+
+					function colorRow(label, key) {
+						return el('div', { style: { marginBottom: '12px' } },
+							el('p', { style: { fontSize: '11px', fontWeight: 500, color: '#1e1e1e', margin: '0 0 6px' } }, label),
+							el(ColorPalette, {
+								colors: getThemeColors(),
+								value: a[key] || '',
+								onChange: function (v) { var u = {}; u[key] = v || ''; set(u); }
+							})
+						);
+					}
+					function rangeRow(label, key, def, min, max, step) {
+						return el(RangeControl, {
+							label: label,
+							value: a[key] !== undefined ? a[key] : def,
+							min: min, max: max, step: step || 1,
+							onChange: function (v) { var u = {}; u[key] = v === undefined ? def : v; set(u); }
+						});
+					}
+
+					function multiCheck(items, selectedIds, onChange) {
+						return el('div', { style: { maxHeight: '180px', overflowY: 'auto', border: '1px solid #e0e0e0', borderRadius: '4px', padding: '6px 8px' } },
+							items.length === 0
+								? el('p', { style: { fontSize: '12px', color: '#999', margin: 0 } }, 'Caricamento…')
+								: items.map(function (item) {
+									var checked = selectedIds.indexOf(item.value) !== -1;
+									return el('label', {
+										key: item.value,
+										style: { display: 'flex', alignItems: 'center', gap: '6px', padding: '3px 0', fontSize: '12px', cursor: 'pointer' }
+									},
+										el('input', {
+											type: 'checkbox',
+											checked: checked,
+											onChange: function () {
+												var next = checked
+													? selectedIds.filter(function (id) { return id !== item.value; })
+													: selectedIds.concat([item.value]);
+												onChange(next);
+											}
+										}),
+										item.label
+									);
+								})
+						);
+					}
+
+					var showCats = a.source_mode === 'category' || a.source_mode === 'category_tag';
+					var showTags = a.source_mode === 'tag'      || a.source_mode === 'category_tag';
+
+					var controls = InspectorControls ? el(InspectorControls, {},
+
+						el(PanelBody, { title: 'Sorgente', initialOpen: true },
+							SelectControl ? el(SelectControl, {
+								label: 'Modalità',
+								value: a.source_mode || 'all',
+								options: [
+									{ value: 'all',          label: 'Tutti gli articoli' },
+									{ value: 'category',     label: 'Per categoria' },
+									{ value: 'tag',          label: 'Per tag' },
+									{ value: 'category_tag', label: 'Categoria + Tag' },
+									{ value: 'manual',       label: 'Selezione manuale (ID)' }
+								],
+								onChange: function (v) { set({ source_mode: v }); }
+							}) : null,
+							showCats ? el('div', { style: { marginTop: '8px' } },
+								el('p', { style: { fontSize: '11px', fontWeight: 500, color: '#1e1e1e', margin: '0 0 6px' } }, 'Categorie'),
+								multiCheck(cats, a.category_ids || [], function (ids) { set({ category_ids: ids }); })
+							) : null,
+							showTags ? el('div', { style: { marginTop: '8px' } },
+								el('p', { style: { fontSize: '11px', fontWeight: 500, color: '#1e1e1e', margin: '0 0 6px' } }, 'Tag'),
+								multiCheck(tagsArr, a.tag_ids || [], function (ids) { set({ tag_ids: ids }); })
+							) : null,
+							a.source_mode === 'manual' ? el(TextareaControl, {
+								label: 'ID articoli (separati da virgola)',
+								help: 'Es: 12, 45, 78',
+								value: (a.manual_ids || []).join(', '),
+								rows: 2,
+								onChange: function (v) {
+									var ids = v.split(',').map(function (s) { return parseInt(s.trim(), 10); }).filter(function (n) { return !isNaN(n) && n > 0; });
+									set({ manual_ids: ids });
+								}
+							}) : null,
+							SelectControl ? el(SelectControl, {
+								label: 'Ordina per',
+								value: a.order_by || 'date',
+								options: [
+									{ value: 'date',       label: 'Data pubblicazione' },
+									{ value: 'title',      label: 'Titolo (A-Z)' },
+									{ value: 'modified',   label: 'Data modifica' },
+									{ value: 'rand',       label: 'Casuale' },
+									{ value: 'menu_order', label: 'Ordine manuale' }
+								],
+								onChange: function (v) { set({ order_by: v }); }
+							}) : null,
+							SelectControl ? el(SelectControl, {
+								label: 'Direzione',
+								value: a.order || 'DESC',
+								options: [
+									{ value: 'DESC', label: 'Decrescente (nuovi prima)' },
+									{ value: 'ASC',  label: 'Crescente (vecchi prima)' }
+								],
+								onChange: function (v) { set({ order: v }); }
+							}) : null,
+							rangeRow('N° massimo articoli (0 = tutti)', 'max_items', 0, 0, 50, 1)
+						),
+
+						el(PanelBody, { title: 'Comportamento', initialOpen: false },
+							el(ToggleControl, {
+								label: 'Link al click',
+								checked: a.show_link !== false,
+								onChange: function (v) { set({ show_link: v }); }
+							}),
+							a.show_link !== false ? SelectControl ? el(SelectControl, {
+								label: 'Apri in',
+								value: a.link_target || '_self',
+								options: [
+									{ value: '_self',  label: 'Stessa finestra' },
+									{ value: '_blank', label: 'Nuova scheda' }
+								],
+								onChange: function (v) { set({ link_target: v }); }
+							}) : null : null,
+							el(ToggleControl, {
+								label: 'Mostra immagine',
+								checked: a.show_image !== false,
+								onChange: function (v) { set({ show_image: v }); }
+							}),
+							a.show_image !== false ? el(TextControl, {
+								label: 'Prefisso label immagine',
+								help: 'Es: "ARCHIVIO" → "ARCHIVIO · 2024"',
+								value: a.image_label_prefix || '',
+								onChange: function (v) { set({ image_label_prefix: v }); }
+							}) : null,
+							el(ToggleControl, {
+								label: 'Mostra excerpt',
+								checked: a.show_excerpt !== false,
+								onChange: function (v) { set({ show_excerpt: v }); }
+							}),
+							a.show_excerpt !== false ? rangeRow('Lunghezza excerpt (parole)', 'excerpt_length', 30, 5, 80, 5) : null
+						),
+
+						el(PanelBody, { title: 'Colonna sinistra', initialOpen: false },
+							SelectControl ? el(SelectControl, {
+								label: 'Campo sinistra',
+								value: a.left_field || 'post_date',
+								options: [
+									{ value: 'post_date',    label: 'Data (formato configurabile)' },
+									{ value: 'custom_field', label: 'Campo personalizzato' }
+								],
+								onChange: function (v) { set({ left_field: v }); }
+							}) : null,
+							a.left_field !== 'custom_field' ? el(TextControl, {
+								label: 'Formato data (PHP)',
+								help: 'Y = 2024 · j M = 14 Giu · d/m = 14/06',
+								value: a.left_format || 'Y',
+								onChange: function (v) { set({ left_format: v }); }
+							}) : null,
+							a.left_field === 'custom_field' ? el(TextControl, {
+								label: 'Nome meta field',
+								value: a.left_custom_field || '',
+								onChange: function (v) { set({ left_custom_field: v }); }
+							}) : null
+						),
+
+						el(PanelBody, { title: 'Layout sezione', initialOpen: false },
+							colorRow('Sfondo', 'bg_color'),
+							rangeRow('Larghezza massima (px)', 'max_width', 1100, 400, 1920, 20),
+							rangeRow('Padding verticale (px)', 'padding_y', 60, 0, 200, 4),
+							rangeRow('Padding orizzontale (px)', 'padding_x', 24, 0, 120, 4),
+							rangeRow('Spazio interno riga (px)', 'row_gap_y', 40, 16, 100, 4),
+							rangeRow('Margine superiore (px)', 'margin_top', 0, 0, 200, 4),
+							rangeRow('Margine inferiore (px)', 'margin_bottom', 0, 0, 200, 4),
+							rangeRow('Margine sinistro (px)', 'margin_left', 0, 0, 200, 4),
+							rangeRow('Margine destro (px)', 'margin_right', 0, 0, 200, 4),
+							colorRow('Colore separatore', 'separator_color')
+						),
+
+						el(PanelBody, { title: 'Stile — colonna sinistra', initialOpen: false },
+							colorRow('Colore testo', 'left_color'),
+							rangeRow('Font size (px)', 'left_size', 80, 20, 140, 2),
+							rangeRow('Font weight', 'left_weight', 900, 300, 900, 100),
+							rangeRow('Larghezza colonna (px)', 'left_col_width', 140, 60, 300, 10)
+						),
+
+						el(PanelBody, { title: 'Stile — titolo', initialOpen: false },
+							colorRow('Colore titolo', 'title_color'),
+							rangeRow('Font size (px)', 'title_size', 22, 12, 56, 1),
+							rangeRow('Font weight', 'title_weight', 800, 300, 900, 100),
+							el(ToggleControl, {
+								label: 'Testo maiuscolo',
+								checked: a.title_upper !== false,
+								onChange: function (v) { set({ title_upper: v }); }
+							})
+						),
+
+						el(PanelBody, { title: 'Stile — testo corpo', initialOpen: false },
+							colorRow('Colore', 'text_color'),
+							rangeRow('Font size (px)', 'text_size', 15, 11, 22, 1)
+						),
+
+						el(PanelBody, { title: 'Stile — immagine', initialOpen: false },
+							rangeRow('Larghezza colonna immagine (px)', 'image_col_width', 360, 160, 600, 20),
+							el(TextControl, {
+								label: 'Aspect ratio (CSS)',
+								help: 'Es: 16/9 · 4/3 · 3/2 · 1/1',
+								value: a.image_ratio || '16/9',
+								onChange: function (v) { set({ image_ratio: v }); }
+							}),
+							rangeRow('Border radius (px)', 'image_radius', 8, 0, 32, 2),
+							colorRow('Sfondo label', 'image_label_bg'),
+							colorRow('Colore testo label', 'image_label_color'),
+							rangeRow('Font size label (px)', 'image_label_size', 10, 7, 18, 1)
+						)
+
+					) : null;
+
+					/* Preview canvas */
+					var fakeRows = [
+						{ left: '1943', title: 'Cousteau e Gagnan inventano l\'Aqualung', exc: 'L\'autorespiratore moderno nasce a Marsiglia. Da quel momento il mare smette di essere appannaggio dei palombari.' },
+						{ left: '1959', title: 'Nasce CMAS',                              exc: 'Confédération Mondiale des Activités Subaquatiques. Cousteau ne è il primo presidente.' },
+						{ left: '1978', title: 'Calypso fonda il club ad Arezzo',         exc: 'Tre amici, due ingegneri e un dentista, affittano un garage in via Roma.' }
+					];
+
+					var preview = el('div', {
+						style: { background: a.bg_color || '#f6f1e6', borderRadius: '8px', padding: '16px', fontFamily: 'system-ui,sans-serif' }
+					},
+						fakeRows.map(function (row, idx) {
+							return el('div', {
+								key: idx,
+								style: {
+									display: 'grid',
+									gridTemplateColumns: Math.min(a.left_col_width || 140, 80) + 'px 1fr' + (a.show_image !== false ? ' 140px' : ''),
+									gap: '20px',
+									alignItems: 'start',
+									padding: '20px 0',
+									borderBottom: '1px solid ' + (a.separator_color || 'rgba(10,37,64,.12)'),
+									borderTop: idx === 0 ? ('1px solid ' + (a.separator_color || 'rgba(10,37,64,.12)')) : 'none'
+								}
+							},
+								el('div', {
+									style: {
+										fontSize: Math.min(a.left_size || 80, 36) + 'px',
+										fontWeight: a.left_weight || 900,
+										color: a.left_color || '#c8a84b',
+										lineHeight: 1,
+										letterSpacing: '-.02em'
+									}
+								}, row.left),
+								el('div', {},
+									el('p', {
+										style: {
+											margin: '0 0 8px',
+											fontSize: Math.min(a.title_size || 22, 16) + 'px',
+											fontWeight: a.title_weight || 800,
+											textTransform: a.title_upper !== false ? 'uppercase' : 'none',
+											color: a.title_color || '#1B77A7',
+											lineHeight: 1.2
+										}
+									}, row.title),
+									a.show_excerpt !== false ? el('p', {
+										style: { margin: 0, fontSize: Math.min(a.text_size || 15, 12) + 'px', color: a.text_color || '#3d5265', lineHeight: 1.5 }
+									}, row.exc.substring(0, 80) + '…') : null
+								),
+								a.show_image !== false ? el('div', {
+									style: {
+										borderRadius: (a.image_radius || 8) + 'px',
+										overflow: 'hidden',
+										background: '#b0c8d8',
+										aspectRatio: '16/9',
+										position: 'relative',
+										display: 'flex',
+										alignItems: 'flex-end'
+									}
+								},
+									el('span', {
+										style: {
+											padding: '4px 8px',
+											background: a.image_label_bg || 'rgba(10,37,64,.6)',
+											color: a.image_label_color || '#fff',
+											fontSize: '8px',
+											fontWeight: 600,
+											letterSpacing: '.12em',
+											textTransform: 'uppercase',
+											width: '100%'
+										}
+									}, (a.image_label_prefix || 'ARCHIVIO') + ' · ' + row.left)
+								) : null
+							);
+						}),
+						el('div', { style: { fontSize: '10px', opacity: .5, marginTop: '8px', fontFamily: 'monospace' } },
+							'calypso/lista-articoli · ' + (a.source_mode || 'all') +
+							(a.max_items > 0 ? ' · max ' + a.max_items : ' · tutti') +
+							' · ' + (a.order_by || 'date') + ' ' + (a.order || 'DESC')
+						)
+					);
 
 					return el(Fragment, {}, controls, preview);
 				},

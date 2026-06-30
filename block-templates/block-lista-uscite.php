@@ -20,6 +20,52 @@ $attr_lbl_ritrovo  = (string)  ( $attributes['lbl_ritrovo']      ?? 'RITROVO' );
 $attr_lbl_liberi   = (string)  ( $attributes['lbl_liberi']       ?? 'Posti liberi' );
 $attr_empty_title  = (string)  ( $attributes['empty_title']      ?? 'Nessuna uscita in programma.' );
 
+/* ── Stile ── */
+$bg_color         = (string) ( $attributes['bg_color']         ?? '#dff4f8' );
+$max_width        = (int)    ( $attributes['max_width']        ?? 1320 );
+$padding_y        = (int)    ( $attributes['padding_y']        ?? 80 );
+$padding_x        = (int)    ( $attributes['padding_x']        ?? 48 );
+$color_accent     = (string) ( $attributes['color_accent']     ?? '#1B77A7' );
+$color_ink        = (string) ( $attributes['color_ink']        ?? '#0b1a26' );
+$card_bg          = (string) ( $attributes['card_bg']          ?? '#ffffff' );
+$card_radius      = (int)    ( $attributes['card_radius']      ?? 16 );
+$card_shadow      = (string) ( $attributes['card_shadow']      ?? '0 4px 32px -8px rgba(10,37,64,.12)' );
+$row_padding_y    = (int)    ( $attributes['row_padding_y']    ?? 28 );
+$row_padding_x    = (int)    ( $attributes['row_padding_x']    ?? 32 );
+$row_border_color = (string) ( $attributes['row_border_color'] ?? 'rgba(11,26,38,.07)' );
+$btn_bg           = (string) ( $attributes['btn_bg']           ?? '#061826' );
+$btn_color        = (string) ( $attributes['btn_color']        ?? '#ffffff' );
+/* ── Testo intestazione ── */
+$eyebrow_size      = (int)    ( $attributes['eyebrow_size']      ?? 13 );
+$eyebrow_weight    = (int)    ( $attributes['eyebrow_weight']    ?? 600 );
+$title_size        = (int)    ( $attributes['title_size']        ?? 76 );
+$title_weight      = (int)    ( $attributes['title_weight']      ?? 900 );
+$title_line_height = (string) ( $attributes['title_line_height'] ?? '.95' );
+$head_link_size    = (int)    ( $attributes['head_link_size']    ?? 14 );
+$head_link_weight  = (int)    ( $attributes['head_link_weight']  ?? 600 );
+/* ── Testo righe ── */
+$dayname_size       = (int) ( $attributes['dayname_size']       ?? 10 );
+$daynum_size        = (int) ( $attributes['daynum_size']        ?? 58 );
+$daynum_weight      = (int) ( $attributes['daynum_weight']      ?? 900 );
+$month_size         = (int) ( $attributes['month_size']         ?? 10 );
+$name_size          = (int) ( $attributes['name_size']          ?? 20 );
+$name_weight        = (int) ( $attributes['name_weight']        ?? 700 );
+$luogo_size         = (int) ( $attributes['luogo_size']         ?? 13 );
+$ritrovo_label_size = (int) ( $attributes['ritrovo_label_size'] ?? 9 );
+$ritrovo_val_size   = (int) ( $attributes['ritrovo_val_size']   ?? 11 );
+$posti_size         = (int) ( $attributes['posti_size']         ?? 13 );
+$badge_size         = (int) ( $attributes['badge_size']         ?? 12 );
+$badge_weight       = (int) ( $attributes['badge_weight']       ?? 600 );
+/* ── Bottone/Vuoto ── */
+$btn_size   = (int) ( $attributes['btn_size']   ?? 13 );
+$btn_weight = (int) ( $attributes['btn_weight'] ?? 700 );
+$empty_size = (int) ( $attributes['empty_size'] ?? 16 );
+
+$css = static function ( string $v ): string {
+	return preg_replace( '/[^#a-zA-Z0-9.,()%\s\-\/]/', '', $v );
+};
+$uid = 'cso-lu-' . sprintf( '%08x', crc32( implode( ',', [ $bg_color, $max_width, $card_radius, $color_accent ] ) ) );
+
 $archive_url = get_post_type_archive_link( 'calypso_uscita' );
 $today       = current_time( 'Y-m-d' );
 
@@ -87,117 +133,84 @@ $mesi_short = [
 	'09'=>'SET','10'=>'OTT','11'=>'NOV','12'=>'DIC',
 ];
 $giorni_it = ['Sun'=>'DOM','Mon'=>'LUN','Tue'=>'MAR','Wed'=>'MER','Thu'=>'GIO','Fri'=>'VEN','Sat'=>'SAB'];
+$py_md  = max( 40, (int) round( $padding_y * 0.8 ) );
+$px_md  = max( 20, (int) round( $padding_x * 0.583 ) );
+$py_sm  = max( 24, (int) round( $padding_y * 0.6 ) );
+$px_sm  = max( 12, (int) round( $padding_x * 0.417 ) );
+$title_md  = max( 24, (int) round( $title_size  * 0.737 ) );
+$daynum_md = max( 20, (int) round( $daynum_size * 0.793 ) );
+$name_md   = max( 13, (int) round( $name_size   * 0.85  ) );
+$title_sm  = max( 20, (int) round( $title_size  * 0.5   ) );
+$daynum_sm = max( 18, (int) round( $daynum_size * 0.621 ) );
+$name_sm   = max( 12, (int) round( $name_size   * 0.75  ) );
+$luogo_sm  = max( 10, (int) round( $luogo_size  * 0.923 ) );
+$title_xs  = max( 18, (int) round( $title_size  * 0.395 ) );
+$daynum_xs = max( 16, (int) round( $daynum_size * 0.517 ) );
 ?>
 <style>
-.cso-lu{background:#dff4f8;color:var(--c-ink,#0b1a26)}
-.cso-lu a{text-decoration:none;color:inherit}
-
-/* ── Wrapper sezione ── */
-.cso-lu__wrap{max-width:1320px;margin:0 auto;padding:80px 48px}
-
-/* ── Header ── */
-.cso-lu__head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:48px;flex-wrap:wrap}
-.cso-lu__eyebrow{display:block;font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--c-deep,#1B77A7);margin-bottom:16px}
-.cso-lu__title{font-size:76px;line-height:.95;color:var(--c-deep,#1B77A7);margin:0;font-weight:900}
-.cso-lu__head-link{flex-shrink:0;display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--c-deep,#1B77A7);white-space:nowrap;align-self:flex-end;padding-bottom:4px}
-.cso-lu__head-link:hover{opacity:.7}
-
-/* ── Card lista ── */
-.cso-lu__card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 32px -8px rgba(10,37,64,.12)}
-
-/* ── Riga ── */
-.cso-lu__row{
-	display:grid;
-	grid-template-columns:<?php echo esc_attr( $grid_template ); ?>;
-	align-items:center;
-	padding:28px 32px;
-	column-gap:0;
-	border-bottom:1px solid rgba(11,26,38,.07);
-}
-.cso-lu__row:last-child{border-bottom:none}
-
-/* Data */
-.cso-lu__date{display:flex;flex-direction:column;line-height:1}
-.cso-lu__dayname{font-family:var(--f-mono,monospace);font-size:10px;color:rgba(11,26,38,.45);letter-spacing:.14em;margin-bottom:1px}
-.cso-lu__daynum{font-size:58px;font-weight:900;color:var(--c-deep,#1B77A7);line-height:1;margin:0}
-.cso-lu__month{font-family:var(--f-mono,monospace);font-size:10px;color:rgba(11,26,38,.45);letter-spacing:.14em;margin-top:2px}
-
-/* Info */
-.cso-lu__name{font-size:20px;font-weight:700;color:var(--c-deep,#1B77A7);text-transform:uppercase;margin:0 0 5px;line-height:1.1}
-.cso-lu__name:hover{opacity:.8}
-.cso-lu__luogo{display:flex;align-items:center;gap:5px;font-size:13px;color:rgba(11,26,38,.55);margin:0}
-
-/* Badge livello */
-.cso-lu__badge{display:inline-flex;padding:5px 12px;border-radius:999px;background:rgba(27,119,167,.12);color:var(--c-deep,#1B77A7);font-size:12px;font-weight:600;justify-self:start}
-
-/* Ritrovo */
-.cso-lu__ritrovo-label{display:block;font-family:var(--f-mono,monospace);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(11,26,38,.4);margin-bottom:4px}
-.cso-lu__ritrovo-val{font-family:var(--f-mono,monospace);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:rgba(11,26,38,.55)}
-
-/* Posti */
-.cso-lu__posti{font-family:var(--f-mono,monospace);font-size:13px;letter-spacing:.06em}
-.cso-lu__posti--warn{color:var(--c-coral,#e9bf26);font-weight:600}
-.cso-lu__posti--ok{color:rgba(11,26,38,.45)}
-.cso-lu__posti--full{color:rgba(11,26,38,.25)}
-.cso-lu__posti--libera{color:rgba(11,26,38,.35)}
-
-/* CTA */
-.cso-lu__btn{display:inline-flex;align-items:center;justify-content:center;padding:11px 20px;background:var(--c-abyss,#061826);color:#fff;border-radius:999px;font-size:13px;font-weight:700;white-space:nowrap;border:none;cursor:pointer;transition:background .15s;justify-self:end}
-.cso-lu__btn:hover{background:var(--c-deep,#1B77A7);color:#fff}
-.cso-lu__btn--disabled{background:rgba(11,26,38,.08);color:rgba(11,26,38,.3);pointer-events:none;cursor:default}
-
-/* Empty */
-.cso-lu__empty{padding:48px 32px;text-align:center;font-size:16px;color:rgba(11,26,38,.5)}
-
-/* ══════════════════════
-   RESPONSIVE
-   ══════════════════════ */
+#<?php echo $uid; ?>{--c-deep:<?php echo $css( $color_accent ); ?>;--c-ink:<?php echo $css( $color_ink ); ?>;--c-abyss:<?php echo $css( $btn_bg ); ?>;background:<?php echo $css( $bg_color ); ?>;color:var(--c-ink)}
+#<?php echo $uid; ?> a{text-decoration:none;color:inherit}
+#<?php echo $uid; ?> .cso-lu__wrap{max-width:<?php echo $max_width; ?>px;margin:0 auto;padding:<?php echo $padding_y; ?>px <?php echo $padding_x; ?>px}
+#<?php echo $uid; ?> .cso-lu__head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:48px;flex-wrap:wrap}
+#<?php echo $uid; ?> .cso-lu__eyebrow{display:block;font-weight:<?php echo $eyebrow_weight; ?>;letter-spacing:.16em;text-transform:uppercase;font-size:<?php echo $eyebrow_size; ?>px;color:var(--c-deep);margin-bottom:16px}
+#<?php echo $uid; ?> .cso-lu__title{font-size:<?php echo $title_size; ?>px;line-height:<?php echo $css( $title_line_height ); ?>;color:var(--c-deep);margin:0;font-weight:<?php echo $title_weight; ?>}
+#<?php echo $uid; ?> .cso-lu__head-link{flex-shrink:0;display:inline-flex;align-items:center;gap:8px;font-size:<?php echo $head_link_size; ?>px;font-weight:<?php echo $head_link_weight; ?>;color:var(--c-deep);white-space:nowrap;align-self:flex-end;padding-bottom:4px}
+#<?php echo $uid; ?> .cso-lu__head-link:hover{opacity:.7}
+#<?php echo $uid; ?> .cso-lu__card{background:<?php echo $css( $card_bg ); ?>;border-radius:<?php echo $card_radius; ?>px;overflow:hidden;box-shadow:<?php echo $css( $card_shadow ); ?>}
+#<?php echo $uid; ?> .cso-lu__row{display:grid;grid-template-columns:<?php echo esc_attr( $grid_template ); ?>;align-items:center;padding:<?php echo $row_padding_y; ?>px <?php echo $row_padding_x; ?>px;column-gap:0;border-bottom:1px solid <?php echo $css( $row_border_color ); ?>}
+#<?php echo $uid; ?> .cso-lu__row:last-child{border-bottom:none}
+#<?php echo $uid; ?> .cso-lu__date{display:flex;flex-direction:column;line-height:1}
+#<?php echo $uid; ?> .cso-lu__dayname{font-family:var(--f-mono,monospace);font-size:<?php echo $dayname_size; ?>px;color:rgba(11,26,38,.45);letter-spacing:.14em;margin-bottom:1px}
+#<?php echo $uid; ?> .cso-lu__daynum{font-size:<?php echo $daynum_size; ?>px;font-weight:<?php echo $daynum_weight; ?>;color:var(--c-deep);line-height:1;margin:0}
+#<?php echo $uid; ?> .cso-lu__month{font-family:var(--f-mono,monospace);font-size:<?php echo $month_size; ?>px;color:rgba(11,26,38,.45);letter-spacing:.14em;margin-top:2px}
+#<?php echo $uid; ?> .cso-lu__name{font-size:<?php echo $name_size; ?>px;font-weight:<?php echo $name_weight; ?>;color:var(--c-deep);text-transform:uppercase;margin:0 0 5px;line-height:1.1}
+#<?php echo $uid; ?> .cso-lu__name:hover{opacity:.8}
+#<?php echo $uid; ?> .cso-lu__luogo{display:flex;align-items:center;gap:5px;font-size:<?php echo $luogo_size; ?>px;color:rgba(11,26,38,.55);margin:0}
+#<?php echo $uid; ?> .cso-lu__badge{display:inline-flex;padding:5px 12px;border-radius:999px;background:rgba(27,119,167,.12);color:var(--c-deep);font-size:<?php echo $badge_size; ?>px;font-weight:<?php echo $badge_weight; ?>;justify-self:start}
+#<?php echo $uid; ?> .cso-lu__ritrovo-label{display:block;font-family:var(--f-mono,monospace);font-size:<?php echo $ritrovo_label_size; ?>px;letter-spacing:.12em;text-transform:uppercase;color:rgba(11,26,38,.4);margin-bottom:4px}
+#<?php echo $uid; ?> .cso-lu__ritrovo-val{font-family:var(--f-mono,monospace);font-size:<?php echo $ritrovo_val_size; ?>px;letter-spacing:.06em;text-transform:uppercase;color:rgba(11,26,38,.55)}
+#<?php echo $uid; ?> .cso-lu__posti{font-family:var(--f-mono,monospace);font-size:<?php echo $posti_size; ?>px;letter-spacing:.06em}
+#<?php echo $uid; ?> .cso-lu__posti--warn{color:var(--c-coral,#e9bf26);font-weight:600}
+#<?php echo $uid; ?> .cso-lu__posti--ok{color:rgba(11,26,38,.45)}
+#<?php echo $uid; ?> .cso-lu__posti--full{color:rgba(11,26,38,.25)}
+#<?php echo $uid; ?> .cso-lu__posti--libera{color:rgba(11,26,38,.35)}
+#<?php echo $uid; ?> .cso-lu__btn{display:inline-flex;align-items:center;justify-content:center;padding:11px 20px;background:var(--c-abyss);color:<?php echo $css( $btn_color ); ?>;border-radius:999px;font-size:<?php echo $btn_size; ?>px;font-weight:<?php echo $btn_weight; ?>;white-space:nowrap;border:none;cursor:pointer;transition:background .15s;justify-self:end}
+#<?php echo $uid; ?> .cso-lu__btn:hover{background:var(--c-deep);color:<?php echo $css( $btn_color ); ?>}
+#<?php echo $uid; ?> .cso-lu__btn--disabled{background:rgba(11,26,38,.08);color:rgba(11,26,38,.3);pointer-events:none;cursor:default}
+#<?php echo $uid; ?> .cso-lu__empty{padding:48px 32px;text-align:center;font-size:<?php echo $empty_size; ?>px;color:rgba(11,26,38,.5)}
 @media(max-width:1024px){
-	.cso-lu__wrap{padding:64px 28px}
-	.cso-lu__title{font-size:56px}
-	.cso-lu__row{padding:24px 24px}
-	.cso-lu__daynum{font-size:46px}
-	.cso-lu__name{font-size:17px}
+	#<?php echo $uid; ?> .cso-lu__wrap{padding:<?php echo $py_md; ?>px <?php echo $px_md; ?>px}
+	#<?php echo $uid; ?> .cso-lu__title{font-size:<?php echo $title_md; ?>px}
+	#<?php echo $uid; ?> .cso-lu__row{padding:24px 24px}
+	#<?php echo $uid; ?> .cso-lu__daynum{font-size:<?php echo $daynum_md; ?>px}
+	#<?php echo $uid; ?> .cso-lu__name{font-size:<?php echo $name_md; ?>px}
 }
-
 @media(max-width:760px){
-	.cso-lu__wrap{padding:48px 20px}
-	.cso-lu__head{margin-bottom:32px}
-	.cso-lu__title{font-size:38px}
-	.cso-lu__head-link{font-size:13px}
-
-	/* Su mobile: 3 colonne → data | info+posti | btn */
-	.cso-lu__row{
-		display:grid;
-		grid-template-columns:70px 1fr auto;
-		grid-template-rows:auto auto;
-		align-items:center;
-		column-gap:14px;
-		row-gap:0;
-		padding:20px 18px;
-	}
-	.cso-lu__date   {grid-column:1;grid-row:1/3;align-self:center}
-	.cso-lu__info   {grid-column:2;grid-row:1;padding-top:2px}
-	.cso-lu__posti  {grid-column:2;grid-row:2;padding-bottom:2px}
-	.cso-lu__cta    {grid-column:3;grid-row:1/3;align-self:center}
-	.cso-lu__badge  {display:none}
-	.cso-lu__ritrovo{display:none}
-
-	.cso-lu__daynum{font-size:36px}
-	.cso-lu__name{font-size:15px}
-	.cso-lu__luogo{font-size:12px}
-	.cso-lu__posti{font-size:12px;margin-top:3px}
-	.cso-lu__btn{padding:9px 14px;font-size:12px}
+	#<?php echo $uid; ?> .cso-lu__wrap{padding:<?php echo $py_sm; ?>px <?php echo $px_sm; ?>px}
+	#<?php echo $uid; ?> .cso-lu__head{margin-bottom:32px}
+	#<?php echo $uid; ?> .cso-lu__title{font-size:<?php echo $title_sm; ?>px}
+	#<?php echo $uid; ?> .cso-lu__head-link{font-size:13px}
+	#<?php echo $uid; ?> .cso-lu__row{display:grid;grid-template-columns:70px 1fr auto;grid-template-rows:auto auto;align-items:center;column-gap:14px;row-gap:0;padding:20px 18px}
+	#<?php echo $uid; ?> .cso-lu__date{grid-column:1;grid-row:1/3;align-self:center}
+	#<?php echo $uid; ?> .cso-lu__info{grid-column:2;grid-row:1;padding-top:2px}
+	#<?php echo $uid; ?> .cso-lu__posti{grid-column:2;grid-row:2;padding-bottom:2px}
+	#<?php echo $uid; ?> .cso-lu__cta{grid-column:3;grid-row:1/3;align-self:center}
+	#<?php echo $uid; ?> .cso-lu__badge{display:none}
+	#<?php echo $uid; ?> .cso-lu__ritrovo{display:none}
+	#<?php echo $uid; ?> .cso-lu__daynum{font-size:<?php echo $daynum_sm; ?>px}
+	#<?php echo $uid; ?> .cso-lu__name{font-size:<?php echo $name_sm; ?>px}
+	#<?php echo $uid; ?> .cso-lu__luogo{font-size:<?php echo $luogo_sm; ?>px}
+	#<?php echo $uid; ?> .cso-lu__posti{font-size:12px;margin-top:3px}
+	#<?php echo $uid; ?> .cso-lu__btn{padding:9px 14px;font-size:12px}
 }
-
 @media(max-width:420px){
-	.cso-lu__title{font-size:30px}
-	.cso-lu__row{padding:18px 14px;column-gap:10px}
-	.cso-lu__daynum{font-size:30px}
+	#<?php echo $uid; ?> .cso-lu__title{font-size:<?php echo $title_xs; ?>px}
+	#<?php echo $uid; ?> .cso-lu__row{padding:18px 14px;column-gap:10px}
+	#<?php echo $uid; ?> .cso-lu__daynum{font-size:<?php echo $daynum_xs; ?>px}
 }
 </style>
 
-<div class="cso-lu">
+<div class="cso-lu" id="<?php echo $uid; ?>">
 <div class="cso-lu__wrap">
 
 	<!-- Header -->

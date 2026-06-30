@@ -181,12 +181,13 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
 #<?php echo $uid; ?> .dcar__photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;display:block;transition:transform .4s;}
 #<?php echo $uid; ?> .dcar__card:hover .dcar__photo img{transform:scale(1.04);}
 #<?php echo $uid; ?> .dcar__photo-label{
-  position:absolute;bottom:0;left:0;right:0;
+  position:absolute;bottom:0;left:0;
   background:<?php echo $css( $photo_label_bg ); ?>;
   color:<?php echo $css( $photo_label_color ); ?>;
   font-size:<?php echo $photo_label_size; ?>px;
-  font-weight:500;letter-spacing:.14em;text-transform:uppercase;
-  padding:5px 12px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  padding:10px 14px;border-top-right-radius:8px;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
 }
 #<?php echo $uid; ?> .dcar__body{padding:<?php echo $card_body_py; ?>px <?php echo $card_body_px; ?>px;flex:1;display:flex;flex-direction:column;}
 #<?php echo $uid; ?> .dcar__name{
