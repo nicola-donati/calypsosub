@@ -211,7 +211,8 @@ class Calypsosub_Blocks {
 				'arrow_hover_col'=> [ 'type' => 'string',  'default' => '#ffffff' ],
 				'arrow_size'     => [ 'type' => 'integer', 'default' => 44 ],
 				'arrow_radius'   => [ 'type' => 'integer', 'default' => 999 ],
-				'arrow_shadow'   => [ 'type' => 'string',  'default' => '0 2px 12px -4px rgba(10,37,64,.25)' ],
+				'arrow_shadow'      => [ 'type' => 'string',  'default' => '0 2px 12px -4px rgba(10,37,64,.25)' ],
+				'arrow_shadow_show' => [ 'type' => 'boolean', 'default' => true ],
 				/* ── Sezione ── */
 				'bg_color'      => [ 'type' => 'string',  'default' => '' ],
 				'max_width'     => [ 'type' => 'integer', 'default' => 1320 ],
@@ -3137,7 +3138,8 @@ class Calypsosub_Blocks {
 							a.arrows_show !== false ? colorRow('Icona freccia hover', 'arrow_hover_col') : null,
 							a.arrows_show !== false ? rangeRow('Dimensione freccia (px)', 'arrow_size', 44, 28, 80, 2) : null,
 							a.arrows_show !== false ? rangeRow('Border radius freccia (px)', 'arrow_radius', 999, 0, 999, 4) : null,
-							a.arrows_show !== false ? el(TextControl, { label: 'Box-shadow freccia (CSS)', value: a.arrow_shadow || '0 2px 12px -4px rgba(10,37,64,.25)', onChange: function (v) { set({ arrow_shadow: v }); } }) : null
+							a.arrows_show !== false ? el(ToggleControl, { label: 'Mostra box-shadow freccia', checked: a.arrow_shadow_show !== false, onChange: function (v) { set({ arrow_shadow_show: v }); } }) : null,
+							(a.arrows_show !== false && a.arrow_shadow_show !== false) ? el(TextControl, { label: 'Box-shadow freccia (CSS)', value: a.arrow_shadow || '0 2px 12px -4px rgba(10,37,64,.25)', onChange: function (v) { set({ arrow_shadow: v }); } }) : null
 						),
 
 						el(PanelBody, { title: 'Layout sezione', initialOpen: false },

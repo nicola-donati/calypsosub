@@ -33,16 +33,17 @@ $peek          = (int)    ( $a['peek']          ?? 40 );
 $snap          = (string) ( $a['snap']          ?? 'start' );
 
 /* ── Frecce ── */
-$arrows_show     = (bool)   ( $a['arrows_show']     ?? true );
-$arrows_position = (string) ( $a['arrows_position'] ?? 'sides' );
-$arrow_bg        = (string) ( $a['arrow_bg']        ?? '#ffffff' );
-$arrow_color     = (string) ( $a['arrow_color']     ?? '#0a2540' );
-$arrow_border    = (string) ( $a['arrow_border']    ?? 'rgba(10,37,64,.15)' );
-$arrow_hover_bg  = (string) ( $a['arrow_hover_bg']  ?? '#0a2540' );
-$arrow_hover_col = (string) ( $a['arrow_hover_col'] ?? '#ffffff' );
-$arrow_size      = (int)    ( $a['arrow_size']      ?? 44 );
-$arrow_radius    = (int)    ( $a['arrow_radius']    ?? 999 );
-$arrow_shadow    = (string) ( $a['arrow_shadow']    ?? '0 2px 12px -4px rgba(10,37,64,.25)' );
+$arrows_show      = (bool)   ( $a['arrows_show']      ?? true );
+$arrows_position  = (string) ( $a['arrows_position']  ?? 'sides' );
+$arrow_bg         = (string) ( $a['arrow_bg']         ?? '#ffffff' );
+$arrow_color      = (string) ( $a['arrow_color']      ?? '#0a2540' );
+$arrow_border     = (string) ( $a['arrow_border']     ?? 'rgba(10,37,64,.15)' );
+$arrow_hover_bg   = (string) ( $a['arrow_hover_bg']   ?? '#0a2540' );
+$arrow_hover_col  = (string) ( $a['arrow_hover_col']  ?? '#ffffff' );
+$arrow_size       = (int)    ( $a['arrow_size']       ?? 44 );
+$arrow_radius     = (int)    ( $a['arrow_radius']     ?? 999 );
+$arrow_shadow     = (string) ( $a['arrow_shadow']     ?? '0 2px 12px -4px rgba(10,37,64,.25)' );
+$arrow_shadow_show= (bool)   ( $a['arrow_shadow_show'] ?? true );
 
 /* ── Sezione ── */
 $bg_color      = (string) ( $a['bg_color']      ?? '' );
@@ -252,15 +253,16 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
   position:absolute;top:50%;transform:translateY(-50%);
   width:<?php echo $arrow_size; ?>px;height:<?php echo $arrow_size; ?>px;
   display:flex;align-items:center;justify-content:center;
-  background:<?php echo $css( $arrow_bg ); ?>;
+  background:<?php echo $arrow_bg !== '' ? $css( $arrow_bg ) : 'transparent'; ?>;
   color:<?php echo $css( $arrow_color ); ?>;
-  border:none;
+  border:none;outline:none;
   border-radius:<?php echo $arrow_radius; ?>px;
-  box-shadow:<?php echo $css( $arrow_shadow ); ?>;
+  box-shadow:<?php echo $arrow_shadow_show && $arrow_shadow !== '' ? $css( $arrow_shadow ) : 'none'; ?>;
   cursor:pointer;z-index:2;transition:background .15s,color .15s,opacity .15s;
   user-select:none;font-size:<?php echo max(16, (int)round($arrow_size * .45)); ?>px;line-height:1;
+  -webkit-appearance:none;appearance:none;padding:0;
 }
-#<?php echo $uid; ?> .dcar__arrow:hover{background:<?php echo $css( $arrow_hover_bg ); ?>;color:<?php echo $css( $arrow_hover_col ); ?>;border-color:transparent;}
+#<?php echo $uid; ?> .dcar__arrow:hover{background:<?php echo $arrow_hover_bg !== '' ? $css( $arrow_hover_bg ) : 'transparent'; ?>;color:<?php echo $css( $arrow_hover_col ); ?>;}
 #<?php echo $uid; ?> .dcar__arrow--prev{left:<?php echo $arrows_position === 'inside' ? '8px' : ( '-' . ($arrow_size/2) . 'px' ); ?>;}
 #<?php echo $uid; ?> .dcar__arrow--next{right:<?php echo $arrows_position === 'inside' ? '8px' : ( '-' . ($arrow_size/2) . 'px' ); ?>;}
 #<?php echo $uid; ?> .dcar__arrow.is-hidden{opacity:0;pointer-events:none;}
