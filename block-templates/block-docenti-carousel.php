@@ -289,8 +289,12 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
 	<div class="dcar__inner">
 
 		<?php if ( $arrows_show ) : ?>
-		<button class="dcar__arrow dcar__arrow--prev" aria-label="Precedente" data-dir="prev">&#8592;</button>
-		<button class="dcar__arrow dcar__arrow--next" aria-label="Successivo" data-dir="next">&#8594;</button>
+		<button class="dcar__arrow dcar__arrow--prev" aria-label="Precedente" data-dir="prev">
+			<svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor"><polygon points="10,0 0,8 10,16"/></svg>
+		</button>
+		<button class="dcar__arrow dcar__arrow--next" aria-label="Successivo" data-dir="next">
+			<svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor"><polygon points="0,0 10,8 0,16"/></svg>
+		</button>
 		<?php endif; ?>
 
 		<div class="dcar__viewport">
