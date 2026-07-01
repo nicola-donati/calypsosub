@@ -254,11 +254,11 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
   display:flex;align-items:center;justify-content:center;
   background:<?php echo $css( $arrow_bg ); ?>;
   color:<?php echo $css( $arrow_color ); ?>;
-  border:1px solid <?php echo $css( $arrow_border ); ?>;
+  border:none;
   border-radius:<?php echo $arrow_radius; ?>px;
   box-shadow:<?php echo $css( $arrow_shadow ); ?>;
   cursor:pointer;z-index:2;transition:background .15s,color .15s,opacity .15s;
-  user-select:none;
+  user-select:none;font-size:<?php echo max(16, (int)round($arrow_size * .45)); ?>px;line-height:1;
 }
 #<?php echo $uid; ?> .dcar__arrow:hover{background:<?php echo $css( $arrow_hover_bg ); ?>;color:<?php echo $css( $arrow_hover_col ); ?>;border-color:transparent;}
 #<?php echo $uid; ?> .dcar__arrow--prev{left:<?php echo $arrows_position === 'inside' ? '8px' : ( '-' . ($arrow_size/2) . 'px' ); ?>;}
@@ -287,12 +287,8 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
 	<div class="dcar__inner">
 
 		<?php if ( $arrows_show ) : ?>
-		<button class="dcar__arrow dcar__arrow--prev" aria-label="Precedente" data-dir="prev">
-			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-		</button>
-		<button class="dcar__arrow dcar__arrow--next" aria-label="Successivo" data-dir="next">
-			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-		</button>
+		<button class="dcar__arrow dcar__arrow--prev" aria-label="Precedente" data-dir="prev">&#8592;</button>
+		<button class="dcar__arrow dcar__arrow--next" aria-label="Successivo" data-dir="next">&#8594;</button>
 		<?php endif; ?>
 
 		<div class="dcar__viewport">
