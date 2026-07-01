@@ -253,6 +253,27 @@ class Calypsosub_Blocks {
 				'stats_color'     => [ 'type' => 'string',  'default' => 'rgba(10,37,64,.55)' ],
 				'stats_size'      => [ 'type' => 'integer', 'default' => 12 ],
 				'stats_sep_color' => [ 'type' => 'string',  'default' => 'rgba(10,37,64,.2)' ],
+				/* ── Font testi ── */
+				'name_font'       => [ 'type' => 'string',  'default' => '' ],
+				'body_font'       => [ 'type' => 'string',  'default' => '' ],
+				/* ── Stile testo nome ── */
+				'name_italic'      => [ 'type' => 'boolean', 'default' => false ],
+				'name_decoration'  => [ 'type' => 'string',  'default' => 'none' ],
+				/* ── Stile testo ruolo ── */
+				'ruolo_italic'     => [ 'type' => 'boolean', 'default' => false ],
+				'ruolo_decoration' => [ 'type' => 'string',  'default' => 'none' ],
+				/* ── Stile testo soprannome ── */
+				'sopr_decoration'  => [ 'type' => 'string',  'default' => 'none' ],
+				/* ── Stile testo bio ── */
+				'bio_italic'       => [ 'type' => 'boolean', 'default' => false ],
+				/* ── Pallini paginazione ── */
+				'dots_show'         => [ 'type' => 'boolean', 'default' => true ],
+				'dots_color'        => [ 'type' => 'string',  'default' => 'rgba(10,37,64,.2)' ],
+				'dots_active_color' => [ 'type' => 'string',  'default' => '#0a2540' ],
+				'dots_size'         => [ 'type' => 'integer', 'default' => 7 ],
+				/* ── Autoplay ── */
+				'autoplay'       => [ 'type' => 'boolean', 'default' => false ],
+				'autoplay_speed' => [ 'type' => 'integer', 'default' => 3000 ],
 			],
 		],
 		'calypso/lista-eventi'    => [ 'file' => 'block-eventi-lista.php',     'title' => 'Lista Eventi' ],
@@ -3155,33 +3176,84 @@ class Calypsosub_Blocks {
 							rangeRow('Font size label foto (px)', 'photo_label_size', 9, 7, 16, 1)
 						),
 
+						el(PanelBody, { title: 'Font testi card', initialOpen: false },
+							el('p', { style: { fontSize: '11px', color: '#666', margin: '0 0 8px' } }, 'Lascia vuoto per ereditare il font del tema. Esempi: "Georgia, serif", "var(--f-body)".'),
+							textRow('Font nome (font-family CSS)', 'name_font'),
+							textRow('Font body — ruolo, bio, stats (font-family CSS)', 'body_font')
+						),
+
 						el(PanelBody, { title: 'Stile nome', initialOpen: false },
 							colorRow('Colore nome', 'name_color'),
 							rangeRow('Font size nome (px)', 'name_size', 22, 12, 48, 1),
 							rangeRow('Font weight nome', 'name_weight', 800, 300, 900, 100),
-							el(ToggleControl, { label: 'Nome maiuscolo', checked: a.name_upper !== false, onChange: function (v) { set({ name_upper: v }); } })
+							el(ToggleControl, { label: 'Nome maiuscolo', checked: a.name_upper !== false, onChange: function (v) { set({ name_upper: v }); } }),
+							el(ToggleControl, { label: 'Corsivo', checked: !!a.name_italic, onChange: function (v) { set({ name_italic: v }); } }),
+							el(SelectControl, { label: 'Decorazione testo', value: a.name_decoration || 'none',
+								options: [
+									{ value: 'none',         label: 'Nessuna' },
+									{ value: 'underline',    label: 'Sottolineato' },
+									{ value: 'line-through', label: 'Barrato' },
+									{ value: 'overline',     label: 'Sopralineato' },
+								],
+								onChange: function (v) { set({ name_decoration: v }); }
+							})
 						),
 
 						el(PanelBody, { title: 'Stile soprannome', initialOpen: false },
 							colorRow('Colore soprannome', 'sopr_color'),
-							rangeRow('Font size soprannome (px)', 'sopr_size', 15, 10, 28, 1)
+							rangeRow('Font size soprannome (px)', 'sopr_size', 15, 10, 28, 1),
+							el(SelectControl, { label: 'Decorazione testo', value: a.sopr_decoration || 'none',
+								options: [
+									{ value: 'none',         label: 'Nessuna' },
+									{ value: 'underline',    label: 'Sottolineato' },
+									{ value: 'line-through', label: 'Barrato' },
+								],
+								onChange: function (v) { set({ sopr_decoration: v }); }
+							})
 						),
 
 						el(PanelBody, { title: 'Stile ruolo', initialOpen: false },
 							colorRow('Colore ruolo', 'ruolo_color'),
 							rangeRow('Font size ruolo (px)', 'ruolo_size', 15, 10, 28, 1),
-							rangeRow('Font weight ruolo', 'ruolo_weight', 600, 300, 900, 100)
+							rangeRow('Font weight ruolo', 'ruolo_weight', 600, 300, 900, 100),
+							el(ToggleControl, { label: 'Corsivo', checked: !!a.ruolo_italic, onChange: function (v) { set({ ruolo_italic: v }); } }),
+							el(SelectControl, { label: 'Decorazione testo', value: a.ruolo_decoration || 'none',
+								options: [
+									{ value: 'none',         label: 'Nessuna' },
+									{ value: 'underline',    label: 'Sottolineato' },
+									{ value: 'line-through', label: 'Barrato' },
+								],
+								onChange: function (v) { set({ ruolo_decoration: v }); }
+							})
 						),
 
 						el(PanelBody, { title: 'Stile bio', initialOpen: false },
 							colorRow('Colore bio', 'bio_color'),
-							rangeRow('Font size bio (px)', 'bio_size', 14, 10, 22, 1)
+							rangeRow('Font size bio (px)', 'bio_size', 14, 10, 22, 1),
+							el(ToggleControl, { label: 'Corsivo', checked: !!a.bio_italic, onChange: function (v) { set({ bio_italic: v }); } })
 						),
 
 						el(PanelBody, { title: 'Stile stats', initialOpen: false },
 							colorRow('Colore stats', 'stats_color'),
 							rangeRow('Font size stats (px)', 'stats_size', 12, 9, 20, 1),
 							colorRow('Colore separatore ·', 'stats_sep_color')
+						),
+
+						el(PanelBody, { title: 'Pallini paginazione', initialOpen: false },
+							el(ToggleControl, { label: 'Mostra pallini', checked: a.dots_show !== false, onChange: function (v) { set({ dots_show: v }); } }),
+							a.dots_show !== false ? colorRow('Colore pallino inattivo', 'dots_color') : null,
+							a.dots_show !== false ? colorRow('Colore pallino attivo', 'dots_active_color') : null,
+							a.dots_show !== false ? rangeRow('Dimensione pallino (px)', 'dots_size', 7, 4, 20, 1) : null
+						),
+
+						el(PanelBody, { title: 'Autoplay (scorrimento automatico)', initialOpen: false },
+							el(ToggleControl, {
+								label: 'Autoplay attivo',
+								help: 'Il carosello scorre da solo. Si ferma quando il mouse è sopra.',
+								checked: !!a.autoplay,
+								onChange: function (v) { set({ autoplay: v }); }
+							}),
+							a.autoplay ? rangeRow('Velocità (millisecondi tra slide)', 'autoplay_speed', 3000, 500, 10000, 500) : null
 						)
 
 					) : null;

@@ -93,6 +93,28 @@ $stats_color  = (string) ( $a['stats_color']  ?? 'rgba(10,37,64,.55)' );
 $stats_size   = (int)    ( $a['stats_size']   ?? 12 );
 $stats_sep_color = (string) ( $a['stats_sep_color'] ?? 'rgba(10,37,64,.2)' );
 
+/* ── Font testi ── */
+$name_font = (string) ( $a['name_font'] ?? '' );
+$body_font = (string) ( $a['body_font'] ?? '' );
+
+/* ── Stile testo ── */
+$name_italic      = (bool)   ( $a['name_italic']      ?? false );
+$name_decoration  = (string) ( $a['name_decoration']  ?? 'none' );
+$ruolo_italic     = (bool)   ( $a['ruolo_italic']     ?? false );
+$ruolo_decoration = (string) ( $a['ruolo_decoration'] ?? 'none' );
+$sopr_decoration  = (string) ( $a['sopr_decoration']  ?? 'none' );
+$bio_italic       = (bool)   ( $a['bio_italic']       ?? false );
+
+/* ── Pallini paginazione ── */
+$dots_show         = (bool)   ( $a['dots_show']         ?? true );
+$dots_color        = (string) ( $a['dots_color']        ?? 'rgba(10,37,64,.2)' );
+$dots_active_color = (string) ( $a['dots_active_color'] ?? '#0a2540' );
+$dots_size         = (int)    ( $a['dots_size']         ?? 7 );
+
+/* ── Autoplay ── */
+$autoplay       = (bool) ( $a['autoplay']       ?? false );
+$autoplay_speed = max( 500, (int) ( $a['autoplay_speed'] ?? 3000 ) );
+
 /* ── CSS sanitization ── */
 $css = static function ( string $v ): string {
 	return preg_replace( '/[^#a-zA-Z0-9.,()%\s\-\/]/', '', $v );
@@ -189,24 +211,31 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
   padding:10px 14px;border-top-right-radius:8px;
   backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
 }
-#<?php echo $uid; ?> .dcar__body{padding:<?php echo $card_body_py; ?>px <?php echo $card_body_px; ?>px;flex:1;display:flex;flex-direction:column;}
+#<?php echo $uid; ?> .dcar__body{padding:<?php echo $card_body_py; ?>px <?php echo $card_body_px; ?>px;flex:1;display:flex;flex-direction:column;<?php if ( $body_font ) : ?>font-family:<?php echo $css( $body_font ); ?>;<?php endif; ?>}
 #<?php echo $uid; ?> .dcar__name{
   margin:0;font-size:<?php echo $name_size; ?>px;font-weight:<?php echo $name_weight; ?>;
   color:<?php echo $css( $name_color ); ?>;line-height:1.1;
   text-transform:<?php echo $name_upper ? 'uppercase' : 'none'; ?>;
   letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-style:<?php echo $name_italic ? 'italic' : 'normal'; ?>;
+  text-decoration:<?php echo $css( $name_decoration ); ?>;
+  <?php if ( $name_font ) : ?>font-family:<?php echo $css( $name_font ); ?>;<?php endif; ?>
 }
 #<?php echo $uid; ?> .dcar__soprannome{
   margin:4px 0 0;font-size:<?php echo $sopr_size; ?>px;
   color:<?php echo $css( $sopr_color ); ?>;font-style:italic;
+  text-decoration:<?php echo $css( $sopr_decoration ); ?>;
 }
 #<?php echo $uid; ?> .dcar__ruolo{
   margin:4px 0 0;font-size:<?php echo $ruolo_size; ?>px;font-weight:<?php echo $ruolo_weight; ?>;
   color:<?php echo $css( $ruolo_color ); ?>;
+  font-style:<?php echo $ruolo_italic ? 'italic' : 'normal'; ?>;
+  text-decoration:<?php echo $css( $ruolo_decoration ); ?>;
 }
 #<?php echo $uid; ?> .dcar__bio{
   margin:10px 0 0;font-size:<?php echo $bio_size; ?>px;
   color:<?php echo $css( $bio_color ); ?>;line-height:1.55;
+  font-style:<?php echo $bio_italic ? 'italic' : 'normal'; ?>;
   display:-webkit-box;-webkit-line-clamp:<?php echo $bio_lines; ?>;-webkit-box-orient:vertical;overflow:hidden;
 }
 #<?php echo $uid; ?> .dcar__stats{
@@ -234,9 +263,11 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
 #<?php echo $uid; ?> .dcar__arrow--prev{left:<?php echo $arrows_position === 'inside' ? '8px' : ( '-' . ($arrow_size/2) . 'px' ); ?>;}
 #<?php echo $uid; ?> .dcar__arrow--next{right:<?php echo $arrows_position === 'inside' ? '8px' : ( '-' . ($arrow_size/2) . 'px' ); ?>;}
 #<?php echo $uid; ?> .dcar__arrow.is-hidden{opacity:0;pointer-events:none;}
+<?php if ( $dots_show ) : ?>
 #<?php echo $uid; ?> .dcar__dots{display:flex;justify-content:center;gap:8px;margin-top:20px;}
-#<?php echo $uid; ?> .dcar__dot{width:7px;height:7px;border-radius:50%;background:<?php echo $css($arrow_border); ?>;cursor:pointer;transition:background .2s,transform .2s;}
-#<?php echo $uid; ?> .dcar__dot.is-active{background:<?php echo $css($arrow_color); ?>;transform:scale(1.35);}
+#<?php echo $uid; ?> .dcar__dot{width:<?php echo $dots_size; ?>px;height:<?php echo $dots_size; ?>px;border-radius:50%;background:<?php echo $css( $dots_color ); ?>;cursor:pointer;transition:background .2s,transform .2s;}
+#<?php echo $uid; ?> .dcar__dot.is-active{background:<?php echo $css( $dots_active_color ); ?>;transform:scale(1.35);}
+<?php endif; ?>
 @media(max-width:1024px){
   #<?php echo $uid; ?> .dcar__card{
     flex-basis:calc((100% - <?php echo ($tablet_cols - 1); ?> * <?php echo $gap; ?>px) / <?php echo $tablet_cols; ?> - <?php echo round($peek / $tablet_cols, 2); ?>px);
@@ -322,11 +353,13 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
 			</div>
 		</div>
 
+		<?php if ( $dots_show ) : ?>
 		<div class="dcar__dots">
 			<?php for ( $i = 0; $i < $total; $i++ ) : ?>
 			<button class="dcar__dot<?php echo $i === 0 ? ' is-active' : ''; ?>" data-dot="<?php echo $i; ?>" aria-label="Vai al docente <?php echo $i + 1; ?>"></button>
 			<?php endfor; ?>
 		</div>
+		<?php endif; ?>
 
 	</div>
 </section>
@@ -383,6 +416,32 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
 	});
 
 	go(0);
+
+	/* ── Autoplay ── */
+	var autoplay      = <?php echo $autoplay ? 'true' : 'false'; ?>;
+	var autoplaySpeed = <?php echo $autoplay_speed; ?>;
+	var autoTimer     = null;
+
+	function startAuto() {
+		if (!autoplay) { return; }
+		if (autoTimer !== null) { clearInterval(autoTimer); }
+		autoTimer = setInterval(function () {
+			var cols = colsNow();
+			var max  = Math.max(0, total - cols);
+			var next = current + 1;
+			if (next > max) { next = 0; }
+			go(next);
+		}, autoplaySpeed);
+	}
+	function stopAuto() {
+		if (autoTimer !== null) { clearInterval(autoTimer); autoTimer = null; }
+	}
+	if (autoplay) {
+		wrap.addEventListener('mouseenter', stopAuto);
+		wrap.addEventListener('mouseleave', startAuto);
+		startAuto();
+	}
+
 	window.addEventListener('resize', function () { go(current); });
 })();
 </script>
