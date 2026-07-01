@@ -792,11 +792,16 @@ if ( $preselect_id && isset( $items_by_tipo[ $preselect_tab ] ) ) {
 			var formPanel = root.querySelector('[data-form-panel="' + tipo + '"]');
 			root.querySelectorAll('[data-form-panel]').forEach(function (el) { el.classList.add('is-hidden'); });
 
-			if (!isLoggedIn && requireLogin[tipo]) {
+			var needsLogin = false;
+			if (!isLoggedIn) { if (requireLogin[tipo]) { needsLogin = true; } }
+			var doLoad = false;
+			if (formPanel.innerHTML.trim() === '') { doLoad = true; }
+			if (formPanel.querySelector('.cso-pren__login-wall')) { doLoad = true; }
+			if (needsLogin) {
 				formPanel.innerHTML = loginWallHtml;
 				formPanel.classList.remove('is-hidden');
 				autoSelectFirstVisible(panel);
-			} else if (formPanel.innerHTML.trim() === '' || formPanel.querySelector('.cso-pren__login-wall')) {
+			} else if (doLoad) {
 				formPanel.innerHTML = '';
 				var body = new FormData();
 				body.append('action', 'calypso_prenotazione_form');
