@@ -197,6 +197,7 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
   overflow:hidden;
   display:flex;flex-direction:column;
   transition:transform .2s,box-shadow .2s;
+  text-decoration:none;color:inherit;
 }
 #<?php echo $uid; ?> .dcar__card:hover{transform:translateY(-3px);box-shadow:<?php echo $css( $card_shadow ); ?>,0 16px 40px -16px rgba(10,37,64,.28);}
 #<?php echo $uid; ?> .dcar__photo{position:relative;overflow:hidden;background:#0a2540;padding-top:<?php echo $ratio_pct; ?>%;}
