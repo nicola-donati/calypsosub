@@ -8,6 +8,18 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 $a = $attributes ?? [];
 
+$require_login_uscite = (bool)   ( $a['require_login_uscite'] ?? true );
+$require_login_eventi = (bool)   ( $a['require_login_eventi'] ?? true );
+$require_login_corsi  = (bool)   ( $a['require_login_corsi']  ?? false );
+$login_message        = (string) ( $a['login_message']        ?? 'Per prenotarti devi aver effettuato il login.' );
+
+$require_login_map = [
+	'uscite' => $require_login_uscite,
+	'eventi' => $require_login_eventi,
+	'corsi'  => $require_login_corsi,
+];
+$user_logged_in = is_user_logged_in();
+
 $enable_uscite = (bool) ( $a['enable_uscite'] ?? true );
 $enable_eventi = (bool) ( $a['enable_eventi'] ?? true );
 $enable_corsi  = (bool) ( $a['enable_corsi']  ?? true );
@@ -67,7 +79,6 @@ $data_padding_y   = (int)    ( $a['data_padding_y']   ?? 48 );
 
 $form_bg_color          = (string) ( $a['form_bg_color']          ?? '#ffffff' );
 $form_radius             = (int)    ( $a['form_radius']             ?? 18 );
-$form_step_bg_color      = (string) ( $a['form_step_bg_color']      ?? '#ff6b4a' );
 $form_title_color        = (string) ( $a['form_title_color']        ?? '#0a2540' );
 $form_title_size         = (int)    ( $a['form_title_size']         ?? 20 );
 $form_title_font_weight  = (int)    ( $a['form_title_font_weight']  ?? 800 );
@@ -281,10 +292,13 @@ $uid = 'cso-pren-' . sprintf( '%08x', crc32( implode( ',', array_keys( $tipi ) )
 // Calypsosub_CF7_Booking_Handler::ajax_render_form() via check_ajax_referer()).
 $ajax_nonce = wp_create_nonce( 'calypso_prenotazione_form' );
 
-// Pre-render del form CF7 del tipo attivo, con hidden fields per l'eventuale card pre-selezionata.
-Calypsosub_CF7_Booking_Handler::$active_post_id = $preselect_id ?: null;
-$initial_form_html = do_shortcode( '[contact-form-7 id="' . (int) $tipi[ $preselect_tab ] . '"]' );
-Calypsosub_CF7_Booking_Handler::$active_post_id = null;
+// Pre-render del form CF7 del tipo attivo (solo se non bloccato da require_login).
+$initial_form_html = '';
+if ( $user_logged_in || empty( $require_login_map[ $preselect_tab ] ) ) {
+	Calypsosub_CF7_Booking_Handler::$active_post_id = $preselect_id ?: null;
+	$initial_form_html = do_shortcode( '[contact-form-7 id="' . (int) $tipi[ $preselect_tab ] . '"]' );
+	Calypsosub_CF7_Booking_Handler::$active_post_id = null;
+}
 
 $preselected_card = null;
 if ( $preselect_id && isset( $items_by_tipo[ $preselect_tab ] ) ) {
@@ -363,7 +377,6 @@ if ( $preselect_id && isset( $items_by_tipo[ $preselect_tab ] ) ) {
 
 #<?php echo $uid; ?> .cso-pren__form-card{background:<?php echo esc_attr( $form_bg_color ); ?>;border-radius:<?php echo $form_radius; ?>px;padding:32px;}
 #<?php echo $uid; ?> .cso-pren__form-head{display:flex;align-items:center;gap:14px;margin-bottom:6px;}
-#<?php echo $uid; ?> .cso-pren__form-step{width:36px;height:36px;border-radius:50%;background:<?php echo esc_attr( $form_step_bg_color ); ?>;color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
 #<?php echo $uid; ?> .cso-pren__form-title{font-size:<?php echo $form_title_size; ?>px;font-weight:<?php echo $form_title_font_weight; ?>;color:<?php echo esc_attr( $form_title_color ); ?>;margin:0;}
 #<?php echo $uid; ?> .cso-pren__form-sub{font-size:13px;color:rgba(11,26,38,.55);margin:0 0 24px 50px;}
 #<?php echo $uid; ?> .cso-pren__form-wrap.is-hidden{display:none;}
@@ -507,7 +520,6 @@ if ( $preselect_id && isset( $items_by_tipo[ $preselect_tab ] ) ) {
 		<div class="cso-pren__data-layout">
 			<div class="cso-pren__form-card">
 				<div class="cso-pren__form-head">
-					<span class="cso-pren__form-step">01</span>
 					<h3 class="cso-pren__form-title"><?php esc_html_e( 'I tuoi dati', 'calypsosub' ); ?></h3>
 				</div>
 				<p class="cso-pren__form-sub"><?php esc_html_e( 'Completa con i tuoi dati per la prenotazione.', 'calypsosub' ); ?></p>
@@ -515,7 +527,17 @@ if ( $preselect_id && isset( $items_by_tipo[ $preselect_tab ] ) ) {
 				<?php foreach ( $tipi as $tipo => $form_id ) : ?>
 				<div class="cso-pren__form-wrap<?php echo $tipo === $preselect_tab ? '' : ' is-hidden'; ?>" data-form-panel="<?php echo esc_attr( $tipo ); ?>">
 					<?php if ( $tipo === $preselect_tab ) : ?>
-						<?php echo $initial_form_html; ?>
+						<?php if ( ! $user_logged_in && ! empty( $require_login_map[ $tipo ] ) ) : ?>
+							<?php
+							$login_url = wp_login_url( get_permalink() );
+							echo '<div class="cso-pren__login-wall" style="padding:28px 24px;text-align:center;">'
+								. '<p style="font-size:15px;color:#0a2540;margin:0 0 16px;">' . esc_html( $login_message ) . '</p>'
+								. '<a href="' . esc_url( $login_url ) . '" style="display:inline-block;padding:12px 28px;background:#1B77A7;color:#fff;border-radius:999px;font-weight:700;text-decoration:none;">Accedi</a>'
+								. '</div>';
+							?>
+						<?php else : ?>
+							<?php echo $initial_form_html; ?>
+						<?php endif; ?>
 					<?php endif; ?>
 				</div>
 				<?php endforeach; ?>
@@ -541,6 +563,14 @@ if ( $preselect_id && isset( $items_by_tipo[ $preselect_tab ] ) ) {
 
 	var TIPO_TO_CPT  = { uscite: 'calypso_uscita', eventi: 'calypso_evento', corsi: 'calypso_corso' };
 	var TIPO_BADGE   = { uscite: '<?php echo esc_js( __( 'Uscita', 'calypsosub' ) ); ?>', eventi: '<?php echo esc_js( __( 'Evento', 'calypsosub' ) ); ?>', corsi: '<?php echo esc_js( __( 'Corso', 'calypsosub' ) ); ?>' };
+	var requireLogin = <?php echo wp_json_encode( array_map( 'boolval', $require_login_map ) ); ?>;
+	var isLoggedIn   = <?php echo $user_logged_in ? 'true' : 'false'; ?>;
+	var loginWallHtml = <?php echo wp_json_encode(
+		'<div class="cso-pren__login-wall" style="padding:28px 24px;text-align:center;">'
+		. '<p style="font-size:15px;color:#0a2540;margin:0 0 16px;">' . esc_html( $login_message ) . '</p>'
+		. '<a href="' . esc_url( wp_login_url( get_permalink() ) ) . '" style="display:inline-block;padding:12px 28px;background:#1B77A7;color:#fff;border-radius:999px;font-weight:700;text-decoration:none;">Accedi</a>'
+		. '</div>'
+	); ?>;
 
 	function escHtml(s) {
 		var d = document.createElement('div');
@@ -761,7 +791,13 @@ if ( $preselect_id && isset( $items_by_tipo[ $preselect_tab ] ) ) {
 			var panel = panelForTipo(tipo);
 			var formPanel = root.querySelector('[data-form-panel="' + tipo + '"]');
 			root.querySelectorAll('[data-form-panel]').forEach(function (el) { el.classList.add('is-hidden'); });
-			if (formPanel.innerHTML.trim() === '') {
+
+			if (!isLoggedIn && requireLogin[tipo]) {
+				formPanel.innerHTML = loginWallHtml;
+				formPanel.classList.remove('is-hidden');
+				autoSelectFirstVisible(panel);
+			} else if (formPanel.innerHTML.trim() === '' || formPanel.querySelector('.cso-pren__login-wall')) {
+				formPanel.innerHTML = '';
 				var body = new FormData();
 				body.append('action', 'calypso_prenotazione_form');
 				body.append('cf7_form_id', tabBtn.getAttribute('data-form-id'));

@@ -452,3 +452,321 @@ th {
     scroll-behavior: auto !important;
   }
 }
+
+
+/* ============================================================
+   14 · CONTACT FORM 7 — stile Calypso Sub
+   ------------------------------------------------------------
+   Sovrascrive i default di CF7 e allinea i controlli
+   alla palette del tema. I form devono essere costruiti
+   con la struttura descritta in docs/cf7-guide.md.
+============================================================ */
+
+/* ── Spacing campi: CF7 wrappa ogni campo in <p> ── */
+.wpcf7-form > p {
+  margin: 0 0 20px;
+}
+.wpcf7-form > p:last-of-type {
+  margin-bottom: 0;
+}
+
+/* ── Span wrapper attorno all'input: rendi block ──────────
+   CF7 genera: <label> testo<br><span.wpcf7-form-control-wrap><input></span></label>
+   Il margin-top crea il gap tra testo-label e input.
+─────────────────────────────────────────────────────────── */
+.wpcf7-form span.wpcf7-form-control-wrap {
+  display: block;
+  margin-top: 7px;
+}
+
+/* ── Label CF7 ── */
+.wpcf7-form label {
+  display: block;
+  font-size: 10px;
+  font-family: var(--f-mono, monospace);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: #5c6b75;
+  line-height: 1.4;
+  /* nessun margin-bottom: il gap tra campo e campo viene dal <p> */
+}
+
+/* ── Input testo, email, tel, number, date, url ── */
+.wpcf7-form input[type="text"],
+.wpcf7-form input[type="email"],
+.wpcf7-form input[type="tel"],
+.wpcf7-form input[type="number"],
+.wpcf7-form input[type="date"],
+.wpcf7-form input[type="url"],
+.wpcf7-form input[type="password"] {
+  display: block;
+  width: 100%;
+  padding: 13px 16px;
+  border: 1px solid rgba(10,37,64,.18);
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--c-ink, #0a2540);
+  background: #fff;
+  transition: border-color .15s, box-shadow .15s;
+  outline: none;
+  box-shadow: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* ── Textarea ── */
+.wpcf7-form textarea {
+  display: block;
+  width: 100%;
+  padding: 13px 16px;
+  border: 1px solid rgba(10,37,64,.18);
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--c-ink, #0a2540);
+  background: #fff;
+  transition: border-color .15s, box-shadow .15s;
+  outline: none;
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* ── Select ── */
+.wpcf7-form select {
+  display: block;
+  width: 100%;
+  padding: 13px 42px 13px 16px;
+  border: 1px solid rgba(10,37,64,.18);
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--c-ink, #0a2540);
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235c6b75' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 14px center;
+  transition: border-color .15s, box-shadow .15s;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+/* ── Focus comune ── */
+.wpcf7-form input[type="text"]:focus,
+.wpcf7-form input[type="email"]:focus,
+.wpcf7-form input[type="tel"]:focus,
+.wpcf7-form input[type="number"]:focus,
+.wpcf7-form input[type="date"]:focus,
+.wpcf7-form input[type="url"]:focus,
+.wpcf7-form input[type="password"]:focus,
+.wpcf7-form textarea:focus,
+.wpcf7-form select:focus {
+  border-color: var(--c-wave, #1B77A7);
+  box-shadow: 0 0 0 3px rgba(27,119,167,.12);
+}
+
+/* ── Placeholder ── */
+.wpcf7-form input::placeholder,
+.wpcf7-form textarea::placeholder {
+  color: rgba(10,37,64,.32);
+}
+
+/* ── Stato non valido ── */
+.wpcf7-form input.wpcf7-not-valid,
+.wpcf7-form select.wpcf7-not-valid,
+.wpcf7-form textarea.wpcf7-not-valid {
+  border-color: #c0392b !important;
+  box-shadow: 0 0 0 3px rgba(192,57,43,.10) !important;
+}
+.wpcf7-not-valid-tip {
+  display: block;
+  font-size: 12px;
+  color: #c0392b;
+  margin-top: 5px;
+}
+
+/* ── Messaggio risposta (invio ok / errore) ── */
+.wpcf7-response-output {
+  margin: 16px 0 0 !important;
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  border: none !important;
+}
+.wpcf7-form.sent .wpcf7-response-output {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+.wpcf7-form.failed .wpcf7-response-output,
+.wpcf7-form.invalid .wpcf7-response-output,
+.wpcf7-form.spam .wpcf7-response-output {
+  background: #fdecea;
+  color: #c0392b;
+}
+
+/* ── RADIO come pill button ──────────────────────────────
+   Struttura CF7:
+   <span class="wpcf7-radio">
+     <span class="wpcf7-list-item">
+       <label>
+         <input type="radio">
+         <span class="wpcf7-list-item-label">Testo</span>
+       </label>
+     </span>
+   </span>
+─────────────────────────────────────────────────────── */
+.wpcf7-radio {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.wpcf7-radio .wpcf7-list-item {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.wpcf7-radio .wpcf7-list-item label {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 22px;
+  border: 1.5px solid rgba(10,37,64,.18);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--c-ink, #0a2540);
+  text-transform: none;
+  letter-spacing: 0;
+  margin: 0;
+  white-space: nowrap;
+  transition: border-color .15s, color .15s, background .15s;
+  user-select: none;
+}
+.wpcf7-radio .wpcf7-list-item label:hover {
+  border-color: rgba(10,37,64,.4);
+}
+.wpcf7-radio .wpcf7-list-item input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+/* selezionato: bordo + testo oro */
+.wpcf7-radio .wpcf7-list-item:has(input[type="radio"]:checked) label {
+  border-color: var(--c-gold, #f5a623);
+  color: #b9790a;
+  background: #fff8ed;
+}
+
+/* ── CHECKBOX come pill (stesso stile, accento blu) ── */
+.wpcf7-checkbox {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.wpcf7-checkbox .wpcf7-list-item {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.wpcf7-checkbox .wpcf7-list-item label {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 22px;
+  border: 1.5px solid rgba(10,37,64,.18);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--c-ink, #0a2540);
+  text-transform: none;
+  letter-spacing: 0;
+  margin: 0;
+  white-space: nowrap;
+  transition: border-color .15s, color .15s, background .15s;
+  user-select: none;
+}
+.wpcf7-checkbox .wpcf7-list-item label:hover {
+  border-color: rgba(10,37,64,.4);
+}
+.wpcf7-checkbox .wpcf7-list-item input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.wpcf7-checkbox .wpcf7-list-item:has(input[type="checkbox"]:checked) label {
+  border-color: var(--c-wave, #1B77A7);
+  color: var(--c-wave, #1B77A7);
+  background: #eaf3fa;
+}
+
+/* ── File upload (input nativo) ── */
+.wpcf7-form input[type="file"] {
+  display: block;
+  width: 100%;
+  padding: 20px 16px;
+  border: 1.5px dashed rgba(10,37,64,.22);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--c-wave, #1B77A7);
+  background: #f8fbfd;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.wpcf7-form input[type="file"]:hover {
+  border-color: var(--c-wave, #1B77A7);
+}
+
+/* ── Testo di aiuto (paragrafo dopo il campo) ── */
+.wpcf7-form .cf7-help {
+  display: block;
+  font-size: 12px;
+  font-style: italic;
+  color: #7a8f9c;
+  margin-top: 5px;
+}
+
+/* ── Layout griglia 2 colonne ──────────────────────────
+   Nel template CF7 wrappa i campi in:
+   <div class="cf7-grid"> ... </div>
+─────────────────────────────────────────────────────── */
+.wpcf7-form .cf7-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: end;
+}
+@media (max-width: 600px) {
+  .wpcf7-form .cf7-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Submit button ── */
+.wpcf7-form input[type="submit"],
+.wpcf7-form .wpcf7-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  background: var(--c-coral, #ff6b4a);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, transform .15s, box-shadow .15s;
+  box-shadow: 0 4px 16px -4px rgba(255,107,74,.45);
+  width: auto;
+}
+.wpcf7-form input[type="submit"]:hover,
+.wpcf7-form .wpcf7-submit:hover {
+  background: var(--c-coral-deep, #e04a2a);
+  transform: translateY(-1px);
+}

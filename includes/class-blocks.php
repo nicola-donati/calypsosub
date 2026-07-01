@@ -555,6 +555,12 @@ class Calypsosub_Blocks {
 				'card_columns'       => [ 'type' => 'integer', 'default' => 4 ],
 				'max_width'          => [ 'type' => 'integer', 'default' => 1320 ],
 
+				/* Accesso per tipo */
+				'require_login_uscite' => [ 'type' => 'boolean', 'default' => true ],
+				'require_login_eventi' => [ 'type' => 'boolean', 'default' => true ],
+				'require_login_corsi'  => [ 'type' => 'boolean', 'default' => false ],
+				'login_message'        => [ 'type' => 'string',  'default' => 'Per prenotarti devi aver effettuato il login.' ],
+
 				/* Sezione selezione — sfondo & layout */
 				'select_bg_color'        => [ 'type' => 'string',  'default' => '#f6f1e6' ],
 				'select_padding_y'       => [ 'type' => 'integer', 'default' => 40 ],
@@ -607,7 +613,6 @@ class Calypsosub_Blocks {
 				/* Form prenotazione */
 				'form_bg_color'             => [ 'type' => 'string',  'default' => '#ffffff' ],
 				'form_radius'               => [ 'type' => 'integer', 'default' => 18 ],
-				'form_step_bg_color'        => [ 'type' => 'string',  'default' => '#ff6b4a' ],
 				'form_title_color'          => [ 'type' => 'string',  'default' => '#0a2540' ],
 				'form_title_size'           => [ 'type' => 'integer', 'default' => 20 ],
 				'form_title_font_weight'    => [ 'type' => 'integer', 'default' => 800 ],
@@ -2754,6 +2759,30 @@ class Calypsosub_Blocks {
 						el(PanelBody, { title: 'Corsi', initialOpen: false }, formSelect('corsi', 'enable_corsi', 'cf7_form_corsi')),
 
 						el(PanelBody, { title: 'Comportamento', initialOpen: false },
+							subHead('Accesso richiesto (per tipo)'),
+							el(ToggleControl, {
+								label: 'Uscite — richiedi login',
+								help: 'Se attivo, chi non è loggato vede un messaggio con link al login.',
+								checked: a.require_login_uscite !== false,
+								onChange: function (v) { set({ require_login_uscite: v }); }
+							}),
+							el(ToggleControl, {
+								label: 'Eventi — richiedi login',
+								help: 'Se attivo, chi non è loggato vede un messaggio con link al login.',
+								checked: a.require_login_eventi !== false,
+								onChange: function (v) { set({ require_login_eventi: v }); }
+							}),
+							el(ToggleControl, {
+								label: 'Corsi — richiedi login',
+								help: 'Disattivato di default: la pre-iscrizione ai corsi è aperta a tutti.',
+								checked: !!a.require_login_corsi,
+								onChange: function (v) { set({ require_login_corsi: v }); }
+							}),
+							el(TextControl, {
+								label: 'Messaggio per utenti non loggati',
+								value: a.login_message || 'Per prenotarti devi aver effettuato il login.',
+								onChange: function (v) { set({ login_message: v }); }
+							}),
 							el(RangeControl, {
 								label: 'Elementi totali per tab (cap query)',
 								help: 'Massimo elementi caricati per tab, prima dei filtri/paginazione.',
@@ -2880,7 +2909,6 @@ class Calypsosub_Blocks {
 
 						el(PanelBody, { title: 'Form prenotazione', initialOpen: false },
 							colorRow('Sfondo card form', 'form_bg_color'),
-							colorRow('Sfondo pallino step "01"', 'form_step_bg_color'),
 							colorRow('Colore titolo form', 'form_title_color'),
 							el(RangeControl, {
 								label: 'Dimensione titolo form (px)',
