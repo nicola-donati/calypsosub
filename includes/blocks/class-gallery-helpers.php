@@ -3,33 +3,31 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class Calypsosub_Gallery_Helpers {
 
-	private const DESKTOP_PATTERN = [
-		[ 'col' => 3, 'row' => 2 ],
-		[ 'col' => 2, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 2, 'row' => 1 ],
-		[ 'col' => 2, 'row' => 2 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
+	private const SHAPE_CELLS = [
+		'horizontal' => [ 'col' => 2, 'row' => 1 ],
+		'vertical'   => [ 'col' => 1, 'row' => 2 ],
+		'square'     => [ 'col' => 1, 'row' => 1 ],
 	];
 
-	private const MOBILE_PATTERN = [
-		[ 'col' => 2, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
-		[ 'col' => 1, 'row' => 1 ],
+	private const SHAPE_CELLS_BIG = [
+		'horizontal' => [ 'col' => 3, 'row' => 2 ],
+		'vertical'   => [ 'col' => 2, 'row' => 3 ],
+		'square'     => [ 'col' => 2, 'row' => 2 ],
 	];
 
-	public static function cell_style( int $index, bool $mobile = false ): array {
-		$pattern = $mobile ? self::MOBILE_PATTERN : self::DESKTOP_PATTERN;
-		return $pattern[ $index % count( $pattern ) ];
+	public static function classify_shape( float $ratio ): string {
+		if ( $ratio >= 1.6 ) {
+			return 'horizontal';
+		}
+		if ( $ratio <= 0.63 ) {
+			return 'vertical';
+		}
+		return 'square';
+	}
+
+	public static function cell_style( float $ratio, bool $big = false ): array {
+		$shape = self::classify_shape( $ratio );
+		return $big ? self::SHAPE_CELLS_BIG[ $shape ] : self::SHAPE_CELLS[ $shape ];
 	}
 
 	public static function resolve_overlay_text( int $attachment_id ): string {
@@ -37,10 +35,48 @@ class Calypsosub_Gallery_Helpers {
 		return $caption !== '' ? $caption : (string) get_the_title( $attachment_id );
 	}
 
-	public static function build_units( array $cells ): array {
+	/**
+	 * Costruisce l'array di celle (url, ratio, alt, caption...) a partire da
+	 * una lista di attachment ID. Condiviso tra blocco galleria e galleria
+	 * docente per evitare di duplicare la logica di lettura media.
+	 */
+	public static function build_cells_from_attachments( array $attachment_ids, string $image_size = 'large' ): array {
+		$cells = [];
+		foreach ( $attachment_ids as $attachment_id ) {
+			$attachment_id = (int) $attachment_id;
+			$img = wp_get_attachment_image_src( $attachment_id, $image_size );
+			if ( ! $img ) {
+				continue;
+			}
+			[ $img_url, $img_w, $img_h ] = $img;
+			$overlay_text = self::resolve_overlay_text( $attachment_id );
+			$alt          = get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) ?: $overlay_text;
+
+			$cells[] = [
+				'id'      => $attachment_id,
+				'url'     => $img_url,
+				'full'    => wp_get_attachment_image_url( $attachment_id, 'full' ) ?: $img_url,
+				'ratio'   => $img_w > 0 && $img_h > 0 ? $img_w / $img_h : 1,
+				'alt'     => $alt,
+				'caption' => $overlay_text,
+			];
+		}
+		return $cells;
+	}
+
+	/**
+	 * Ogni cella diventa "big" con probabilità ~35% (indipendente, non legata
+	 * all'indice): con foto dallo stesso aspect ratio (es. tutte quadrate) il
+	 * layout deve comunque variare da un render all'altro, non ripetere
+	 * sempre lo stesso scheletro.
+	 */
+	public static function build_units( array $cells, ?callable $is_big = null ): array {
+		$is_big = $is_big ?? static function (): bool {
+			return mt_rand( 1, 100 ) <= 35;
+		};
 		$units = [];
-		foreach ( $cells as $i => $cell ) {
-			$units[] = [ 'cell' => $cell ] + self::cell_style( $i );
+		foreach ( $cells as $cell ) {
+			$units[] = [ 'cell' => $cell ] + self::cell_style( $cell['ratio'], (bool) $is_big() );
 		}
 		return $units;
 	}

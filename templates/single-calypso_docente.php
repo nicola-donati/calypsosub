@@ -44,8 +44,9 @@ $gallery_all  = $galleria_ids;
 $wp_user_url  = $user_id ? get_author_posts_url( $user_id ) : '';
 $wp_user_name = $user_id ? get_the_author_meta( 'display_name', $user_id ) : '';
 
-/* pattern galleria: tall | wide | normal | normal | wide | normal | normal … */
-$gp = [ 'tall', 'wide', '', '', 'wide', '', '' ];
+$gallery_units = Calypsosub_Gallery_Helpers::build_units(
+	Calypsosub_Gallery_Helpers::build_cells_from_attachments( $gallery_all )
+);
 
 /* Design settings */
 $d = [
@@ -274,8 +275,6 @@ function cso_social_icon( string $nome ): string {
 }
 .cso-doc-gallery-item{border-radius:12px;overflow:hidden;position:relative;background:linear-gradient(135deg,var(--c-aqua,#26CBFB),var(--c-deep,#1B77A7))}
 .cso-doc-gallery-item img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.cso-doc-gallery-item--wide{grid-column:span 2}
-.cso-doc-gallery-item--tall{grid-row:span 2}
 .cso-doc-gallery-item__cap{
 	position:absolute;bottom:0;left:0;
 	letter-spacing:.1em;text-transform:uppercase;
@@ -312,16 +311,13 @@ function cso_social_icon( string $nome ): string {
 	.cso-doc . cso-doc-block__heading{font-size:36px}
 	.cso-doc-gallery{padding:44px 20px 64px}
 	.cso-doc . cso-doc-gallery__heading{font-size:36px}
-	.cso-doc-gallery__grid{grid-template-columns:1fr 1fr;grid-auto-rows:150px}
-	.cso-doc-gallery-item--wide{grid-column:span 2}
-	.cso-doc-gallery-item--tall{grid-row:span 1}
+	.cso-doc-gallery__grid{grid-auto-rows:150px}
 }
 @media(max-width:420px){
 	.cso-doc .cso-doc-hero__name{font-size:44px}
 	.cso-doc .cso-doc-hero__exp-val{font-size:42px}
 	.cso-doc . cso-doc-block__heading{font-size:30px}
-	.cso-doc-gallery__grid{grid-template-columns:1fr;grid-auto-rows:200px}
-	.cso-doc-gallery-item--wide{grid-column:span 1}
+	.cso-doc-gallery__grid{grid-auto-rows:110px}
 }
 </style>
 <style>
@@ -571,21 +567,14 @@ function cso_social_icon( string $nome ): string {
 	</div>
 
 	<div class="cso-doc-gallery__grid">
-		<?php foreach ( $gallery_all as $i => $att_id ) :
-			$g_url     = wp_get_attachment_image_url( $att_id, 'large' );
-			if ( ! $g_url ) continue;
-			$g_alt     = get_post_field( 'post_title', $att_id );
-			$g_caption = wp_get_attachment_caption( $att_id );
-			$g_mod     = $gp[ $i % 7 ] ?? '';
-			$g_class   = 'cso-doc-gallery-item'
-				. ( $g_mod === 'wide' ? ' cso-doc-gallery-item--wide' : '' )
-				. ( $g_mod === 'tall' ? ' cso-doc-gallery-item--tall' : '' );
+		<?php foreach ( $gallery_units as $unit ) :
+			$cell = $unit['cell'];
 		?>
-		<div class="<?php echo esc_attr( $g_class ); ?>">
-			<img src="<?php echo esc_url( $g_url ); ?>"
-			     alt="<?php echo esc_attr( $g_alt ); ?>" loading="lazy">
-			<?php if ( $g_caption ) : ?>
-			<div class="cso-doc-gallery-item__cap"><?php echo esc_html( $g_caption ); ?></div>
+		<div class="cso-doc-gallery-item" style="grid-column:span <?php echo (int) $unit['col']; ?>;grid-row:span <?php echo (int) $unit['row']; ?>;">
+			<img src="<?php echo esc_url( $cell['url'] ); ?>"
+			     alt="<?php echo esc_attr( $cell['alt'] ); ?>" loading="lazy">
+			<?php if ( $cell['caption'] ) : ?>
+			<div class="cso-doc-gallery-item__cap"><?php echo esc_html( $cell['caption'] ); ?></div>
 			<?php endif; ?>
 		</div>
 		<?php endforeach; ?>

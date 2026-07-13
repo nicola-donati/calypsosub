@@ -3,55 +3,74 @@ use PHPUnit\Framework\TestCase;
 
 class Test_Gallery_Helpers extends TestCase {
 
-	public function test_cell_style_desktop_pattern(): void {
-		$expected = [
-			[ 'col' => 3, 'row' => 2 ],
-			[ 'col' => 2, 'row' => 1 ],
-			[ 'col' => 1, 'row' => 1 ],
-			[ 'col' => 1, 'row' => 1 ],
-			[ 'col' => 2, 'row' => 1 ],
-			[ 'col' => 2, 'row' => 2 ],
-			[ 'col' => 1, 'row' => 1 ],
-			[ 'col' => 1, 'row' => 1 ],
-			[ 'col' => 1, 'row' => 1 ],
-			[ 'col' => 1, 'row' => 1 ],
+	public function test_classify_shape_horizontal(): void {
+		$this->assertSame( 'horizontal', Calypsosub_Gallery_Helpers::classify_shape( 1.6 ) );
+		$this->assertSame( 'horizontal', Calypsosub_Gallery_Helpers::classify_shape( 2.5 ) );
+	}
+
+	public function test_classify_shape_vertical(): void {
+		$this->assertSame( 'vertical', Calypsosub_Gallery_Helpers::classify_shape( 0.63 ) );
+		$this->assertSame( 'vertical', Calypsosub_Gallery_Helpers::classify_shape( 0.4 ) );
+	}
+
+	public function test_classify_shape_square(): void {
+		$this->assertSame( 'square', Calypsosub_Gallery_Helpers::classify_shape( 1.0 ) );
+		$this->assertSame( 'square', Calypsosub_Gallery_Helpers::classify_shape( 0.64 ) );
+		$this->assertSame( 'square', Calypsosub_Gallery_Helpers::classify_shape( 1.59 ) );
+	}
+
+	public function test_cell_style_horizontal_regular(): void {
+		$this->assertSame( [ 'col' => 2, 'row' => 1 ], Calypsosub_Gallery_Helpers::cell_style( 2.0, false ) );
+	}
+
+	public function test_cell_style_horizontal_big(): void {
+		$this->assertSame( [ 'col' => 3, 'row' => 2 ], Calypsosub_Gallery_Helpers::cell_style( 2.0, true ) );
+	}
+
+	public function test_cell_style_vertical_regular(): void {
+		$this->assertSame( [ 'col' => 1, 'row' => 2 ], Calypsosub_Gallery_Helpers::cell_style( 0.5, false ) );
+	}
+
+	public function test_cell_style_vertical_big(): void {
+		$this->assertSame( [ 'col' => 2, 'row' => 3 ], Calypsosub_Gallery_Helpers::cell_style( 0.5, true ) );
+	}
+
+	public function test_cell_style_square_regular(): void {
+		$this->assertSame( [ 'col' => 1, 'row' => 1 ], Calypsosub_Gallery_Helpers::cell_style( 1.0, false ) );
+	}
+
+	public function test_cell_style_square_big(): void {
+		$this->assertSame( [ 'col' => 2, 'row' => 2 ], Calypsosub_Gallery_Helpers::cell_style( 1.0, true ) );
+	}
+
+	public function test_build_units_maps_cells_by_ratio_using_injected_big_flag(): void {
+		$cells = [
+			[ 'ratio' => 2.0 ],
+			[ 'ratio' => 0.5 ],
+			[ 'ratio' => 1.0 ],
 		];
-		foreach ( $expected as $index => $style ) {
-			$this->assertSame( $style, Calypsosub_Gallery_Helpers::cell_style( $index ) );
-		}
+		// forza tutte le celle a "regular" per un confronto deterministico.
+		$units = Calypsosub_Gallery_Helpers::build_units( $cells, static fn() => false );
+
+		$this->assertSame( $cells[0], $units[0]['cell'] );
+		$this->assertSame( [ 'col' => 2, 'row' => 1 ], [ 'col' => $units[0]['col'], 'row' => $units[0]['row'] ] );
+		$this->assertSame( [ 'col' => 1, 'row' => 2 ], [ 'col' => $units[1]['col'], 'row' => $units[1]['row'] ] );
+		$this->assertSame( [ 'col' => 1, 'row' => 1 ], [ 'col' => $units[2]['col'], 'row' => $units[2]['row'] ] );
 	}
 
-	public function test_cell_style_desktop_wraps_after_ten(): void {
-		$this->assertSame(
-			Calypsosub_Gallery_Helpers::cell_style( 0 ),
-			Calypsosub_Gallery_Helpers::cell_style( 10 )
-		);
-		$this->assertSame(
-			Calypsosub_Gallery_Helpers::cell_style( 3 ),
-			Calypsosub_Gallery_Helpers::cell_style( 13 )
-		);
+	public function test_build_units_uses_injected_big_flag_per_cell(): void {
+		$cells = [ [ 'ratio' => 1.0 ], [ 'ratio' => 1.0 ] ];
+		$units = Calypsosub_Gallery_Helpers::build_units( $cells, static fn() => true );
+
+		$this->assertSame( [ 'col' => 2, 'row' => 2 ], [ 'col' => $units[0]['col'], 'row' => $units[0]['row'] ] );
+		$this->assertSame( [ 'col' => 2, 'row' => 2 ], [ 'col' => $units[1]['col'], 'row' => $units[1]['row'] ] );
 	}
 
-	public function test_cell_style_mobile_pattern(): void {
-		$expected = [
-			[ 'col' => 2, 'row' => 1 ],
-			[ 'col' => 1, 'row' => 1 ],
-			[ 'col' => 1, 'row' => 1 ],
-			[ 'col' => 1, 'row' => 1 ],
-			[ 'col' => 1, 'row' => 1 ],
-			[ 'col' => 1, 'row' => 1 ],
-			[ 'col' => 1, 'row' => 1 ],
-			[ 'col' => 1, 'row' => 1 ],
-		];
-		foreach ( $expected as $index => $style ) {
-			$this->assertSame( $style, Calypsosub_Gallery_Helpers::cell_style( $index, true ) );
-		}
-	}
-
-	public function test_cell_style_mobile_wraps_after_eight(): void {
-		$this->assertSame(
-			Calypsosub_Gallery_Helpers::cell_style( 0, true ),
-			Calypsosub_Gallery_Helpers::cell_style( 8, true )
+	public function test_build_units_default_randomizer_stays_within_shape_variants(): void {
+		$units = Calypsosub_Gallery_Helpers::build_units( [ [ 'ratio' => 1.0 ] ] );
+		$this->assertContains(
+			[ 'col' => $units[0]['col'], 'row' => $units[0]['row'] ],
+			[ [ 'col' => 1, 'row' => 1 ], [ 'col' => 2, 'row' => 2 ] ]
 		);
 	}
 

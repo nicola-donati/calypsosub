@@ -60,26 +60,7 @@ $mobile_row_height = (int) round( $row_height * 0.8 );
 $desktop_cols = max( 4, (int) floor( min( $max_width, 1320 ) / max( 1, $row_height ) ) );
 $mobile_cols  = 4;
 
-$cells = [];
-foreach ( $items as $item ) {
-	$img = wp_get_attachment_image_src( $item->ID, 'large' );
-	if ( ! $img ) {
-		continue;
-	}
-	[ $img_url, $img_w, $img_h ] = $img;
-	$ratio        = $img_w > 0 && $img_h > 0 ? $img_w / $img_h : 1;
-	$overlay_text = Calypsosub_Gallery_Helpers::resolve_overlay_text( $item->ID );
-	$alt          = get_post_meta( $item->ID, '_wp_attachment_image_alt', true ) ?: $overlay_text;
-
-	$cells[] = [
-		'id'      => $item->ID,
-		'url'     => $img_url,
-		'full'    => wp_get_attachment_image_url( $item->ID, 'full' ) ?: $img_url,
-		'ratio'   => $ratio,
-		'alt'     => $alt,
-		'caption' => $overlay_text,
-	];
-}
+$cells = Calypsosub_Gallery_Helpers::build_cells_from_attachments( wp_list_pluck( $items, 'ID' ) );
 
 if ( empty( $cells ) ) {
 	return;
