@@ -96,7 +96,7 @@ class Calypsosub_CPT_Corsi {
 			],
 			'public'          => true,
 			'show_in_rest'    => true,
-			'supports'        => [ 'title', 'thumbnail' ],
+			'supports'        => [ 'title', 'editor', 'thumbnail' ],
 			'menu_icon'       => 'dashicons-welcome-learn-more',
 			'rewrite'         => [ 'slug' => 'corsi' ],
 			'has_archive'     => true,

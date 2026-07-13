@@ -160,6 +160,10 @@ if ( ! empty( $priority_ids ) && $source_mode !== 'manual' ) {
 $uid   = 'cso-dcar-' . sprintf( '%08x', crc32( implode( ',', [ $max_width, $gap, $desktop_cols, count( $docenti ) ] ) ) );
 $total = count( $docenti );
 
+/* ── Arrow layout geometry ── */
+$vp_margin       = $arrows_position === 'outside' ? ( $arrow_size + 12 ) : (int) ceil( $arrow_size / 2 );
+$arrow_outer_pos = $arrows_position === 'outside' ? (int) round( ( $vp_margin - $arrow_size ) / 2 ) : -(int) ceil( $arrow_size / 2 );
+
 /* ── Section style ── */
 $section_styles = [];
 if ( $bg_color ) $section_styles[] = 'background:' . $css( $bg_color );
@@ -178,8 +182,8 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
 #<?php echo $uid; ?>{padding:<?php echo $padding_y; ?>px <?php echo $padding_x; ?>px;}
 #<?php echo $uid; ?> .dcar__inner{max-width:<?php echo $max_width; ?>px;margin:0 auto;position:relative;}
 #<?php echo $uid; ?> .dcar__viewport{overflow:hidden;}
-<?php if ( $arrows_position === 'outside' ) : ?>
-#<?php echo $uid; ?> .dcar__inner{padding:0 <?php echo $arrow_size + 16; ?>px;}
+<?php if ( $arrows_position !== 'inside' ) : ?>
+#<?php echo $uid; ?> .dcar__viewport{margin:0 <?php echo $vp_margin; ?>px;}
 <?php endif; ?>
 #<?php echo $uid; ?> .dcar__track{
   display:flex;
@@ -263,8 +267,8 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
   -webkit-appearance:none;appearance:none;padding:0;
 }
 #<?php echo $uid; ?> .dcar__arrow:hover{background:<?php echo $arrow_hover_bg !== '' ? $css( $arrow_hover_bg ) : 'transparent'; ?>;color:<?php echo $css( $arrow_hover_col ); ?>;}
-#<?php echo $uid; ?> .dcar__arrow--prev{left:<?php echo $arrows_position === 'inside' ? '8px' : ( '-' . ($arrow_size/2) . 'px' ); ?>;}
-#<?php echo $uid; ?> .dcar__arrow--next{right:<?php echo $arrows_position === 'inside' ? '8px' : ( '-' . ($arrow_size/2) . 'px' ); ?>;}
+#<?php echo $uid; ?> .dcar__arrow--prev{left:<?php echo $arrows_position === 'inside' ? '8px' : ( $arrow_outer_pos . 'px' ); ?>;}
+#<?php echo $uid; ?> .dcar__arrow--next{right:<?php echo $arrows_position === 'inside' ? '8px' : ( $arrow_outer_pos . 'px' ); ?>;}
 #<?php echo $uid; ?> .dcar__arrow.is-hidden{opacity:0;pointer-events:none;}
 <?php if ( $dots_show ) : ?>
 #<?php echo $uid; ?> .dcar__dots{display:flex;justify-content:center;gap:8px;margin-top:20px;}
@@ -277,9 +281,9 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
   }
 }
 @media(max-width:640px){
-  #<?php echo $uid; ?> .dcar__card{
-    flex-basis:calc((100% - <?php echo ($mobile_cols - 1); ?> * <?php echo $gap; ?>px) / <?php echo $mobile_cols; ?> - <?php echo $peek > 0 ? round($peek * .5, 2) : 0; ?>px);
-  }
+  #<?php echo $uid; ?> .dcar__track{gap:0;}
+  #<?php echo $uid; ?> .dcar__card{flex-basis:100%;}
+  #<?php echo $uid; ?> .dcar__viewport{margin:0;}
   #<?php echo $uid; ?> .dcar__arrow--prev{left:4px;}
   #<?php echo $uid; ?> .dcar__arrow--next{right:4px;}
 }
@@ -290,10 +294,10 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
 
 		<?php if ( $arrows_show ) : ?>
 		<button class="dcar__arrow dcar__arrow--prev" aria-label="Precedente" data-dir="prev">
-			<svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor"><polygon points="10,0 0,8 10,16"/></svg>
+			<svg width="13" height="20" viewBox="0 0 13 20" fill="currentColor"><path d="M13,0 L0,10 L13,20 Q9,10 13,0 Z"/></svg>
 		</button>
 		<button class="dcar__arrow dcar__arrow--next" aria-label="Successivo" data-dir="next">
-			<svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor"><polygon points="0,0 10,8 0,16"/></svg>
+			<svg width="13" height="20" viewBox="0 0 13 20" fill="currentColor"><path d="M0,0 L13,10 L0,20 Q4,10 0,0 Z"/></svg>
 		</button>
 		<?php endif; ?>
 
@@ -305,7 +309,7 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
 				$cognome     = (string) get_post_meta( $id, '_docente_cognome',     true );
 				$soprannome  = (string) get_post_meta( $id, '_docente_soprannome',  true );
 				$ruolo       = (string) get_post_meta( $id, '_docente_ruolo',       true );
-				$bio     = (string) get_post_meta( $id, '_docente_bio',     true );
+				$bio     = (string) get_post_meta( $id, '_docente_bio_breve', true );
 				$anni    = (int)    get_post_meta( $id, '_docente_anni_esperienza', true );
 				$spec    = get_post_meta( $id, '_docente_specializzazioni', true );
 				$img     = get_the_post_thumbnail_url( $id, 'large' );
@@ -392,7 +396,7 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
 		current  = Math.max(0, Math.min(idx, max));
 		var card = cards[current];
 		if (!card) return;
-		var offset = card.offsetLeft - track.parentElement.offsetLeft;
+		var offset = card.offsetLeft - cards[0].offsetLeft;
 		track.style.transform = 'translateX(-' + offset + 'px)';
 		dots.forEach(function (d, i) { d.classList.toggle('is-active', i === current); });
 		if (btnPrev) btnPrev.classList.toggle('is-hidden', current === 0);

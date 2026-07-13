@@ -123,8 +123,19 @@ class Calypsosub_CPT_Docenti {
 		</div>
 
 		<div class="calypso-meta-field" style="margin-bottom:16px">
-			<label><?php _e( 'Bio', 'calypsosub' ); ?></label>
-			<textarea name="calypso_bio"><?php echo esc_textarea( $d['bio'] ); ?></textarea>
+			<label><?php _e( 'Descrizione breve', 'calypsosub' ); ?> <small><?php _e( 'usata nelle card (carousel, liste)', 'calypsosub' ); ?></small></label>
+			<textarea name="calypso_bio_breve"><?php echo esc_textarea( $d['bio_breve'] ); ?></textarea>
+		</div>
+
+		<div class="calypso-meta-field" style="margin-bottom:16px">
+			<label><?php _e( 'Descrizione', 'calypsosub' ); ?> <small><?php _e( 'usata nella pagina del docente', 'calypsosub' ); ?></small></label>
+			<?php wp_editor( $d['bio'], 'calypso_bio', [
+				'textarea_name' => 'calypso_bio',
+				'textarea_rows' => 8,
+				'teeny'         => true,
+				'media_buttons' => false,
+				'quicktags'     => false,
+			] ); ?>
 		</div>
 
 		<div class="calypso-meta-field" style="margin-bottom:16px">
@@ -340,7 +351,6 @@ class Calypsosub_CPT_Docenti {
 			'_docente_ruolo'       => 'calypso_ruolo',
 			'_docente_email'       => 'calypso_email',
 			'_docente_telefono'    => 'calypso_telefono',
-			'_docente_bio'         => 'calypso_bio',
 		];
 
 		// Specializzazioni: repeater → array di stringhe
@@ -354,6 +364,11 @@ class Calypsosub_CPT_Docenti {
 			update_post_meta( $post_id, $meta_key,
 				sanitize_text_field( wp_unslash( $_POST[ $post_key ] ?? '' ) ) );
 		}
+		update_post_meta( $post_id, '_docente_bio',
+			wp_kses_post( wp_unslash( $_POST['calypso_bio'] ?? '' ) ) );
+		update_post_meta( $post_id, '_docente_bio_breve',
+			sanitize_textarea_field( wp_unslash( $_POST['calypso_bio_breve'] ?? '' ) ) );
+
 		update_post_meta( $post_id, '_docente_anni_esperienza',
 			absint( $_POST['calypso_anni_esperienza'] ?? 0 ) );
 		update_post_meta( $post_id, '_docente_user_id',
@@ -395,6 +410,7 @@ class Calypsosub_CPT_Docenti {
 			'email'            => (string) get_post_meta( $post_id, '_docente_email', true ),
 			'telefono'         => (string) get_post_meta( $post_id, '_docente_telefono', true ),
 			'bio'              => (string) get_post_meta( $post_id, '_docente_bio', true ),
+			'bio_breve'        => (string) get_post_meta( $post_id, '_docente_bio_breve', true ),
 			'anni_esperienza'  => (int)    get_post_meta( $post_id, '_docente_anni_esperienza', true ),
 			'user_id'          => (int)    get_post_meta( $post_id, '_docente_user_id', true ),
 			'galleria'         => array_map( 'absint', (array) ( get_post_meta( $post_id, '_docente_galleria', true ) ?: [] ) ),

@@ -104,6 +104,10 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 .cso-display-heading{font-size:clamp(28px,4vw,56px);font-weight:800;text-transform:uppercase;line-height:.96;margin:0 0 24px}
 .cso-lead{line-height:1.7;margin:0 0 32px;max-width:640px}
 .cso .cso-lead{font-size:18px;color:var(--c-ink,#0b1a26)}
+.cso-prose{font-size:17px;line-height:1.75;max-width:720px}
+.cso .cso-prose{color:var(--c-ink,#0b1a26)}
+.cso-prose p{margin:0 0 1em}
+.cso-prose p:last-child{margin-bottom:0}
 
 /* ── Fasi ── */
 .cso-fasi{margin:0;padding:0;list-style:none}
@@ -282,6 +286,14 @@ $_cd = [
 <div class="cso-layout">
 
 <main>
+
+	<?php if ( get_the_content() ) : ?>
+	<div class="cso-section">
+		<span class="cso-eyebrow"><?php echo esc_html( calypsosub_opt( 'corsi', 'sec_descrizione_eyebrow', __( 'Il corso', 'calypsosub' ) ) ); ?></span>
+		<h2 class="cso-display-heading"><?php echo esc_html( calypsosub_opt( 'corsi', 'sec_descrizione_heading', __( 'Descrizione.', 'calypsosub' ) ) ); ?></h2>
+		<div class="cso-prose"><?php the_content(); ?></div>
+	</div>
+	<?php endif; ?>
 
 	<?php if ( $fasi ) : ?>
 	<div class="cso-section">
