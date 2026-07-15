@@ -72,7 +72,8 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
   background-repeat:no-repeat;
 }
 .cso-hero--bg-img .cso-hero__inner{position:relative;z-index:1}
-.cso-hero h1,.cso-hero h2,.cso-hero h3{color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.9),0 5px 36px rgba(0,0,0,.75),0 12px 56px rgba(0,0,0,.5)}
+.cso-hero__overlay{position:absolute;inset:0;pointer-events:none;z-index:0}
+.cso-hero h1,.cso-hero h2,.cso-hero h3{text-shadow:0 2px 14px rgba(0,0,0,.9),0 5px 36px rgba(0,0,0,.75),0 12px 56px rgba(0,0,0,.5)}
 .cso-hero a{color:rgba(255,255,255,.55);text-decoration:none}
 .cso-hero a:hover{color:rgba(255,255,255,.9)}
 @media(max-width:1024px){.cso-hero{padding:calc(var(--cso-header-h) + 24px) 20px 40px}}
@@ -82,11 +83,10 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 .cso-hero__header{display:grid;grid-template-columns:1.4fr 1fr;gap:80px;align-items:end;margin-bottom:56px}
 @media(max-width:1024px){.cso-hero__header{grid-template-columns:1fr;gap:24px;margin-bottom:32px}}
 
-.cso-hero__badge{background:var(--c-coral,#ff6b4a)}
+.cso-hero__badge{background:var(--c-coral,#ff6b4a);display:inline-block}
 
-.cso-hero__sub{margin-top:16px;font-weight:600;line-height:1;text-shadow:0 2px 14px rgba(0,0,0,.9),0 5px 36px rgba(0,0,0,.75),0 12px 56px rgba(0,0,0,.5)}
-.cso .cso-hero__sub{font-size:clamp(28px,5vw,72px);color:var(--c-aqua,#26CBFB)}
-.cso-hero__lead{line-height:1.6;opacity:.85;margin:0;align-self:end}
+.cso-hero__sub{margin-top:16px;line-height:1;text-shadow:0 2px 14px rgba(0,0,0,.9),0 5px 36px rgba(0,0,0,.75),0 12px 56px rgba(0,0,0,.5)}
+.cso-hero__lead{line-height:1.6;margin:0;align-self:end}
 
 .cso-hero__img{width:100%;height:480px;object-fit:cover;display:block;border-radius:12px}
 .cso-hero__img-placeholder{font-size:64px;width:100%;height:480px;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(38,203,251,.1) 100%);display:flex;align-items:center;justify-content:center;border-radius:12px}
@@ -205,8 +205,23 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 </style>
 <?php
 $_cd = [
-	'hero_bg'        => calypsosub_opt( 'corsi', 'design_hero_bg',        '#0a2540' ),
-	'badge_bg'       => calypsosub_opt( 'corsi', 'design_badge_bg',        '#ff6b4a' ),
+	'hero_bg'           => calypsosub_opt( 'corsi', 'design_hero_bg',          '#0a2540' ),
+	'hero_overlay'      => calypsosub_opt( 'corsi', 'design_hero_overlay_color', '#061826' ),
+	'badge_bg'          => calypsosub_opt( 'corsi', 'design_badge_bg',         '#ff6b4a' ),
+	'hero_badge_color'  => calypsosub_opt( 'corsi', 'design_hero_badge_color', '#ffffff' ),
+	'hero_badge_size'   => (int) calypsosub_opt( 'corsi', 'design_hero_badge_size', '14' ),
+	'hero_badge_weight' => (int) calypsosub_opt( 'corsi', 'design_hero_badge_weight', '600' ),
+	'hero_title_color'  => calypsosub_opt( 'corsi', 'design_hero_title_color', '#ffffff' ),
+	'hero_title_size'   => (int) calypsosub_opt( 'corsi', 'design_hero_title_size', '96' ),
+	'hero_title_weight' => (int) calypsosub_opt( 'corsi', 'design_hero_title_weight', '700' ),
+	'hero_title_font'   => preg_replace( '/[^a-zA-Z0-9 ,\"\'\-]/', '', calypsosub_opt( 'corsi', 'design_hero_title_font', '' ) ),
+	'hero_sub_color'    => calypsosub_opt( 'corsi', 'design_hero_sub_color',   '#26CBFB' ),
+	'hero_sub_size'     => (int) calypsosub_opt( 'corsi', 'design_hero_sub_size', '72' ),
+	'hero_sub_weight'   => (int) calypsosub_opt( 'corsi', 'design_hero_sub_weight', '700' ),
+	'hero_lead_color'   => calypsosub_opt( 'corsi', 'design_hero_lead_color',  '#ffffff' ),
+	'hero_lead_opacity' => (int) calypsosub_opt( 'corsi', 'design_hero_lead_opacity', '85' ),
+	'hero_lead_size'    => (int) calypsosub_opt( 'corsi', 'design_hero_lead_size', '18' ),
+	'hero_lead_font'    => preg_replace( '/[^a-zA-Z0-9 ,\"\'\-]/', '', calypsosub_opt( 'corsi', 'design_hero_lead_font', '' ) ),
 	'eyebrow'        => calypsosub_opt( 'corsi', 'design_eyebrow',         '#1B77A7' ),
 	'sidebar_accent' => calypsosub_opt( 'corsi', 'design_sidebar_accent',  '#26CBFB' ),
 	'related_bg'     => calypsosub_opt( 'corsi', 'design_related_bg',      '#f6f1e6' ),
@@ -214,7 +229,22 @@ $_cd = [
 ?>
 <style>
 .cso-hero{background:<?php echo esc_attr($_cd['hero_bg']); ?>}
+.cso-hero__overlay{background:linear-gradient(<?php echo calypso_hex2rgba($_cd['hero_overlay'],.55); ?> 0%,<?php echo calypso_hex2rgba($_cd['hero_overlay'],.15); ?> 40%,<?php echo calypso_hex2rgba($_cd['hero_overlay'],.85); ?> 100%)}
 .cso-hero__badge{background:<?php echo esc_attr($_cd['badge_bg']); ?>}
+.cso .cso-hero__badge{color:<?php echo esc_attr($_cd['hero_badge_color']); ?>;font-size:<?php echo $_cd['hero_badge_size']; ?>px;font-weight:<?php echo $_cd['hero_badge_weight']; ?>}
+.cso .cso-hero__title{
+	color:<?php echo esc_attr($_cd['hero_title_color']); ?>;
+	font-size:clamp(40px,7vw,<?php echo $_cd['hero_title_size']; ?>px);
+	font-weight:<?php echo $_cd['hero_title_weight']; ?>;
+	<?php if ($_cd['hero_title_font']) : ?>font-family:<?php echo $_cd['hero_title_font']; ?>;<?php endif; ?>
+}
+.cso .cso-hero__sub{color:<?php echo esc_attr($_cd['hero_sub_color']); ?>;font-size:clamp(28px,5vw,<?php echo $_cd['hero_sub_size']; ?>px);font-weight:<?php echo $_cd['hero_sub_weight']; ?>}
+.cso .cso-hero__lead{
+	color:<?php echo esc_attr($_cd['hero_lead_color']); ?>;
+	opacity:<?php echo max( 0, min( 100, $_cd['hero_lead_opacity'] ) ) / 100; ?>;
+	font-size:<?php echo $_cd['hero_lead_size']; ?>px;
+	<?php if ($_cd['hero_lead_font']) : ?>font-family:<?php echo $_cd['hero_lead_font']; ?>;<?php endif; ?>
+}
 .cso .cso-eyebrow{color:<?php echo esc_attr($_cd['eyebrow']); ?>}
 .cso .cso-fase__titolo{color:<?php echo esc_attr($_cd['eyebrow']); ?>}
 .cso .cso-fase__ore{color:<?php echo esc_attr($_cd['eyebrow']); ?>}
@@ -233,6 +263,7 @@ $_cd = [
 <!-- HERO -->
 <section class="cso-hero<?php echo $hero_bg ? ' cso-hero--bg-img' : ''; ?>"
          <?php if ( $hero_bg ) : ?>style="background-image:url('<?php echo esc_url( $img ); ?>')"<?php endif; ?>>
+<?php if ( $hero_bg ) : ?><div class="cso-hero__overlay"></div><?php endif; ?>
 <div class="cso-hero__inner">
 
 	<nav class="cso-breadcrumb" aria-label="<?php esc_attr_e( 'Breadcrumb', 'calypsosub' ); ?>">

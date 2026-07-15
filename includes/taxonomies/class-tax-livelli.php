@@ -8,7 +8,7 @@ class Calypsosub_Tax_Livelli {
 	}
 
 	public function register_taxonomy(): void {
-		register_taxonomy( 'calypso_livello', 'calypso_corso', [
+		register_taxonomy( 'calypso_livello', [ 'calypso_corso', 'calypso_uscita' ], [
 			'label'        => __( 'Livelli', 'calypsosub' ),
 			'labels'       => [
 				'name'          => __( 'Livelli', 'calypsosub' ),

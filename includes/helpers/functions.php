@@ -19,6 +19,22 @@ function calypsosub_opt( string $section, string $key, string $default = '' ): s
 }
 
 /**
+ * Converte un hex (#rgb o #rrggbb) in stringa rgba() con opacità data.
+ * Usata per overlay hero configurabili. Fallback su abyss se l'hex non è valido.
+ */
+function calypso_hex2rgba( string $hex, float $alpha ): string {
+	$hex = ltrim( trim( $hex ), '#' );
+	if ( strlen( $hex ) === 3 ) {
+		$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+	}
+	if ( strlen( $hex ) !== 6 || ! ctype_xdigit( $hex ) ) {
+		return "rgba(6,24,38,$alpha)";
+	}
+	[ $r, $g, $b ] = array_map( 'hexdec', [ substr( $hex, 0, 2 ), substr( $hex, 2, 2 ), substr( $hex, 4, 2 ) ] );
+	return "rgba($r,$g,$b,$alpha)";
+}
+
+/**
  * Wrapper per auth — estendibile con membership plugin.
  */
 function calypso_is_user_logged_in(): bool {
@@ -172,6 +188,46 @@ function calypso_get_occorrenze_by_uscita( int $uscita_id, array $args = [] ): a
 		] ],
 	], $args ) );
 	return $query->posts;
+}
+
+/**
+ * Prossime uscite (esclusa una data), una per scheda uscita, ordinate
+ * per data della prima occorrenza futura crescente. Usata per la sezione
+ * "Altre uscite in calendario" nella pagina singola uscita.
+ *
+ * @return WP_Post[] Post di tipo calypso_uscita.
+ */
+function calypso_get_prossime_uscite_escluso( int $uscita_id_escluso, int $limit = 3 ): array {
+	$oggi = current_time( 'Y-m-d\TH:i' );
+
+	$occ_query = new WP_Query( [
+		'post_type'      => 'calypso_occ_uscita',
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+		'orderby'        => 'meta_value',
+		'meta_key'       => '_occorrenza_uscita_data',
+		'order'          => 'ASC',
+		'meta_query'     => [ [
+			'key'     => '_occorrenza_uscita_data',
+			'value'   => $oggi,
+			'compare' => '>=',
+			'type'    => 'DATETIME',
+		] ],
+	] );
+
+	$uscite_ids = [];
+	foreach ( $occ_query->posts as $occ ) {
+		$uid = (int) get_post_meta( $occ->ID, '_occorrenza_uscita_uscita_id', true );
+		if ( ! $uid || $uid === $uscita_id_escluso ) continue;
+		if ( in_array( $uid, $uscite_ids, true ) ) continue;
+		$uscite_ids[] = $uid;
+		if ( count( $uscite_ids ) >= $limit ) break;
+	}
+
+	if ( ! $uscite_ids ) return [];
+
+	$uscite = array_map( 'get_post', $uscite_ids );
+	return array_values( array_filter( $uscite, static fn( $u ) => $u instanceof WP_Post && $u->post_status === 'publish' ) );
 }
 
 /**

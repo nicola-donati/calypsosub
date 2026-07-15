@@ -87,12 +87,32 @@ class Calypsosub_Settings_Pages {
 				'cpt'   => 'calypso_uscita',
 				'label' => 'Uscite',
 				'groups' => [
-					'Design — Colori principali' => [
-						'design_accent'          => [ 'label' => 'Colore accento (badge, bottoni, dot, posti)',   'default' => '#ff6b4a',  'type' => 'color' ],
-						'design_deep'            => [ 'label' => 'Colore primario scuro (infobar, card head)',    'default' => '#0a2540',  'type' => 'color' ],
-						'design_section_heading' => [ 'label' => 'Colore titolo sezioni',                        'default' => '#0a2540',  'type' => 'color' ],
-						'design_section_border'  => [ 'label' => 'Colore bordo titolo sezioni',                  'default' => '#dce1e6',  'type' => 'color' ],
-						'design_body_bg'         => [ 'label' => 'Sfondo corpo pagina',                          'default' => '#ffffff',  'type' => 'color' ],
+					'Pagina singola — Hero design' => [
+						'design_hero_bg'               => [ 'label' => 'Sfondo hero e sidebar',                'default' => '#0a2540',                'type' => 'color' ],
+						'design_hero_overlay_color'    => [ 'label' => 'Colore overlay (se immagine di sfondo attiva)', 'default' => '#061826',        'type' => 'color' ],
+						'design_badge_bg'              => [ 'label' => 'Sfondo badge e bottone principale',    'default' => '#ff6b4a',                'type' => 'color' ],
+						'design_hero_badge_color'      => [ 'label' => 'Colore testo badge',                   'default' => '#ffffff',                'type' => 'color' ],
+						'design_hero_badge_size'       => [ 'label' => 'Dimensione testo badge (px)',           'default' => '14',                     'type' => 'number' ],
+						'design_hero_badge_weight'     => [ 'label' => 'Peso testo badge (100-900)',            'default' => '600',                    'type' => 'number' ],
+						'design_hero_title_color'      => [ 'label' => 'Colore titolo (h1)',                    'default' => '#ffffff',                'type' => 'color' ],
+						'design_hero_title_size'       => [ 'label' => 'Dimensione titolo (px, max clamp)',     'default' => '96',                     'type' => 'number' ],
+						'design_hero_title_weight'     => [ 'label' => 'Peso titolo (100-900)',                 'default' => '700',                    'type' => 'number' ],
+						'design_hero_title_font'       => [ 'label' => 'Font-family titolo (vuoto = eredita)',  'default' => '' ],
+						'design_hero_sub_color'        => [ 'label' => 'Colore nota "proposta più volte"',      'default' => '#26CBFB',                'type' => 'color' ],
+						'design_hero_sub_size'         => [ 'label' => 'Dimensione nota (px)',                  'default' => '16',                     'type' => 'number' ],
+						'design_hero_sub_weight'       => [ 'label' => 'Peso nota (100-900)',                   'default' => '600',                    'type' => 'number' ],
+						'design_hero_lead_color'       => [ 'label' => 'Colore testo lead (descrizione breve)', 'default' => '#ffffff',                'type' => 'color' ],
+						'design_hero_lead_opacity'     => [ 'label' => 'Opacità testo lead (0-100)',            'default' => '85',                     'type' => 'number' ],
+						'design_hero_lead_size'        => [ 'label' => 'Dimensione testo lead (px)',           'default' => '18',                     'type' => 'number' ],
+						'design_hero_lead_font'        => [ 'label' => 'Font-family lead (vuoto = eredita)',    'default' => '' ],
+						'design_hero_stat_bg'          => [ 'label' => 'Sfondo box statistiche hero',           'default' => 'rgba(6,24,38,.35)', 'type' => 'color' ],
+						'design_hero_stat_label_color' => [ 'label' => 'Colore etichetta box statistiche',      'default' => '#26CBFB',                'type' => 'color' ],
+						'design_hero_stat_value_color' => [ 'label' => 'Colore valore box statistiche',         'default' => '#ffffff',                'type' => 'color' ],
+					],
+					'Design — Colori sezioni e sidebar' => [
+						'design_eyebrow'         => [ 'label' => 'Colore eyebrow e titoli sezione', 'default' => '#1B77A7',  'type' => 'color' ],
+						'design_sidebar_accent'  => [ 'label' => 'Colore accento sidebar (labels)', 'default' => '#26CBFB',  'type' => 'color' ],
+						'design_related_bg'      => [ 'label' => 'Sfondo sezione uscite correlate', 'default' => '#f6f1e6',  'type' => 'color' ],
 					],
 					'Archivio — Hero' => [
 						'archive_eyebrow'       => [ 'label' => 'Eyebrow  (usa {anno} come segnaposto)', 'default' => 'Calendario · stagione {anno}' ],
@@ -119,25 +139,38 @@ class Calypsosub_Settings_Pages {
 						'empty_show_all'       => [ 'label' => 'Link mostra tutte',              'default' => 'Mostra tutte' ],
 					],
 					'Pagina singola — Sezioni' => [
-						'badge'              => [ 'label' => 'Badge hero',                 'default' => 'Uscita subacquea' ],
-						'sec_descrizione'    => [ 'label' => 'Titolo sezione Descrizione', 'default' => 'Descrizione' ],
-						'sec_date'           => [ 'label' => 'Titolo sezione Date',        'default' => 'Date disponibili' ],
-						'sec_ritrovo'        => [ 'label' => 'Titolo sezione Ritrovo',     'default' => 'Punto di ritrovo' ],
-						'sec_incluso'        => [ 'label' => 'Titolo sezione Incluso',     'default' => "Cosa è incluso" ],
-						'sec_cosa_portare'   => [ 'label' => 'Titolo sezione Cosa portare', 'default' => 'Cosa portare' ],
-						'sec_cancellazione'  => [ 'label' => 'Titolo sezione Cancellazione', 'default' => 'Politica di cancellazione' ],
+						'badge'                   => [ 'label' => 'Badge hero (fallback se nessun livello assegnato)', 'default' => 'Itinerario in barca' ],
+						'hero_note_piu_date'      => [ 'label' => 'Nota "più date" (mostrata se >1 data disponibile)', 'default' => 'Proposta più volte durante la stagione — vedi le date disponibili' ],
+						'breadcrumb_archive'      => [ 'label' => 'Voce breadcrumb archivio',       'default' => 'Uscite' ],
+						'sec_descrizione_eyebrow' => [ 'label' => 'Eyebrow sezione Descrizione',     'default' => "L'uscita" ],
+						'sec_descrizione_heading' => [ 'label' => 'Titolo sezione Descrizione',      'default' => 'Descrizione.' ],
+						'sec_immersioni_eyebrow'  => [ 'label' => 'Eyebrow sezione Immersioni',      'default' => 'Le immersioni' ],
+						'sec_programma_eyebrow'   => [ 'label' => 'Eyebrow sezione Programma',       'default' => 'Il programma della giornata' ],
+						'sec_fauna_eyebrow'       => [ 'label' => 'Eyebrow sezione Fauna',           'default' => 'Cosa vedrai sotto' ],
+						'sec_fauna_heading'       => [ 'label' => 'Titolo sezione Fauna',            'default' => 'La vita della secca.' ],
+						'sec_galleria_eyebrow'    => [ 'label' => 'Eyebrow sezione Galleria',        'default' => 'Galleria' ],
+						'sec_galleria_heading'    => [ 'label' => 'Titolo sezione Galleria',         'default' => 'Dagli ultimi tuffi.' ],
+						'sec_incluso'             => [ 'label' => 'Titolo box Inclusi (sidebar)',    'default' => "Inclusi nell'uscita" ],
+						'sec_cosa_portare'        => [ 'label' => 'Titolo box Cosa portare (sidebar)', 'default' => 'Cosa portare' ],
+						'sec_cancellazione'       => [ 'label' => 'Titolo box Cancellazione (sidebar)', 'default' => 'Cancellazione' ],
 					],
-					'Pagina singola — Sidebar prenotazione' => [
-						'card_title'          => [ 'label' => 'Titolo card prenotazione',      'default' => 'Prenota' ],
-						'btn_prenota_ora'     => [ 'label' => 'Bottone Prenota ora',            'default' => 'Prenota ora' ],
-						'btn_area_personale'  => [ 'label' => 'Bottone Area personale',         'default' => 'Area personale' ],
-						'label_posti'         => [ 'label' => 'Etichetta posti disponibili',    'default' => 'posti disponibili' ],
-						'label_accompagnatori'=> [ 'label' => 'Etichetta campo accompagnatori', 'default' => 'N° accompagnatori' ],
-						'label_allergie'      => [ 'label' => 'Etichetta campo allergie',       'default' => 'Allergie / note mediche' ],
-						'msg_gia_prenotato'   => [ 'label' => 'Messaggio già prenotato',        'default' => '✓ Hai già una prenotazione attiva per questa uscita.' ],
-						'msg_lista_avviso'    => [ 'label' => 'Avviso lista attesa',             'default' => "Posti esauriti — puoi iscriverti in lista d'attesa." ],
-						'msg_esauriti'        => [ 'label' => 'Messaggio posti esauriti',        'default' => 'Posti esauriti per questa uscita.' ],
-						'msg_accedi_cta'      => [ 'label' => 'Testo invito al login',           'default' => 'Accedi per prenotare questa uscita.' ],
+					'Pagina singola — Sidebar' => [
+						'sidebar_eyebrow' => [ 'label' => 'Eyebrow sidebar',          'default' => 'Itinerario' ],
+						'sidebar_title'   => [ 'label' => 'Titolo sidebar',           'default' => 'Informazioni pratiche' ],
+						'stat_ritrovo'    => [ 'label' => 'Etichetta Ritrovo',        'default' => 'Ritrovo' ],
+						'stat_imbarco'    => [ 'label' => 'Etichetta Imbarco',        'default' => 'Imbarco' ],
+						'stat_rientro'    => [ 'label' => 'Etichetta Rientro',        'default' => 'Rientro previsto' ],
+						'stat_immersioni' => [ 'label' => 'Etichetta Immersioni',     'default' => 'Immersioni' ],
+						'stat_difficolta' => [ 'label' => 'Etichetta Difficoltà',     'default' => 'Difficoltà' ],
+						'inizi_label'     => [ 'label' => 'Etichetta Prossime date',  'default' => 'Prossime date' ],
+						'inizi_note'      => [ 'label' => 'Nota sotto "Prossime date"', 'default' => 'Stesso itinerario, date diverse durante la stagione.' ],
+						'btn_prenota_ora' => [ 'label' => 'Bottone Prenota',          'default' => 'Prenota' ],
+					],
+					'Pagina singola — Uscite correlate' => [
+						'related_eyebrow'   => [ 'label' => 'Eyebrow',                     'default' => 'Continua a scendere' ],
+						'related_heading'   => [ 'label' => 'Titolo sezione',              'default' => 'Altre uscite in calendario.' ],
+						'related_link'      => [ 'label' => 'Link calendario completo',    'default' => 'Calendario completo →' ],
+						'related_card_link' => [ 'label' => 'Link card uscita',            'default' => "Scopri l'uscita →" ],
 					],
 				],
 				'campi_prenotazione_default' => [
@@ -149,15 +182,36 @@ class Calypsosub_Settings_Pages {
 				'cpt'   => 'calypso_corso',
 				'label' => 'Corsi',
 				'groups' => [
-					'Design — Colori principali' => [
-						'design_hero_bg'         => [ 'label' => 'Sfondo hero e sidebar',           'default' => '#0a2540',  'type' => 'color' ],
-						'design_badge_bg'        => [ 'label' => 'Sfondo badge e bottone principale','default' => '#ff6b4a',  'type' => 'color' ],
+					'Pagina singola — Hero design' => [
+						'design_hero_bg'           => [ 'label' => 'Sfondo hero e sidebar',                'default' => '#0a2540',  'type' => 'color' ],
+						'design_hero_overlay_color'=> [ 'label' => 'Colore overlay (se immagine di sfondo attiva)', 'default' => '#061826', 'type' => 'color' ],
+						'design_badge_bg'          => [ 'label' => 'Sfondo badge e bottone principale',    'default' => '#ff6b4a',  'type' => 'color' ],
+						'design_hero_badge_color'  => [ 'label' => 'Colore testo badge',                   'default' => '#ffffff',  'type' => 'color' ],
+						'design_hero_badge_size'   => [ 'label' => 'Dimensione testo badge (px)',          'default' => '14',      'type' => 'number' ],
+						'design_hero_badge_weight' => [ 'label' => 'Peso testo badge (100-900)',           'default' => '600',     'type' => 'number' ],
+						'design_hero_title_color'  => [ 'label' => 'Colore titolo (h1)',                    'default' => '#ffffff',  'type' => 'color' ],
+						'design_hero_title_size'   => [ 'label' => 'Dimensione titolo (px, max clamp)',    'default' => '96',      'type' => 'number' ],
+						'design_hero_title_weight'=> [ 'label' => 'Peso titolo (100-900)',                 'default' => '700',     'type' => 'number' ],
+						'design_hero_title_font'   => [ 'label' => 'Font-family titolo (vuoto = eredita)', 'default' => '' ],
+						'design_hero_sub_color'    => [ 'label' => 'Colore sottotitolo',                   'default' => '#26CBFB',  'type' => 'color' ],
+						'design_hero_sub_size'     => [ 'label' => 'Dimensione sottotitolo (px, max clamp)', 'default' => '72',   'type' => 'number' ],
+						'design_hero_sub_weight'   => [ 'label' => 'Peso sottotitolo (100-900)',           'default' => '700',     'type' => 'number' ],
+						'design_hero_lead_color'   => [ 'label' => 'Colore testo lead',                    'default' => '#ffffff',  'type' => 'color' ],
+						'design_hero_lead_opacity' => [ 'label' => 'Opacità testo lead (0-100)',            'default' => '85',      'type' => 'number' ],
+						'design_hero_lead_size'    => [ 'label' => 'Dimensione testo lead (px)',           'default' => '18',      'type' => 'number' ],
+						'design_hero_lead_font'    => [ 'label' => 'Font-family lead (vuoto = eredita)',   'default' => '' ],
+					],
+					'Design — Colori sezioni e sidebar' => [
 						'design_eyebrow'         => [ 'label' => 'Colore eyebrow e titoli sezione', 'default' => '#1B77A7',  'type' => 'color' ],
 						'design_sidebar_accent'  => [ 'label' => 'Colore accento sidebar (labels)', 'default' => '#26CBFB',  'type' => 'color' ],
 						'design_related_bg'      => [ 'label' => 'Sfondo sezione corsi correlati',  'default' => '#f6f1e6',  'type' => 'color' ],
 					],
 					'Hero' => [
 						'breadcrumb_archive' => [ 'label' => 'Voce breadcrumb archivio', 'default' => 'Corsi' ],
+					],
+					'Sezione Descrizione' => [
+						'sec_descrizione_eyebrow' => [ 'label' => 'Eyebrow',  'default' => 'Il corso' ],
+						'sec_descrizione_heading' => [ 'label' => 'Titolo',   'default' => 'Descrizione.' ],
 					],
 					'Sezione Programma' => [
 						'sec_programma_eyebrow' => [ 'label' => 'Eyebrow',  'default' => 'Il programma' ],
@@ -174,7 +228,8 @@ class Calypsosub_Settings_Pages {
 						'sec_docenti_heading' => [ 'label' => 'Titolo',  'default' => 'I nostri docenti.' ],
 					],
 					'Sidebar — In sintesi' => [
-						'sidebar_title'   => [ 'label' => 'Titolo sidebar',              'default' => 'In sintesi' ],
+						'sidebar_title'          => [ 'label' => 'Titolo sidebar',              'default' => 'In sintesi' ],
+						'sidebar_requisiti_label'=> [ 'label' => 'Etichetta Requisiti',         'default' => 'Requisiti' ],
 						'stat_durata'     => [ 'label' => 'Etichetta Durata',            'default' => 'Durata' ],
 						'stat_immersioni' => [ 'label' => 'Etichetta Immersioni',        'default' => 'Immersioni' ],
 						'stat_profondita' => [ 'label' => 'Etichetta Profondità',        'default' => 'Profondità' ],
@@ -196,10 +251,22 @@ class Calypsosub_Settings_Pages {
 				'cpt'   => 'calypso_evento',
 				'label' => 'Eventi',
 				'groups' => [
-					'Design — Colori principali' => [
-						'design_accent'  => [ 'label' => 'Colore accento (badge, card head, bottone, posti)', 'default' => '#1B77A7',  'type' => 'color' ],
-						'design_deep'    => [ 'label' => 'Colore primario scuro (infobar, bottone secondario)', 'default' => '#0a2540',  'type' => 'color' ],
-						'design_body_bg' => [ 'label' => 'Sfondo corpo pagina',                                'default' => '#ffffff',  'type' => 'color' ],
+					'Pagina singola — Hero design' => [
+						'design_accent'            => [ 'label' => 'Colore accento (badge, card head, bottone, posti)', 'default' => '#1B77A7',  'type' => 'color' ],
+						'design_deep'              => [ 'label' => 'Colore primario scuro (infobar, bottone secondario)', 'default' => '#0a2540',  'type' => 'color' ],
+						'design_body_bg'           => [ 'label' => 'Sfondo corpo pagina',                                'default' => '#ffffff',  'type' => 'color' ],
+						'design_hero_overlay_color'=> [ 'label' => 'Colore overlay su immagine hero',                    'default' => '#061826',  'type' => 'color' ],
+						'design_hero_badge_color'  => [ 'label' => 'Colore testo badge',                                 'default' => '#ffffff',  'type' => 'color' ],
+						'design_hero_badge_size'   => [ 'label' => 'Dimensione testo badge (px)',                       'default' => '14',       'type' => 'number' ],
+						'design_hero_badge_weight' => [ 'label' => 'Peso testo badge (100-900)',                        'default' => '600',      'type' => 'number' ],
+						'design_hero_title_color'  => [ 'label' => 'Colore titolo (h1)',                                  'default' => '#ffffff',  'type' => 'color' ],
+						'design_hero_title_size'   => [ 'label' => 'Dimensione titolo (px, max clamp)',                 'default' => '72',       'type' => 'number' ],
+						'design_hero_title_weight'=> [ 'label' => 'Peso titolo (100-900)',                              'default' => '700',      'type' => 'number' ],
+						'design_hero_title_font'   => [ 'label' => 'Font-family titolo (vuoto = eredita)',              'default' => '' ],
+						'design_hero_sub_color'    => [ 'label' => 'Colore sottotitolo',                                 'default' => '#ffffff',  'type' => 'color' ],
+						'design_hero_sub_opacity'  => [ 'label' => 'Opacità sottotitolo (0-100)',                       'default' => '85',       'type' => 'number' ],
+						'design_hero_sub_size'     => [ 'label' => 'Dimensione sottotitolo (px)',                       'default' => '18',       'type' => 'number' ],
+						'design_hero_sub_weight'   => [ 'label' => 'Peso sottotitolo (100-900)',                        'default' => '400',      'type' => 'number' ],
 					],
 					'Hero' => [
 						'badge' => [ 'label' => 'Badge hero', 'default' => 'Evento' ],
@@ -222,6 +289,35 @@ class Calypsosub_Settings_Pages {
 				],
 				'campi_prenotazione_default' => [],
 			],
+		];
+	}
+
+	/* ── Palette colori tema (per gli swatch nei campi color) ─────────────────── */
+
+	private static function palette(): array {
+		if ( function_exists( 'wp_get_global_settings' ) ) {
+			$settings      = wp_get_global_settings( [ 'color', 'palette' ] );
+			$theme_palette = $settings['theme'] ?? [];
+			if ( $theme_palette ) {
+				return array_map( static fn( $c ) => [
+					'slug'  => $c['slug']  ?? '',
+					'name'  => $c['name']  ?? '',
+					'color' => $c['color'] ?? '',
+				], $theme_palette );
+			}
+		}
+		// Fallback se il tema non espone theme.json (allineato a theme.json del tema Calypso Sub).
+		return [
+			[ 'slug' => 'abyss',      'name' => 'Abyss',       'color' => '#061826' ],
+			[ 'slug' => 'deep',       'name' => 'Deep',        'color' => '#0a2540' ],
+			[ 'slug' => 'wave',       'name' => 'Wave',        'color' => '#1B77A7' ],
+			[ 'slug' => 'aqua',       'name' => 'Aqua',        'color' => '#26CBFB' ],
+			[ 'slug' => 'foam',       'name' => 'Foam',        'color' => '#cfe9ee' ],
+			[ 'slug' => 'gold',       'name' => 'Gold',        'color' => '#E9BF26' ],
+			[ 'slug' => 'bone',       'name' => 'Bone',        'color' => '#f6f1e6' ],
+			[ 'slug' => 'ink',        'name' => 'Ink',         'color' => '#0b1a26' ],
+			[ 'slug' => 'coral-deep', 'name' => 'Coral deep',  'color' => '#ff6b4a' ],
+			[ 'slug' => 'white',      'name' => 'White',       'color' => '#ffffff' ],
 		];
 	}
 
@@ -258,9 +354,14 @@ class Calypsosub_Settings_Pages {
 			.cso-settings-table td{padding:10px 18px}
 			.cso-settings-table input[type=text],.cso-settings-table textarea{width:100%;font-size:13px}
 			.cso-settings-table textarea{min-height:72px}
-			.cso-settings-table input[type=color]{width:44px;height:34px;padding:2px 3px;border:1px solid #ddd;border-radius:4px;cursor:pointer;vertical-align:middle}
 			.cso-settings-table input[type=number]{width:110px;font-size:13px}
 			.cso-settings-submit{margin-top:8px}
+			.cso-color-swatches{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+			.cso-color-swatch{width:28px;height:28px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.15);cursor:pointer;padding:0;position:relative;display:inline-block;flex-shrink:0}
+			.cso-color-swatch.is-active{box-shadow:0 0 0 2px #fff,0 0 0 4px #1d6f9c}
+			.cso-color-swatch--custom{overflow:hidden}
+			.cso-color-swatch--custom::after{content:"\270E";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(255,255,255,.9);text-shadow:0 1px 2px rgba(0,0,0,.6);pointer-events:none}
+			.cso-color-swatch--custom input[type=color]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:none;padding:0}
 		' );
 	}
 
@@ -268,9 +369,10 @@ class Calypsosub_Settings_Pages {
 
 	private function render( string $section ): void {
 		if ( ! current_user_can( 'calypsosub_manage' ) ) return;
-		$cfg  = self::config()[ $section ];
-		$opts = (array) get_option( 'calypsosub_opts_' . $section, [] );
-		$saved = isset( $_GET['saved'] );
+		$cfg     = self::config()[ $section ];
+		$opts    = (array) get_option( 'calypsosub_opts_' . $section, [] );
+		$saved   = isset( $_GET['saved'] );
+		$palette = self::palette();
 		?>
 		<div class="wrap cso-settings-wrap">
 			<h1><?php echo esc_html( 'Impostazioni — ' . $cfg['label'] ); ?></h1>
@@ -298,11 +400,42 @@ class Calypsosub_Settings_Pages {
 								<textarea id="cso-<?php echo esc_attr( $key ); ?>"
 								          name="cso_opts[<?php echo esc_attr( $key ); ?>]"
 								          placeholder="<?php echo esc_attr( $field['default'] ); ?>"><?php echo esc_textarea( $val ); ?></textarea>
-								<?php elseif ( $type === 'color' ) : ?>
-								<input type="color"
-								       id="cso-<?php echo esc_attr( $key ); ?>"
-								       name="cso_opts[<?php echo esc_attr( $key ); ?>]"
-								       value="<?php echo esc_attr( $val ?: $field['default'] ); ?>">
+								<?php elseif ( $type === 'color' ) :
+									$current   = $val ?: $field['default'];
+									$is_hexish = (bool) preg_match( '/^#/', $field['default'] );
+									$is_custom = true;
+									foreach ( $palette as $p ) {
+										if ( $p['color'] !== '' && strcasecmp( $p['color'], $current ) === 0 ) { $is_custom = false; break; }
+									}
+								?>
+								<div class="cso-color-field">
+									<div class="cso-color-swatches">
+										<?php foreach ( $palette as $p ) : ?>
+										<button type="button"
+										        class="cso-color-swatch<?php echo ( ! $is_custom && strcasecmp( $p['color'], $current ) === 0 ) ? ' is-active' : ''; ?>"
+										        style="background:<?php echo esc_attr( $p['color'] ); ?>"
+										        data-color="<?php echo esc_attr( $p['color'] ); ?>"
+										        title="<?php echo esc_attr( $p['name'] ); ?>"
+										        aria-label="<?php echo esc_attr( $p['name'] ); ?>"></button>
+										<?php endforeach; ?>
+										<label class="cso-color-swatch cso-color-swatch--custom<?php echo $is_custom ? ' is-active' : ''; ?>"
+										       style="background:<?php echo esc_attr( $current ); ?>"
+										       title="<?php esc_attr_e( 'Colore personalizzato', 'calypsosub' ); ?>">
+											<?php if ( $is_hexish ) : ?>
+												<input type="color" class="cso-color-native" value="<?php echo esc_attr( $current ); ?>">
+											<?php endif; ?>
+										</label>
+										<?php if ( ! $is_hexish ) : ?>
+										<input type="text" class="cso-color-text" value="<?php echo esc_attr( $current ); ?>"
+										       placeholder="es. rgba(255,255,255,.08)" style="width:180px;font-size:12px">
+										<?php endif; ?>
+									</div>
+									<input type="hidden"
+									       id="cso-<?php echo esc_attr( $key ); ?>"
+									       name="cso_opts[<?php echo esc_attr( $key ); ?>]"
+									       class="cso-color-value"
+									       value="<?php echo esc_attr( $current ); ?>">
+								</div>
 								<?php elseif ( $type === 'number' ) : ?>
 								<input type="number"
 								       id="cso-<?php echo esc_attr( $key ); ?>"
@@ -382,6 +515,40 @@ class Calypsosub_Settings_Pages {
 							e.target.closest('.cso-campo-pren-row').remove();
 						}
 					});
+
+					document.querySelectorAll('.cso-color-field').forEach(function (field) {
+						var hidden      = field.querySelector('.cso-color-value');
+						var customLabel = field.querySelector('.cso-color-swatch--custom');
+						var nativeInput = field.querySelector('.cso-color-native');
+						var textInput   = field.querySelector('.cso-color-text');
+
+						field.querySelectorAll('.cso-color-swatch:not(.cso-color-swatch--custom)').forEach(function (btn) {
+							btn.addEventListener('click', function () {
+								hidden.value = btn.dataset.color;
+								if (textInput) textInput.value = btn.dataset.color;
+								field.querySelectorAll('.cso-color-swatch').forEach(function (b) { b.classList.remove('is-active'); });
+								btn.classList.add('is-active');
+							});
+						});
+
+						if (nativeInput) {
+							nativeInput.addEventListener('input', function () {
+								hidden.value = nativeInput.value;
+								customLabel.style.background = nativeInput.value;
+								field.querySelectorAll('.cso-color-swatch').forEach(function (b) { b.classList.remove('is-active'); });
+								customLabel.classList.add('is-active');
+							});
+						}
+
+						if (textInput) {
+							textInput.addEventListener('input', function () {
+								hidden.value = textInput.value;
+								customLabel.style.background = textInput.value;
+								field.querySelectorAll('.cso-color-swatch').forEach(function (b) { b.classList.remove('is-active'); });
+								customLabel.classList.add('is-active');
+							});
+						}
+					});
 				})();
 				</script>
 
@@ -407,7 +574,13 @@ class Calypsosub_Settings_Pages {
 			$val  = wp_unslash( $raw[ $key ] ?? '' );
 			$type = $field['type'] ?? 'text';
 			if ( $type === 'color' ) {
-				$clean[ $key ] = sanitize_hex_color( $val ) ?? '';
+				if ( preg_match( '/^#/', $field['default'] ) ) {
+					$clean[ $key ] = sanitize_hex_color( $val ) ?? '';
+				} else {
+					// Colori non-hex (rgba/hsla, es. overlay/box translucidi): stessa allowlist dei campi testo liberi.
+					$s = sanitize_text_field( $val );
+					$clean[ $key ] = $s !== '' && preg_match( '/^(#[0-9a-fA-F]{3,8}|rgba?\([\d.,\s%]+\)|hsla?\([\d.,\s%]+\))$/i', $s ) ? $s : '';
+				}
 			} elseif ( $type === 'number' ) {
 				$clean[ $key ] = (string) (int) $val;
 			} elseif ( $type === 'textarea' ) {

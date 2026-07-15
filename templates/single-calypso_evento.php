@@ -50,12 +50,12 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 .cso-hero__bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 6s ease}
 .cso-hero__bg--gradient{background:linear-gradient(135deg,var(--c-deep) 0%,#1a5c8a 50%,var(--c-wave) 100%)}
 .cso-hero:hover .cso-hero__bg{transform:scale(1.03)}
-.cso-hero__overlay{position:absolute;inset:0;background:linear-gradient(rgba(6,24,38,.45) 0%,rgba(6,24,38,.1) 40%,rgba(6,24,38,.85) 100%)}
+.cso-hero__overlay{position:absolute;inset:0}
 .cso-hero__content{position:relative;z-index:1;padding:40px 48px;max-width:860px}
 @media(max-width:1024px){.cso-hero__content{padding:32px 20px}}
-.cso-badge{background:var(--c-wave)}
+.cso-badge{background:var(--c-wave);display:inline-block}
 .cso-hero__title{margin:0 0 8px}
-.cso-hero__subtitle{line-height:1.6;color:rgba(255,255,255,.85);margin:8px 0 0}
+.cso-hero__subtitle{line-height:1.6;margin:8px 0 0}
 .cso-infobar{background:var(--c-deep);color:#fff;padding:18px 48px;display:flex;flex-wrap:wrap;gap:28px}
 .cso-infobar__pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border-radius:20px;padding:6px 14px;font-size:14px}
 .cso-infobar__icon{font-size:18px;opacity:.7}
@@ -92,14 +92,40 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 </style>
 <?php
 $_evd = [
-	'accent'  => calypsosub_opt( 'eventi', 'design_accent',  '#1B77A7' ),
-	'deep'    => calypsosub_opt( 'eventi', 'design_deep',    '#0a2540' ),
-	'body_bg' => calypsosub_opt( 'eventi', 'design_body_bg', '#ffffff' ),
+	'accent'           => calypsosub_opt( 'eventi', 'design_accent',           '#1B77A7' ),
+	'deep'             => calypsosub_opt( 'eventi', 'design_deep',             '#0a2540' ),
+	'body_bg'          => calypsosub_opt( 'eventi', 'design_body_bg',          '#ffffff' ),
+	'hero_overlay'     => calypsosub_opt( 'eventi', 'design_hero_overlay_color', '#061826' ),
+	'hero_badge_color' => calypsosub_opt( 'eventi', 'design_hero_badge_color', '#ffffff' ),
+	'hero_badge_size'  => (int) calypsosub_opt( 'eventi', 'design_hero_badge_size', '14' ),
+	'hero_badge_weight'=> (int) calypsosub_opt( 'eventi', 'design_hero_badge_weight', '600' ),
+	'hero_title_color' => calypsosub_opt( 'eventi', 'design_hero_title_color', '#ffffff' ),
+	'hero_title_size'  => (int) calypsosub_opt( 'eventi', 'design_hero_title_size', '72' ),
+	'hero_title_weight'=> (int) calypsosub_opt( 'eventi', 'design_hero_title_weight', '700' ),
+	'hero_title_font'  => preg_replace( '/[^a-zA-Z0-9 ,\"\'\-]/', '', calypsosub_opt( 'eventi', 'design_hero_title_font', '' ) ),
+	'hero_sub_color'   => calypsosub_opt( 'eventi', 'design_hero_sub_color',   '#ffffff' ),
+	'hero_sub_opacity' => (int) calypsosub_opt( 'eventi', 'design_hero_sub_opacity', '85' ),
+	'hero_sub_size'    => (int) calypsosub_opt( 'eventi', 'design_hero_sub_size', '18' ),
+	'hero_sub_weight'  => (int) calypsosub_opt( 'eventi', 'design_hero_sub_weight', '400' ),
 ];
 ?>
 <style>
 .cso{background:<?php echo esc_attr($_evd['body_bg']); ?>}
+.cso-hero__overlay{background:linear-gradient(<?php echo calypso_hex2rgba($_evd['hero_overlay'],.45); ?> 0%,<?php echo calypso_hex2rgba($_evd['hero_overlay'],.1); ?> 40%,<?php echo calypso_hex2rgba($_evd['hero_overlay'],.85); ?> 100%)}
 .cso-badge{background:<?php echo esc_attr($_evd['accent']); ?>}
+.cso .cso-badge{color:<?php echo esc_attr($_evd['hero_badge_color']); ?>;font-size:<?php echo $_evd['hero_badge_size']; ?>px;font-weight:<?php echo $_evd['hero_badge_weight']; ?>}
+.cso .cso-hero__title{
+	color:<?php echo esc_attr($_evd['hero_title_color']); ?>;
+	font-size:clamp(32px,6vw,<?php echo $_evd['hero_title_size']; ?>px);
+	font-weight:<?php echo $_evd['hero_title_weight']; ?>;
+	<?php if ($_evd['hero_title_font']) : ?>font-family:<?php echo $_evd['hero_title_font']; ?>;<?php endif; ?>
+}
+.cso .cso-hero__subtitle{
+	color:<?php echo esc_attr($_evd['hero_sub_color']); ?>;
+	opacity:<?php echo max( 0, min( 100, $_evd['hero_sub_opacity'] ) ) / 100; ?>;
+	font-size:<?php echo $_evd['hero_sub_size']; ?>px;
+	font-weight:<?php echo $_evd['hero_sub_weight']; ?>;
+}
 .cso-infobar{background:<?php echo esc_attr($_evd['deep']); ?>}
 .cso-card__head{background:<?php echo esc_attr($_evd['accent']); ?>}
 .cso-spots__num{color:<?php echo esc_attr($_evd['accent']); ?>}

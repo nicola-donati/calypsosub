@@ -20,6 +20,7 @@ define( 'CALYPSOSUB_URL', plugin_dir_url( __FILE__ ) );
 require_once CALYPSOSUB_PATH . 'includes/helpers/functions.php';
 require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-brevetti.php';
 require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-livelli.php';
+require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-fauna.php';
 require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-media-tag.php';
 require_once CALYPSOSUB_PATH . 'includes/media/class-media-overlay-field.php';
 require_once CALYPSOSUB_PATH . 'includes/blocks/class-gallery-helpers.php';
@@ -62,6 +63,7 @@ add_filter( 'use_block_editor_for_post_type', function ( bool $use, string $post
 
 ( new Calypsosub_Tax_Brevetti() )->init();
 ( new Calypsosub_Tax_Livelli() )->init();
+( new Calypsosub_Tax_Fauna() )->init();
 ( new Calypsosub_Tax_Media_Tag() )->init();
 ( new Calypsosub_Media_Overlay_Field() )->init();
 ( new Calypsosub_Article_Timeline_Fields() )->init();
