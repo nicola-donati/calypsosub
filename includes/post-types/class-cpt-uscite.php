@@ -115,6 +115,14 @@ class Calypsosub_CPT_Uscite {
 				<input type="number" min="0" name="calypso_num_immersioni" value="<?php echo esc_attr( $d['num_immersioni'] ); ?>">
 			</div>
 			<div class="calypso-meta-field">
+				<label><?php _e( 'Focal point immagine hero — orizzontale (%)', 'calypsosub' ); ?> <small><?php _e( 'punto di fuoco della foto hero, 50 = centro', 'calypsosub' ); ?></small></label>
+				<input type="number" min="0" max="100" name="calypso_hero_focal_x" value="<?php echo esc_attr( $d['hero_focal_x'] ); ?>" placeholder="50">
+			</div>
+			<div class="calypso-meta-field">
+				<label><?php _e( 'Focal point immagine hero — verticale (%)', 'calypsosub' ); ?> <small><?php _e( 'punto di fuoco della foto hero, 50 = centro', 'calypsosub' ); ?></small></label>
+				<input type="number" min="0" max="100" name="calypso_hero_focal_y" value="<?php echo esc_attr( $d['hero_focal_y'] ); ?>" placeholder="50">
+			</div>
+			<div class="calypso-meta-field">
 				<label><?php _e( 'Tag fauna aggiuntivi', 'calypsosub' ); ?> <small><?php _e( 'separati da virgola, in aggiunta ai termini "Fauna e habitat" qui sotto', 'calypsosub' ); ?></small></label>
 				<input type="text" name="calypso_fauna_extra" value="<?php echo esc_attr( $d['fauna_extra'] ); ?>">
 			</div>
@@ -354,6 +362,15 @@ class Calypsosub_CPT_Uscite {
 			delete_post_meta( $post_id, '_uscita_num_immersioni' );
 		}
 
+		foreach ( [ '_uscita_hero_focal_x' => 'calypso_hero_focal_x', '_uscita_hero_focal_y' => 'calypso_hero_focal_y' ] as $meta_key => $post_key ) {
+			$raw = $_POST[ $post_key ] ?? '';
+			if ( $raw !== '' ) {
+				update_post_meta( $post_id, $meta_key, min( 100, max( 0, absint( $raw ) ) ) );
+			} else {
+				delete_post_meta( $post_id, $meta_key );
+			}
+		}
+
 		update_post_meta( $post_id, '_hero_use_featured_image',
 			isset( $_POST['calypso_hero_bg'] ) ? '1' : '0' );
 
@@ -408,6 +425,8 @@ class Calypsosub_CPT_Uscite {
 
 	private function get_meta( int $post_id ): array {
 		$num_imm_raw = get_post_meta( $post_id, '_uscita_num_immersioni', true );
+		$focal_x_raw = get_post_meta( $post_id, '_uscita_hero_focal_x', true );
+		$focal_y_raw = get_post_meta( $post_id, '_uscita_hero_focal_y', true );
 		return [
 			'sottotitolo'        => (string) get_post_meta( $post_id, '_uscita_sottotitolo', true ),
 			'desc_breve'         => (string) get_post_meta( $post_id, '_uscita_desc_breve', true ),
@@ -424,6 +443,8 @@ class Calypsosub_CPT_Uscite {
 			'programma_override' => (array) ( get_post_meta( $post_id, '_uscita_programma_override', true ) ?: [] ),
 			'galleria'           => array_map( 'absint', (array) ( get_post_meta( $post_id, '_uscita_galleria', true ) ?: [] ) ),
 			'hero_use_featured_image' => (string) get_post_meta( $post_id, '_hero_use_featured_image', true ),
+			'hero_focal_x'       => $focal_x_raw !== '' && $focal_x_raw !== false ? (string) $focal_x_raw : '',
+			'hero_focal_y'       => $focal_y_raw !== '' && $focal_y_raw !== false ? (string) $focal_y_raw : '',
 		];
 	}
 }

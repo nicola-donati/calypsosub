@@ -97,9 +97,9 @@ $side_value_color        = (string) ( $a['side_value_color']        ?? '#ffffff'
 global $calypsosub_booking_manager;
 
 $tipi = [];
+if ( $enable_corsi  && $cf7_form_corsi )  $tipi['corsi']  = $cf7_form_corsi;
 if ( $enable_uscite && $cf7_form_uscite ) $tipi['uscite'] = $cf7_form_uscite;
 if ( $enable_eventi && $cf7_form_eventi ) $tipi['eventi'] = $cf7_form_eventi;
-if ( $enable_corsi  && $cf7_form_corsi )  $tipi['corsi']  = $cf7_form_corsi;
 
 if ( empty( $tipi ) ) {
 	if ( current_user_can( 'edit_posts' ) ) {
@@ -161,7 +161,8 @@ $build_card = static function ( WP_Post $post, string $tipo ) use ( $calypsosub_
 		$card['livello']   = __( 'Tutti i livelli', 'calypsosub' );
 		$card['sottotitolo'] = (string) $card['luogo'];
 		$card['mese_key']  = $card['data'] ? date( 'Y-m', strtotime( $card['data'] ) ) : '';
-		$card['disponibile'] = $card['posti'] === null ? true : ( $card['posti'] > 0 );
+		$card['scaduta']   = $card['data'] !== '' && $card['data'] < current_time( 'Y-m-d\TH:i' );
+		$card['disponibile'] = $card['scaduta'] ? false : ( $card['posti'] === null ? true : ( $card['posti'] > 0 ) );
 	} elseif ( $tipo === 'eventi' ) {
 		$date = (array) ( get_post_meta( $id, '_evento_date', true ) ?: [] );
 		$card['data']  = calypso_next_future_date( $date );
@@ -194,7 +195,8 @@ $build_card = static function ( WP_Post $post, string $tipo ) use ( $calypsosub_
 
 $items_by_tipo = [];
 if ( isset( $tipi['uscite'] ) ) {
-	$occorrenze_uscite = get_posts( [
+	// Uscite future (prenotabili), in ordine cronologico crescente.
+	$occorrenze_future = get_posts( [
 		'post_type'      => 'calypso_occ_uscita',
 		'post_status'    => 'publish',
 		'posts_per_page' => -1,
@@ -207,6 +209,22 @@ if ( isset( $tipi['uscite'] ) ) {
 			'compare' => '>=',
 		] ],
 	] );
+	// Uscite passate, non più prenotabili: mostrate comunque (con warning in
+	// UI) sotto le future, ordinate dalla più recente alla più vecchia.
+	$occorrenze_passate = get_posts( [
+		'post_type'      => 'calypso_occ_uscita',
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+		'orderby'        => 'meta_value',
+		'meta_key'       => '_occorrenza_uscita_data',
+		'order'          => 'DESC',
+		'meta_query'     => [ [
+			'key'     => '_occorrenza_uscita_data',
+			'value'   => current_time( 'Y-m-d\TH:i' ),
+			'compare' => '<',
+		] ],
+	] );
+	$occorrenze_uscite = array_merge( $occorrenze_future, $occorrenze_passate );
 	$items_by_tipo['uscite'] = array_map(
 		static fn( $p ) => $build_card( $p, 'uscite' ),
 		array_slice( $occorrenze_uscite, 0, $max_items_per_tab )
@@ -349,6 +367,8 @@ if ( $preselect_id && isset( $items_by_tipo[ $preselect_tab ] ) ) {
 #<?php echo $uid; ?> .cso-pren__card:hover{transform:translateY(-2px);}
 #<?php echo $uid; ?> .cso-pren__card:focus-visible{outline:2px solid <?php echo esc_attr( $card_selected_border_color ); ?>;outline-offset:2px;}
 #<?php echo $uid; ?> .cso-pren__card.is-selected{box-shadow:0 0 0 3px <?php echo esc_attr( $card_selected_border_color ); ?>,0 10px 30px -16px rgba(10,37,64,.25);}
+#<?php echo $uid; ?> .cso-pren__card.is-scaduta{cursor:default;opacity:.6;}
+#<?php echo $uid; ?> .cso-pren__card-expired-badge{position:absolute;top:10px;right:10px;display:inline-flex;align-items:center;gap:5px;background:<?php echo esc_attr( $card_spots_warn_color ); ?>;color:#fff;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 12px;border-radius:999px;}
 
 #<?php echo $uid; ?> .cso-pren__card-media{position:relative;height:<?php echo $card_media_height; ?>px;background:<?php echo esc_attr( $card_img_bg_color ); ?>;}
 #<?php echo $uid; ?> .cso-pren__card-media-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;margin:0;}
@@ -464,10 +484,13 @@ if ( $preselect_id && isset( $items_by_tipo[ $preselect_tab ] ) ) {
 				<div class="cso-pren__cards" data-cards>
 					<?php foreach ( $cards as $card ) :
 						$is_selected = $card['id'] === $preselect_id;
+						$is_scaduta  = ! empty( $card['scaduta'] );
 						$date_badge  = $card_date_badge( $card['data'] ?? '' );
-						$spots_warn  = isset( $card['posti'] ) && $card['posti'] !== null && $card['posti'] <= 4;
+						$spots_warn  = $is_scaduta || ( isset( $card['posti'] ) && $card['posti'] !== null && $card['posti'] <= 4 );
 						$spots_text  = '';
-						if ( isset( $card['posti'] ) && $card['posti'] !== null && isset( $card['max'] ) && $card['max'] !== null ) {
+						if ( $is_scaduta ) {
+							$spots_text = __( 'Non prenotabile', 'calypsosub' );
+						} elseif ( isset( $card['posti'] ) && $card['posti'] !== null && isset( $card['max'] ) && $card['max'] !== null ) {
 							$spots_text = $card['posti'] . ' / ' . $card['max'];
 						} elseif ( isset( $card['posti'] ) && $card['posti'] !== null ) {
 							$spots_text = $card['posti'] > 0
@@ -475,7 +498,7 @@ if ( $preselect_id && isset( $items_by_tipo[ $preselect_tab ] ) ) {
 								: __( 'Esaurito', 'calypsosub' );
 						}
 					?>
-					<button type="button" class="cso-pren__card<?php echo $is_selected ? ' is-selected' : ''; ?>" data-card="<?php echo esc_attr( wp_json_encode( $card ) ); ?>" data-filter-mese="<?php echo esc_attr( $card['mese_key'] ?? '' ); ?>" data-filter-luogo="<?php echo esc_attr( $card['luogo'] ?? '' ); ?>" data-filter-livello="<?php echo esc_attr( $card['livello'] ?? '' ); ?>" data-filter-disponibile="<?php echo ( $card['disponibile'] ?? true ) ? '1' : '0'; ?>">
+					<button type="button" class="cso-pren__card<?php echo $is_selected ? ' is-selected' : ''; ?><?php echo $is_scaduta ? ' is-scaduta' : ''; ?>" data-card="<?php echo esc_attr( wp_json_encode( $card ) ); ?>" data-filter-mese="<?php echo esc_attr( $card['mese_key'] ?? '' ); ?>" data-filter-luogo="<?php echo esc_attr( $card['luogo'] ?? '' ); ?>" data-filter-livello="<?php echo esc_attr( $card['livello'] ?? '' ); ?>" data-filter-disponibile="<?php echo ( $card['disponibile'] ?? true ) ? '1' : '0'; ?>"<?php echo $is_scaduta ? ' disabled aria-disabled="true"' : ''; ?>>
 						<div class="cso-pren__card-media">
 							<?php if ( $card['img'] ) : ?>
 							<img class="cso-pren__card-media-img" src="<?php echo esc_url( $card['img'] ); ?>" width="<?php echo (int) $card['img_w']; ?>" height="<?php echo (int) $card['img_h']; ?>" alt="<?php echo esc_attr( $card['title'] ); ?>" decoding="async">
@@ -486,7 +509,11 @@ if ( $preselect_id && isset( $items_by_tipo[ $preselect_tab ] ) ) {
 								<span class="cso-pren__card-date-label"><?php echo esc_html( $date_badge['mese'] . ' · ' . $date_badge['giorno'] ); ?></span>
 							</div>
 							<?php endif; ?>
+							<?php if ( $is_scaduta ) : ?>
+							<span class="cso-pren__card-expired-badge"><?php esc_html_e( 'Non prenotabile', 'calypsosub' ); ?></span>
+							<?php else : ?>
 							<span class="cso-pren__card-selected-badge"><?php esc_html_e( 'Selezionata', 'calypsosub' ); ?></span>
+							<?php endif; ?>
 							<div class="cso-pren__card-media-title"><?php echo esc_html( $card['title'] ); ?></div>
 						</div>
 						<div class="cso-pren__card-body">
@@ -742,7 +769,7 @@ if ( $preselect_id && isset( $items_by_tipo[ $preselect_tab ] ) ) {
 			if (activeFormPanel) setHiddenPostId(activeFormPanel, card.id, card.tipo);
 			return;
 		}
-		var cards = getCardsInPanel(panel).filter(function (c) { return c.style.display !== 'none'; });
+		var cards = getCardsInPanel(panel).filter(function (c) { return c.style.display !== 'none' && !c.disabled; });
 		if (cards.length) selectCard(cards[0]);
 	}
 

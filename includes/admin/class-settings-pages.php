@@ -108,6 +108,17 @@ class Calypsosub_Settings_Pages {
 						'design_hero_stat_bg'          => [ 'label' => 'Sfondo box statistiche hero',           'default' => 'rgba(6,24,38,.35)', 'type' => 'color' ],
 						'design_hero_stat_label_color' => [ 'label' => 'Colore etichetta box statistiche',      'default' => '#26CBFB',                'type' => 'color' ],
 						'design_hero_stat_value_color' => [ 'label' => 'Colore valore box statistiche',         'default' => '#ffffff',                'type' => 'color' ],
+						'design_hero_stat_border'      => [ 'label' => 'Colore bordo box statistiche',          'default' => 'rgba(255,255,255,.15)',  'type' => 'color' ],
+						'design_hero_text_color'       => [ 'label' => 'Colore testo generico (fallback)',      'default' => '#ffffff',                'type' => 'color' ],
+						'design_hero_min_height'       => [ 'label' => 'Altezza minima hero (px)',              'default' => '640',                    'type' => 'number' ],
+						'design_hero_content_anchor'   => [ 'label' => 'Ancoraggio verticale contenuto', 'default' => 'flex-end', 'type' => 'select', 'options' => [ 'flex-start' => 'Alto', 'center' => 'Centro', 'flex-end' => 'Basso' ] ],
+						'design_hero_eyebrow_text'     => [ 'label' => 'Testo eyebrow (sopra badge, vuoto = nascosto)', 'default' => '' ],
+						'design_hero_eyebrow_color'    => [ 'label' => 'Colore eyebrow',                        'default' => '#26CBFB',                'type' => 'color' ],
+						'design_hero_eyebrow_size'     => [ 'label' => 'Dimensione eyebrow (px)',               'default' => '14',                     'type' => 'number' ],
+						'design_hero_eyebrow_weight'   => [ 'label' => 'Peso eyebrow (100-900)',                'default' => '600',                    'type' => 'number' ],
+						'design_hero_eyebrow_wave'     => [ 'label' => 'Mostra icona onda accanto a eyebrow',   'default' => '1',                      'type' => 'checkbox' ],
+						'design_hero_scroll_color'     => [ 'label' => 'Colore indicatore "scorri"',            'default' => 'rgba(255,255,255,.7)',   'type' => 'color' ],
+						'design_hero_breadcrumb_color' => [ 'label' => 'Colore link breadcrumb',                'default' => 'rgba(255,255,255,.55)',  'type' => 'color' ],
 					],
 					'Design — Colori sezioni e sidebar' => [
 						'design_eyebrow'         => [ 'label' => 'Colore eyebrow e titoli sezione', 'default' => '#1B77A7',  'type' => 'color' ],
@@ -442,6 +453,21 @@ class Calypsosub_Settings_Pages {
 								       name="cso_opts[<?php echo esc_attr( $key ); ?>]"
 								       value="<?php echo esc_attr( $val ); ?>"
 								       placeholder="<?php echo esc_attr( $field['default'] ); ?>">
+								<?php elseif ( $type === 'select' ) :
+									$current = $val !== '' ? $val : $field['default'];
+								?>
+								<select id="cso-<?php echo esc_attr( $key ); ?>" name="cso_opts[<?php echo esc_attr( $key ); ?>]">
+									<?php foreach ( $field['options'] as $opt_val => $opt_label ) : ?>
+									<option value="<?php echo esc_attr( $opt_val ); ?>" <?php selected( $current, $opt_val ); ?>><?php echo esc_html( $opt_label ); ?></option>
+									<?php endforeach; ?>
+								</select>
+								<?php elseif ( $type === 'checkbox' ) :
+									$current = $val !== '' ? $val : $field['default'];
+								?>
+								<label style="display:inline-flex;align-items:center;gap:8px">
+									<input type="checkbox" id="cso-<?php echo esc_attr( $key ); ?>" name="cso_opts[<?php echo esc_attr( $key ); ?>]" value="1" <?php checked( $current, '1' ); ?>>
+									<?php esc_html_e( 'Attivo', 'calypsosub' ); ?>
+								</label>
 								<?php else : ?>
 								<input type="text"
 								       id="cso-<?php echo esc_attr( $key ); ?>"
@@ -585,6 +611,11 @@ class Calypsosub_Settings_Pages {
 				$clean[ $key ] = (string) (int) $val;
 			} elseif ( $type === 'textarea' ) {
 				$clean[ $key ] = sanitize_textarea_field( $val );
+			} elseif ( $type === 'select' ) {
+				$allowed = array_keys( $field['options'] ?? [] );
+				$clean[ $key ] = in_array( $val, $allowed, true ) ? $val : ( $field['default'] ?? '' );
+			} elseif ( $type === 'checkbox' ) {
+				$clean[ $key ] = $val === '1' ? '1' : '0';
 			} else {
 				$s = sanitize_text_field( $val );
 				// free-form CSS color fields (defaults start with # or rgba/hsla): strict allowlist

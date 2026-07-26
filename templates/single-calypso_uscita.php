@@ -37,6 +37,10 @@ $fauna_tags = array_merge( $fauna_terms, $fauna_extra_list );
 
 $img     = get_the_post_thumbnail_url( $id, 'full' );
 $hero_bg = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $img;
+$hero_focal_x_raw = get_post_meta( $id, '_uscita_hero_focal_x', true );
+$hero_focal_y_raw = get_post_meta( $id, '_uscita_hero_focal_y', true );
+$hero_focal_x = $hero_focal_x_raw !== '' ? min( 100, max( 0, (int) $hero_focal_x_raw ) ) : 50;
+$hero_focal_y = $hero_focal_y_raw !== '' ? min( 100, max( 0, (int) $hero_focal_y_raw ) ) : 50;
 
 $fmt = static function ( string $dt ): string {
 	$ts = strtotime( $dt );
@@ -120,16 +124,19 @@ $gallery_units = Calypsosub_Gallery_Helpers::build_units(
 .cso-related h2,.cso-related h3,.cso-related h4{color:var(--c-deep,#0a2540)}
 
 /* ── Hero ── */
-.cso-hero{background:var(--c-deep,#0a2540);color:#fff;padding:calc(var(--cso-header-h) + 40px) 48px 64px;position:relative}
+.cso-hero{padding:calc(var(--cso-header-h) + 40px) 48px 64px;position:relative}
 .cso-hero--bg-img{background-size:cover;background-position:center center;background-repeat:no-repeat}
 .cso-hero--bg-img .cso-hero__inner{position:relative;z-index:1}
 .cso-hero__overlay{position:absolute;inset:0;pointer-events:none;z-index:0}
 .cso-hero h1,.cso-hero h2,.cso-hero h3{text-shadow:0 2px 14px rgba(0,0,0,.9),0 5px 36px rgba(0,0,0,.75),0 12px 56px rgba(0,0,0,.5)}
-.cso-hero a{color:rgba(255,255,255,.55);text-decoration:none}
+.cso-hero a{text-decoration:none}
 .cso-hero a:hover{color:rgba(255,255,255,.9)}
 @media(max-width:1024px){.cso-hero{padding:calc(var(--cso-header-h) + 24px) 20px 40px}}
 
-.cso-hero__inner{max-width:1320px;margin:0 auto}
+.cso-hero__eyebrow{display:flex;align-items:center;gap:8px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.cso-hero__scroll{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;letter-spacing:.15em;text-transform:uppercase;z-index:1}
+
+.cso-hero__inner{max-width:1320px;margin:0 auto;width:100%}
 .cso-hero__header{display:grid;grid-template-columns:1.4fr 1fr;gap:80px;align-items:end;margin-bottom:40px}
 @media(max-width:1024px){.cso-hero__header{grid-template-columns:1fr;gap:24px;margin-bottom:32px}}
 
@@ -298,14 +305,30 @@ $_ud = [
 	'hero_stat_bg'      => calypsosub_opt( 'uscite', 'design_hero_stat_bg',          'rgba(255,255,255,.08)' ),
 	'hero_stat_label'   => calypsosub_opt( 'uscite', 'design_hero_stat_label_color', '#26CBFB' ),
 	'hero_stat_value'   => calypsosub_opt( 'uscite', 'design_hero_stat_value_color', '#ffffff' ),
+	'hero_stat_border'  => calypsosub_opt( 'uscite', 'design_hero_stat_border',      'rgba(255,255,255,.15)' ),
+	'hero_text_color'   => calypsosub_opt( 'uscite', 'design_hero_text_color',       '#ffffff' ),
+	'hero_min_height'   => (int) calypsosub_opt( 'uscite', 'design_hero_min_height', '640' ),
+	'hero_content_anchor' => calypsosub_opt( 'uscite', 'design_hero_content_anchor', 'flex-end' ),
+	'hero_eyebrow_text'   => calypsosub_opt( 'uscite', 'design_hero_eyebrow_text',   '' ),
+	'hero_eyebrow_color'  => calypsosub_opt( 'uscite', 'design_hero_eyebrow_color',  '#26CBFB' ),
+	'hero_eyebrow_size'   => (int) calypsosub_opt( 'uscite', 'design_hero_eyebrow_size', '14' ),
+	'hero_eyebrow_weight' => (int) calypsosub_opt( 'uscite', 'design_hero_eyebrow_weight', '600' ),
+	'hero_eyebrow_wave'   => calypsosub_opt( 'uscite', 'design_hero_eyebrow_wave',   '1' ) === '1',
+	'hero_scroll_color'     => calypsosub_opt( 'uscite', 'design_hero_scroll_color',     'rgba(255,255,255,.7)' ),
+	'hero_breadcrumb_color' => calypsosub_opt( 'uscite', 'design_hero_breadcrumb_color', 'rgba(255,255,255,.55)' ),
 	'eyebrow'        => calypsosub_opt( 'uscite', 'design_eyebrow',         '#1B77A7' ),
 	'sidebar_accent' => calypsosub_opt( 'uscite', 'design_sidebar_accent',  '#26CBFB' ),
 	'related_bg'     => calypsosub_opt( 'uscite', 'design_related_bg',      '#f6f1e6' ),
 ];
 ?>
 <style>
-.cso-hero{background:<?php echo esc_attr($_ud['hero_bg']); ?>}
+.cso-hero{background-color:<?php echo esc_attr($_ud['hero_bg']); ?>;color:<?php echo esc_attr($_ud['hero_text_color']); ?>}
+.cso-hero--bg-img{min-height:<?php echo $_ud['hero_min_height']; ?>px;display:flex;flex-direction:column;justify-content:<?php echo esc_attr($_ud['hero_content_anchor']); ?>}
 .cso-hero__overlay{background:linear-gradient(180deg,<?php echo calypso_hex2rgba($_ud['hero_overlay'],.5); ?> 0%,<?php echo calypso_hex2rgba($_ud['hero_overlay'],.4); ?> 50%,<?php echo calypso_hex2rgba($_ud['hero_overlay'],.75); ?> 100%)}
+.cso-hero a{color:<?php echo esc_attr($_ud['hero_breadcrumb_color']); ?>}
+.cso-hero__scroll{color:<?php echo esc_attr($_ud['hero_scroll_color']); ?>}
+.cso .cso-hero__eyebrow{color:<?php echo esc_attr($_ud['hero_eyebrow_color']); ?>;font-size:<?php echo $_ud['hero_eyebrow_size']; ?>px;font-weight:<?php echo $_ud['hero_eyebrow_weight']; ?>}
+.cso-hero-stat{border:1px solid <?php echo esc_attr($_ud['hero_stat_border']); ?>}
 .cso-hero__badge{background:<?php echo esc_attr($_ud['badge_bg']); ?>}
 .cso .cso-hero__badge{color:<?php echo esc_attr($_ud['hero_badge_color']); ?>;font-size:<?php echo $_ud['hero_badge_size']; ?>px;font-weight:<?php echo $_ud['hero_badge_weight']; ?>}
 .cso .cso-hero__title{
@@ -341,7 +364,7 @@ $_ud = [
 
 <!-- HERO -->
 <section class="cso-hero<?php echo $hero_bg ? ' cso-hero--bg-img' : ''; ?>"
-         <?php if ( $hero_bg ) : ?>style="background-image:url('<?php echo esc_url( $img ); ?>')"<?php endif; ?>>
+         <?php if ( $hero_bg ) : ?>style="background-image:url('<?php echo esc_url( $img ); ?>');background-position:<?php echo (int) $hero_focal_x; ?>% <?php echo (int) $hero_focal_y; ?>%"<?php endif; ?>>
 <?php if ( $hero_bg ) : ?><div class="cso-hero__overlay"></div><?php endif; ?>
 <div class="cso-hero__inner">
 
@@ -355,6 +378,14 @@ $_ud = [
 
 	<?php if ( $hero_bg ) : ?>
 	<div>
+		<?php if ( $_ud['hero_eyebrow_text'] ) : ?>
+			<div class="cso-hero__eyebrow">
+				<?php if ( $_ud['hero_eyebrow_wave'] ) : ?>
+				<svg width="20" height="12" viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M1 6 C 4 1, 8 11, 12 6 S 20 1, 23 6"/></svg>
+				<?php endif; ?>
+				<?php echo esc_html( $_ud['hero_eyebrow_text'] ); ?>
+			</div>
+		<?php endif; ?>
 		<?php if ( $livello || $luogo ) : ?>
 			<div class="cso-hero__badge"><?php echo esc_html( trim( ( $livello ?: calypsosub_opt( 'uscite', 'badge', __( 'Itinerario in barca', 'calypsosub' ) ) ) . ( $luogo ? ' · ' . $luogo : '' ) ) ); ?></div>
 		<?php endif; ?>
