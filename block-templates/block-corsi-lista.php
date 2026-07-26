@@ -4,6 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 $corsi        = calypso_get_corsi();
 $all_livelli  = get_terms( [ 'taxonomy' => 'calypso_livello', 'hide_empty' => true ] );
 $has_livelli  = ! is_wp_error( $all_livelli ) && ! empty( $all_livelli );
+$title_tag    = calypsosub_title_tag( (string) ( ( $attributes ?? [] )['title_tag'] ?? 'h3' ), 'h3' );
 ?>
 <style>
 .calypso-corsi{max-width:1320px;margin:0 auto;padding:0 24px}
@@ -123,7 +124,7 @@ $has_livelli  = ! is_wp_error( $all_livelli ) && ! empty( $all_livelli );
 					<?php if ( $livello ) : ?>
 						<span class="calypso-corso-card__level"><?php echo esc_html( $livello ); ?></span>
 					<?php endif; ?>
-					<h3 class="calypso-corso-card__title"><?php echo esc_html( $post->post_title ); ?></h3>
+					<<?php echo $title_tag; ?> class="calypso-corso-card__title"><?php echo esc_html( $post->post_title ); ?></<?php echo $title_tag; ?>>
 					<?php if ( $desc_breve ) : ?>
 						<p class="calypso-corso-card__desc"><?php echo esc_html( $desc_breve ); ?></p>
 					<?php endif; ?>

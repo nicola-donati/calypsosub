@@ -79,6 +79,7 @@ $data_padding_y   = (int)    ( $a['data_padding_y']   ?? 48 );
 
 $form_bg_color          = (string) ( $a['form_bg_color']          ?? '#ffffff' );
 $form_radius             = (int)    ( $a['form_radius']             ?? 18 );
+$form_title_tag          = calypsosub_title_tag( (string) ( $a['form_title_tag'] ?? 'h3' ), 'h3' );
 $form_title_color        = (string) ( $a['form_title_color']        ?? '#0a2540' );
 $form_title_size         = (int)    ( $a['form_title_size']         ?? 20 );
 $form_title_font_weight  = (int)    ( $a['form_title_font_weight']  ?? 800 );
@@ -87,6 +88,7 @@ $sidebar_bg_color    = (string) ( $a['sidebar_bg_color']    ?? '#0a2540' );
 $sidebar_text_color  = (string) ( $a['sidebar_text_color'] ?? '#ffffff' );
 $sidebar_radius      = (int)    ( $a['sidebar_radius']     ?? 18 );
 $side_badge_bg_color = (string) ( $a['side_badge_bg_color'] ?? '#ff6b4a' );
+$side_title_tag          = calypsosub_title_tag( (string) ( $a['side_title_tag'] ?? 'h3' ), 'h3' );
 $side_title_color        = (string) ( $a['side_title_color']        ?? '#ffffff' );
 $side_title_size         = (int)    ( $a['side_title_size']         ?? 18 );
 $side_title_font_weight  = (int)    ( $a['side_title_font_weight']  ?? 800 );
@@ -405,7 +407,7 @@ if ( $preselect_id && isset( $items_by_tipo[ $preselect_tab ] ) ) {
 #<?php echo $uid; ?> .cso-pren__side-img{height:160px;background:rgba(255,255,255,.08) center/cover;position:relative;}
 #<?php echo $uid; ?> .cso-pren__side-badge{position:absolute;top:12px;left:12px;background:<?php echo esc_attr( $side_badge_bg_color ); ?>;color:#fff;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 10px;border-radius:999px;}
 #<?php echo $uid; ?> .cso-pren__side-body{padding:22px 24px 26px;}
-#<?php echo $uid; ?> .cso-pren__side-body h3{margin:0 0 6px;font-size:<?php echo $side_title_size; ?>px;font-weight:<?php echo $side_title_font_weight; ?>;color:<?php echo esc_attr( $side_title_color ); ?>;}
+#<?php echo $uid; ?> .cso-pren__side-title{margin:0 0 6px;font-size:<?php echo $side_title_size; ?>px;font-weight:<?php echo $side_title_font_weight; ?>;color:<?php echo esc_attr( $side_title_color ); ?>;}
 #<?php echo $uid; ?> .cso-pren__side-luogo{margin:0 0 16px;font-size:13px;color:<?php echo esc_attr( $side_luogo_color ); ?>;}
 #<?php echo $uid; ?> .cso-pren__sidebar dl{margin:0;}
 #<?php echo $uid; ?> .cso-pren__sidebar dt{font-size:11px;text-transform:uppercase;color:<?php echo esc_attr( $side_label_color ); ?>;letter-spacing:.04em;margin-top:14px;}
@@ -547,7 +549,7 @@ if ( $preselect_id && isset( $items_by_tipo[ $preselect_tab ] ) ) {
 		<div class="cso-pren__data-layout">
 			<div class="cso-pren__form-card">
 				<div class="cso-pren__form-head">
-					<h3 class="cso-pren__form-title"><?php esc_html_e( 'I tuoi dati', 'calypsosub' ); ?></h3>
+					<<?php echo $form_title_tag; ?> class="cso-pren__form-title"><?php esc_html_e( 'I tuoi dati', 'calypsosub' ); ?></<?php echo $form_title_tag; ?>>
 				</div>
 				<p class="cso-pren__form-sub"><?php esc_html_e( 'Completa con i tuoi dati per la prenotazione.', 'calypsosub' ); ?></p>
 
@@ -588,6 +590,7 @@ if ( $preselect_id && isset( $items_by_tipo[ $preselect_tab ] ) ) {
 	var ajaxUrl = '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>';
 	var ajaxNonce = root.getAttribute('data-nonce');
 
+	var sideTitleTag = '<?php echo esc_js( $side_title_tag ); ?>';
 	var TIPO_TO_CPT  = { uscite: 'calypso_uscita', eventi: 'calypso_evento', corsi: 'calypso_corso' };
 	var TIPO_BADGE   = { uscite: '<?php echo esc_js( __( 'Uscita', 'calypsosub' ) ); ?>', eventi: '<?php echo esc_js( __( 'Evento', 'calypsosub' ) ); ?>', corsi: '<?php echo esc_js( __( 'Corso', 'calypsosub' ) ); ?>' };
 	var requireLogin = <?php echo wp_json_encode( array_map( 'boolval', $require_login_map ) ); ?>;
@@ -610,7 +613,7 @@ if ( $preselect_id && isset( $items_by_tipo[ $preselect_tab ] ) ) {
 		var badge = card.badge || TIPO_BADGE[card.tipo] || '';
 		var html = '<div class="cso-pren__side-img" style="' + (card.img ? 'background-image:url(' + card.img + ')' : '') + '">';
 		if (badge) html += '<span class="cso-pren__side-badge">' + escHtml(badge) + '</span>';
-		html += '</div><div class="cso-pren__side-body"><h3>' + escHtml(card.title) + '</h3>';
+		html += '</div><div class="cso-pren__side-body"><' + sideTitleTag + ' class="cso-pren__side-title">' + escHtml(card.title) + '</' + sideTitleTag + '>';
 		if (card.luogo) html += '<p class="cso-pren__side-luogo">📍 ' + escHtml(card.luogo) + '</p>';
 		html += '<dl>';
 		if (card.data) html += '<dt><?php echo esc_js( __( 'Data', 'calypsosub' ) ); ?></dt><dd>' + escHtml(card.data) + '</dd>';

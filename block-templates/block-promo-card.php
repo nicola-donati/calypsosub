@@ -27,6 +27,7 @@ $overlay_size  = (int)    ( $a['overlay_size']  ?? 10 );
 /* ── Contenuto ── */
 $eyebrow   = (string) ( $a['eyebrow']     ?? '' );
 $title     = (string) ( $a['title']       ?? '' );
+$title_tag = calypsosub_title_tag( (string) ( $a['title_tag'] ?? 'none' ), 'div' );
 $desc      = (string) ( $a['description'] ?? '' );
 $link_text = (string) ( $a['link_text']   ?? 'Scopri' );
 $link_url  = (string) ( $a['link_url']    ?? '' );
@@ -112,9 +113,9 @@ if ( $title_font ) {
 		<?php endif; ?>
 
 		<?php if ( $title ) : ?>
-		<div class="calypso-promo-card__title" style="<?php echo $title_css; ?>">
+		<<?php echo $title_tag; ?> class="calypso-promo-card__title" style="<?php echo $title_css; ?>">
 			<?php echo esc_html( $title ); ?>
-		</div>
+		</<?php echo $title_tag; ?>>
 		<?php endif; ?>
 
 		<?php if ( $desc ) : ?>

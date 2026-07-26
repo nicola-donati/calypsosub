@@ -59,6 +59,7 @@ $image_id      = (int)    ( $attr['image_id']     ?? 0 );
 $eyebrow       = (string) ( $attr['eyebrow']      ?? __( 'La subacquea ad Arezzo dal 1978', 'calypsosub' ) );
 $eyebrow_wave  = (bool)   ( $attr['eyebrow_wave'] ?? true );
 $title         = (string) ( $attr['title']        ?? "Sotto la superficie\nc'è un" );
+$title_tag     = calypsosub_title_tag( (string) ( $attr['title_tag'] ?? 'h1' ), 'h1' );
 $title_em      = (string) ( $attr['title_em']     ?? __( 'altro mondo.', 'calypsosub' ) );
 $description   = (string) ( $attr['description']  ?? __( "Calypso Sub è il club di chi crede che il mare non si visiti, si abiti. Quasi cinquant'anni di immersioni, corsi e amicizie in profondità.", 'calypsosub' ) );
 $btn1_text     = (string) ( $attr['btn1_text']    ?? __( 'Diventa socio', 'calypsosub' ) );
@@ -355,12 +356,12 @@ body:has(.csh-hero) .entry-content>*{margin-top:0!important;margin-block-start:0
       </div>
       <?php endif; ?>
 
-      <h1 class="csh-hero__title">
+      <<?php echo $title_tag; ?> class="csh-hero__title">
         <?php echo $title_html; ?>
         <?php if ( $title_em ) : ?>
           <?php echo $title ? ' ' : ''; ?><em><?php echo esc_html( $title_em ); ?></em>
         <?php endif; ?>
-      </h1>
+      </<?php echo $title_tag; ?>>
 
       <?php if ( $description ) : ?>
       <p class="csh-hero__desc"><?php echo esc_html( $description ); ?></p>

@@ -4,6 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /* ── Attributi ── */
 $attr_eyebrow      = (string)  ( $attributes['eyebrow']          ?? 'Prossime uscite' );
 $attr_title        = (string)  ( $attributes['title']            ?? "Il mare\nci aspetta." );
+$attr_title_tag    = calypsosub_title_tag( (string) ( $attributes['title_tag'] ?? 'h2' ), 'h2' );
 $attr_show_hlink   = (bool)    ( $attributes['show_header_link'] ?? true );
 $attr_hlink_text   = (string)  ( $attributes['header_link_text'] ?? 'Calendario completo' );
 $attr_show_past    = (bool)    ( $attributes['show_past']        ?? false );
@@ -217,7 +218,7 @@ $daynum_xs = max( 16, (int) round( $daynum_size * 0.517 ) );
 	<div class="cso-lu__head">
 		<div>
 			<span class="cso-lu__eyebrow"><?php echo esc_html( $attr_eyebrow ); ?></span>
-			<h2 class="cso-lu__title display"><?php echo nl2br( esc_html( $attr_title ) ); ?></h2>
+			<<?php echo $attr_title_tag; ?> class="cso-lu__title display"><?php echo nl2br( esc_html( $attr_title ) ); ?></<?php echo $attr_title_tag; ?>>
 		</div>
 		<?php if ( $attr_show_hlink && $archive_url ) : ?>
 		<a href="<?php echo esc_url( $archive_url ); ?>" class="cso-lu__head-link">

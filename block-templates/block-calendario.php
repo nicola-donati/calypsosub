@@ -4,6 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /* ── Attributi LazyBlocks ── */
 $eyebrow      = ! empty( $attributes['eyebrow'] )    ? $attributes['eyebrow']    : '03 — Prossime uscite';
 $heading      = ! empty( $attributes['heading'] )    ? $attributes['heading']    : '';
+$heading_tag  = calypsosub_title_tag( (string) ( $attributes['heading_tag'] ?? 'h2' ), 'h2' );
 $link_text    = ! empty( $attributes['link_text'] )  ? $attributes['link_text']  : 'Calendario completo';
 $link_url     = ! empty( $attributes['link_url'] )   ? $attributes['link_url']   : '';
 $max_items    = max( 1, (int) ( $attributes['max_items'] ?? 6 ) );
@@ -297,9 +298,9 @@ $mesi_it   = [
 			<span class="cso-cal__eyebrow eyebrow"><?php echo esc_html( $eyebrow ); ?></span>
 			<?php endif; ?>
 			<?php if ( $heading ) : ?>
-			<h2 class="cso-cal__heading display">
+			<<?php echo $heading_tag; ?> class="cso-cal__heading display">
 				<?php echo wp_kses( $heading, [ 'em' => [], 'br' => [], 'strong' => [] ] ); ?>
-			</h2>
+			</<?php echo $heading_tag; ?>>
 			<?php endif; ?>
 		</div>
 		<?php if ( $link_url && $link_text ) : ?>

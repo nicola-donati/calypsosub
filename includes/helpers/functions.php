@@ -35,6 +35,16 @@ function calypso_hex2rgba( string $hex, float $alpha ): string {
 }
 
 /**
+ * Valida un tag heading scelto in editor (h1-h6). Qualsiasi altro valore
+ * (incluso 'none' o input non atteso) ricade sul tag non-heading originale
+ * del blocco, mai un'eco diretta della stringa non controllata.
+ */
+function calypsosub_title_tag( string $value, string $none_tag = 'div' ): string {
+	static $allowed = [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ];
+	return in_array( $value, $allowed, true ) ? $value : $none_tag;
+}
+
+/**
  * Wrapper per auth — estendibile con membership plugin.
  */
 function calypso_is_user_logged_in(): bool {

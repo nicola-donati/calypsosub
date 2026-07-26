@@ -23,6 +23,7 @@ $show_right           = (bool)   ( $a['show_right']           ?? true );
 $right_meta_key       = (string) ( $a['right_meta_key']       ?? '_corso_stat_durata' );
 $right_label          = (string) ( $a['right_label']          ?? 'DURATA' );
 $right_unit           = (string) ( $a['right_unit']           ?? '' );
+$title_tag            = calypsosub_title_tag( (string) ( $a['title_tag'] ?? 'none' ), 'p' );
 
 /* ── Featured ── */
 $featured_enabled = (bool) ( $a['featured_enabled'] ?? true );
@@ -267,7 +268,7 @@ $title_transform = $title_upper ? 'uppercase' : 'none';
 			<span class="csstrip__badge"><?php echo esc_html( $livello ); ?></span>
 			<?php endif; ?>
 			<div class="csstrip__body">
-				<p class="csstrip__title"><?php echo esc_html( $post->post_title ); ?></p>
+				<<?php echo $title_tag; ?> class="csstrip__title"><?php echo esc_html( $post->post_title ); ?></<?php echo $title_tag; ?>>
 				<?php if ( $show_stats && ! empty( $stats ) ) : ?>
 				<p class="csstrip__stats"><?php echo esc_html( implode( ' · ', $stats ) ); ?></p>
 				<?php endif; ?>

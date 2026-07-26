@@ -12,6 +12,7 @@ class Calypsosub_Blocks {
 				/* ── Intestazione sezione ── */
 				'eyebrow'          => [ 'type' => 'string',  'default' => 'Prossime uscite' ],
 				'title'            => [ 'type' => 'string',  'default' => "Il mare\nci aspetta." ],
+				'title_tag'        => [ 'type' => 'string',  'default' => 'h2' ],
 				'show_header_link' => [ 'type' => 'boolean', 'default' => true ],
 				'header_link_text' => [ 'type' => 'string',  'default' => 'Calendario completo' ],
 				/* ── Comportamento ── */
@@ -84,6 +85,7 @@ class Calypsosub_Blocks {
 			'attributes' => [
 				'eyebrow'     => [ 'type' => 'string',  'default' => '03 — Prossime uscite' ],
 				'heading'     => [ 'type' => 'string',  'default' => '' ],
+				'heading_tag' => [ 'type' => 'string',  'default' => 'h2' ],
 				'link_text'   => [ 'type' => 'string',  'default' => 'Calendario completo' ],
 				'link_url'    => [ 'type' => 'string',  'default' => '' ],
 				'max_items'   => [ 'type' => 'integer', 'default' => 6 ],
@@ -92,7 +94,9 @@ class Calypsosub_Blocks {
 				'show_corsi'  => [ 'type' => 'boolean', 'default' => true ],
 			],
 		],
-		'calypso/lista-corsi'     => [ 'file' => 'block-corsi-lista.php',      'title' => 'Lista Corsi' ],
+		'calypso/lista-corsi'     => [ 'file' => 'block-corsi-lista.php',      'title' => 'Lista Corsi', 'attributes' => [
+			'title_tag' => [ 'type' => 'string', 'default' => 'h3' ],
+		] ],
 		'calypso/corsi-strip' => [
 			'file'  => 'block-corsi-strip.php',
 			'title' => 'Corsi Strip',
@@ -117,6 +121,7 @@ class Calypsosub_Blocks {
 				'right_meta_key'       => [ 'type' => 'string',  'default' => '_corso_stat_durata' ],
 				'right_label'          => [ 'type' => 'string',  'default' => 'DURATA' ],
 				'right_unit'           => [ 'type' => 'string',  'default' => '' ],
+				'title_tag'            => [ 'type' => 'string',  'default' => 'none' ],
 				/* ── Featured ── */
 				'featured_enabled' => [ 'type' => 'boolean', 'default' => true ],
 				'featured_index'   => [ 'type' => 'integer', 'default' => 0 ],
@@ -170,7 +175,9 @@ class Calypsosub_Blocks {
 				'right_value_weight' => [ 'type' => 'integer', 'default' => 800 ],
 			],
 		],
-		'calypso/lista-docenti'   => [ 'file' => 'block-docenti-lista.php',    'title' => 'Lista Docenti' ],
+		'calypso/lista-docenti'   => [ 'file' => 'block-docenti-lista.php',    'title' => 'Lista Docenti', 'attributes' => [
+			'title_tag' => [ 'type' => 'string', 'default' => 'h3' ],
+		] ],
 		'calypso/docenti-carousel' => [
 			'file'  => 'block-docenti-carousel.php',
 			'title' => 'Docenti Carosello',
@@ -235,6 +242,7 @@ class Calypsosub_Blocks {
 				'photo_label_color' => [ 'type' => 'string',  'default' => '#ffffff' ],
 				'photo_label_size'  => [ 'type' => 'integer', 'default' => 9 ],
 				/* ── Nome ── */
+				'name_tag'    => [ 'type' => 'string',  'default' => 'none' ],
 				'name_color'  => [ 'type' => 'string',  'default' => '#1B77A7' ],
 				'name_size'   => [ 'type' => 'integer', 'default' => 22 ],
 				'name_weight' => [ 'type' => 'integer', 'default' => 800 ],
@@ -277,8 +285,13 @@ class Calypsosub_Blocks {
 				'autoplay_speed' => [ 'type' => 'integer', 'default' => 3000 ],
 			],
 		],
-		'calypso/lista-eventi'    => [ 'file' => 'block-eventi-lista.php',     'title' => 'Lista Eventi' ],
-		'calypso/area-personale'  => [ 'file' => 'block-area-personale.php',   'title' => 'Area Personale' ],
+		'calypso/lista-eventi'    => [ 'file' => 'block-eventi-lista.php',     'title' => 'Lista Eventi', 'attributes' => [
+			'title_tag' => [ 'type' => 'string', 'default' => 'h3' ],
+		] ],
+		'calypso/area-personale'  => [ 'file' => 'block-area-personale.php',   'title' => 'Area Personale', 'attributes' => [
+			'title_tag'         => [ 'type' => 'string', 'default' => 'h2' ],
+			'history_title_tag' => [ 'type' => 'string', 'default' => 'h3' ],
+		] ],
 		'calypso/prossima-uscita' => [
 			'file'       => 'block-prossima-uscita.php',
 			'title'      => 'Prossima Uscita',
@@ -294,6 +307,7 @@ class Calypsosub_Blocks {
 				'eyebrow'        => [ 'type' => 'string',  'default' => 'La subacquea ad Arezzo dal 1978' ],
 				'eyebrow_wave'   => [ 'type' => 'boolean', 'default' => true ],
 				'title'          => [ 'type' => 'string',  'default' => "Sotto la superficie\nc'è un" ],
+				'title_tag'      => [ 'type' => 'string',  'default' => 'h1' ],
 				'title_em'       => [ 'type' => 'string',  'default' => 'altro mondo.' ],
 				'description'    => [ 'type' => 'string',  'default' => '' ],
 				'btn1_text'      => [ 'type' => 'string',  'default' => 'Diventa socio' ],
@@ -358,6 +372,10 @@ class Calypsosub_Blocks {
 			'attributes' => [
 				'eyebrow'          => [ 'type' => 'string',  'default' => '' ],
 				'title'            => [ 'type' => 'string',  'default' => '' ],
+				'title_tag'        => [ 'type' => 'string',  'default' => 'h2' ],
+				'description'       => [ 'type' => 'string',  'default' => '' ],
+				'description_color' => [ 'type' => 'string',  'default' => '#3d5265' ],
+				'description_size'  => [ 'type' => 'integer', 'default' => 17 ],
 				'header_link_text' => [ 'type' => 'string',  'default' => '' ],
 				'header_link_url'  => [ 'type' => 'string',  'default' => '' ],
 				'bg_color'         => [ 'type' => 'string',  'default' => '#dff4f8' ],
@@ -399,6 +417,7 @@ class Calypsosub_Blocks {
 				/* ── Contenuto ── */
 				'eyebrow'          => [ 'type' => 'string',  'default' => '01' ],
 				'title'            => [ 'type' => 'string',  'default' => 'Titolo' ],
+				'title_tag'        => [ 'type' => 'string',  'default' => 'none' ],
 				'description'      => [ 'type' => 'string',  'default' => '' ],
 				'link_text'        => [ 'type' => 'string',  'default' => 'Scopri' ],
 				'link_url'         => [ 'type' => 'string',  'default' => '' ],
@@ -471,6 +490,7 @@ class Calypsosub_Blocks {
 				'image_label_prefix' => [ 'type' => 'string',  'default' => 'ARCHIVIO' ],
 				'show_excerpt'       => [ 'type' => 'boolean', 'default' => true ],
 				'excerpt_length'     => [ 'type' => 'integer', 'default' => 30 ],
+				'title_tag'          => [ 'type' => 'string',  'default' => 'h3' ],
 				/* ── Colonna sinistra ── */
 				'left_field'        => [ 'type' => 'string',  'default' => 'post_date' ],
 				'left_format'       => [ 'type' => 'string',  'default' => 'Y' ],
@@ -635,6 +655,7 @@ class Calypsosub_Blocks {
 				/* Form prenotazione */
 				'form_bg_color'             => [ 'type' => 'string',  'default' => '#ffffff' ],
 				'form_radius'               => [ 'type' => 'integer', 'default' => 18 ],
+				'form_title_tag'            => [ 'type' => 'string',  'default' => 'h3' ],
 				'form_title_color'          => [ 'type' => 'string',  'default' => '#0a2540' ],
 				'form_title_size'           => [ 'type' => 'integer', 'default' => 20 ],
 				'form_title_font_weight'    => [ 'type' => 'integer', 'default' => 800 ],
@@ -644,6 +665,7 @@ class Calypsosub_Blocks {
 				'sidebar_text_color'  => [ 'type' => 'string',  'default' => '#ffffff' ],
 				'sidebar_radius'      => [ 'type' => 'integer', 'default' => 18 ],
 				'side_badge_bg_color' => [ 'type' => 'string',  'default' => '#ff6b4a' ],
+				'side_title_tag'          => [ 'type' => 'string',  'default' => 'h3' ],
 				'side_title_color'        => [ 'type' => 'string',  'default' => '#ffffff' ],
 				'side_title_size'         => [ 'type' => 'integer', 'default' => 18 ],
 				'side_title_font_weight'  => [ 'type' => 'integer', 'default' => 800 ],
@@ -731,6 +753,25 @@ class Calypsosub_Blocks {
 		} catch(e) { return []; }
 	}
 
+	var TITLE_TAG_OPTIONS = [
+		{ value: 'none', label: 'Nessuno (testo semplice)' },
+		{ value: 'h1', label: 'H1' },
+		{ value: 'h2', label: 'H2' },
+		{ value: 'h3', label: 'H3' },
+		{ value: 'h4', label: 'H4' },
+		{ value: 'h5', label: 'H5' },
+		{ value: 'h6', label: 'H6' },
+	];
+
+	function makeTitleTagControl(label, value, onChange) {
+		return el(SelectControl, {
+			label: label,
+			value: value || 'none',
+			options: TITLE_TAG_OPTIONS,
+			onChange: onChange,
+		});
+	}
+
 	var calypsoBlocks = {$blocks_json};
 
 	calypsoBlocks.forEach(function (info) {
@@ -784,6 +825,7 @@ class Calypsosub_Blocks {
 								rows: 3,
 								onChange: function (v) { set({ title: v }); }
 							}),
+							makeTitleTagControl('Tag titolo (SEO)', a.title_tag, function (v) { set({ title_tag: v }); }),
 							el(ToggleControl, {
 								label: 'Mostra link "Calendario completo"',
 								checked: !!a.show_header_link,
@@ -1037,6 +1079,7 @@ class Calypsosub_Blocks {
 								rows: 2,
 								onChange: function (v) { set({ heading: v }); }
 							}),
+							makeTitleTagControl('Tag titolo (SEO)', a.heading_tag, function (v) { set({ heading_tag: v }); }),
 							el(TextControl, {
 								label: 'Testo link →',
 								value: a.link_text || '',
@@ -1186,6 +1229,7 @@ class Calypsosub_Blocks {
 									value: a.title || '',
 									onChange: function (v) { set({ title: v }); }
 								}),
+								makeTitleTagControl('Tag titolo (SEO)', a.title_tag, function (v) { set({ title_tag: v }); }),
 								el(TextControl, {
 									label: 'Titolo — parte in evidenza (aqua)',
 									value: a.title_em || '',
@@ -1549,6 +1593,7 @@ class Calypsosub_Blocks {
 								value: a.title || '',
 								onChange: function (v) { set({ title: v }); }
 							}),
+							makeTitleTagControl('Tag titolo (SEO)', a.title_tag, function (v) { set({ title_tag: v }); }),
 							el(TextareaControl, {
 								label: 'Descrizione',
 								value: a.description || '',
@@ -1833,6 +1878,21 @@ class Calypsosub_Blocks {
 								rows: 3,
 								onChange: function (v) { set({ title: v }); }
 							}),
+							makeTitleTagControl('Tag titolo (SEO)', a.title_tag, function (v) { set({ title_tag: v }); }),
+							el(TextareaControl, {
+								label: 'Descrizione (sotto il titolo, opzionale)',
+								value: a.description || '',
+								rows: 3,
+								onChange: function (v) { set({ description: v }); }
+							}),
+							a.description ? colorRow('Colore descrizione', 'description_color') : null,
+							a.description ? el(RangeControl, {
+								label: 'Dimensione testo descrizione',
+								value: parseInt(a.description_size, 10) || 17,
+								min: 12,
+								max: 32,
+								onChange: function (v) { set({ description_size: v }); }
+							}) : null,
 							el(TextControl, {
 								label: 'Testo link intestazione (vuoto = nascosto)',
 								value: a.header_link_text || '',
@@ -2931,6 +2991,7 @@ class Calypsosub_Blocks {
 
 						el(PanelBody, { title: 'Form prenotazione', initialOpen: false },
 							colorRow('Sfondo card form', 'form_bg_color'),
+							makeTitleTagControl('Tag titolo form (SEO)', a.form_title_tag, function (v) { set({ form_title_tag: v }); }),
 							colorRow('Colore titolo form', 'form_title_color'),
 							el(RangeControl, {
 								label: 'Dimensione titolo form (px)',
@@ -2958,6 +3019,7 @@ class Calypsosub_Blocks {
 								onChange: function (v) { set({ sidebar_radius: v === undefined ? 18 : v }); }
 							}),
 							subHead('Titolo (nome elemento)'),
+							makeTitleTagControl('Tag titolo sidebar (SEO)', a.side_title_tag, function (v) { set({ side_title_tag: v }); }),
 							colorRow('Colore titolo', 'side_title_color'),
 							el(RangeControl, {
 								label: 'Dimensione titolo (px)',
@@ -3185,6 +3247,7 @@ class Calypsosub_Blocks {
 						),
 
 						el(PanelBody, { title: 'Stile nome', initialOpen: false },
+							makeTitleTagControl('Tag nome (SEO)', a.name_tag, function (v) { set({ name_tag: v }); }),
 							colorRow('Colore nome', 'name_color'),
 							rangeRow('Font size nome (px)', 'name_size', 22, 12, 48, 1),
 							rangeRow('Font weight nome', 'name_weight', 800, 300, 900, 100),
@@ -3598,6 +3661,7 @@ class Calypsosub_Blocks {
 						),
 
 						el(PanelBody, { title: 'Stile titolo', initialOpen: false },
+							makeTitleTagControl('Tag titolo (SEO)', a.title_tag, function (v) { set({ title_tag: v }); }),
 							rangeRow('Font size titolo (px)', 'title_size', 22, 12, 60, 1),
 							rangeRow('Font weight titolo', 'title_weight', 800, 300, 900, 100),
 							el(ToggleControl, {
@@ -3845,6 +3909,7 @@ class Calypsosub_Blocks {
 						),
 
 						el(PanelBody, { title: 'Stile — titolo', initialOpen: false },
+							makeTitleTagControl('Tag titolo (SEO)', a.title_tag, function (v) { set({ title_tag: v }); }),
 							colorRow('Colore titolo', 'title_color'),
 							rangeRow('Font size (px)', 'title_size', 22, 12, 56, 1),
 							rangeRow('Font weight', 'title_weight', 800, 300, 900, 100),
@@ -3967,6 +4032,13 @@ class Calypsosub_Blocks {
 		   Blocchi generici
 		   ════════════════════════════════════════════ */
 		var hasInsideHero = info.attributes && info.attributes.inside_hero !== undefined;
+		var titleTagLabels = {
+			title_tag: 'Titolo',
+			history_title_tag: 'Titolo storico',
+			form_title_tag: 'Titolo form',
+			side_title_tag: 'Titolo sidebar',
+		};
+		var tagAttrKeys = Object.keys(info.attributes || {}).filter(function (k) { return /_tag$/.test(k); });
 
 		blocks.registerBlockType(info.name, {
 			title: info.title,
@@ -3989,18 +4061,27 @@ class Calypsosub_Blocks {
 						: ' (server-side rendered)'
 					))
 				];
-				if (hasInsideHero && InspectorControls) {
+				if ((hasInsideHero || tagAttrKeys.length) && InspectorControls) {
+					var panelChildren = [];
+					if (hasInsideHero) {
+						panelChildren.push(el(ToggleControl, {
+							label: 'Dentro hero',
+							help: props.attributes.inside_hero
+								? 'Card floating — visibile solo su desktop'
+								: 'Strip section — visibile solo su mobile',
+							checked: !!props.attributes.inside_hero,
+							onChange: function (val) { props.setAttributes({ inside_hero: val }); }
+						}));
+					}
+					tagAttrKeys.forEach(function (key) {
+						panelChildren.push(makeTitleTagControl(
+							titleTagLabels[key] || 'Titolo',
+							props.attributes[key],
+							function (val) { var upd = {}; upd[key] = val; props.setAttributes(upd); }
+						));
+					});
 					children.unshift(el(InspectorControls, {},
-						el(PanelBody, { title: 'Impostazioni', initialOpen: true },
-							el(ToggleControl, {
-								label: 'Dentro hero',
-								help: props.attributes.inside_hero
-									? 'Card floating — visibile solo su desktop'
-									: 'Strip section — visibile solo su mobile',
-								checked: !!props.attributes.inside_hero,
-								onChange: function (val) { props.setAttributes({ inside_hero: val }); }
-							})
-						)
+						el(PanelBody, { title: 'Impostazioni', initialOpen: true }, panelChildren)
 					));
 				}
 				return el(Fragment, {}, children);

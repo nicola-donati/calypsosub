@@ -20,6 +20,7 @@ $image_size         = (string) ( $a['image_size']         ?? 'medium_large' );
 $image_label_prefix = (string) ( $a['image_label_prefix'] ?? 'ARCHIVIO' );
 $show_excerpt       = (bool)   ( $a['show_excerpt']       ?? true );
 $excerpt_length     = (int)    ( $a['excerpt_length']     ?? 30 );
+$title_tag          = calypsosub_title_tag( (string) ( $a['title_tag'] ?? 'h3' ), 'h3' );
 
 /* ── Colonna sinistra ── */
 $left_field        = (string) ( $a['left_field']        ?? 'post_date' );
@@ -212,7 +213,7 @@ $title_transform = $title_upper ? 'uppercase' : 'none';
 		<?php if ( $show_link ) : ?>href="<?php echo esc_url( get_permalink( $id ) ); ?>"<?php if ( $link_target === '_blank' ) : ?> target="_blank" rel="noopener"<?php endif; ?><?php endif; ?>>
 		<div class="csart__left"><?php echo esc_html( $left_val ); ?></div>
 		<div class="csart__body">
-			<h3 class="csart__title"><?php echo esc_html( $post->post_title ); ?></h3>
+			<<?php echo $title_tag; ?> class="csart__title"><?php echo esc_html( $post->post_title ); ?></<?php echo $title_tag; ?>>
 			<?php if ( $show_excerpt && $excerpt_text !== '' ) : ?>
 			<p class="csart__excerpt"><?php echo esc_html( $excerpt_text ); ?></p>
 			<?php endif; ?>

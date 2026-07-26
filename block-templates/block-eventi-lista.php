@@ -1,7 +1,8 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-$eventi = calypso_get_eventi();
+$eventi    = calypso_get_eventi();
+$title_tag = calypsosub_title_tag( (string) ( ( $attributes ?? [] )['title_tag'] ?? 'h3' ), 'h3' );
 ?>
 <style>
 .calypso-list{max-width:1320px;margin:0 auto;padding:0 24px}
@@ -53,11 +54,11 @@ $eventi = calypso_get_eventi();
 			<?php endif; ?>
 			<div class="calypso-card__body">
 				<span class="calypso-card__badge"><?php _e( 'Evento', 'calypsosub' ); ?></span>
-				<h3 class="calypso-card__title">
+				<<?php echo $title_tag; ?> class="calypso-card__title">
 					<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" style="color:inherit;text-decoration:none">
 						<?php echo esc_html( $post->post_title ); ?>
 					</a>
-				</h3>
+				</<?php echo $title_tag; ?>>
 				<?php if ( $luogo ) : ?>
 					<p class="calypso-card__subtitle">📍 <?php echo esc_html( $luogo ); ?></p>
 				<?php endif; ?>

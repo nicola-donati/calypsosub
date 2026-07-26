@@ -1,7 +1,8 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-$docenti = calypso_get_docenti();
+$docenti   = calypso_get_docenti();
+$title_tag = calypsosub_title_tag( (string) ( ( $attributes ?? [] )['title_tag'] ?? 'h3' ), 'h3' );
 ?>
 <style>
 .calypso-docenti{max-width:1320px;margin:0 auto;padding:0 24px}
@@ -65,7 +66,7 @@ $docenti = calypso_get_docenti();
 					</div>
 				</div>
 				<div class="calypso-docente-card__body">
-					<h3 class="calypso-docente-card__name"><?php echo esc_html( $display_upper ); ?></h3>
+					<<?php echo $title_tag; ?> class="calypso-docente-card__name"><?php echo esc_html( $display_upper ); ?></<?php echo $title_tag; ?>>
 					<?php if ( $soprannome ) : ?>
 						<p class="calypso-docente-card__soprannome">detto &ldquo;<?php echo esc_html( $soprannome ); ?>&rdquo;</p>
 					<?php endif; ?>

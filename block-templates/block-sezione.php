@@ -5,6 +5,10 @@ $a = $attributes ?? [];
 
 $eyebrow       = (string) ( $a['eyebrow']          ?? '' );
 $title         = (string) ( $a['title']            ?? '' );
+$title_tag     = calypsosub_title_tag( (string) ( $a['title_tag'] ?? 'h2' ), 'h2' );
+$description       = (string) ( $a['description']       ?? '' );
+$description_color = (string) ( $a['description_color'] ?? '#3d5265' );
+$description_size   = (int)    ( $a['description_size']  ?? 17 );
 $link_text     = (string) ( $a['header_link_text'] ?? '' );
 $link_url      = (string) ( $a['header_link_url']  ?? '' );
 $bg_color      = (string) ( $a['bg_color']         ?? '#dff4f8' );
@@ -36,7 +40,7 @@ if ( $bg_img_url ) {
 	$section_style .= 'background-image:url(' . esc_url( $bg_img_url ) . ');background-size:cover;background-position:center;';
 }
 
-$has_header = $eyebrow || $title || ( $link_text && $link_url );
+$has_header = $eyebrow || $title || $description || ( $link_text && $link_url );
 
 $uid = 'cso-sez-' . sprintf( '%08x', crc32( implode( ',', [ $max_width, $padding_y, $padding_x, $title_size, $eyebrow_size, $eyebrow_margin_bottom, $head_margin_bottom ] ) ) );
 ?>
@@ -65,9 +69,14 @@ $uid = 'cso-sez-' . sprintf( '%08x', crc32( implode( ',', [ $max_width, $padding
 			</span>
 			<?php endif; ?>
 			<?php if ( $title ) : ?>
-			<h2 class="cso-sez__title display" style="line-height:<?php echo $title_line_height / 100; ?>;color:<?php echo esc_attr( $title_color ); ?>;margin:0;font-weight:<?php echo $title_font_weight; ?>;">
+			<<?php echo $title_tag; ?> class="cso-sez__title display" style="line-height:<?php echo $title_line_height / 100; ?>;color:<?php echo esc_attr( $title_color ); ?>;margin:0;font-weight:<?php echo $title_font_weight; ?>;">
 				<?php echo nl2br( esc_html( $title ) ); ?>
-			</h2>
+			</<?php echo $title_tag; ?>>
+			<?php endif; ?>
+			<?php if ( $description ) : ?>
+			<p class="cso-sez__desc" style="margin:12px 0 0;color:<?php echo esc_attr( $description_color ); ?>;font-size:<?php echo $description_size; ?>px;line-height:1.6;">
+				<?php echo nl2br( esc_html( $description ) ); ?>
+			</p>
 			<?php endif; ?>
 		</div>
 		<?php if ( $link_text && $link_url ) : ?>

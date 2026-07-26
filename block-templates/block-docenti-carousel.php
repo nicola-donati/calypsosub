@@ -70,6 +70,7 @@ $photo_label_color = (string) ( $a['photo_label_color'] ?? '#ffffff' );
 $photo_label_size  = (int)    ( $a['photo_label_size']  ?? 9 );
 
 /* ── Nome ── */
+$name_tag    = calypsosub_title_tag( (string) ( $a['name_tag'] ?? 'none' ), 'p' );
 $name_color  = (string) ( $a['name_color']  ?? '#1B77A7' );
 $name_size   = (int)    ( $a['name_size']   ?? 22 );
 $name_weight = (int)    ( $a['name_weight'] ?? 800 );
@@ -337,7 +338,7 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
 					<?php endif; ?>
 				</div>
 				<div class="dcar__body">
-					<p class="dcar__name"><?php echo esc_html( $display_name ); ?></p>
+					<<?php echo $name_tag; ?> class="dcar__name"><?php echo esc_html( $display_name ); ?></<?php echo $name_tag; ?>>
 					<?php if ( $show_soprannome && $soprannome ) : ?>
 					<p class="dcar__soprannome">detto &ldquo;<?php echo esc_html( $soprannome ); ?>&rdquo;</p>
 					<?php endif; ?>

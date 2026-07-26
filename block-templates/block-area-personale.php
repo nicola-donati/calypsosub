@@ -26,12 +26,14 @@ foreach ( $booking_ids as $bid ) {
 	}
 }
 
-$cancel_nonce = wp_create_nonce( 'calypso_cancel_nonce' );
+$cancel_nonce      = wp_create_nonce( 'calypso_cancel_nonce' );
+$title_tag         = calypsosub_title_tag( (string) ( ( $attributes ?? [] )['title_tag'] ?? 'h2' ), 'h2' );
+$history_title_tag = calypsosub_title_tag( (string) ( ( $attributes ?? [] )['history_title_tag'] ?? 'h3' ), 'h3' );
 ?>
 <style>
 .calypso-account{max-width:840px;margin:0 auto;padding:0 24px}
-.calypso-account h2{font-size:32px;color:var(--c-deep);margin:0 0 20px}
-.calypso-account h3{font-size:24px;color:var(--c-deep);margin:32px 0 16px}
+.calypso-account__title{font-size:32px;color:var(--c-deep);margin:0 0 20px}
+.calypso-account__subtitle{font-size:24px;color:var(--c-deep);margin:32px 0 16px}
 .calypso-bookings-table{width:100%;border-collapse:collapse;margin-bottom:24px}
 .calypso-bookings-table th{background:var(--c-deep);color:#fff;padding:10px 14px;text-align:left;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
 .calypso-bookings-table td{padding:12px 14px;border-bottom:1px solid #e5e7eb;font-size:14px;vertical-align:middle}
@@ -52,7 +54,7 @@ $cancel_nonce = wp_create_nonce( 'calypso_cancel_nonce' );
 </style>
 
 <div class="calypso-account">
-	<h2><?php _e( 'Le mie prenotazioni', 'calypsosub' ); ?></h2>
+	<<?php echo $title_tag; ?> class="calypso-account__title"><?php _e( 'Le mie prenotazioni', 'calypsosub' ); ?></<?php echo $title_tag; ?>>
 
 	<?php if ( empty( $active ) ) : ?>
 		<p class="calypso-empty-state"><?php _e( 'Nessuna prenotazione attiva.', 'calypsosub' ); ?></p>
@@ -115,7 +117,7 @@ $cancel_nonce = wp_create_nonce( 'calypso_cancel_nonce' );
 	<?php endif; ?>
 
 	<?php if ( ! empty( $history ) ) : ?>
-	<h3><?php _e( 'Storico', 'calypsosub' ); ?></h3>
+	<<?php echo $history_title_tag; ?> class="calypso-account__subtitle"><?php _e( 'Storico', 'calypsosub' ); ?></<?php echo $history_title_tag; ?>>
 	<table class="calypso-bookings-table calypso-bookings-history">
 		<thead>
 			<tr>
