@@ -384,6 +384,7 @@ class Calypsosub_Blocks {
 				'max_width'        => [ 'type' => 'integer', 'default' => 1320 ],
 				'eyebrow_color'          => [ 'type' => 'string',  'default' => '#1B77A7' ],
 				'title_color'            => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'title_highlight_color'  => [ 'type' => 'string',  'default' => '#26CBFB' ],
 				'title_size'             => [ 'type' => 'integer', 'default' => 76 ],
 				'eyebrow_size'           => [ 'type' => 'integer', 'default' => 13 ],
 				'eyebrow_letter_spacing' => [ 'type' => 'integer', 'default' => 16 ],
@@ -1940,7 +1941,8 @@ class Calypsosub_Blocks {
 								onChange: function (v) { set({ eyebrow: v }); }
 							}),
 							el(TextareaControl, {
-								label: 'Titolo (\\n per a capo)',
+								label: 'Titolo (\\n per a capo, **parola** per colorarla)',
+								help: 'Racchiudi tra doppi asterischi la parte da colorare, es. "Sotto la **superficie**".',
 								value: a.title || '',
 								rows: 3,
 								onChange: function (v) { set({ title: v }); }
@@ -2008,6 +2010,7 @@ class Calypsosub_Blocks {
 							}),
 							subHead('Titolo'),
 							colorRow('Colore', 'title_color'),
+							colorRow('Colore parole evidenziate (tra **doppi asterischi**)', 'title_highlight_color'),
 							el(RangeControl, {
 								label: 'Dimensione (px)',
 								value: a.title_size || 76,
@@ -2065,6 +2068,14 @@ class Calypsosub_Blocks {
 					var hasHeader  = a.eyebrow || a.title || (a.header_link_text && a.header_link_url);
 					var effLinkColor = (a.link_color && a.link_color !== '') ? a.link_color : (a.eyebrow_color || '#1B77A7');
 
+					function renderHighlightedTitle(text, color) {
+						var parts = String(text || '').split(/\*\*(.+?)\*\*/);
+						return parts.map(function (part, i) {
+							if (part === '') return null;
+							return (i % 2 === 1) ? el('span', { key: i, style: { color: color } }, part) : part;
+						});
+					}
+
 					return el(Fragment, {},
 						controls,
 						el('section', {
@@ -2086,7 +2097,7 @@ class Calypsosub_Blocks {
 										}, a.eyebrow) : null,
 										a.title ? el('h2', {
 											style: { fontSize: Math.min(a.title_size || 76, 60) + 'px', lineHeight: (a.title_line_height !== undefined ? a.title_line_height : 95) / 100, color: a.title_color || '#1B77A7', margin: 0, fontWeight: a.title_font_weight || 900 }
-										}, titleLines.join(' · ')) : null
+										}, renderHighlightedTitle(titleLines.join(' · '), a.title_highlight_color || '#26CBFB')) : null
 									),
 									(a.header_link_text) ? el('span', {
 										style: { flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: (a.link_size || 14) + 'px', fontWeight: a.link_font_weight || 600, color: effLinkColor }

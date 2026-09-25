@@ -45,6 +45,28 @@ function calypsosub_title_tag( string $value, string $none_tag = 'div' ): string
 }
 
 /**
+ * Rende un titolo in HTML convertendo gli "a capo" e colorando le porzioni
+ * racchiuse tra doppi asterischi — es. "Sotto la **superficie**" — con il
+ * colore indicato. Tutto il testo resta correttamente escapato; eventuali
+ * "**" non in coppia restano semplicemente come testo letterale.
+ */
+function calypsosub_render_highlighted_title( string $text, string $highlight_color ): string {
+	$parts = preg_split( '/\*\*(.+?)\*\*/su', $text, -1, PREG_SPLIT_DELIM_CAPTURE );
+	if ( $parts === false ) {
+		return nl2br( esc_html( $text ) );
+	}
+	$html = '';
+	foreach ( $parts as $i => $part ) {
+		if ( $part === '' ) continue;
+		$escaped = nl2br( esc_html( $part ) );
+		$html   .= ( $i % 2 === 1 )
+			? '<span style="color:' . esc_attr( $highlight_color ) . '">' . $escaped . '</span>'
+			: $escaped;
+	}
+	return $html;
+}
+
+/**
  * Wrapper per auth — estendibile con membership plugin.
  */
 function calypso_is_user_logged_in(): bool {

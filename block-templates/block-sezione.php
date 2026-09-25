@@ -22,6 +22,7 @@ $eyebrow_letter_spacing = (int)    ( $a['eyebrow_letter_spacing'] ?? 16 );
 $eyebrow_font_weight    = (int)    ( $a['eyebrow_font_weight']    ?? 600 );
 $eyebrow_margin_bottom  = (int)    ( $a['eyebrow_margin_bottom']  ?? 16 );
 $title_color            = (string) ( $a['title_color']            ?? '#1B77A7' );
+$title_highlight_color  = (string) ( $a['title_highlight_color']  ?? '#26CBFB' );
 $title_size             = (int)    ( $a['title_size']             ?? 76 );
 $title_line_height      = (int)    ( $a['title_line_height']      ?? 95 );
 $title_font_weight      = (int)    ( $a['title_font_weight']      ?? 900 );
@@ -70,7 +71,7 @@ $uid = 'cso-sez-' . sprintf( '%08x', crc32( implode( ',', [ $max_width, $padding
 			<?php endif; ?>
 			<?php if ( $title ) : ?>
 			<<?php echo $title_tag; ?> class="cso-sez__title display" style="line-height:<?php echo $title_line_height / 100; ?>;color:<?php echo esc_attr( $title_color ); ?>;margin:0;font-weight:<?php echo $title_font_weight; ?>;">
-				<?php echo nl2br( esc_html( $title ) ); ?>
+				<?php echo calypsosub_render_highlighted_title( $title, $title_highlight_color ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</<?php echo $title_tag; ?>>
 			<?php endif; ?>
 			<?php if ( $description ) : ?>
