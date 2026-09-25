@@ -11,6 +11,7 @@ $manual_ids         = (array)  ( $a['manual_ids']         ?? [] );
 $order_by           = (string) ( $a['order_by']           ?? 'date' );
 $order              = (string) ( $a['order']              ?? 'DESC' );
 $max_items          = (int)    ( $a['max_items']          ?? 0 );
+$current_page       = max( 1, absint( $_GET['cso_apag'] ?? 1 ) );
 
 /* ── Comportamento ── */
 $show_link          = (bool)   ( $a['show_link']          ?? true );
@@ -67,12 +68,16 @@ $image_label_size  = (int)    ( $a['image_label_size']  ?? 10 );
 
 /* ── Query articoli ── */
 $q_args = [
-	'post_type'      => 'post',
-	'post_status'    => 'publish',
-	'posts_per_page' => $max_items > 0 ? $max_items : -1,
-	'orderby'        => $order_by === 'random' ? 'rand' : $order_by,
-	'order'          => strtoupper( $order ),
+	'post_type'           => 'post',
+	'post_status'         => 'publish',
+	'posts_per_page'      => $max_items > 0 ? $max_items : -1,
+	'orderby'             => $order_by === 'random' ? 'rand' : $order_by,
+	'order'               => strtoupper( $order ),
+	'ignore_sticky_posts' => true,
 ];
+if ( $max_items > 0 ) {
+	$q_args['paged'] = $current_page;
+}
 
 if ( $source_mode === 'manual' && ! empty( $manual_ids ) ) {
 	$q_args['post__in'] = array_map( 'intval', $manual_ids );
@@ -86,8 +91,11 @@ if ( $source_mode === 'manual' && ! empty( $manual_ids ) ) {
 	if ( ! empty( $tag_ids ) )      $q_args['tag__in']      = array_map( 'intval', $tag_ids );
 }
 
-$posts = get_posts( $q_args );
+$query = new WP_Query( $q_args );
+$posts = $query->posts;
 if ( empty( $posts ) ) return;
+
+$total_pages = $max_items > 0 ? (int) $query->max_num_pages : 1;
 
 /* ── Helpers ── */
 $css = static function ( string $v ): string {
@@ -191,6 +199,39 @@ $title_transform = $title_upper ? 'uppercase' : 'none';
   #<?php echo $uid; ?> .csart__row{grid-template-columns:1fr;gap:16px;padding:28px 0;}
   #<?php echo $uid; ?> .csart__left{font-size:<?php echo max( 36, (int) round( $left_size * .55 ) ); ?>px;}
 }
+#<?php echo $uid; ?> .csart__pagination{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:center;
+  padding-top:<?php echo $row_gap_y > 0 ? $row_gap_y : 40; ?>px;
+}
+#<?php echo $uid; ?> .csart__pagination .page-numbers{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:36px;
+  height:36px;
+  padding:0 10px;
+  border-radius:6px;
+  border:1px solid <?php echo $css( $separator_color ); ?>;
+  color:<?php echo $css( $text_color ); ?>;
+  font-size:14px;
+  font-weight:600;
+  text-decoration:none;
+}
+#<?php echo $uid; ?> .csart__pagination a.page-numbers:hover{
+  border-color:<?php echo $css( $title_color ); ?>;
+  color:<?php echo $css( $title_color ); ?>;
+}
+#<?php echo $uid; ?> .csart__pagination .page-numbers.current{
+  background:<?php echo $css( $title_color ); ?>;
+  border-color:<?php echo $css( $title_color ); ?>;
+  color:#fff;
+}
+#<?php echo $uid; ?> .csart__pagination .page-numbers.dots{
+  border-color:transparent;
+}
 </style>
 <section id="<?php echo $uid; ?>" style="<?php echo esc_attr( $section_style ); ?>">
 	<div class="csart__inner">
@@ -231,4 +272,21 @@ $title_transform = $title_upper ? 'uppercase' : 'none';
 	</<?php echo $row_tag; ?>>
 	<?php endforeach; ?>
 	</div>
+	<?php if ( $total_pages > 1 ) :
+		$pagination_links = paginate_links( [
+			'base'      => esc_url_raw( add_query_arg( 'cso_apag', '%#%' ) ),
+			'format'    => '',
+			'current'   => $current_page,
+			'total'     => $total_pages,
+			'prev_text' => '‹',
+			'next_text' => '›',
+			'type'      => 'plain',
+		] );
+	?>
+	<?php if ( $pagination_links ) : ?>
+	<nav class="csart__pagination" aria-label="<?php esc_attr_e( 'Paginazione articoli', 'calypsosub' ); ?>">
+		<?php echo wp_kses_post( $pagination_links ); ?>
+	</nav>
+	<?php endif; ?>
+	<?php endif; ?>
 </section>
