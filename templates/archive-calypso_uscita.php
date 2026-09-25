@@ -537,7 +537,7 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 
 			<div class="cso-uscita-row__info">
 				<a href="<?php echo esc_url( get_permalink( $u->_uscita_id ) ); ?>">
-					<p class="cso-uscita-row__title"><?php echo esc_html( get_the_title( $u->_uscita_id ) ); ?></p>
+					<h3 class="cso-uscita-row__title"><?php echo esc_html( get_the_title( $u->_uscita_id ) ); ?></h3>
 				</a>
 				<?php if ( $luogo ) : ?>
 				<p class="cso-uscita-row__luogo">

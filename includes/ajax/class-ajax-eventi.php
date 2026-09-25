@@ -241,7 +241,7 @@ class Calypsosub_Ajax_Eventi {
 
 					<div class="cso-evento-row__info">
 						<a href="<?php echo esc_url( get_permalink( $e->ID ) ); ?>">
-							<p class="cso-evento-row__title"><?php echo esc_html( $e->post_title ); ?></p>
+							<h3 class="cso-evento-row__title"><?php echo esc_html( $e->post_title ); ?></h3>
 						</a>
 						<?php if ( $luogo_ev ) : ?>
 						<p class="cso-evento-row__luogo">

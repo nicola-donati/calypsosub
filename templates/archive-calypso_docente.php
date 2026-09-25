@@ -182,7 +182,7 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 		</div>
 
 		<div class="cso-docente-card__body">
-			<div class="cso-docente-card__name display"><?php echo esc_html( $full_name ); ?></div>
+			<h3 class="cso-docente-card__name display"><?php echo esc_html( $full_name ); ?></h3>
 			<?php if ( $soprannome ) : ?>
 			<div class="cso-docente-card__soprannome">detto &ldquo;<?php echo esc_html( $soprannome ); ?>&rdquo;</div>
 			<?php endif; ?>
