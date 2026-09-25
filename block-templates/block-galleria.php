@@ -98,7 +98,7 @@ $section_style_attr = $section_style ? ' style="' . implode( ';', $section_style
 		?>
 		<div class="cso-gal__cell"
 		     data-index="<?php echo (int) $index; ?>"
-		     <?php if ( $lightbox ) : ?>data-lightbox-src="<?php echo esc_url( $cell['full'] ); ?>"<?php endif; ?>
+		     <?php if ( $lightbox ) : ?>data-lightbox-src="<?php echo esc_url( $cell['full'] ); ?>" data-lightbox-alt="<?php echo esc_attr( $cell['alt'] ); ?>"<?php endif; ?>
 		     style="grid-column:span <?php echo (int) $unit['col']; ?>;grid-row:span <?php echo (int) $unit['row']; ?>;">
 			<img src="<?php echo esc_url( $cell['url'] ); ?>" alt="<?php echo esc_attr( $cell['alt'] ); ?>" loading="lazy">
 			<?php if ( $cell['caption'] ) : ?>
@@ -119,8 +119,9 @@ $section_style_attr = $section_style ? ' style="' . implode( ';', $section_style
 	if (!section || !overlay) return;
 	var overlayImg = overlay.querySelector('img');
 
-	function open(src){
+	function open(src, alt){
 		overlayImg.src = src;
+		overlayImg.alt = alt || '';
 		overlay.style.display = 'flex';
 	}
 	function close(){
@@ -132,7 +133,8 @@ $section_style_attr = $section_style ? ' style="' . implode( ';', $section_style
 		var cell = e.target.closest('.cso-gal__cell');
 		if (!cell) return;
 		var src = cell.getAttribute('data-lightbox-src');
-		if (src) open(src);
+		var alt = cell.getAttribute('data-lightbox-alt');
+		if (src) open(src, alt);
 	});
 	overlay.addEventListener('click', close);
 	document.addEventListener('keydown', function(e){

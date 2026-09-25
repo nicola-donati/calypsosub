@@ -44,6 +44,7 @@ require_once CALYPSOSUB_PATH . 'includes/account/class-user-account.php';
 require_once CALYPSOSUB_PATH . 'includes/class-template-loader.php';
 require_once CALYPSOSUB_PATH . 'includes/class-blocks.php';
 require_once CALYPSOSUB_PATH . 'includes/ajax/class-ajax-eventi.php';
+require_once CALYPSOSUB_PATH . 'includes/seo/class-seo-enhancements.php';
 add_action( 'wp_ajax_calypso_eventi_search',        [ 'Calypsosub_Ajax_Eventi', 'handle' ] );
 add_action( 'wp_ajax_nopriv_calypso_eventi_search', [ 'Calypsosub_Ajax_Eventi', 'handle' ] );
 
@@ -81,6 +82,7 @@ $email_manager                       = new Calypsosub_Booking_Email();
 $GLOBALS['calypsosub_booking_manager'] = new Calypsosub_Booking_Manager( $email_manager );
 $GLOBALS['calypsosub_booking_manager']->init();
 
+( new Calypsosub_Seo_Enhancements() )->init();
 ( new Calypsosub_Template_Loader() )->init();
 ( new Calypsosub_Admin_Menus() )->init();
 ( new Calypsosub_Settings_Pages() )->init();
