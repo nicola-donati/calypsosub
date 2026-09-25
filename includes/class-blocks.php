@@ -674,6 +674,73 @@ class Calypsosub_Blocks {
 				'side_value_color'        => [ 'type' => 'string',  'default' => '#ffffff' ],
 			],
 		],
+		'calypso/nav-menu' => [
+			'file'  => 'block-nav-menu.php',
+			'title' => 'Menu di Navigazione',
+			'icon'  => 'menu',
+			'attributes' => [
+				/* ── Link di navigazione ── */
+				'nav_links' => [
+					'type'    => 'array',
+					'default' => [],
+					'items'   => [
+						'type'       => 'object',
+						'properties' => [
+							'label'        => [ 'type' => 'string' ],
+							'url'          => [ 'type' => 'string' ],
+							'new_tab'      => [ 'type' => 'boolean' ],
+							'hide_desktop' => [ 'type' => 'boolean' ],
+							'hide_tablet'  => [ 'type' => 'boolean' ],
+							'hide_mobile'  => [ 'type' => 'boolean' ],
+						],
+					],
+				],
+				/* ── Accedi/Esci ── */
+				'show_login_logout'        => [ 'type' => 'boolean', 'default' => true ],
+				'login_label'              => [ 'type' => 'string',  'default' => 'Accedi' ],
+				'logout_label'             => [ 'type' => 'string',  'default' => 'Esci' ],
+				'login_logout_hide_desktop'=> [ 'type' => 'boolean', 'default' => false ],
+				'login_logout_hide_tablet' => [ 'type' => 'boolean', 'default' => false ],
+				'login_logout_hide_mobile' => [ 'type' => 'boolean', 'default' => false ],
+				/* ── Pulsanti personalizzati ── */
+				'buttons' => [
+					'type'    => 'array',
+					'default' => [],
+					'items'   => [
+						'type'       => 'object',
+						'properties' => [
+							'label'        => [ 'type' => 'string' ],
+							'url'          => [ 'type' => 'string' ],
+							'new_tab'      => [ 'type' => 'boolean' ],
+							'style'        => [ 'type' => 'string' ],
+							'hide_desktop' => [ 'type' => 'boolean' ],
+							'hide_tablet'  => [ 'type' => 'boolean' ],
+							'hide_mobile'  => [ 'type' => 'boolean' ],
+						],
+					],
+				],
+				/* ── Comportamento responsive ── */
+				'hamburger_breakpoint' => [ 'type' => 'string', 'default' => 'mobile' ],
+				'sidebar_side'         => [ 'type' => 'string', 'default' => 'right' ],
+				/* ── Layout ── */
+				'gap' => [ 'type' => 'integer', 'default' => 24 ],
+				/* ── Colori link ── */
+				'link_color'       => [ 'type' => 'string',  'default' => '#0b1a26' ],
+				'link_hover_color' => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'link_size'        => [ 'type' => 'integer', 'default' => 15 ],
+				'link_weight'      => [ 'type' => 'integer', 'default' => 600 ],
+				/* ── Colori pulsanti ── */
+				'btn_primary_bg'      => [ 'type' => 'string', 'default' => '#ff6b4a' ],
+				'btn_primary_color'   => [ 'type' => 'string', 'default' => '#ffffff' ],
+				'btn_secondary_bg'    => [ 'type' => 'string', 'default' => '#061826' ],
+				'btn_secondary_color' => [ 'type' => 'string', 'default' => '#ffffff' ],
+				/* ── Hamburger + sidebar ── */
+				'hamburger_color'       => [ 'type' => 'string', 'default' => '#0b1a26' ],
+				'sidebar_bg_color'      => [ 'type' => 'string', 'default' => '#ffffff' ],
+				'sidebar_text_color'    => [ 'type' => 'string', 'default' => '#0b1a26' ],
+				'sidebar_overlay_color' => [ 'type' => 'string', 'default' => 'rgba(6,24,38,.6)' ],
+			],
+		],
 	];
 
 	public function init(): void {
@@ -4018,6 +4085,211 @@ class Calypsosub_Blocks {
 							'calypso/lista-articoli · ' + (a.source_mode || 'all') +
 							(a.max_items > 0 ? ' · max ' + a.max_items : ' · tutti') +
 							' · ' + (a.order_by || 'date') + ' ' + (a.order || 'DESC')
+						)
+					);
+
+					return el(Fragment, {}, controls, preview);
+				},
+				save: function () { return null; },
+			});
+			return;
+		}
+
+		/* ════════════════════════════════════════════
+		   calypso/nav-menu — link, accedi/esci, pulsanti, hamburger responsive
+		   ════════════════════════════════════════════ */
+		if (info.name === 'calypso/nav-menu') {
+			blocks.registerBlockType(info.name, {
+				title: info.title,
+				category: 'calypso',
+				icon: info.icon || 'menu',
+				attributes: info.attributes || {},
+				edit: function (props) {
+					var a   = props.attributes;
+					var set = props.setAttributes;
+
+					function colorRow(label, key) {
+						return el('div', { style: { marginBottom: '12px' } },
+							el('p', { style: { fontSize: '11px', fontWeight: 500, color: '#1e1e1e', margin: '0 0 6px' } }, label),
+							el(ColorPalette, {
+								colors: getThemeColors(),
+								value: a[key] || '',
+								onChange: function (v) { var u = {}; u[key] = v || ''; set(u); }
+							})
+						);
+					}
+
+					function visRow(item, onUpdate) {
+						return el('div', { style: { display: 'flex', gap: '14px', margin: '8px 0 4px', flexWrap: 'wrap' } },
+							el(ToggleControl, { label: 'Nascondi desktop', checked: !!item.hide_desktop, onChange: function (v) { onUpdate({ hide_desktop: v }); } }),
+							el(ToggleControl, { label: 'Nascondi tablet',  checked: !!item.hide_tablet,  onChange: function (v) { onUpdate({ hide_tablet: v }); } }),
+							el(ToggleControl, { label: 'Nascondi mobile', checked: !!item.hide_mobile,  onChange: function (v) { onUpdate({ hide_mobile: v }); } })
+						);
+					}
+
+					function repeaterPanel(title, key, extraFields) {
+						var items = a[key] || [];
+						function setItems(next) { var u = {}; u[key] = next; set(u); }
+						function updateItem(idx, patch) {
+							var copy = items.slice();
+							copy[idx] = Object.assign({}, copy[idx], patch);
+							setItems(copy);
+						}
+						function removeItem(idx) {
+							var copy = items.slice();
+							copy.splice(idx, 1);
+							setItems(copy);
+						}
+						function addItem() {
+							setItems(items.concat([{ label: '', url: '', new_tab: false, style: 'primary', hide_desktop: false, hide_tablet: false, hide_mobile: false }]));
+						}
+						var rows = items.map(function (item, idx) {
+							return el('div', { key: idx, style: { border: '1px solid #e0e0e0', borderRadius: '4px', padding: '10px', marginBottom: '10px' } },
+								el(TextControl, {
+									label: 'Testo',
+									value: item.label || '',
+									onChange: function (v) { updateItem(idx, { label: v }); }
+								}),
+								el(TextControl, {
+									label: 'URL',
+									type: 'url',
+									value: item.url || '',
+									onChange: function (v) { updateItem(idx, { url: v }); }
+								}),
+								el(ToggleControl, {
+									label: 'Apri in nuova scheda',
+									checked: !!item.new_tab,
+									onChange: function (v) { updateItem(idx, { new_tab: v }); }
+								}),
+								extraFields ? extraFields(item, function (patch) { updateItem(idx, patch); }) : null,
+								el('p', { style: { fontSize: '11px', fontWeight: 500, margin: '10px 0 0', color: '#1e1e1e' } }, 'Visibilità'),
+								visRow(item, function (patch) { updateItem(idx, patch); }),
+								el(Button, { onClick: function () { removeItem(idx); }, isDestructive: true, variant: 'link', style: { marginTop: '6px' } }, 'Rimuovi')
+							);
+						});
+						return el(PanelBody, { title: title, initialOpen: false },
+							rows,
+							el(Button, { onClick: addItem, variant: 'secondary' }, '+ Aggiungi')
+						);
+					}
+
+					function buttonExtraFields(item, onUpdate) {
+						return el(SelectControl, {
+							label: 'Stile',
+							value: item.style || 'primary',
+							options: [
+								{ value: 'primary', label: 'Primario' },
+								{ value: 'secondary', label: 'Secondario' }
+							],
+							onChange: function (v) { onUpdate({ style: v }); }
+						});
+					}
+
+					var controls = InspectorControls ? el(InspectorControls, {},
+
+						repeaterPanel('Link di navigazione', 'nav_links', null),
+
+						el(PanelBody, { title: 'Accedi / Esci', initialOpen: false },
+							el(ToggleControl, {
+								label: 'Mostra blocco Accedi/Esci',
+								checked: !!a.show_login_logout,
+								onChange: function (v) { set({ show_login_logout: v }); }
+							}),
+							a.show_login_logout ? el(TextControl, {
+								label: 'Etichetta "Accedi"',
+								value: a.login_label || '',
+								onChange: function (v) { set({ login_label: v }); }
+							}) : null,
+							a.show_login_logout ? el(TextControl, {
+								label: 'Etichetta "Esci"',
+								value: a.logout_label || '',
+								onChange: function (v) { set({ logout_label: v }); }
+							}) : null,
+							a.show_login_logout ? el('div', {},
+								el('p', { style: { fontSize: '11px', fontWeight: 500, margin: '10px 0 0', color: '#1e1e1e' } }, 'Visibilità'),
+								el('div', { style: { display: 'flex', gap: '14px', margin: '8px 0 4px', flexWrap: 'wrap' } },
+									el(ToggleControl, { label: 'Nascondi desktop', checked: !!a.login_logout_hide_desktop, onChange: function (v) { set({ login_logout_hide_desktop: v }); } }),
+									el(ToggleControl, { label: 'Nascondi tablet',  checked: !!a.login_logout_hide_tablet,  onChange: function (v) { set({ login_logout_hide_tablet: v }); } }),
+									el(ToggleControl, { label: 'Nascondi mobile', checked: !!a.login_logout_hide_mobile, onChange: function (v) { set({ login_logout_hide_mobile: v }); } })
+								)
+							) : null
+						),
+
+						repeaterPanel('Pulsanti personalizzati', 'buttons', buttonExtraFields),
+
+						el(PanelBody, { title: 'Menu compatto (hamburger)', initialOpen: false },
+							el(SelectControl, {
+								label: 'Passa a hamburger sotto:',
+								value: a.hamburger_breakpoint || 'mobile',
+								options: [
+									{ value: 'none',   label: 'Mai — barra sempre visibile' },
+									{ value: 'tablet', label: '1024px — tablet e mobile' },
+									{ value: 'mobile', label: '760px — solo mobile' }
+								],
+								onChange: function (v) { set({ hamburger_breakpoint: v }); }
+							}),
+							el(SelectControl, {
+								label: 'Lato pannello a scomparsa',
+								value: a.sidebar_side || 'right',
+								options: [
+									{ value: 'right', label: 'Destra' },
+									{ value: 'left', label: 'Sinistra' }
+								],
+								onChange: function (v) { set({ sidebar_side: v }); }
+							}),
+							colorRow('Colore icona hamburger', 'hamburger_color'),
+							colorRow('Sfondo pannello', 'sidebar_bg_color'),
+							colorRow('Colore testo pannello', 'sidebar_text_color')
+						),
+
+						el(PanelBody, { title: 'Aspetto', initialOpen: false },
+							el(RangeControl, {
+								label: 'Spaziatura tra elementi (px)',
+								value: a.gap !== undefined ? a.gap : 24,
+								min: 4, max: 64, step: 2,
+								onChange: function (v) { set({ gap: v === undefined ? 24 : v }); }
+							}),
+							colorRow('Colore link', 'link_color'),
+							colorRow('Colore link (hover)', 'link_hover_color'),
+							el(RangeControl, {
+								label: 'Dimensione testo link (px)',
+								value: a.link_size || 15,
+								min: 10, max: 28, step: 1,
+								onChange: function (v) { set({ link_size: v || 15 }); }
+							}),
+							colorRow('Pulsante primario — sfondo', 'btn_primary_bg'),
+							colorRow('Pulsante primario — testo', 'btn_primary_color'),
+							colorRow('Pulsante secondario — sfondo', 'btn_secondary_bg'),
+							colorRow('Pulsante secondario — testo', 'btn_secondary_color')
+						)
+
+					) : null;
+
+					var previewItems = (a.nav_links || []).map(function (item, idx) {
+						return el('span', { key: 'l' + idx, style: { padding: '6px 10px', background: '#eef4f6', borderRadius: '4px', fontSize: '13px' } }, item.label || '(link senza testo)');
+					});
+					if (a.show_login_logout) {
+						previewItems.push(el('span', { key: 'll', style: { padding: '6px 10px', background: '#dff0d8', borderRadius: '4px', fontSize: '13px' } }, a.login_label || 'Accedi'));
+					}
+					var previewButtons = (a.buttons || []).map(function (item, idx) {
+						return el('span', {
+							key: 'b' + idx,
+							style: {
+								padding: '6px 14px', borderRadius: '999px', fontSize: '13px', fontWeight: 600,
+								background: item.style === 'secondary' ? (a.btn_secondary_bg || '#061826') : (a.btn_primary_bg || '#ff6b4a'),
+								color: item.style === 'secondary' ? (a.btn_secondary_color || '#fff') : (a.btn_primary_color || '#fff')
+							}
+						}, item.label || '(pulsante)');
+					});
+
+					var hbLabel = { none: 'mai', tablet: 'sotto 1024px', mobile: 'sotto 760px' }[a.hamburger_breakpoint || 'mobile'];
+
+					var preview = el('div', { style: { fontFamily: 'system-ui,sans-serif' } },
+						el('div', { style: { display: 'flex', alignItems: 'center', gap: (a.gap !== undefined ? a.gap : 24) + 'px', flexWrap: 'wrap', padding: '14px 18px', border: '1px dashed #ccc' } },
+							previewItems.concat(previewButtons)
+						),
+						el('div', { style: { fontSize: '10px', opacity: .5, marginTop: '8px', fontFamily: 'monospace' } },
+							'calypso/nav-menu · hamburger ' + hbLabel + ' · pannello a ' + (a.sidebar_side === 'left' ? 'sinistra' : 'destra')
 						)
 					);
 
