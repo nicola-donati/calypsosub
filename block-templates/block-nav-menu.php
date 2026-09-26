@@ -31,10 +31,18 @@ $hamburger_breakpoint = in_array( $a['hamburger_breakpoint'] ?? 'mobile', [ 'non
 $sidebar_side = ( $a['sidebar_side'] ?? 'right' ) === 'left' ? 'left' : 'right';
 
 $gap               = (int)    ( $a['gap']         ?? 24 );
+$min_height        = (int)    ( $a['min_height']  ?? 0 );
 $link_color        = (string) ( $a['link_color']       ?: '#0b1a26' );
 $link_hover_color  = (string) ( $a['link_hover_color'] ?: '#1B77A7' );
 $link_size         = (int)    ( $a['link_size']   ?? 15 );
 $link_weight       = (int)    ( $a['link_weight'] ?? 600 );
+$link_font         = preg_replace( '/[^a-zA-Z0-9 ,\"\'\-]/', '', (string) ( $a['link_font'] ?? '' ) );
+$link_upper        = ! empty( $a['link_upper'] );
+$link_italic       = ! empty( $a['link_italic'] );
+$link_decoration   = in_array( $a['link_decoration'] ?? 'none', [ 'none', 'underline', 'line-through', 'overline' ], true )
+	? $a['link_decoration']
+	: 'none';
+$link_letter_spacing = (int) ( $a['link_letter_spacing'] ?? 0 );
 
 $btn_primary_bg      = (string) ( $a['btn_primary_bg']      ?: '#ff6b4a' );
 $btn_primary_color   = (string) ( $a['btn_primary_color']   ?: '#ffffff' );
@@ -120,8 +128,18 @@ $render_items = function () use ( $nav_links, $show_login_logout, $ll_url, $ll_l
 ?>
 <style>
 #<?php echo $uid; ?>{position:relative}
-#<?php echo $uid; ?> .cso-nav__bar{display:flex;align-items:center;flex-wrap:wrap;gap:<?php echo $gap; ?>px}
-#<?php echo $uid; ?> .cso-nav__link{color:<?php echo esc_attr( $link_color ); ?>;font-size:<?php echo $link_size; ?>px;font-weight:<?php echo $link_weight; ?>;text-decoration:none;transition:color .15s}
+#<?php echo $uid; ?> .cso-nav__bar{display:flex;align-items:center;flex-wrap:wrap;gap:<?php echo $gap; ?>px<?php echo $min_height > 0 ? ';min-height:' . $min_height . 'px' : ''; ?>}
+#<?php echo $uid; ?> .cso-nav__link{
+	color:<?php echo esc_attr( $link_color ); ?>;
+	font-size:<?php echo $link_size; ?>px;
+	font-weight:<?php echo $link_weight; ?>;
+	text-decoration:<?php echo esc_attr( $link_decoration ); ?>;
+	text-transform:<?php echo $link_upper ? 'uppercase' : 'none'; ?>;
+	font-style:<?php echo $link_italic ? 'italic' : 'normal'; ?>;
+	letter-spacing:<?php echo $link_letter_spacing / 100; ?>em;
+	<?php if ( $link_font !== '' ) : ?>font-family:<?php echo $link_font; ?>;<?php endif; ?>
+	transition:color .15s;
+}
 #<?php echo $uid; ?> .cso-nav__link:hover{color:<?php echo esc_attr( $link_hover_color ); ?>}
 #<?php echo $uid; ?> .cso-nav__login{color:<?php echo esc_attr( $link_color ); ?>;font-size:<?php echo $link_size; ?>px;font-weight:<?php echo $link_weight; ?>;text-decoration:none;border:1px solid currentColor;border-radius:999px;padding:6px 16px;transition:color .15s,border-color .15s}
 #<?php echo $uid; ?> .cso-nav__login:hover{color:<?php echo esc_attr( $link_hover_color ); ?>}

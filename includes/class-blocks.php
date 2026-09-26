@@ -724,12 +724,18 @@ class Calypsosub_Blocks {
 				'hamburger_breakpoint' => [ 'type' => 'string', 'default' => 'mobile' ],
 				'sidebar_side'         => [ 'type' => 'string', 'default' => 'right' ],
 				/* ── Layout ── */
-				'gap' => [ 'type' => 'integer', 'default' => 24 ],
-				/* ── Colori link ── */
-				'link_color'       => [ 'type' => 'string',  'default' => '#0b1a26' ],
-				'link_hover_color' => [ 'type' => 'string',  'default' => '#1B77A7' ],
-				'link_size'        => [ 'type' => 'integer', 'default' => 15 ],
-				'link_weight'      => [ 'type' => 'integer', 'default' => 600 ],
+				'gap'        => [ 'type' => 'integer', 'default' => 24 ],
+				'min_height' => [ 'type' => 'integer', 'default' => 0 ],
+				/* ── Aspetto link ── */
+				'link_color'          => [ 'type' => 'string',  'default' => '#0b1a26' ],
+				'link_hover_color'    => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'link_size'           => [ 'type' => 'integer', 'default' => 15 ],
+				'link_weight'         => [ 'type' => 'integer', 'default' => 600 ],
+				'link_font'           => [ 'type' => 'string',  'default' => '' ],
+				'link_upper'          => [ 'type' => 'boolean', 'default' => false ],
+				'link_italic'         => [ 'type' => 'boolean', 'default' => false ],
+				'link_decoration'     => [ 'type' => 'string',  'default' => 'none' ],
+				'link_letter_spacing' => [ 'type' => 'integer', 'default' => 0 ],
 				/* ── Colori pulsanti ── */
 				'btn_primary_bg'      => [ 'type' => 'string', 'default' => '#ff6b4a' ],
 				'btn_primary_color'   => [ 'type' => 'string', 'default' => '#ffffff' ],
@@ -4260,24 +4266,83 @@ class Calypsosub_Blocks {
 								min: 4, max: 64, step: 2,
 								onChange: function (v) { set({ gap: v === undefined ? 24 : v }); }
 							}),
-							colorRow('Colore link', 'link_color'),
-							colorRow('Colore link (hover)', 'link_hover_color'),
 							el(RangeControl, {
-								label: 'Dimensione testo link (px)',
-								value: a.link_size || 15,
-								min: 10, max: 28, step: 1,
-								onChange: function (v) { set({ link_size: v || 15 }); }
+								label: 'Altezza minima barra (px, 0 = automatica)',
+								value: a.min_height !== undefined ? a.min_height : 0,
+								min: 0, max: 200, step: 4,
+								onChange: function (v) { set({ min_height: v === undefined ? 0 : v }); }
 							}),
 							colorRow('Pulsante primario — sfondo', 'btn_primary_bg'),
 							colorRow('Pulsante primario — testo', 'btn_primary_color'),
 							colorRow('Pulsante secondario — sfondo', 'btn_secondary_bg'),
 							colorRow('Pulsante secondario — testo', 'btn_secondary_color')
+						),
+
+						el(PanelBody, { title: 'Aspetto link', initialOpen: false },
+							colorRow('Colore', 'link_color'),
+							colorRow('Colore (hover)', 'link_hover_color'),
+							el(RangeControl, {
+								label: 'Dimensione testo (px)',
+								value: a.link_size || 15,
+								min: 10, max: 28, step: 1,
+								onChange: function (v) { set({ link_size: v || 15 }); }
+							}),
+							el(RangeControl, {
+								label: 'Peso font',
+								value: a.link_weight || 600,
+								min: 300, max: 900, step: 100,
+								onChange: function (v) { set({ link_weight: v || 600 }); }
+							}),
+							el(TextControl, {
+								label: 'Font (font-family CSS, vuoto = eredita dal tema)',
+								value: a.link_font || '',
+								onChange: function (v) { set({ link_font: v }); }
+							}),
+							el(RangeControl, {
+								label: 'Letter spacing (em ×100)',
+								value: a.link_letter_spacing !== undefined ? a.link_letter_spacing : 0,
+								min: 0, max: 50, step: 1,
+								onChange: function (v) { set({ link_letter_spacing: v === undefined ? 0 : v }); }
+							}),
+							el(ToggleControl, {
+								label: 'Maiuscolo',
+								checked: !!a.link_upper,
+								onChange: function (v) { set({ link_upper: v }); }
+							}),
+							el(ToggleControl, {
+								label: 'Corsivo',
+								checked: !!a.link_italic,
+								onChange: function (v) { set({ link_italic: v }); }
+							}),
+							el(SelectControl, {
+								label: 'Decorazione testo',
+								value: a.link_decoration || 'none',
+								options: [
+									{ value: 'none',         label: 'Nessuna' },
+									{ value: 'underline',    label: 'Sottolineato' },
+									{ value: 'line-through', label: 'Barrato' },
+									{ value: 'overline',     label: 'Sopralineato' }
+								],
+								onChange: function (v) { set({ link_decoration: v }); }
+							})
 						)
 
 					) : null;
 
 					var previewItems = (a.nav_links || []).map(function (item, idx) {
-						return el('span', { key: 'l' + idx, style: { padding: '6px 10px', background: '#eef4f6', borderRadius: '4px', fontSize: '13px' } }, item.label || '(link senza testo)');
+						return el('span', {
+							key: 'l' + idx,
+							style: {
+								padding: '6px 10px', background: '#eef4f6', borderRadius: '4px',
+								fontSize: (a.link_size || 15) + 'px',
+								fontWeight: a.link_weight || 600,
+								fontStyle: a.link_italic ? 'italic' : 'normal',
+								textDecoration: a.link_decoration || 'none',
+								textTransform: a.link_upper ? 'uppercase' : 'none',
+								letterSpacing: ((a.link_letter_spacing || 0) / 100) + 'em',
+								color: a.link_color || '#0b1a26'
+							}
+						}, item.label || '(link senza testo)');
 					});
 					if (a.show_login_logout) {
 						previewItems.push(el('span', { key: 'll', style: { padding: '6px 10px', background: '#dff0d8', borderRadius: '4px', fontSize: '13px' } }, a.login_label || 'Accedi'));
