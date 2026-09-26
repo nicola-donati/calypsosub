@@ -24,7 +24,6 @@ $ll_hide             = [
 	'tablet'  => ! empty( $a['login_logout_hide_tablet'] ),
 	'mobile'  => ! empty( $a['login_logout_hide_mobile'] ),
 ];
-$ll_overlay = ! empty( $a['login_logout_overlay'] );
 
 $hamburger_breakpoint = in_array( $a['hamburger_breakpoint'] ?? 'mobile', [ 'none', 'tablet', 'mobile' ], true )
 	? $a['hamburger_breakpoint']
@@ -81,31 +80,8 @@ $vis_class = static function ( array $hide ): string {
 };
 
 /* ── Markup degli elementi (link + accedi/esci + pulsanti), riusato sia
- *    nella barra orizzontale sia nel pannello laterale.
- *
- *    Un elemento con "overlay" attivo, quando renderizzato nella barra,
- *    non occupa spazio (wrapper a larghezza/altezza zero) e viene
- *    posizionato in position:absolute con z-index più alto degli altri:
- *    l'effetto è che si sovrappone all'elemento successivo invece di
- *    spingerlo di lato. Nel pannello laterale (elenco verticale) l'overlay
- *    non ha senso — lì l'elemento si comporta come tutti gli altri. ── */
-$render_items = function ( string $context ) use ( $nav_links, $show_login_logout, $ll_url, $ll_label, $ll_hide, $ll_overlay, $buttons, $vis_class ) {
-	$is_bar = $context === 'bar';
-
-	$emit = function ( string $classes, string $href, string $target_attr, string $label, array $hide, bool $overlay ) use ( $vis_class, $is_bar ) {
-		$hide_class = $vis_class( $hide );
-		if ( $overlay && $is_bar ) {
-			echo '<span class="cso-nav__item cso-nav__overlay-wrap ' . esc_attr( $hide_class ) . '">'
-				. '<a class="' . esc_attr( $classes ) . ' cso-nav__overlay-inner" href="' . esc_url( $href ) . '"' . $target_attr . '>'
-				. esc_html( $label )
-				. '</a></span>';
-		} else {
-			echo '<a class="cso-nav__item ' . esc_attr( $classes ) . ' ' . esc_attr( $hide_class ) . '" href="' . esc_url( $href ) . '"' . $target_attr . '>'
-				. esc_html( $label )
-				. '</a>';
-		}
-	};
-
+ *    nella barra orizzontale sia nel pannello laterale. ── */
+$render_items = function () use ( $nav_links, $show_login_logout, $ll_url, $ll_label, $ll_hide, $buttons, $vis_class ) {
 	foreach ( $nav_links as $link ) {
 		$hide = [
 			'desktop' => ! empty( $link['hide_desktop'] ),
@@ -113,11 +89,22 @@ $render_items = function ( string $context ) use ( $nav_links, $show_login_logou
 			'mobile'  => ! empty( $link['hide_mobile'] ),
 		];
 		$target = ! empty( $link['new_tab'] ) ? ' target="_blank" rel="noopener noreferrer"' : '';
-		$emit( 'cso-nav__link', (string) ( $link['url'] ?? '' ), $target, (string) ( $link['label'] ?? '' ), $hide, ! empty( $link['overlay'] ) );
+		printf(
+			'<a class="cso-nav__item cso-nav__link %1$s" href="%2$s"%3$s>%4$s</a>',
+			esc_attr( $vis_class( $hide ) ),
+			esc_url( $link['url'] ?? '' ),
+			$target,
+			esc_html( $link['label'] ?? '' )
+		);
 	}
 
 	if ( $show_login_logout ) {
-		$emit( 'cso-nav__login', $ll_url, '', $ll_label, $ll_hide, $ll_overlay );
+		printf(
+			'<a class="cso-nav__item cso-nav__login %1$s" href="%2$s">%3$s</a>',
+			esc_attr( $vis_class( $ll_hide ) ),
+			esc_url( $ll_url ),
+			esc_html( $ll_label )
+		);
 	}
 
 	foreach ( $buttons as $btn ) {
@@ -128,15 +115,20 @@ $render_items = function ( string $context ) use ( $nav_links, $show_login_logou
 		];
 		$style  = ( $btn['style'] ?? 'primary' ) === 'secondary' ? 'secondary' : 'primary';
 		$target = ! empty( $btn['new_tab'] ) ? ' target="_blank" rel="noopener noreferrer"' : '';
-		$emit( 'cso-nav__btn cso-nav__btn--' . $style, (string) ( $btn['url'] ?? '' ), $target, (string) ( $btn['label'] ?? '' ), $hide, ! empty( $btn['overlay'] ) );
+		printf(
+			'<a class="cso-nav__item cso-nav__btn cso-nav__btn--%1$s %2$s" href="%3$s"%4$s>%5$s</a>',
+			esc_attr( $style ),
+			esc_attr( $vis_class( $hide ) ),
+			esc_url( $btn['url'] ?? '' ),
+			$target,
+			esc_html( $btn['label'] ?? '' )
+		);
 	}
 };
 ?>
 <style>
 #<?php echo $uid; ?>{position:relative}
 #<?php echo $uid; ?> .cso-nav__bar{display:flex;align-items:center;flex-wrap:wrap;gap:<?php echo $gap; ?>px<?php echo $min_height > 0 ? ';min-height:' . $min_height . 'px' : ''; ?>}
-#<?php echo $uid; ?> .cso-nav__overlay-wrap{position:relative;width:0;height:0;min-width:0;overflow:visible}
-#<?php echo $uid; ?> .cso-nav__overlay-inner{position:absolute;top:50%;left:0;transform:translateY(-50%);z-index:5;white-space:nowrap}
 #<?php echo $uid; ?> .cso-nav__link{
 	color:<?php echo esc_attr( $link_color ); ?>;
 	font-size:<?php echo $link_size; ?>px;
@@ -211,7 +203,7 @@ if ( $hamburger_breakpoint !== 'none' ) {
 <div class="cso-nav" id="<?php echo esc_attr( $uid ); ?>">
 
 	<nav class="cso-nav__bar" aria-label="<?php esc_attr_e( 'Menu principale', 'calypsosub' ); ?>">
-		<?php $render_items( 'bar' ); ?>
+		<?php $render_items(); ?>
 	</nav>
 
 	<?php if ( $hamburger_breakpoint !== 'none' ) : ?>
@@ -226,7 +218,7 @@ if ( $hamburger_breakpoint !== 'none' ) {
 	<aside class="cso-nav__sidebar" id="<?php echo esc_attr( $uid ); ?>-sidebar" aria-hidden="true">
 		<button type="button" class="cso-nav__sidebar-close" id="<?php echo esc_attr( $uid ); ?>-close"
 		        aria-label="<?php esc_attr_e( 'Chiudi menu', 'calypsosub' ); ?>">&times;</button>
-		<?php $render_items( 'sidebar' ); ?>
+		<?php $render_items(); ?>
 	</aside>
 
 	<script>
