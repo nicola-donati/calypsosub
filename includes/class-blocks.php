@@ -693,6 +693,7 @@ class Calypsosub_Blocks {
 							'hide_desktop' => [ 'type' => 'boolean' ],
 							'hide_tablet'  => [ 'type' => 'boolean' ],
 							'hide_mobile'  => [ 'type' => 'boolean' ],
+							'overlay'      => [ 'type' => 'boolean' ],
 						],
 					],
 				],
@@ -703,6 +704,7 @@ class Calypsosub_Blocks {
 				'login_logout_hide_desktop'=> [ 'type' => 'boolean', 'default' => false ],
 				'login_logout_hide_tablet' => [ 'type' => 'boolean', 'default' => false ],
 				'login_logout_hide_mobile' => [ 'type' => 'boolean', 'default' => false ],
+				'login_logout_overlay'     => [ 'type' => 'boolean', 'default' => false ],
 				/* ── Pulsanti personalizzati ── */
 				'buttons' => [
 					'type'    => 'array',
@@ -717,6 +719,7 @@ class Calypsosub_Blocks {
 							'hide_desktop' => [ 'type' => 'boolean' ],
 							'hide_tablet'  => [ 'type' => 'boolean' ],
 							'hide_mobile'  => [ 'type' => 'boolean' ],
+							'overlay'      => [ 'type' => 'boolean' ],
 						],
 					],
 				],
@@ -4158,7 +4161,7 @@ class Calypsosub_Blocks {
 							setItems(copy);
 						}
 						function addItem() {
-							setItems(items.concat([{ label: '', url: '', new_tab: false, style: 'primary', hide_desktop: false, hide_tablet: false, hide_mobile: false }]));
+							setItems(items.concat([{ label: '', url: '', new_tab: false, style: 'primary', hide_desktop: false, hide_tablet: false, hide_mobile: false, overlay: false }]));
 						}
 						var rows = items.map(function (item, idx) {
 							return el('div', { key: idx, style: { border: '1px solid #e0e0e0', borderRadius: '4px', padding: '10px', marginBottom: '10px' } },
@@ -4181,6 +4184,12 @@ class Calypsosub_Blocks {
 								extraFields ? extraFields(item, function (patch) { updateItem(idx, patch); }) : null,
 								el('p', { style: { fontSize: '11px', fontWeight: 500, margin: '10px 0 0', color: '#1e1e1e' } }, 'Visibilità'),
 								visRow(item, function (patch) { updateItem(idx, patch); }),
+								el(ToggleControl, {
+									label: 'In overlay (z-index maggiore, non occupa spazio)',
+									help: 'Solo nella barra: l\'elemento non spinge gli altri di lato e si sovrappone a quello successivo.',
+									checked: !!item.overlay,
+									onChange: function (v) { updateItem(idx, { overlay: v }); }
+								}),
 								el(Button, { onClick: function () { removeItem(idx); }, isDestructive: true, variant: 'link', style: { marginTop: '6px' } }, 'Rimuovi')
 							);
 						});
@@ -4229,7 +4238,13 @@ class Calypsosub_Blocks {
 									el(ToggleControl, { label: 'Nascondi tablet',  checked: !!a.login_logout_hide_tablet,  onChange: function (v) { set({ login_logout_hide_tablet: v }); } }),
 									el(ToggleControl, { label: 'Nascondi mobile', checked: !!a.login_logout_hide_mobile, onChange: function (v) { set({ login_logout_hide_mobile: v }); } })
 								)
-							) : null
+							) : null,
+							a.show_login_logout ? el(ToggleControl, {
+								label: 'In overlay (z-index maggiore, non occupa spazio)',
+								help: 'Solo nella barra: l\'elemento non spinge gli altri di lato e si sovrappone a quello successivo.',
+								checked: !!a.login_logout_overlay,
+								onChange: function (v) { set({ login_logout_overlay: v }); }
+							}) : null
 						),
 
 						repeaterPanel('Pulsanti personalizzati', 'buttons', buttonExtraFields),
