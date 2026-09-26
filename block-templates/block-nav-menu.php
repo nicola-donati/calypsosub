@@ -32,6 +32,7 @@ $sidebar_side = ( $a['sidebar_side'] ?? 'right' ) === 'left' ? 'left' : 'right';
 
 $gap               = (int)    ( $a['gap']         ?? 24 );
 $min_height        = (int)    ( $a['min_height']  ?? 0 );
+$block_overlay     = ! empty( $a['block_overlay'] );
 $link_color        = (string) ( $a['link_color']       ?: '#0b1a26' );
 $link_hover_color  = (string) ( $a['link_hover_color'] ?: '#1B77A7' );
 $link_size         = (int)    ( $a['link_size']   ?? 15 );
@@ -128,6 +129,10 @@ $render_items = function () use ( $nav_links, $show_login_logout, $ll_url, $ll_l
 ?>
 <style>
 #<?php echo $uid; ?>{position:relative}
+<?php if ( $block_overlay ) : ?>
+#<?php echo $uid; ?>-shell{position:relative;height:0;overflow:visible}
+#<?php echo $uid; ?>{position:absolute;top:0;left:0;right:0;z-index:20}
+<?php endif; ?>
 #<?php echo $uid; ?> .cso-nav__bar{display:flex;align-items:center;flex-wrap:wrap;gap:<?php echo $gap; ?>px<?php echo $min_height > 0 ? ';min-height:' . $min_height . 'px' : ''; ?>}
 #<?php echo $uid; ?> .cso-nav__link{
 	color:<?php echo esc_attr( $link_color ); ?>;
@@ -200,6 +205,9 @@ if ( $hamburger_breakpoint !== 'none' ) {
 ?>
 </style>
 
+<?php if ( $block_overlay ) : ?>
+<div id="<?php echo esc_attr( $uid ); ?>-shell">
+<?php endif; ?>
 <div class="cso-nav" id="<?php echo esc_attr( $uid ); ?>">
 
 	<nav class="cso-nav__bar" aria-label="<?php esc_attr_e( 'Menu principale', 'calypsosub' ); ?>">
@@ -255,3 +263,6 @@ if ( $hamburger_breakpoint !== 'none' ) {
 	<?php endif; ?>
 
 </div>
+<?php if ( $block_overlay ) : ?>
+</div>
+<?php endif; ?>

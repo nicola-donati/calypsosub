@@ -724,8 +724,9 @@ class Calypsosub_Blocks {
 				'hamburger_breakpoint' => [ 'type' => 'string', 'default' => 'mobile' ],
 				'sidebar_side'         => [ 'type' => 'string', 'default' => 'right' ],
 				/* ── Layout ── */
-				'gap'        => [ 'type' => 'integer', 'default' => 24 ],
-				'min_height' => [ 'type' => 'integer', 'default' => 0 ],
+				'gap'           => [ 'type' => 'integer', 'default' => 24 ],
+				'min_height'    => [ 'type' => 'integer', 'default' => 0 ],
+				'block_overlay' => [ 'type' => 'boolean', 'default' => false ],
 				/* ── Aspetto link ── */
 				'link_color'          => [ 'type' => 'string',  'default' => '#0b1a26' ],
 				'link_hover_color'    => [ 'type' => 'string',  'default' => '#1B77A7' ],
@@ -4272,6 +4273,12 @@ class Calypsosub_Blocks {
 								min: 0, max: 200, step: 4,
 								onChange: function (v) { set({ min_height: v === undefined ? 0 : v }); }
 							}),
+							el(ToggleControl, {
+								label: 'Blocco in overlay (non occupa altezza in pagina)',
+								help: 'Il blocco esce dal flusso della pagina e galleggia sopra al blocco/sezione successiva — utile per un header trasparente sopra un\'immagine hero.',
+								checked: !!a.block_overlay,
+								onChange: function (v) { set({ block_overlay: v }); }
+							}),
 							colorRow('Pulsante primario — sfondo', 'btn_primary_bg'),
 							colorRow('Pulsante primario — testo', 'btn_primary_color'),
 							colorRow('Pulsante secondario — sfondo', 'btn_secondary_bg'),
@@ -4365,7 +4372,8 @@ class Calypsosub_Blocks {
 							previewItems.concat(previewButtons)
 						),
 						el('div', { style: { fontSize: '10px', opacity: .5, marginTop: '8px', fontFamily: 'monospace' } },
-							'calypso/nav-menu · hamburger ' + hbLabel + ' · pannello a ' + (a.sidebar_side === 'left' ? 'sinistra' : 'destra')
+							'calypso/nav-menu · hamburger ' + hbLabel + ' · pannello a ' + (a.sidebar_side === 'left' ? 'sinistra' : 'destra') +
+							(a.block_overlay ? ' · ⚠ blocco in overlay: in pagina galleggerà sopra il blocco successivo' : '')
 						)
 					);
 
