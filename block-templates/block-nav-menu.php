@@ -50,7 +50,11 @@ $login_logout_group = (string) ( $a['login_logout_group'] ?? '1' );
 $hamburger_breakpoint = in_array( $a['hamburger_breakpoint'] ?? 'mobile', [ 'none', 'tablet', 'mobile' ], true )
 	? $a['hamburger_breakpoint']
 	: 'mobile';
-$sidebar_side = ( $a['sidebar_side'] ?? 'right' ) === 'left' ? 'left' : 'right';
+$sidebar_side      = ( $a['sidebar_side'] ?? 'right' ) === 'left' ? 'left' : 'right';
+$sidebar_direction = ( $a['sidebar_direction'] ?? 'column' ) === 'row' ? 'row' : 'column';
+$sidebar_align     = in_array( $a['sidebar_align'] ?? 'flex-start', [ 'flex-start', 'center', 'flex-end' ], true )
+	? $a['sidebar_align']
+	: 'flex-start';
 
 $gap               = (int)    ( $a['gap']         ?? 24 );
 $min_height        = (int)    ( $a['min_height']  ?? 0 );
@@ -216,12 +220,14 @@ foreach ( $items as $it ) {
 }
 ?>
 <style>
-#<?php echo $uid; ?>{position:relative;padding:<?php echo $padding_y; ?>px <?php echo $padding_x; ?>px;margin:<?php echo $margin_top; ?>px <?php echo $margin_right; ?>px <?php echo $margin_bottom; ?>px <?php echo $margin_left; ?>px}
+#<?php echo $uid; ?>{position:relative;display:flex;align-items:center;padding:<?php echo $padding_y; ?>px <?php echo $padding_x; ?>px;margin:<?php echo $margin_top; ?>px <?php echo $margin_right; ?>px <?php echo $margin_bottom; ?>px <?php echo $margin_left; ?>px}
 <?php if ( $block_overlay ) : ?>
 #<?php echo $uid; ?>-shell{position:relative;height:0;overflow:visible}
 #<?php echo $uid; ?>{position:absolute;top:0;left:0;right:0;z-index:20}
 <?php endif; ?>
-#<?php echo $uid; ?> .cso-nav__bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:<?php echo $gap; ?>px<?php echo $min_height > 0 ? ';min-height:' . $min_height . 'px' : ''; ?>}
+#<?php echo $uid; ?> .cso-nav__bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:<?php echo $gap; ?>px;flex:1 1 auto;min-width:0<?php echo $min_height > 0 ? ';min-height:' . $min_height . 'px' : ''; ?>}
+<?php /* L'hamburger va sullo stesso lato verso cui si apre il pannello laterale */ ?>
+#<?php echo $uid; ?> .cso-nav__hamburger{<?php echo $sidebar_side === 'left' ? 'order:-1;margin-right:auto' : 'margin-left:auto'; ?>}
 <?php foreach ( $groups_cfg as $n => $g ) : ?>
 #<?php echo $uid; ?> .cso-nav__group--<?php echo $n; ?>{
 	display:flex;
@@ -271,7 +277,7 @@ foreach ( $items as $it ) {
 	position:fixed;top:0;<?php echo esc_attr( $sidebar_side ); ?>:0;height:100%;width:min(86vw,340px);
 	background:<?php echo esc_attr( $sidebar_bg_color ); ?>;color:<?php echo esc_attr( $sidebar_text_color ); ?>;
 	box-shadow:0 0 40px rgba(0,0,0,.25);z-index:9999;overflow-y:auto;
-	padding:24px;display:flex;flex-direction:column;gap:18px;align-items:flex-start;
+	padding:24px;display:flex;flex-direction:<?php echo esc_attr( $sidebar_direction ); ?>;flex-wrap:wrap;gap:18px;align-items:<?php echo esc_attr( $sidebar_align ); ?>;
 	transform:translateX(<?php echo $sidebar_side === 'left' ? '-105%' : '105%'; ?>);transition:transform .25s ease;
 }
 #<?php echo $uid; ?> .cso-nav__sidebar.is-open{transform:translateX(0)}

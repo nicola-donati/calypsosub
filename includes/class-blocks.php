@@ -735,6 +735,8 @@ class Calypsosub_Blocks {
 				/* ── Comportamento responsive ── */
 				'hamburger_breakpoint' => [ 'type' => 'string', 'default' => 'mobile' ],
 				'sidebar_side'         => [ 'type' => 'string', 'default' => 'right' ],
+				'sidebar_direction'    => [ 'type' => 'string', 'default' => 'column' ],
+				'sidebar_align'        => [ 'type' => 'string', 'default' => 'flex-start' ],
 				/* ── Layout ── */
 				'gap'           => [ 'type' => 'integer', 'default' => 24 ],
 				'min_height'    => [ 'type' => 'integer', 'default' => 0 ],
@@ -4450,6 +4452,25 @@ class Calypsosub_Blocks {
 									{ value: 'left', label: 'Sinistra' }
 								],
 								onChange: function (v) { set({ sidebar_side: v }); }
+							}),
+							el(SelectControl, {
+								label: 'Disposizione elementi nel pannello',
+								value: a.sidebar_direction || 'column',
+								options: [
+									{ value: 'column', label: 'In colonna (verticale)' },
+									{ value: 'row', label: 'In riga (orizzontale)' }
+								],
+								onChange: function (v) { set({ sidebar_direction: v }); }
+							}),
+							el(SelectControl, {
+								label: 'Allineamento elementi nel pannello',
+								value: a.sidebar_align || 'flex-start',
+								options: [
+									{ value: 'flex-start', label: 'Inizio' },
+									{ value: 'center', label: 'Centro' },
+									{ value: 'flex-end', label: 'Fine' }
+								],
+								onChange: function (v) { set({ sidebar_align: v }); }
 							}),
 							colorRow('Colore icona hamburger', 'hamburger_color'),
 							colorRow('Sfondo pannello', 'sidebar_bg_color'),
