@@ -217,8 +217,12 @@ $emit_item = function ( array $item ) use ( $vis_class, $logo_src, $logo_alt, $l
 			$btn    = $item['data'];
 			$style  = ( $btn['style'] ?? 'primary' ) === 'secondary' ? 'secondary' : 'primary';
 			$target = ! empty( $btn['new_tab'] ) ? ' target="_blank" rel="noopener noreferrer"' : '';
+			$arrow  = ! empty( $btn['show_arrow'] )
+				? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>'
+				: '';
 			echo '<a class="cso-nav__item cso-nav__btn cso-nav__btn--' . esc_attr( $style ) . ' ' . esc_attr( $hide_class ) . '" href="' . esc_url( (string) ( $btn['url'] ?? '' ) ) . '"' . $target . '>'
 				. esc_html( (string) ( $btn['label'] ?? '' ) )
+				. $arrow
 				. '</a>';
 			break;
 	}
@@ -266,7 +270,7 @@ foreach ( $items as $it ) {
 #<?php echo $uid; ?> .cso-nav__link:hover{color:<?php echo esc_attr( $link_hover_color ); ?>}
 #<?php echo $uid; ?> .cso-nav__login{color:<?php echo esc_attr( $link_color ); ?>;font-size:<?php echo $link_size; ?>px;font-weight:<?php echo $link_weight; ?>;text-decoration:none;border:1px solid currentColor;border-radius:999px;padding:6px 16px;transition:color .15s,border-color .15s}
 #<?php echo $uid; ?> .cso-nav__login:hover{color:<?php echo esc_attr( $link_hover_color ); ?>}
-#<?php echo $uid; ?> .cso-nav__btn{display:inline-flex;align-items:center;font-size:<?php echo $link_size; ?>px;font-weight:700;text-decoration:none;border-radius:999px;padding:8px 20px;transition:filter .15s}
+#<?php echo $uid; ?> .cso-nav__btn{display:inline-flex;align-items:center;gap:8px;font-size:<?php echo $link_size; ?>px;font-weight:700;text-decoration:none;border-radius:999px;padding:8px 20px;transition:filter .15s}
 #<?php echo $uid; ?> .cso-nav__btn:hover{filter:brightness(.92)}
 #<?php echo $uid; ?> .cso-nav__btn--primary{background:<?php echo esc_attr( $btn_primary_bg ); ?>;color:<?php echo esc_attr( $btn_primary_color ); ?>}
 #<?php echo $uid; ?> .cso-nav__btn--secondary{background:<?php echo esc_attr( $btn_secondary_bg ); ?>;color:<?php echo esc_attr( $btn_secondary_color ); ?>}

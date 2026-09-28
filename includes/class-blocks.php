@@ -725,6 +725,7 @@ class Calypsosub_Blocks {
 							'url'          => [ 'type' => 'string' ],
 							'new_tab'      => [ 'type' => 'boolean' ],
 							'style'        => [ 'type' => 'string' ],
+							'show_arrow'   => [ 'type' => 'boolean' ],
 							'hide_desktop' => [ 'type' => 'boolean' ],
 							'hide_tablet'  => [ 'type' => 'boolean' ],
 							'hide_mobile'  => [ 'type' => 'boolean' ],
@@ -4341,15 +4342,22 @@ class Calypsosub_Blocks {
 					}
 
 					function buttonExtraFields(item, onUpdate) {
-						return el(SelectControl, {
-							label: 'Stile',
-							value: item.style || 'primary',
-							options: [
-								{ value: 'primary', label: 'Primario' },
-								{ value: 'secondary', label: 'Secondario' }
-							],
-							onChange: function (v) { onUpdate({ style: v }); }
-						});
+						return el(Fragment, {},
+							el(SelectControl, {
+								label: 'Stile',
+								value: item.style || 'primary',
+								options: [
+									{ value: 'primary', label: 'Primario' },
+									{ value: 'secondary', label: 'Secondario' }
+								],
+								onChange: function (v) { onUpdate({ style: v }); }
+							}),
+							el(ToggleControl, {
+								label: 'Mostra freccia',
+								checked: !!item.show_arrow,
+								onChange: function (v) { onUpdate({ show_arrow: v }); }
+							})
+						);
 					}
 
 					var logoMediaBtn = (MediaUploadCheck && MediaUpload)
@@ -4637,7 +4645,7 @@ class Calypsosub_Blocks {
 								background: item.style === 'secondary' ? (a.btn_secondary_bg || '#061826') : (a.btn_primary_bg || '#ff6b4a'),
 								color: item.style === 'secondary' ? (a.btn_secondary_color || '#fff') : (a.btn_primary_color || '#fff')
 							}
-						}, item.label || '(pulsante)');
+						}, (item.label || '(pulsante)') + (item.show_arrow ? ' →' : ''));
 					});
 
 					var hbLabel = { none: 'mai', tablet: 'sotto 1024px', mobile: 'sotto 760px' }[a.hamburger_breakpoint || 'mobile'];
