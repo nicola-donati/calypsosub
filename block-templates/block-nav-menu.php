@@ -52,9 +52,20 @@ $hamburger_breakpoint = in_array( $a['hamburger_breakpoint'] ?? 'mobile', [ 'non
 	: 'mobile';
 $sidebar_side      = ( $a['sidebar_side'] ?? 'right' ) === 'left' ? 'left' : 'right';
 $sidebar_direction = ( $a['sidebar_direction'] ?? 'column' ) === 'row' ? 'row' : 'column';
-$sidebar_align     = in_array( $a['sidebar_align'] ?? 'flex-start', [ 'flex-start', 'center', 'flex-end' ], true )
-	? $a['sidebar_align']
-	: 'flex-start';
+$valid_h = [ 'flex-start', 'center', 'flex-end' ];
+$valid_v = [ 'flex-start', 'center', 'flex-end', 'space-between' ];
+$sidebar_align_h = in_array( $a['sidebar_align_h'] ?? 'flex-start', $valid_h, true ) ? $a['sidebar_align_h'] : 'flex-start';
+$sidebar_align_v = in_array( $a['sidebar_align_v'] ?? 'flex-start', $valid_v, true ) ? $a['sidebar_align_v'] : 'flex-start';
+/* "Orizzontale"/"Verticale" restano tali per chi configura, indipendentemente
+ * dalla disposizione scelta: qui si traducono nell'asse CSS giusto
+ * (trasversale/principale) a seconda che la disposizione sia riga o colonna. */
+if ( $sidebar_direction === 'column' ) {
+	$sidebar_cross_axis = $sidebar_align_h; // align-items
+	$sidebar_main_axis  = $sidebar_align_v; // justify-content
+} else {
+	$sidebar_cross_axis = $sidebar_align_v; // align-items
+	$sidebar_main_axis  = $sidebar_align_h; // justify-content
+}
 
 $gap               = (int)    ( $a['gap']         ?? 24 );
 $min_height        = (int)    ( $a['min_height']  ?? 0 );
@@ -277,7 +288,7 @@ foreach ( $items as $it ) {
 	position:fixed;top:0;<?php echo esc_attr( $sidebar_side ); ?>:0;height:100%;width:min(86vw,340px);
 	background:<?php echo esc_attr( $sidebar_bg_color ); ?>;color:<?php echo esc_attr( $sidebar_text_color ); ?>;
 	box-shadow:0 0 40px rgba(0,0,0,.25);z-index:9999;overflow-y:auto;
-	padding:24px;display:flex;flex-direction:<?php echo esc_attr( $sidebar_direction ); ?>;flex-wrap:wrap;gap:18px;align-items:<?php echo esc_attr( $sidebar_align ); ?>;
+	padding:24px;display:flex;flex-direction:<?php echo esc_attr( $sidebar_direction ); ?>;flex-wrap:wrap;gap:18px;align-items:<?php echo esc_attr( $sidebar_cross_axis ); ?>;justify-content:<?php echo esc_attr( $sidebar_main_axis ); ?>;
 	transform:translateX(<?php echo $sidebar_side === 'left' ? '-105%' : '105%'; ?>);transition:transform .25s ease;
 }
 #<?php echo $uid; ?> .cso-nav__sidebar.is-open{transform:translateX(0)}

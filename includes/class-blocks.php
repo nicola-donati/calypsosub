@@ -736,7 +736,8 @@ class Calypsosub_Blocks {
 				'hamburger_breakpoint' => [ 'type' => 'string', 'default' => 'mobile' ],
 				'sidebar_side'         => [ 'type' => 'string', 'default' => 'right' ],
 				'sidebar_direction'    => [ 'type' => 'string', 'default' => 'column' ],
-				'sidebar_align'        => [ 'type' => 'string', 'default' => 'flex-start' ],
+				'sidebar_align_h'      => [ 'type' => 'string', 'default' => 'flex-start' ],
+				'sidebar_align_v'      => [ 'type' => 'string', 'default' => 'flex-start' ],
 				/* ── Layout ── */
 				'gap'           => [ 'type' => 'integer', 'default' => 24 ],
 				'min_height'    => [ 'type' => 'integer', 'default' => 0 ],
@@ -4463,14 +4464,25 @@ class Calypsosub_Blocks {
 								onChange: function (v) { set({ sidebar_direction: v }); }
 							}),
 							el(SelectControl, {
-								label: 'Allineamento elementi nel pannello',
-								value: a.sidebar_align || 'flex-start',
+								label: 'Allineamento orizzontale elementi nel pannello',
+								value: a.sidebar_align_h || 'flex-start',
 								options: [
-									{ value: 'flex-start', label: 'Inizio' },
+									{ value: 'flex-start', label: 'Sinistra' },
 									{ value: 'center', label: 'Centro' },
-									{ value: 'flex-end', label: 'Fine' }
+									{ value: 'flex-end', label: 'Destra' }
 								],
-								onChange: function (v) { set({ sidebar_align: v }); }
+								onChange: function (v) { set({ sidebar_align_h: v }); }
+							}),
+							el(SelectControl, {
+								label: 'Allineamento verticale elementi nel pannello',
+								value: a.sidebar_align_v || 'flex-start',
+								options: [
+									{ value: 'flex-start', label: 'Alto' },
+									{ value: 'center', label: 'Centro' },
+									{ value: 'flex-end', label: 'Basso' },
+									{ value: 'space-between', label: 'Distribuiti (space-between)' }
+								],
+								onChange: function (v) { set({ sidebar_align_v: v }); }
 							}),
 							colorRow('Colore icona hamburger', 'hamburger_color'),
 							colorRow('Sfondo pannello', 'sidebar_bg_color'),
