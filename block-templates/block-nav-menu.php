@@ -2,16 +2,37 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /*
- * Block calypso/nav-menu — barra di navigazione con link, blocco Accedi/Esci
- * e pulsanti personalizzati. Ogni elemento è nascondibile per viewport
- * (desktop/tablet/mobile, stessi breakpoint usati in tutto il plugin:
- * >1024px desktop, 761–1024px tablet, ≤760px mobile). Sotto il breakpoint
- * scelto in "hamburger_breakpoint" l'intera barra si nasconde e viene
- * sostituita da un'icona hamburger che apre un pannello laterale con gli
- * stessi elementi (rispettando comunque la loro visibilità per viewport).
+ * Block calypso/nav-menu — barra di navigazione con logo, link, blocco
+ * Accedi/Esci e pulsanti personalizzati, organizzati in 3 gruppi
+ * (sinistra/centro/destra) disposti su griglia — il gruppo centrale resta
+ * centrato indipendentemente dalla larghezza degli altri due.
+ *
+ * Ogni gruppo ha il proprio layout (riga o colonna), allineamento, gap,
+ * padding e margin — non per singolo elemento ma per l'intero gruppo.
+ * Ogni singolo elemento resta nascondibile per viewport (desktop/tablet/
+ * mobile, stessi breakpoint usati in tutto il plugin: >1024px desktop,
+ * 761–1024px tablet, ≤760px mobile) e assegnabile a uno dei 3 gruppi.
+ *
+ * Sotto il breakpoint scelto in "hamburger_breakpoint" l'intera barra si
+ * nasconde e viene sostituita da un'icona hamburger che apre un pannello
+ * laterale con tutti gli elementi in un semplice elenco verticale (i
+ * gruppi hanno senso solo nella barra orizzontale, non nel pannello).
  */
 
 $a = $attributes ?? [];
+
+/* ── Logo ── */
+$logo_id           = (int) ( $a['logo_id'] ?? 0 );
+$logo_alt          = (string) ( $a['logo_alt'] ?? '' );
+$logo_height       = max( 12, (int) ( $a['logo_height'] ?? 32 ) );
+$logo_link_home    = ! isset( $a['logo_link_home'] ) || ! empty( $a['logo_link_home'] );
+$logo_group        = (string) ( $a['logo_group'] ?? '1' );
+$logo_hide         = [
+	'desktop' => ! empty( $a['logo_hide_desktop'] ),
+	'tablet'  => ! empty( $a['logo_hide_tablet'] ),
+	'mobile'  => ! empty( $a['logo_hide_mobile'] ),
+];
+$logo_src = $logo_id ? wp_get_attachment_image_url( $logo_id, 'medium' ) : '';
 
 $nav_links = array_values( array_filter( (array) ( $a['nav_links'] ?? [] ), static fn( $it ) => is_array( $it ) && ( $it['label'] ?? '' ) !== '' ) );
 $buttons   = array_values( array_filter( (array) ( $a['buttons']   ?? [] ), static fn( $it ) => is_array( $it ) && ( $it['label'] ?? '' ) !== '' ) );
@@ -24,6 +45,7 @@ $ll_hide             = [
 	'tablet'  => ! empty( $a['login_logout_hide_tablet'] ),
 	'mobile'  => ! empty( $a['login_logout_hide_mobile'] ),
 ];
+$login_logout_group = (string) ( $a['login_logout_group'] ?? '1' );
 
 $hamburger_breakpoint = in_array( $a['hamburger_breakpoint'] ?? 'mobile', [ 'none', 'tablet', 'mobile' ], true )
 	? $a['hamburger_breakpoint']
@@ -55,7 +77,28 @@ $sidebar_bg_color      = (string) ( $a['sidebar_bg_color']      ?: '#ffffff' );
 $sidebar_text_color    = (string) ( $a['sidebar_text_color']    ?: '#0b1a26' );
 $sidebar_overlay_color = (string) ( $a['sidebar_overlay_color'] ?: 'rgba(6,24,38,.6)' );
 
-if ( empty( $nav_links ) && ! $show_login_logout && empty( $buttons ) ) {
+/* ── Gruppi: layout, allineamento, spaziatura interna/esterna ── */
+$valid_dir   = [ 'row', 'column' ];
+$valid_align = [ 'flex-start', 'center', 'flex-end', 'space-between' ];
+$groups_cfg  = [];
+foreach ( [ '1', '2', '3' ] as $n ) {
+	$def_align = [ '1' => 'flex-start', '2' => 'center', '3' => 'flex-end' ][ $n ];
+	$groups_cfg[ $n ] = [
+		'direction' => in_array( $a[ "group{$n}_direction" ] ?? 'row', $valid_dir, true ) ? $a[ "group{$n}_direction" ] : 'row',
+		'align'     => in_array( $a[ "group{$n}_align" ] ?? $def_align, $valid_align, true ) ? $a[ "group{$n}_align" ] : $def_align,
+		'gap'       => (int) ( $a[ "group{$n}_gap" ] ?? 16 ),
+		'padding_y' => (int) ( $a[ "group{$n}_padding_y" ] ?? 0 ),
+		'padding_x' => (int) ( $a[ "group{$n}_padding_x" ] ?? 0 ),
+		'margin'    => [
+			(int) ( $a[ "group{$n}_margin_top" ]    ?? 0 ),
+			(int) ( $a[ "group{$n}_margin_right" ]  ?? 0 ),
+			(int) ( $a[ "group{$n}_margin_bottom" ] ?? 0 ),
+			(int) ( $a[ "group{$n}_margin_left" ]   ?? 0 ),
+		],
+	];
+}
+
+if ( ! $logo_src && empty( $nav_links ) && ! $show_login_logout && empty( $buttons ) ) {
 	return;
 }
 
@@ -71,6 +114,47 @@ if ( is_user_logged_in() ) {
 	$ll_label = $login_label;
 }
 
+/* ── Elenco elementi da renderizzare, in ordine: logo, link, accedi/esci,
+ *    pulsanti. Ogni elemento porta con sé il gruppo a cui appartiene
+ *    (usato solo nella barra orizzontale, ignorato nel pannello laterale
+ *    dove viene sempre reso come elenco verticale piatto). ── */
+$normalize_group = static function ( $g ): string {
+	return in_array( (string) $g, [ '1', '2', '3' ], true ) ? (string) $g : '1';
+};
+
+$items = [];
+
+if ( $logo_src ) {
+	$items[] = [ 'type' => 'logo', 'group' => $normalize_group( $logo_group ), 'hide' => $logo_hide ];
+}
+foreach ( $nav_links as $link ) {
+	$items[] = [
+		'type'  => 'link',
+		'group' => $normalize_group( $link['group'] ?? '1' ),
+		'hide'  => [
+			'desktop' => ! empty( $link['hide_desktop'] ),
+			'tablet'  => ! empty( $link['hide_tablet'] ),
+			'mobile'  => ! empty( $link['hide_mobile'] ),
+		],
+		'data'  => $link,
+	];
+}
+if ( $show_login_logout ) {
+	$items[] = [ 'type' => 'login', 'group' => $normalize_group( $login_logout_group ), 'hide' => $ll_hide ];
+}
+foreach ( $buttons as $btn ) {
+	$items[] = [
+		'type'  => 'button',
+		'group' => $normalize_group( $btn['group'] ?? '1' ),
+		'hide'  => [
+			'desktop' => ! empty( $btn['hide_desktop'] ),
+			'tablet'  => ! empty( $btn['hide_tablet'] ),
+			'mobile'  => ! empty( $btn['hide_mobile'] ),
+		],
+		'data'  => $btn,
+	];
+}
+
 /* ── Classi di visibilità per viewport ── */
 $vis_class = static function ( array $hide ): string {
 	$classes = [];
@@ -80,52 +164,50 @@ $vis_class = static function ( array $hide ): string {
 	return implode( ' ', $classes );
 };
 
-/* ── Markup degli elementi (link + accedi/esci + pulsanti), riusato sia
- *    nella barra orizzontale sia nel pannello laterale. ── */
-$render_items = function () use ( $nav_links, $show_login_logout, $ll_url, $ll_label, $ll_hide, $buttons, $vis_class ) {
-	foreach ( $nav_links as $link ) {
-		$hide = [
-			'desktop' => ! empty( $link['hide_desktop'] ),
-			'tablet'  => ! empty( $link['hide_tablet'] ),
-			'mobile'  => ! empty( $link['hide_mobile'] ),
-		];
-		$target = ! empty( $link['new_tab'] ) ? ' target="_blank" rel="noopener noreferrer"' : '';
-		printf(
-			'<a class="cso-nav__item cso-nav__link %1$s" href="%2$s"%3$s>%4$s</a>',
-			esc_attr( $vis_class( $hide ) ),
-			esc_url( $link['url'] ?? '' ),
-			$target,
-			esc_html( $link['label'] ?? '' )
-		);
-	}
+/* ── Rende un singolo elemento (logo/link/accedi-esci/pulsante). ── */
+$emit_item = function ( array $item ) use ( $vis_class, $logo_src, $logo_alt, $logo_height, $logo_link_home, $ll_url, $ll_label ) {
+	$hide_class = $vis_class( $item['hide'] );
 
-	if ( $show_login_logout ) {
-		printf(
-			'<a class="cso-nav__item cso-nav__login %1$s" href="%2$s">%3$s</a>',
-			esc_attr( $vis_class( $ll_hide ) ),
-			esc_url( $ll_url ),
-			esc_html( $ll_label )
-		);
-	}
+	switch ( $item['type'] ) {
+		case 'logo':
+			$img = '<img class="cso-nav__logo-img" src="' . esc_url( $logo_src ) . '" alt="' . esc_attr( $logo_alt ) . '" style="height:' . (int) $logo_height . 'px;width:auto;display:block">';
+			if ( $logo_link_home ) {
+				echo '<a class="cso-nav__item cso-nav__logo ' . esc_attr( $hide_class ) . '" href="' . esc_url( home_url( '/' ) ) . '">' . $img . '</a>';
+			} else {
+				echo '<span class="cso-nav__item cso-nav__logo ' . esc_attr( $hide_class ) . '">' . $img . '</span>';
+			}
+			break;
 
-	foreach ( $buttons as $btn ) {
-		$hide = [
-			'desktop' => ! empty( $btn['hide_desktop'] ),
-			'tablet'  => ! empty( $btn['hide_tablet'] ),
-			'mobile'  => ! empty( $btn['hide_mobile'] ),
-		];
-		$style  = ( $btn['style'] ?? 'primary' ) === 'secondary' ? 'secondary' : 'primary';
-		$target = ! empty( $btn['new_tab'] ) ? ' target="_blank" rel="noopener noreferrer"' : '';
-		printf(
-			'<a class="cso-nav__item cso-nav__btn cso-nav__btn--%1$s %2$s" href="%3$s"%4$s>%5$s</a>',
-			esc_attr( $style ),
-			esc_attr( $vis_class( $hide ) ),
-			esc_url( $btn['url'] ?? '' ),
-			$target,
-			esc_html( $btn['label'] ?? '' )
-		);
+		case 'link':
+			$link   = $item['data'];
+			$target = ! empty( $link['new_tab'] ) ? ' target="_blank" rel="noopener noreferrer"' : '';
+			echo '<a class="cso-nav__item cso-nav__link ' . esc_attr( $hide_class ) . '" href="' . esc_url( (string) ( $link['url'] ?? '' ) ) . '"' . $target . '>'
+				. esc_html( (string) ( $link['label'] ?? '' ) )
+				. '</a>';
+			break;
+
+		case 'login':
+			echo '<a class="cso-nav__item cso-nav__login ' . esc_attr( $hide_class ) . '" href="' . esc_url( $ll_url ) . '">'
+				. esc_html( $ll_label )
+				. '</a>';
+			break;
+
+		case 'button':
+			$btn    = $item['data'];
+			$style  = ( $btn['style'] ?? 'primary' ) === 'secondary' ? 'secondary' : 'primary';
+			$target = ! empty( $btn['new_tab'] ) ? ' target="_blank" rel="noopener noreferrer"' : '';
+			echo '<a class="cso-nav__item cso-nav__btn cso-nav__btn--' . esc_attr( $style ) . ' ' . esc_attr( $hide_class ) . '" href="' . esc_url( (string) ( $btn['url'] ?? '' ) ) . '"' . $target . '>'
+				. esc_html( (string) ( $btn['label'] ?? '' ) )
+				. '</a>';
+			break;
 	}
 };
+
+/* ── Suddivisione per gruppo, solo per la barra orizzontale ── */
+$buckets = [ '1' => [], '2' => [], '3' => [] ];
+foreach ( $items as $it ) {
+	$buckets[ $it['group'] ][] = $it;
+}
 ?>
 <style>
 #<?php echo $uid; ?>{position:relative}
@@ -133,7 +215,20 @@ $render_items = function () use ( $nav_links, $show_login_logout, $ll_url, $ll_l
 #<?php echo $uid; ?>-shell{position:relative;height:0;overflow:visible}
 #<?php echo $uid; ?>{position:absolute;top:0;left:0;right:0;z-index:20}
 <?php endif; ?>
-#<?php echo $uid; ?> .cso-nav__bar{display:flex;align-items:center;flex-wrap:wrap;gap:<?php echo $gap; ?>px<?php echo $min_height > 0 ? ';min-height:' . $min_height . 'px' : ''; ?>}
+#<?php echo $uid; ?> .cso-nav__bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:<?php echo $gap; ?>px<?php echo $min_height > 0 ? ';min-height:' . $min_height . 'px' : ''; ?>}
+<?php foreach ( $groups_cfg as $n => $g ) : ?>
+#<?php echo $uid; ?> .cso-nav__group--<?php echo $n; ?>{
+	display:flex;
+	flex-direction:<?php echo esc_attr( $g['direction'] ); ?>;
+	align-items:center;
+	justify-content:<?php echo esc_attr( $g['align'] ); ?>;
+	flex-wrap:wrap;
+	gap:<?php echo $g['gap']; ?>px;
+	padding:<?php echo $g['padding_y']; ?>px <?php echo $g['padding_x']; ?>px;
+	margin:<?php echo implode( 'px ', $g['margin'] ); ?>px;
+}
+<?php endforeach; ?>
+#<?php echo $uid; ?> .cso-nav__logo-img{object-fit:contain}
 #<?php echo $uid; ?> .cso-nav__link{
 	color:<?php echo esc_attr( $link_color ); ?>;
 	font-size:<?php echo $link_size; ?>px;
@@ -211,7 +306,11 @@ if ( $hamburger_breakpoint !== 'none' ) {
 <div class="cso-nav" id="<?php echo esc_attr( $uid ); ?>">
 
 	<nav class="cso-nav__bar" aria-label="<?php esc_attr_e( 'Menu principale', 'calypsosub' ); ?>">
-		<?php $render_items(); ?>
+		<?php foreach ( [ '1', '2', '3' ] as $n ) : ?>
+		<div class="cso-nav__group cso-nav__group--<?php echo $n; ?>">
+			<?php foreach ( $buckets[ $n ] as $it ) : $emit_item( $it ); endforeach; ?>
+		</div>
+		<?php endforeach; ?>
 	</nav>
 
 	<?php if ( $hamburger_breakpoint !== 'none' ) : ?>
@@ -226,7 +325,7 @@ if ( $hamburger_breakpoint !== 'none' ) {
 	<aside class="cso-nav__sidebar" id="<?php echo esc_attr( $uid ); ?>-sidebar" aria-hidden="true">
 		<button type="button" class="cso-nav__sidebar-close" id="<?php echo esc_attr( $uid ); ?>-close"
 		        aria-label="<?php esc_attr_e( 'Chiudi menu', 'calypsosub' ); ?>">&times;</button>
-		<?php $render_items(); ?>
+		<?php foreach ( $items as $it ) : $emit_item( $it ); endforeach; ?>
 	</aside>
 
 	<script>

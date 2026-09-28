@@ -680,6 +680,15 @@ class Calypsosub_Blocks {
 			'title' => 'Menu di Navigazione',
 			'icon'  => 'menu',
 			'attributes' => [
+				/* ── Logo ── */
+				'logo_id'            => [ 'type' => 'integer', 'default' => 0 ],
+				'logo_alt'           => [ 'type' => 'string',  'default' => '' ],
+				'logo_height'        => [ 'type' => 'integer', 'default' => 32 ],
+				'logo_link_home'     => [ 'type' => 'boolean', 'default' => true ],
+				'logo_group'         => [ 'type' => 'string',  'default' => '1' ],
+				'logo_hide_desktop'  => [ 'type' => 'boolean', 'default' => false ],
+				'logo_hide_tablet'   => [ 'type' => 'boolean', 'default' => false ],
+				'logo_hide_mobile'   => [ 'type' => 'boolean', 'default' => false ],
 				/* ── Link di navigazione ── */
 				'nav_links' => [
 					'type'    => 'array',
@@ -693,6 +702,7 @@ class Calypsosub_Blocks {
 							'hide_desktop' => [ 'type' => 'boolean' ],
 							'hide_tablet'  => [ 'type' => 'boolean' ],
 							'hide_mobile'  => [ 'type' => 'boolean' ],
+							'group'        => [ 'type' => 'string' ],
 						],
 					],
 				],
@@ -703,6 +713,7 @@ class Calypsosub_Blocks {
 				'login_logout_hide_desktop'=> [ 'type' => 'boolean', 'default' => false ],
 				'login_logout_hide_tablet' => [ 'type' => 'boolean', 'default' => false ],
 				'login_logout_hide_mobile' => [ 'type' => 'boolean', 'default' => false ],
+				'login_logout_group'       => [ 'type' => 'string',  'default' => '1' ],
 				/* ── Pulsanti personalizzati ── */
 				'buttons' => [
 					'type'    => 'array',
@@ -717,6 +728,7 @@ class Calypsosub_Blocks {
 							'hide_desktop' => [ 'type' => 'boolean' ],
 							'hide_tablet'  => [ 'type' => 'boolean' ],
 							'hide_mobile'  => [ 'type' => 'boolean' ],
+							'group'        => [ 'type' => 'string' ],
 						],
 					],
 				],
@@ -727,6 +739,34 @@ class Calypsosub_Blocks {
 				'gap'           => [ 'type' => 'integer', 'default' => 24 ],
 				'min_height'    => [ 'type' => 'integer', 'default' => 0 ],
 				'block_overlay' => [ 'type' => 'boolean', 'default' => false ],
+				/* ── Gruppi (colonne) ── */
+				'group1_direction'   => [ 'type' => 'string',  'default' => 'row' ],
+				'group1_align'       => [ 'type' => 'string',  'default' => 'flex-start' ],
+				'group1_gap'         => [ 'type' => 'integer', 'default' => 16 ],
+				'group1_padding_y'   => [ 'type' => 'integer', 'default' => 0 ],
+				'group1_padding_x'   => [ 'type' => 'integer', 'default' => 0 ],
+				'group1_margin_top'    => [ 'type' => 'integer', 'default' => 0 ],
+				'group1_margin_right'  => [ 'type' => 'integer', 'default' => 0 ],
+				'group1_margin_bottom' => [ 'type' => 'integer', 'default' => 0 ],
+				'group1_margin_left'   => [ 'type' => 'integer', 'default' => 0 ],
+				'group2_direction'   => [ 'type' => 'string',  'default' => 'row' ],
+				'group2_align'       => [ 'type' => 'string',  'default' => 'center' ],
+				'group2_gap'         => [ 'type' => 'integer', 'default' => 16 ],
+				'group2_padding_y'   => [ 'type' => 'integer', 'default' => 0 ],
+				'group2_padding_x'   => [ 'type' => 'integer', 'default' => 0 ],
+				'group2_margin_top'    => [ 'type' => 'integer', 'default' => 0 ],
+				'group2_margin_right'  => [ 'type' => 'integer', 'default' => 0 ],
+				'group2_margin_bottom' => [ 'type' => 'integer', 'default' => 0 ],
+				'group2_margin_left'   => [ 'type' => 'integer', 'default' => 0 ],
+				'group3_direction'   => [ 'type' => 'string',  'default' => 'row' ],
+				'group3_align'       => [ 'type' => 'string',  'default' => 'flex-end' ],
+				'group3_gap'         => [ 'type' => 'integer', 'default' => 16 ],
+				'group3_padding_y'   => [ 'type' => 'integer', 'default' => 0 ],
+				'group3_padding_x'   => [ 'type' => 'integer', 'default' => 0 ],
+				'group3_margin_top'    => [ 'type' => 'integer', 'default' => 0 ],
+				'group3_margin_right'  => [ 'type' => 'integer', 'default' => 0 ],
+				'group3_margin_bottom' => [ 'type' => 'integer', 'default' => 0 ],
+				'group3_margin_left'   => [ 'type' => 'integer', 'default' => 0 ],
 				/* ── Aspetto link ── */
 				'link_color'          => [ 'type' => 'string',  'default' => '#0b1a26' ],
 				'link_hover_color'    => [ 'type' => 'string',  'default' => '#1B77A7' ],
@@ -4145,6 +4185,20 @@ class Calypsosub_Blocks {
 						);
 					}
 
+					var GROUP_OPTIONS = [
+						{ value: '1', label: 'Gruppo 1 (sinistra)' },
+						{ value: '2', label: 'Gruppo 2 (centro)' },
+						{ value: '3', label: 'Gruppo 3 (destra)' }
+					];
+					function groupRow(value, onChange) {
+						return el(SelectControl, {
+							label: 'Gruppo',
+							value: value || '1',
+							options: GROUP_OPTIONS,
+							onChange: onChange
+						});
+					}
+
 					function repeaterPanel(title, key, extraFields) {
 						var items = a[key] || [];
 						function setItems(next) { var u = {}; u[key] = next; set(u); }
@@ -4159,7 +4213,7 @@ class Calypsosub_Blocks {
 							setItems(copy);
 						}
 						function addItem() {
-							setItems(items.concat([{ label: '', url: '', new_tab: false, style: 'primary', hide_desktop: false, hide_tablet: false, hide_mobile: false }]));
+							setItems(items.concat([{ label: '', url: '', new_tab: false, style: 'primary', hide_desktop: false, hide_tablet: false, hide_mobile: false, group: '1' }]));
 						}
 						var rows = items.map(function (item, idx) {
 							return el('div', { key: idx, style: { border: '1px solid #e0e0e0', borderRadius: '4px', padding: '10px', marginBottom: '10px' } },
@@ -4180,6 +4234,7 @@ class Calypsosub_Blocks {
 									onChange: function (v) { updateItem(idx, { new_tab: v }); }
 								}),
 								extraFields ? extraFields(item, function (patch) { updateItem(idx, patch); }) : null,
+								groupRow(item.group, function (v) { updateItem(idx, { group: v }); }),
 								el('p', { style: { fontSize: '11px', fontWeight: 500, margin: '10px 0 0', color: '#1e1e1e' } }, 'Visibilità'),
 								visRow(item, function (patch) { updateItem(idx, patch); }),
 								el(Button, { onClick: function () { removeItem(idx); }, isDestructive: true, variant: 'link', style: { marginTop: '6px' } }, 'Rimuovi')
@@ -4189,6 +4244,91 @@ class Calypsosub_Blocks {
 							rows,
 							el(Button, { onClick: addItem, variant: 'secondary' }, '+ Aggiungi')
 						);
+					}
+
+					function groupPanel(n, label) {
+						var dKey = 'group' + n + '_direction';
+						var aKey = 'group' + n + '_align';
+						var gKey = 'group' + n + '_gap';
+						var pyKey = 'group' + n + '_padding_y';
+						var pxKey = 'group' + n + '_padding_x';
+						var mtKey = 'group' + n + '_margin_top';
+						var mrKey = 'group' + n + '_margin_right';
+						var mbKey = 'group' + n + '_margin_bottom';
+						var mlKey = 'group' + n + '_margin_left';
+						function upd(key, def) {
+							return function (v) { var u = {}; u[key] = v === undefined ? def : v; set(u); };
+						}
+						return el(PanelBody, { title: label, initialOpen: false },
+							el(SelectControl, {
+								label: 'Disposizione elementi',
+								value: a[dKey] || 'row',
+								options: [
+									{ value: 'row', label: 'In riga' },
+									{ value: 'column', label: 'In colonna' }
+								],
+								onChange: upd(dKey, 'row')
+							}),
+							el(SelectControl, {
+								label: 'Posizione elementi nel gruppo',
+								value: a[aKey] || 'flex-start',
+								options: [
+									{ value: 'flex-start', label: 'Inizio' },
+									{ value: 'center', label: 'Centro' },
+									{ value: 'flex-end', label: 'Fine' },
+									{ value: 'space-between', label: 'Spaziati (space-between)' }
+								],
+								onChange: upd(aKey, 'flex-start')
+							}),
+							el(RangeControl, {
+								label: 'Spaziatura tra elementi del gruppo (px)',
+								value: a[gKey] !== undefined ? a[gKey] : 16,
+								min: 0, max: 64, step: 2,
+								onChange: upd(gKey, 16)
+							}),
+							subHeadNav('Padding'),
+							el(RangeControl, {
+								label: 'Verticale (px)',
+								value: a[pyKey] !== undefined ? a[pyKey] : 0,
+								min: 0, max: 100, step: 2,
+								onChange: upd(pyKey, 0)
+							}),
+							el(RangeControl, {
+								label: 'Orizzontale (px)',
+								value: a[pxKey] !== undefined ? a[pxKey] : 0,
+								min: 0, max: 100, step: 2,
+								onChange: upd(pxKey, 0)
+							}),
+							subHeadNav('Margin'),
+							el(RangeControl, {
+								label: 'Sopra (px)',
+								value: a[mtKey] !== undefined ? a[mtKey] : 0,
+								min: -100, max: 100, step: 2,
+								onChange: upd(mtKey, 0)
+							}),
+							el(RangeControl, {
+								label: 'Destra (px)',
+								value: a[mrKey] !== undefined ? a[mrKey] : 0,
+								min: -100, max: 100, step: 2,
+								onChange: upd(mrKey, 0)
+							}),
+							el(RangeControl, {
+								label: 'Sotto (px)',
+								value: a[mbKey] !== undefined ? a[mbKey] : 0,
+								min: -100, max: 100, step: 2,
+								onChange: upd(mbKey, 0)
+							}),
+							el(RangeControl, {
+								label: 'Sinistra (px)',
+								value: a[mlKey] !== undefined ? a[mlKey] : 0,
+								min: -100, max: 100, step: 2,
+								onChange: upd(mlKey, 0)
+							})
+						);
+					}
+
+					function subHeadNav(text) {
+						return el('p', { style: { fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#757575', margin: '12px 0 6px', borderBottom: '1px solid #e0e0e0', paddingBottom: '5px' } }, text);
 					}
 
 					function buttonExtraFields(item, onUpdate) {
@@ -4203,7 +4343,56 @@ class Calypsosub_Blocks {
 						});
 					}
 
+					var logoMediaBtn = (MediaUploadCheck && MediaUpload)
+						? el(MediaUploadCheck, {},
+							el(MediaUpload, {
+								onSelect: function (media) { set({ logo_id: media.id }); },
+								allowedTypes: ['image'],
+								value: a.logo_id,
+								render: function (ref) {
+									return el(Button, {
+										onClick: ref.open,
+										variant: a.logo_id ? 'secondary' : 'primary',
+										style: { marginBottom: '8px' }
+									}, a.logo_id ? '⬡ Cambia logo' : '⬡ Scegli logo dalla galleria');
+								}
+							}))
+						: null;
+
 					var controls = InspectorControls ? el(InspectorControls, {},
+
+						el(PanelBody, { title: 'Logo', initialOpen: false },
+							logoMediaBtn,
+							a.logo_id ? el(Button, {
+								onClick: function () { set({ logo_id: 0 }); },
+								variant: 'link',
+								isDestructive: true,
+								style: { marginBottom: '8px' }
+							}, 'Rimuovi logo') : null,
+							a.logo_id ? el(TextControl, {
+								label: 'Testo alternativo (alt)',
+								value: a.logo_alt || '',
+								onChange: function (v) { set({ logo_alt: v }); }
+							}) : null,
+							a.logo_id ? el(RangeControl, {
+								label: 'Altezza (px)',
+								value: a.logo_height || 32,
+								min: 12, max: 120, step: 2,
+								onChange: function (v) { set({ logo_height: v || 32 }); }
+							}) : null,
+							a.logo_id ? el(ToggleControl, {
+								label: 'Collega alla home',
+								checked: a.logo_link_home !== false,
+								onChange: function (v) { set({ logo_link_home: v }); }
+							}) : null,
+							a.logo_id ? groupRow(a.logo_group, function (v) { set({ logo_group: v }); }) : null,
+							a.logo_id ? el('p', { style: { fontSize: '11px', fontWeight: 500, margin: '10px 0 0', color: '#1e1e1e' } }, 'Visibilità') : null,
+							a.logo_id ? el('div', { style: { display: 'flex', gap: '14px', margin: '8px 0 4px', flexWrap: 'wrap' } },
+								el(ToggleControl, { label: 'Nascondi desktop', checked: !!a.logo_hide_desktop, onChange: function (v) { set({ logo_hide_desktop: v }); } }),
+								el(ToggleControl, { label: 'Nascondi tablet',  checked: !!a.logo_hide_tablet,  onChange: function (v) { set({ logo_hide_tablet: v }); } }),
+								el(ToggleControl, { label: 'Nascondi mobile', checked: !!a.logo_hide_mobile, onChange: function (v) { set({ logo_hide_mobile: v }); } })
+							) : null
+						),
 
 						repeaterPanel('Link di navigazione', 'nav_links', null),
 
@@ -4223,6 +4412,7 @@ class Calypsosub_Blocks {
 								value: a.logout_label || '',
 								onChange: function (v) { set({ logout_label: v }); }
 							}) : null,
+							a.show_login_logout ? groupRow(a.login_logout_group, function (v) { set({ login_logout_group: v }); }) : null,
 							a.show_login_logout ? el('div', {},
 								el('p', { style: { fontSize: '11px', fontWeight: 500, margin: '10px 0 0', color: '#1e1e1e' } }, 'Visibilità'),
 								el('div', { style: { display: 'flex', gap: '14px', margin: '8px 0 4px', flexWrap: 'wrap' } },
@@ -4260,9 +4450,13 @@ class Calypsosub_Blocks {
 							colorRow('Colore testo pannello', 'sidebar_text_color')
 						),
 
+						groupPanel('1', 'Gruppo 1 (sinistra)'),
+						groupPanel('2', 'Gruppo 2 (centro)'),
+						groupPanel('3', 'Gruppo 3 (destra)'),
+
 						el(PanelBody, { title: 'Aspetto', initialOpen: false },
 							el(RangeControl, {
-								label: 'Spaziatura tra elementi (px)',
+								label: 'Spaziatura tra i gruppi/colonne (px)',
 								value: a.gap !== undefined ? a.gap : 24,
 								min: 4, max: 64, step: 2,
 								onChange: function (v) { set({ gap: v === undefined ? 24 : v }); }
@@ -4336,7 +4530,11 @@ class Calypsosub_Blocks {
 
 					) : null;
 
-					var previewItems = (a.nav_links || []).map(function (item, idx) {
+					var previewItems = [];
+					if (a.logo_id) {
+						previewItems.push(el('span', { key: 'logo', style: { padding: '6px 10px', background: '#0a2540', color: '#fff', borderRadius: '4px', fontSize: '11px', fontWeight: 700, letterSpacing: '.05em' } }, 'LOGO'));
+					}
+					previewItems = previewItems.concat((a.nav_links || []).map(function (item, idx) {
 						return el('span', {
 							key: 'l' + idx,
 							style: {
@@ -4350,7 +4548,7 @@ class Calypsosub_Blocks {
 								color: a.link_color || '#0b1a26'
 							}
 						}, item.label || '(link senza testo)');
-					});
+					}));
 					if (a.show_login_logout) {
 						previewItems.push(el('span', { key: 'll', style: { padding: '6px 10px', background: '#dff0d8', borderRadius: '4px', fontSize: '13px' } }, a.login_label || 'Accedi'));
 					}
@@ -4373,6 +4571,7 @@ class Calypsosub_Blocks {
 						),
 						el('div', { style: { fontSize: '10px', opacity: .5, marginTop: '8px', fontFamily: 'monospace' } },
 							'calypso/nav-menu · hamburger ' + hbLabel + ' · pannello a ' + (a.sidebar_side === 'left' ? 'sinistra' : 'destra') +
+							' · anteprima semplificata, in pagina ogni elemento va nel suo gruppo (sinistra/centro/destra)' +
 							(a.block_overlay ? ' · ⚠ blocco in overlay: in pagina galleggerà sopra il blocco successivo' : '')
 						)
 					);
