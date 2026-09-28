@@ -739,6 +739,12 @@ class Calypsosub_Blocks {
 				'gap'           => [ 'type' => 'integer', 'default' => 24 ],
 				'min_height'    => [ 'type' => 'integer', 'default' => 0 ],
 				'block_overlay' => [ 'type' => 'boolean', 'default' => false ],
+				'padding_y'     => [ 'type' => 'integer', 'default' => 0 ],
+				'padding_x'     => [ 'type' => 'integer', 'default' => 0 ],
+				'margin_top'    => [ 'type' => 'integer', 'default' => 0 ],
+				'margin_right'  => [ 'type' => 'integer', 'default' => 0 ],
+				'margin_bottom' => [ 'type' => 'integer', 'default' => 0 ],
+				'margin_left'   => [ 'type' => 'integer', 'default' => 0 ],
 				/* ── Gruppi (colonne) ── */
 				'group1_direction'   => [ 'type' => 'string',  'default' => 'row' ],
 				'group1_align'       => [ 'type' => 'string',  'default' => 'flex-start' ],
@@ -4472,6 +4478,44 @@ class Calypsosub_Blocks {
 								help: 'Il blocco esce dal flusso della pagina e galleggia sopra al blocco/sezione successiva — utile per un header trasparente sopra un\'immagine hero.',
 								checked: !!a.block_overlay,
 								onChange: function (v) { set({ block_overlay: v }); }
+							}),
+							subHeadNav('Padding del menu'),
+							el(RangeControl, {
+								label: 'Verticale (px)',
+								value: a.padding_y !== undefined ? a.padding_y : 0,
+								min: 0, max: 120, step: 2,
+								onChange: function (v) { set({ padding_y: v === undefined ? 0 : v }); }
+							}),
+							el(RangeControl, {
+								label: 'Orizzontale (px)',
+								value: a.padding_x !== undefined ? a.padding_x : 0,
+								min: 0, max: 120, step: 2,
+								onChange: function (v) { set({ padding_x: v === undefined ? 0 : v }); }
+							}),
+							subHeadNav('Margin del menu'),
+							el(RangeControl, {
+								label: 'Sopra (px)',
+								value: a.margin_top !== undefined ? a.margin_top : 0,
+								min: -100, max: 100, step: 2,
+								onChange: function (v) { set({ margin_top: v === undefined ? 0 : v }); }
+							}),
+							el(RangeControl, {
+								label: 'Destra (px)',
+								value: a.margin_right !== undefined ? a.margin_right : 0,
+								min: -100, max: 100, step: 2,
+								onChange: function (v) { set({ margin_right: v === undefined ? 0 : v }); }
+							}),
+							el(RangeControl, {
+								label: 'Sotto (px)',
+								value: a.margin_bottom !== undefined ? a.margin_bottom : 0,
+								min: -100, max: 100, step: 2,
+								onChange: function (v) { set({ margin_bottom: v === undefined ? 0 : v }); }
+							}),
+							el(RangeControl, {
+								label: 'Sinistra (px)',
+								value: a.margin_left !== undefined ? a.margin_left : 0,
+								min: -100, max: 100, step: 2,
+								onChange: function (v) { set({ margin_left: v === undefined ? 0 : v }); }
 							}),
 							colorRow('Pulsante primario — sfondo', 'btn_primary_bg'),
 							colorRow('Pulsante primario — testo', 'btn_primary_color'),

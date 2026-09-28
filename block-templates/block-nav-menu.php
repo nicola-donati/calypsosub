@@ -55,6 +55,12 @@ $sidebar_side = ( $a['sidebar_side'] ?? 'right' ) === 'left' ? 'left' : 'right';
 $gap               = (int)    ( $a['gap']         ?? 24 );
 $min_height        = (int)    ( $a['min_height']  ?? 0 );
 $block_overlay     = ! empty( $a['block_overlay'] );
+$padding_y         = (int)    ( $a['padding_y']    ?? 0 );
+$padding_x         = (int)    ( $a['padding_x']    ?? 0 );
+$margin_top        = (int)    ( $a['margin_top']    ?? 0 );
+$margin_right      = (int)    ( $a['margin_right']  ?? 0 );
+$margin_bottom     = (int)    ( $a['margin_bottom'] ?? 0 );
+$margin_left       = (int)    ( $a['margin_left']   ?? 0 );
 $link_color        = (string) ( $a['link_color']       ?: '#0b1a26' );
 $link_hover_color  = (string) ( $a['link_hover_color'] ?: '#1B77A7' );
 $link_size         = (int)    ( $a['link_size']   ?? 15 );
@@ -210,7 +216,7 @@ foreach ( $items as $it ) {
 }
 ?>
 <style>
-#<?php echo $uid; ?>{position:relative}
+#<?php echo $uid; ?>{position:relative;padding:<?php echo $padding_y; ?>px <?php echo $padding_x; ?>px;margin:<?php echo $margin_top; ?>px <?php echo $margin_right; ?>px <?php echo $margin_bottom; ?>px <?php echo $margin_left; ?>px}
 <?php if ( $block_overlay ) : ?>
 #<?php echo $uid; ?>-shell{position:relative;height:0;overflow:visible}
 #<?php echo $uid; ?>{position:absolute;top:0;left:0;right:0;z-index:20}
