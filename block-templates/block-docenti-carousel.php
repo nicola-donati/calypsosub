@@ -95,10 +95,6 @@ $stats_color  = (string) ( $a['stats_color']  ?? 'rgba(10,37,64,.55)' );
 $stats_size   = (int)    ( $a['stats_size']   ?? 12 );
 $stats_sep_color = (string) ( $a['stats_sep_color'] ?? 'rgba(10,37,64,.2)' );
 
-/* ── Font testi ── */
-$name_font = (string) ( $a['name_font'] ?? '' );
-$body_font = (string) ( $a['body_font'] ?? '' );
-
 /* ── Stile testo ── */
 $name_italic      = (bool)   ( $a['name_italic']      ?? false );
 $name_decoration  = (string) ( $a['name_decoration']  ?? 'none' );
@@ -218,7 +214,7 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
   padding:10px 14px;border-top-right-radius:8px;
   backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
 }
-#<?php echo $uid; ?> .dcar__body{padding:<?php echo $card_body_py; ?>px <?php echo $card_body_px; ?>px;flex:1;display:flex;flex-direction:column;<?php if ( $body_font ) : ?>font-family:<?php echo $css( $body_font ); ?>;<?php endif; ?>}
+#<?php echo $uid; ?> .dcar__body{padding:<?php echo $card_body_py; ?>px <?php echo $card_body_px; ?>px;flex:1;display:flex;flex-direction:column;}
 #<?php echo $uid; ?> .dcar__name{
   margin:0;font-size:<?php echo $name_size; ?>px;font-weight:<?php echo $name_weight; ?>;
   color:<?php echo $css( $name_color ); ?>;line-height:1.1;
@@ -226,7 +222,6 @@ $ratio_pct   = ( isset( $ratio_parts[0] ) && $ratio_parts[0] > 0 )
   letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   font-style:<?php echo $name_italic ? 'italic' : 'normal'; ?>;
   text-decoration:<?php echo $css( $name_decoration ); ?>;
-  <?php if ( $name_font ) : ?>font-family:<?php echo $css( $name_font ); ?>;<?php endif; ?>
 }
 #<?php echo $uid; ?> .dcar__soprannome{
   margin:4px 0 0;font-size:<?php echo $sopr_size; ?>px;

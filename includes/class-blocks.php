@@ -262,9 +262,6 @@ class Calypsosub_Blocks {
 				'stats_color'     => [ 'type' => 'string',  'default' => 'rgba(10,37,64,.55)' ],
 				'stats_size'      => [ 'type' => 'integer', 'default' => 12 ],
 				'stats_sep_color' => [ 'type' => 'string',  'default' => 'rgba(10,37,64,.2)' ],
-				/* ── Font testi ── */
-				'name_font'       => [ 'type' => 'string',  'default' => '' ],
-				'body_font'       => [ 'type' => 'string',  'default' => '' ],
 				/* ── Stile testo nome ── */
 				'name_italic'      => [ 'type' => 'boolean', 'default' => false ],
 				'name_decoration'  => [ 'type' => 'string',  'default' => 'none' ],
@@ -323,31 +320,51 @@ class Calypsosub_Blocks {
 				'overlay_color'   => [ 'type' => 'string',  'default' => '#061826' ],
 				/* ── Tipografia eyebrow ── */
 				'eyebrow_color'   => [ 'type' => 'string',  'default' => '#26CBFB' ],
-				'eyebrow_size'    => [ 'type' => 'integer', 'default' => 14 ],
+				'eyebrow_size'        => [ 'type' => 'integer', 'default' => 14 ],
+				'eyebrow_size_tablet' => [ 'type' => 'integer', 'default' => 0 ],
+				'eyebrow_size_mobile' => [ 'type' => 'integer', 'default' => 0 ],
 				'eyebrow_weight'  => [ 'type' => 'integer', 'default' => 600 ],
+				'eyebrow_width'        => [ 'type' => 'string',  'default' => '' ],
+				'eyebrow_width_tablet' => [ 'type' => 'string',  'default' => '' ],
+				'eyebrow_width_mobile' => [ 'type' => 'string',  'default' => '' ],
 				/* ── Tipografia titolo ── */
 				'title_color'     => [ 'type' => 'string',  'default' => '#ffffff' ],
 				'title_em_color'  => [ 'type' => 'string',  'default' => '#26CBFB' ],
-				'title_size'      => [ 'type' => 'integer', 'default' => 108 ],
+				'title_size'        => [ 'type' => 'integer', 'default' => 108 ],
+				'title_size_tablet' => [ 'type' => 'integer', 'default' => 0 ],
+				'title_size_mobile' => [ 'type' => 'integer', 'default' => 0 ],
 				'title_weight'    => [ 'type' => 'integer', 'default' => 700 ],
-				'title_font'      => [ 'type' => 'string',  'default' => '' ],
+				'title_width'        => [ 'type' => 'string',  'default' => '' ],
+				'title_width_tablet' => [ 'type' => 'string',  'default' => '' ],
+				'title_width_mobile' => [ 'type' => 'string',  'default' => '' ],
 				/* ── Tipografia descrizione ── */
 				'desc_color'      => [ 'type' => 'string',  'default' => '#ffffff' ],
 				'desc_opacity'    => [ 'type' => 'integer', 'default' => 92 ],
-				'desc_size'       => [ 'type' => 'integer', 'default' => 0 ],
-				'desc_font'       => [ 'type' => 'string',  'default' => '' ],
+				'desc_size'        => [ 'type' => 'integer', 'default' => 0 ],
+				'desc_size_tablet' => [ 'type' => 'integer', 'default' => 0 ],
+				'desc_size_mobile' => [ 'type' => 'integer', 'default' => 0 ],
+				'desc_width'        => [ 'type' => 'string',  'default' => '540px' ],
+				'desc_width_tablet' => [ 'type' => 'string',  'default' => '' ],
+				'desc_width_mobile' => [ 'type' => 'string',  'default' => '' ],
 				/* ── Bottoni ── */
 				'btn1_bg'         => [ 'type' => 'string',  'default' => '#ff6b4a' ],
 				'btn1_color'      => [ 'type' => 'string',  'default' => '#ffffff' ],
 				'btn1_hover_bg'   => [ 'type' => 'string',  'default' => '#e04a2a' ],
-				'btn1_size'       => [ 'type' => 'integer', 'default' => 15 ],
+				'btn1_size'        => [ 'type' => 'integer', 'default' => 15 ],
+				'btn1_size_tablet' => [ 'type' => 'integer', 'default' => 0 ],
+				'btn1_size_mobile' => [ 'type' => 'integer', 'default' => 0 ],
 				'btn1_weight'     => [ 'type' => 'integer', 'default' => 700 ],
 				'btn2_bg'         => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.1)' ],
 				'btn2_hover_bg'   => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.18)' ],
 				'btn2_border'     => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.25)' ],
 				'btn2_color'      => [ 'type' => 'string',  'default' => '#ffffff' ],
-				'btn2_size'       => [ 'type' => 'integer', 'default' => 15 ],
+				'btn2_size'        => [ 'type' => 'integer', 'default' => 15 ],
+				'btn2_size_tablet' => [ 'type' => 'integer', 'default' => 0 ],
+				'btn2_size_mobile' => [ 'type' => 'integer', 'default' => 0 ],
 				'btn2_weight'     => [ 'type' => 'integer', 'default' => 600 ],
+				'btns_width'        => [ 'type' => 'string',  'default' => '' ],
+				'btns_width_tablet' => [ 'type' => 'string',  'default' => '' ],
+				'btns_width_mobile' => [ 'type' => 'string',  'default' => '' ],
 				/* ── Scroll indicator ── */
 				'scroll_color'    => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.7)' ],
 				/* ── Card prossima uscita ── */
@@ -397,6 +414,12 @@ class Calypsosub_Blocks {
 				'link_font_weight'       => [ 'type' => 'integer', 'default' => 600 ],
 				'padding_x'              => [ 'type' => 'integer', 'default' => 48 ],
 				'head_margin_bottom'     => [ 'type' => 'integer', 'default' => 48 ],
+				/* ── Layout contenuto ── */
+				'content_layout'     => [ 'type' => 'string',  'default' => 'stack' ], // stack | side
+				'content_head_width' => [ 'type' => 'integer', 'default' => 40 ],      // % colonna intestazione (solo modalità "side")
+				'content_gap'        => [ 'type' => 'integer', 'default' => 48 ],      // px, spazio tra intestazione e contenuto (modalità "side")
+				'content_align'      => [ 'type' => 'string',  'default' => 'flex-start' ], // flex-start | center | flex-end
+				'content_reverse'    => [ 'type' => 'boolean', 'default' => false ],   // contenuto a sinistra, intestazione a destra
 			],
 		],
 		'calypso/promo-card' => [
@@ -436,7 +459,6 @@ class Calypsosub_Blocks {
 				'title_size'       => [ 'type' => 'integer', 'default' => 42 ],
 				'title_weight'     => [ 'type' => 'string',  'default' => '900' ],
 				'title_transform'  => [ 'type' => 'string',  'default' => 'uppercase' ],
-				'title_font'       => [ 'type' => 'string',  'default' => '' ],
 				/* ── Tipografia descrizione ── */
 				'desc_color'       => [ 'type' => 'string',  'default' => '#3d5a6c' ],
 				'desc_size'        => [ 'type' => 'integer', 'default' => 14 ],
@@ -569,13 +591,11 @@ class Calypsosub_Blocks {
 				'year_size'            => [ 'type' => 'integer', 'default' => 36 ],
 				'year_font_weight'     => [ 'type' => 'integer', 'default' => 800 ],
 				'year_letter_spacing'  => [ 'type' => 'integer', 'default' => 0 ],
-				'year_font'            => [ 'type' => 'string',  'default' => '' ],
 				'title_color'          => [ 'type' => 'string',  'default' => '#ffffff' ],
 				'title_size'           => [ 'type' => 'integer', 'default' => 18 ],
 				'title_font_weight'    => [ 'type' => 'integer', 'default' => 800 ],
 				'title_letter_spacing' => [ 'type' => 'integer', 'default' => 0 ],
 				'title_transform'      => [ 'type' => 'string',  'default' => 'uppercase' ],
-				'title_font'           => [ 'type' => 'string',  'default' => '' ],
 				'text_color'           => [ 'type' => 'string',  'default' => '#ffffff' ],
 				'text_size'            => [ 'type' => 'integer', 'default' => 13 ],
 				'text_font_weight'     => [ 'type' => 'integer', 'default' => 400 ],
@@ -782,7 +802,6 @@ class Calypsosub_Blocks {
 				'link_hover_color'    => [ 'type' => 'string',  'default' => '#1B77A7' ],
 				'link_size'           => [ 'type' => 'integer', 'default' => 15 ],
 				'link_weight'         => [ 'type' => 'integer', 'default' => 600 ],
-				'link_font'           => [ 'type' => 'string',  'default' => '' ],
 				'link_upper'          => [ 'type' => 'boolean', 'default' => false ],
 				'link_italic'         => [ 'type' => 'boolean', 'default' => false ],
 				'link_decoration'     => [ 'type' => 'string',  'default' => 'none' ],
@@ -857,6 +876,7 @@ class Calypsosub_Blocks {
 		$js = <<<JS
 (function (blocks, element, components, blockEditor) {
 	var el = element.createElement;
+	var useStateHero     = element.useState;
 	var Fragment          = element.Fragment;
 	var InspectorControls = blockEditor ? blockEditor.InspectorControls : null;
 	var MediaUploadCheck  = blockEditor ? blockEditor.MediaUploadCheck  : null;
@@ -871,6 +891,9 @@ class Calypsosub_Blocks {
 	var Divider         = components.Divider || function() { return el('hr', { style: { margin: '12px 0', border: 'none', borderTop: '1px solid #e0e0e0' } }); };
 	var SelectControl   = components.SelectControl;
 	var ColorPalette    = components.ColorPalette;
+	var UnitControl     = components.__experimentalUnitControl || components.UnitControl;
+	var ToggleGroupControl       = components.ToggleGroupControl || components.__experimentalToggleGroupControl;
+	var ToggleGroupControlOption = components.ToggleGroupControlOption || components.__experimentalToggleGroupControlOption;
 
 	function getThemeColors() {
 		try {
@@ -895,6 +918,68 @@ class Calypsosub_Blocks {
 			options: TITLE_TAG_OPTIONS,
 			onChange: onChange,
 		});
+	}
+
+	var WIDTH_UNITS = [
+		{ value: 'px',  label: 'px',  default: 0 },
+		{ value: '%',   label: '%',   default: 0 },
+		{ value: 'em',  label: 'em',  default: 0 },
+		{ value: 'rem', label: 'rem', default: 0 },
+		{ value: 'vw',  label: 'vw',  default: 0 },
+	];
+
+	function makeWidthControl(label, value, onChange, help) {
+		if (UnitControl) {
+			return el(UnitControl, {
+				label: label,
+				help: help,
+				value: value || '',
+				units: WIDTH_UNITS,
+				onChange: function (v) { onChange(v || ''); }
+			});
+		}
+		return el(TextControl, {
+			label: label,
+			help: (help ? help + ' ' : '') + 'Es: 480px, 60%, 30rem.',
+			value: value || '',
+			onChange: onChange
+		});
+	}
+
+	var DEVICES = [
+		{ value: 'desktop', label: 'Desktop' },
+		{ value: 'tablet',  label: 'Tablet' },
+		{ value: 'mobile',  label: 'Mobile' },
+	];
+
+	/* Attributo effettivo per una voce responsive: 'desktop' usa la chiave base (compatibile con i valori già salvati) */
+	function responsiveKey(baseKey, device) {
+		return device === 'desktop' ? baseKey : baseKey + '_' + device;
+	}
+
+	function makeDeviceSwitcher(device, onChange) {
+		if (ToggleGroupControl && ToggleGroupControlOption) {
+			return el(ToggleGroupControl, {
+				label: 'Dimensioni per dispositivo',
+				value: device,
+				isBlock: true,
+				onChange: onChange,
+				__nextHasNoMarginBottom: true,
+				__next40pxDefaultSize: true,
+			}, DEVICES.map(function (d) {
+				return el(ToggleGroupControlOption, { key: d.value, value: d.value, label: d.label });
+			}));
+		}
+		return el('div', { style: { display: 'flex', gap: '4px', marginBottom: '12px' } },
+			DEVICES.map(function (d) {
+				return el(Button, {
+					key: d.value,
+					variant: device === d.value ? 'primary' : 'secondary',
+					isSmall: true,
+					onClick: function () { onChange(d.value); }
+				}, d.label);
+			})
+		);
 	}
 
 	var calypsoBlocks = {$blocks_json};
@@ -1294,6 +1379,9 @@ class Calypsosub_Blocks {
 				edit: function (props) {
 					var a = props.attributes;
 					var set = props.setAttributes;
+					var deviceState = useStateHero('desktop');
+					var device = deviceState[0];
+					var setDevice = deviceState[1];
 
 					var imgLabel = a.image_id
 						? 'Immagine: ID ' + a.image_id
@@ -1308,6 +1396,26 @@ class Calypsosub_Blocks {
 								onChange: function (v) { var u = {}; u[key] = v || ''; set(u); }
 							})
 						);
+					}
+
+					function widthRow(label, baseKey, help) {
+						var key = responsiveKey(baseKey, device);
+						var fullLabel = device === 'desktop' ? label : label + ' — ' + (device === 'tablet' ? 'Tablet' : 'Mobile');
+						return makeWidthControl(fullLabel, a[key], function (v) { var u = {}; u[key] = v; set(u); }, help);
+					}
+
+					function sizeRow(label, baseKey, def, min, max, step) {
+						var key = responsiveKey(baseKey, device);
+						var fullLabel = device === 'desktop' ? label : label + ' — ' + (device === 'tablet' ? 'Tablet' : 'Mobile');
+						var isOverride = device !== 'desktop';
+						return el(RangeControl, {
+							label: fullLabel,
+							help: isOverride ? '0 = eredita dal dispositivo più grande.' : undefined,
+							value: isOverride ? (a[key] || 0) : (a[key] || def),
+							min: isOverride ? 0 : min,
+							max: max, step: step || 1,
+							onChange: function (v) { var u = {}; u[key] = (v === undefined ? (isOverride ? 0 : def) : v); set(u); }
+						});
 					}
 
 					var mediaBtn = (MediaUploadCheck && MediaUpload)
@@ -1328,6 +1436,12 @@ class Calypsosub_Blocks {
 
 					var controls = InspectorControls
 						? el(InspectorControls, {},
+							el(PanelBody, { title: 'Dimensioni — dispositivo', initialOpen: true },
+								el('p', { style: { fontSize: '11px', color: '#666', margin: '0 0 10px' } },
+									'Scegli il dispositivo, poi imposta "Larghezza massima" e "Font size" nei pannelli qui sotto (Eyebrow, Titolo, Descrizione, Bottoni) per quel breakpoint. "Desktop" è il valore di base, usato anche se Tablet/Mobile sono vuoti (0).'
+								),
+								makeDeviceSwitcher(device, setDevice)
+							),
 							el(PanelBody, { title: 'Immagine sfondo', initialOpen: true },
 								mediaBtn,
 								a.image_id
@@ -1396,40 +1510,26 @@ class Calypsosub_Blocks {
 							),
 							el(PanelBody, { title: 'Tipografia — Eyebrow', initialOpen: false },
 								colorRow('Colore', 'eyebrow_color'),
-								el(RangeControl, {
-									label: 'Font size (px)',
-									value: a.eyebrow_size || 14,
-									min: 8, max: 32, step: 1,
-									onChange: function (v) { set({ eyebrow_size: v || 14 }); }
-								}),
+								sizeRow('Font size (px)', 'eyebrow_size', 14, 8, 32, 1),
 								el(RangeControl, {
 									label: 'Font weight',
 									value: a.eyebrow_weight || 600,
 									min: 100, max: 900, step: 100,
 									onChange: function (v) { set({ eyebrow_weight: v || 600 }); }
-								})
+								}),
+								widthRow('Larghezza massima', 'eyebrow_width', 'Vuoto = nessun limite.')
 							),
 							el(PanelBody, { title: 'Tipografia — Titolo', initialOpen: false },
 								colorRow('Colore', 'title_color'),
 								colorRow('Colore parte in evidenza', 'title_em_color'),
-								el(RangeControl, {
-									label: 'Font size massimo (px)',
-									value: a.title_size || 108,
-									min: 32, max: 160, step: 2,
-									onChange: function (v) { set({ title_size: v || 108 }); }
-								}),
+								sizeRow('Font size massimo (px)', 'title_size', 108, 32, 160, 2),
 								el(RangeControl, {
 									label: 'Font weight',
 									value: a.title_weight || 700,
 									min: 100, max: 900, step: 100,
 									onChange: function (v) { set({ title_weight: v || 700 }); }
 								}),
-								el(TextControl, {
-									label: 'Font family (vuoto = eredita tema)',
-									help: 'Es: "Montserrat", sans-serif',
-									value: a.title_font || '',
-									onChange: function (v) { set({ title_font: v }); }
-								})
+								widthRow('Larghezza massima', 'title_width', 'Vuoto = usa lo spazio disponibile.')
 							),
 							el(PanelBody, { title: 'Tipografia — Descrizione', initialOpen: false },
 								colorRow('Colore', 'desc_color'),
@@ -1439,28 +1539,16 @@ class Calypsosub_Blocks {
 									min: 30, max: 100, step: 1,
 									onChange: function (v) { set({ desc_opacity: v }); }
 								}),
-								el(RangeControl, {
-									label: 'Font size (px, 0 = eredita tema)',
-									value: a.desc_size || 0,
-									min: 0, max: 32, step: 1,
-									onChange: function (v) { set({ desc_size: v }); }
-								}),
-								el(TextControl, {
-									label: 'Font family (vuoto = eredita tema)',
-									value: a.desc_font || '',
-									onChange: function (v) { set({ desc_font: v }); }
-								})
+								sizeRow('Font size (px, 0 = eredita tema)', 'desc_size', 0, 0, 32, 1),
+								widthRow('Larghezza massima', 'desc_width', 'Vuoto = nessun limite.')
 							),
 							el(PanelBody, { title: 'Bottoni — stile', initialOpen: false },
+								widthRow('Larghezza massima riga bottoni', 'btns_width', 'Vuoto = nessun limite.'),
+								el(Divider, {}),
 								colorRow('Bottone primario — sfondo', 'btn1_bg'),
 								colorRow('Bottone primario — testo', 'btn1_color'),
 								colorRow('Bottone primario — sfondo hover', 'btn1_hover_bg'),
-								el(RangeControl, {
-									label: 'Bottone primario — font size (px)',
-									value: a.btn1_size || 15,
-									min: 10, max: 24, step: 1,
-									onChange: function (v) { set({ btn1_size: v || 15 }); }
-								}),
+								sizeRow('Bottone primario — font size (px)', 'btn1_size', 15, 10, 24, 1),
 								el(RangeControl, {
 									label: 'Bottone primario — font weight',
 									value: a.btn1_weight || 700,
@@ -1484,12 +1572,7 @@ class Calypsosub_Blocks {
 									onChange: function (v) { set({ btn2_border: v }); }
 								}),
 								colorRow('Bottone secondario — testo', 'btn2_color'),
-								el(RangeControl, {
-									label: 'Bottone secondario — font size (px)',
-									value: a.btn2_size || 15,
-									min: 10, max: 24, step: 1,
-									onChange: function (v) { set({ btn2_size: v || 15 }); }
-								}),
+								sizeRow('Bottone secondario — font size (px)', 'btn2_size', 15, 10, 24, 1),
 								el(RangeControl, {
 									label: 'Bottone secondario — font weight',
 									value: a.btn2_weight || 600,
@@ -1814,13 +1897,7 @@ class Calypsosub_Blocks {
 									{ value: 'capitalize', label: 'Prima Lettera' }
 								],
 								onChange: function (v) { set({ title_transform: v }); }
-							}) : null,
-							el(TextControl, {
-								label: 'Font family (vuoto = eredita tema)',
-								help: 'Es: "Montserrat", sans-serif',
-								value: a.title_font || '',
-								onChange: function (v) { set({ title_font: v }); }
-							})
+							}) : null
 						),
 
 						/* ── Tipografia descrizione ── */
@@ -1906,8 +1983,7 @@ class Calypsosub_Blocks {
 									fontWeight: a.title_weight || '900',
 									textTransform: a.title_transform || 'uppercase',
 									lineHeight: 1,
-									marginBottom: '10px',
-									fontFamily: a.title_font || 'inherit'
+									marginBottom: '10px'
 								}
 							}, a.title) : null,
 							a.description ? el('div', {
@@ -2117,6 +2193,44 @@ class Calypsosub_Blocks {
 								min: 400, max: 1920, step: 20,
 								onChange: function (v) { set({ max_width: v || 1320 }); }
 							})
+						),
+
+						el(PanelBody, { title: 'Layout contenuto', initialOpen: false },
+							el('p', { style: { fontSize: '11px', color: '#666', margin: '0 0 10px' } },
+								'Di default il contenuto (quello che inserisci dentro la Sezione) sta sotto l’intestazione. Attiva "Affianca" per metterlo di fianco.'
+							),
+							el(ToggleControl, {
+								label: 'Affianca contenuto e intestazione',
+								checked: a.content_layout === 'side',
+								onChange: function (v) { set({ content_layout: v ? 'side' : 'stack' }); }
+							}),
+							a.content_layout === 'side' ? el(RangeControl, {
+								label: 'Larghezza colonna intestazione (%)',
+								value: a.content_head_width || 40,
+								min: 20, max: 70, step: 5,
+								onChange: function (v) { set({ content_head_width: v || 40 }); }
+							}) : null,
+							a.content_layout === 'side' ? el(RangeControl, {
+								label: 'Spazio tra le colonne (px)',
+								value: a.content_gap !== undefined ? a.content_gap : 48,
+								min: 0, max: 120, step: 4,
+								onChange: function (v) { set({ content_gap: v === undefined ? 48 : v }); }
+							}) : null,
+							a.content_layout === 'side' ? (SelectControl ? el(SelectControl, {
+								label: 'Allineamento verticale',
+								value: a.content_align || 'flex-start',
+								options: [
+									{ value: 'flex-start', label: 'In alto' },
+									{ value: 'center',     label: 'Al centro' },
+									{ value: 'flex-end',   label: 'In basso' },
+								],
+								onChange: function (v) { set({ content_align: v }); }
+							}) : null) : null,
+							a.content_layout === 'side' ? el(ToggleControl, {
+								label: 'Inverti ordine (contenuto a sinistra)',
+								checked: !!a.content_reverse,
+								onChange: function (v) { set({ content_reverse: v }); }
+							}) : null
 						)
 
 					) : null;
@@ -2124,6 +2238,7 @@ class Calypsosub_Blocks {
 					var titleLines = (a.title || '').split('\\n');
 					var hasHeader  = a.eyebrow || a.title || (a.header_link_text && a.header_link_url);
 					var effLinkColor = (a.link_color && a.link_color !== '') ? a.link_color : (a.eyebrow_color || '#1B77A7');
+					var isSideLayout = a.content_layout === 'side';
 
 					function renderHighlightedTitle(text, color) {
 						var parts = String(text || '').split(/\*\*(.+?)\*\*/);
@@ -2132,6 +2247,22 @@ class Calypsosub_Blocks {
 							return (i % 2 === 1) ? el('span', { key: i, style: { color: color } }, part) : part;
 						});
 					}
+
+					var headEl = hasHeader ? el('div', {
+						style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '24px', flexWrap: 'wrap', marginBottom: isSideLayout ? 0 : (a.head_margin_bottom !== undefined ? a.head_margin_bottom : 48) + 'px' }
+					},
+						el('div', {},
+							a.eyebrow ? el('span', {
+								style: { display: 'block', fontWeight: a.eyebrow_font_weight || 600, letterSpacing: ((a.eyebrow_letter_spacing !== undefined ? a.eyebrow_letter_spacing : 16) / 100) + 'em', textTransform: 'uppercase', fontSize: (a.eyebrow_size || 13) + 'px', color: a.eyebrow_color || '#1B77A7', marginBottom: (a.eyebrow_margin_bottom !== undefined ? a.eyebrow_margin_bottom : 16) + 'px' }
+							}, a.eyebrow) : null,
+							a.title ? el('h2', {
+								style: { fontSize: Math.min(a.title_size || 76, 60) + 'px', lineHeight: (a.title_line_height !== undefined ? a.title_line_height : 95) / 100, color: a.title_color || '#1B77A7', margin: 0, fontWeight: a.title_font_weight || 900 }
+							}, renderHighlightedTitle(titleLines.join(' · '), a.title_highlight_color || '#26CBFB')) : null
+						),
+						(a.header_link_text) ? el('span', {
+							style: { flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: (a.link_size || 14) + 'px', fontWeight: a.link_font_weight || 600, color: effLinkColor }
+						}, a.header_link_text + ' →') : null
+					) : null;
 
 					return el(Fragment, {},
 						controls,
@@ -2145,22 +2276,21 @@ class Calypsosub_Blocks {
 									padding: (a.padding_y || 80) + 'px ' + (a.padding_x !== undefined ? a.padding_x : 48) + 'px'
 								}
 							},
-								hasHeader ? el('div', {
-									style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '24px', marginBottom: (a.head_margin_bottom !== undefined ? a.head_margin_bottom : 48) + 'px', flexWrap: 'wrap' }
+								el('div', {
+									style: isSideLayout ? {
+										display: 'flex',
+										flexDirection: a.content_reverse ? 'row-reverse' : 'row',
+										alignItems: a.content_align || 'flex-start',
+										gap: (a.content_gap !== undefined ? a.content_gap : 48) + 'px'
+									} : {}
 								},
-									el('div', {},
-										a.eyebrow ? el('span', {
-											style: { display: 'block', fontWeight: a.eyebrow_font_weight || 600, letterSpacing: ((a.eyebrow_letter_spacing !== undefined ? a.eyebrow_letter_spacing : 16) / 100) + 'em', textTransform: 'uppercase', fontSize: (a.eyebrow_size || 13) + 'px', color: a.eyebrow_color || '#1B77A7', marginBottom: (a.eyebrow_margin_bottom !== undefined ? a.eyebrow_margin_bottom : 16) + 'px' }
-										}, a.eyebrow) : null,
-										a.title ? el('h2', {
-											style: { fontSize: Math.min(a.title_size || 76, 60) + 'px', lineHeight: (a.title_line_height !== undefined ? a.title_line_height : 95) / 100, color: a.title_color || '#1B77A7', margin: 0, fontWeight: a.title_font_weight || 900 }
-										}, renderHighlightedTitle(titleLines.join(' · '), a.title_highlight_color || '#26CBFB')) : null
-									),
-									(a.header_link_text) ? el('span', {
-										style: { flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: (a.link_size || 14) + 'px', fontWeight: a.link_font_weight || 600, color: effLinkColor }
-									}, a.header_link_text + ' →') : null
-								) : null,
-								el(InnerBlocks, {})
+									hasHeader ? el('div', {
+										style: isSideLayout ? { flex: '0 0 ' + (a.content_head_width || 40) + '%', maxWidth: (a.content_head_width || 40) + '%' } : {}
+									}, headEl) : null,
+									el('div', {
+										style: isSideLayout ? { flex: '1', minWidth: 0 } : {}
+									}, el(InnerBlocks, {}))
+								)
 							)
 						)
 					);
@@ -2781,12 +2911,6 @@ class Calypsosub_Blocks {
 								value: a.year_letter_spacing !== undefined ? a.year_letter_spacing : 0,
 								min: -10, max: 40, step: 1,
 								onChange: function (v) { set({ year_letter_spacing: v === undefined ? 0 : v }); }
-							}),
-							el(TextControl, {
-								label: 'Font family (vuoto = eredita tema)',
-								help: 'Es: "Big Shoulders Display", Impact, sans-serif',
-								value: a.year_font || '',
-								onChange: function (v) { set({ year_font: v }); }
 							})
 						),
 
@@ -2814,13 +2938,7 @@ class Calypsosub_Blocks {
 									{ value: 'capitalize', label: 'Prima Lettera' }
 								],
 								onChange: function (v) { set({ title_transform: v }); }
-							}) : null,
-							el(TextControl, {
-								label: 'Font family (vuoto = eredita tema)',
-								help: 'Es: "Big Shoulders Display", Impact, sans-serif',
-								value: a.title_font || '',
-								onChange: function (v) { set({ title_font: v }); }
-							})
+							}) : null
 						),
 
 						el(PanelBody, { title: 'Tipografia — Testo', initialOpen: false },
@@ -3373,12 +3491,6 @@ class Calypsosub_Blocks {
 							colorRow('Sfondo label foto', 'photo_label_bg'),
 							colorRow('Colore testo label foto', 'photo_label_color'),
 							rangeRow('Font size label foto (px)', 'photo_label_size', 9, 7, 16, 1)
-						),
-
-						el(PanelBody, { title: 'Font testi card', initialOpen: false },
-							el('p', { style: { fontSize: '11px', color: '#666', margin: '0 0 8px' } }, 'Lascia vuoto per ereditare il font del tema. Esempi: "Georgia, serif", "var(--f-body)".'),
-							textRow('Font nome (font-family CSS)', 'name_font'),
-							textRow('Font body — ruolo, bio, stats (font-family CSS)', 'body_font')
 						),
 
 						el(PanelBody, { title: 'Stile nome', initialOpen: false },
@@ -4578,11 +4690,6 @@ class Calypsosub_Blocks {
 								value: a.link_weight || 600,
 								min: 300, max: 900, step: 100,
 								onChange: function (v) { set({ link_weight: v || 600 }); }
-							}),
-							el(TextControl, {
-								label: 'Font (font-family CSS, vuoto = eredita dal tema)',
-								value: a.link_font || '',
-								onChange: function (v) { set({ link_font: v }); }
 							}),
 							el(RangeControl, {
 								label: 'Letter spacing (em ×100)',

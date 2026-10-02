@@ -80,7 +80,6 @@ $link_color        = (string) ( $a['link_color']       ?: '#0b1a26' );
 $link_hover_color  = (string) ( $a['link_hover_color'] ?: '#1B77A7' );
 $link_size         = (int)    ( $a['link_size']   ?? 15 );
 $link_weight       = (int)    ( $a['link_weight'] ?? 600 );
-$link_font         = preg_replace( '/[^a-zA-Z0-9 ,\"\'\-]/', '', (string) ( $a['link_font'] ?? '' ) );
 $link_upper        = ! empty( $a['link_upper'] );
 $link_italic       = ! empty( $a['link_italic'] );
 $link_decoration   = in_array( $a['link_decoration'] ?? 'none', [ 'none', 'underline', 'line-through', 'overline' ], true )
@@ -264,7 +263,6 @@ foreach ( $items as $it ) {
 	text-transform:<?php echo $link_upper ? 'uppercase' : 'none'; ?>;
 	font-style:<?php echo $link_italic ? 'italic' : 'normal'; ?>;
 	letter-spacing:<?php echo $link_letter_spacing / 100; ?>em;
-	<?php if ( $link_font !== '' ) : ?>font-family:<?php echo $link_font; ?>;<?php endif; ?>
 	transition:color .15s;
 }
 #<?php echo $uid; ?> .cso-nav__link:hover{color:<?php echo esc_attr( $link_hover_color ); ?>}

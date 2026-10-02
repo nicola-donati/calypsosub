@@ -48,7 +48,6 @@ $title_color     = (string) ( $a['title_color']    ?? '#061826' );
 $title_size      = (int)    ( $a['title_size']      ?? 42 );
 $title_weight    = (string) ( $a['title_weight']    ?? '900' );
 $title_transform = (string) ( $a['title_transform'] ?? 'uppercase' );
-$title_font      = (string) ( $a['title_font']      ?? '' );
 
 /* ── Tipografia descrizione ── */
 $desc_color = (string) ( $a['desc_color'] ?? '#3d5a6c' );
@@ -79,9 +78,6 @@ $title_css = sprintf(
 	esc_attr( $title_weight ),
 	esc_attr( $title_transform )
 );
-if ( $title_font ) {
-	$title_css .= 'font-family:' . esc_attr( $title_font ) . ';';
-}
 ?>
 <div class="calypso-promo-card" style="<?php echo $card_css; ?>">
 

@@ -34,13 +34,11 @@ $gap_title_text = (int) ( $a['gap_title_text'] ?? 6 );
 $year_size           = (int) ( $a['year_size'] ?? 36 );
 $year_font_weight    = (int) ( $a['year_font_weight'] ?? 800 );
 $year_letter_spacing = (int) ( $a['year_letter_spacing'] ?? 0 );
-$year_font           = (string) ( $a['year_font'] ?? '' );
 
 $title_size           = (int) ( $a['title_size'] ?? 18 );
 $title_font_weight    = (int) ( $a['title_font_weight'] ?? 800 );
 $title_letter_spacing = (int) ( $a['title_letter_spacing'] ?? 0 );
 $title_transform      = (string) ( $a['title_transform'] ?? 'uppercase' );
-$title_font           = (string) ( $a['title_font'] ?? '' );
 
 $text_size        = (int) ( $a['text_size'] ?? 13 );
 $text_font_weight = (int) ( $a['text_font_weight'] ?? 400 );
@@ -116,8 +114,8 @@ $uid = 'cso-storia-' . sprintf( '%08x', crc32( implode( ',', [ $max_width, $colu
 #<?php echo $uid; ?> .cso-storia__item{flex:0 0 <?php echo $item_width; ?>;position:relative;text-decoration:none;color:inherit;display:block;padding-top:<?php echo $content_start; ?>px;}
 #<?php echo $uid; ?> .cso-storia__dot{display:block;position:absolute;top:0;left:0;width:<?php echo $dot_size; ?>px;height:<?php echo $dot_size; ?>px;border-radius:50%;background:<?php echo esc_attr( $dot_color ); ?>;z-index:2;}
 #<?php echo $uid; ?> .cso-storia__dot--last{background:<?php echo esc_attr( $dot_color_last ); ?>;box-shadow:0 0 0 6px <?php echo esc_attr( $dot_color_last ); ?>33;}
-#<?php echo $uid; ?> .cso-storia__year{font-size:<?php echo $year_size; ?>px;font-weight:<?php echo $year_font_weight; ?>;letter-spacing:<?php echo $year_letter_spacing / 100; ?>em;line-height:1.05;color:<?php echo esc_attr( $year_color ); ?>;margin:0 0 <?php echo $gap_year_title; ?>px;<?php echo $year_font !== '' ? 'font-family:' . esc_attr( $year_font ) . ';' : ''; ?>}
-#<?php echo $uid; ?> .cso-storia__title{font-size:<?php echo $title_size; ?>px;font-weight:<?php echo $title_font_weight; ?>;letter-spacing:<?php echo $title_letter_spacing / 100; ?>em;line-height:1.2;text-transform:<?php echo esc_attr( $title_transform ); ?>;color:<?php echo esc_attr( $title_color ); ?>;margin:0 0 <?php echo $gap_title_text; ?>px;<?php echo $title_font !== '' ? 'font-family:' . esc_attr( $title_font ) . ';' : ''; ?>}
+#<?php echo $uid; ?> .cso-storia__year{font-size:<?php echo $year_size; ?>px;font-weight:<?php echo $year_font_weight; ?>;letter-spacing:<?php echo $year_letter_spacing / 100; ?>em;line-height:1.05;color:<?php echo esc_attr( $year_color ); ?>;margin:0 0 <?php echo $gap_year_title; ?>px;}
+#<?php echo $uid; ?> .cso-storia__title{font-size:<?php echo $title_size; ?>px;font-weight:<?php echo $title_font_weight; ?>;letter-spacing:<?php echo $title_letter_spacing / 100; ?>em;line-height:1.2;text-transform:<?php echo esc_attr( $title_transform ); ?>;color:<?php echo esc_attr( $title_color ); ?>;margin:0 0 <?php echo $gap_title_text; ?>px;}
 #<?php echo $uid; ?> .cso-storia__text{font-size:<?php echo $text_size; ?>px;font-weight:<?php echo $text_font_weight; ?>;line-height:<?php echo $text_line_height / 100; ?>;color:<?php echo esc_attr( $text_color ); ?>;opacity:.7;margin:0;}
 <?php if ( $clickable ) : ?>
 #<?php echo $uid; ?> .cso-storia__item{cursor:pointer;}

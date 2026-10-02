@@ -31,6 +31,15 @@ $link_size              = (int)    ( $a['link_size']              ?? 14 );
 $link_font_weight       = (int)    ( $a['link_font_weight']       ?? 600 );
 $head_margin_bottom     = (int)    ( $a['head_margin_bottom']     ?? 48 );
 
+$content_layout     = (string) ( $a['content_layout']     ?? 'stack' );
+$content_head_width = (int)    ( $a['content_head_width'] ?? 40 );
+$content_gap        = (int)    ( $a['content_gap']        ?? 48 );
+$content_align      = in_array( $a['content_align'] ?? 'flex-start', [ 'flex-start', 'center', 'flex-end' ], true )
+	? $a['content_align']
+	: 'flex-start';
+$content_reverse    = ! empty( $a['content_reverse'] );
+$is_side            = $content_layout === 'side';
+
 $effective_link_color = $link_color ?: $eyebrow_color;
 
 $bg_img_url = $bg_image_id ? ( wp_get_attachment_image_url( $bg_image_id, 'full' ) ?: '' ) : '';
@@ -56,13 +65,24 @@ $uid = 'cso-sez-' . sprintf( '%08x', crc32( implode( ',', [ $max_width, $padding
 	#<?php echo $uid; ?> .cso-sez__wrap{padding:<?php echo (int)($padding_y*.6); ?>px <?php echo (int)($padding_x*.4); ?>px}
 	#<?php echo $uid; ?> .cso-sez__title{font-size:<?php echo (int)($title_size*.5); ?>px}
 }
+<?php if ( $is_side ) : ?>
+#<?php echo $uid; ?> .cso-sez__row{display:flex;flex-direction:<?php echo $content_reverse ? 'row-reverse' : 'row'; ?>;align-items:<?php echo esc_attr( $content_align ); ?>;gap:<?php echo $content_gap; ?>px}
+#<?php echo $uid; ?> .cso-sez__head-col{flex:0 0 <?php echo $content_head_width; ?>%;max-width:<?php echo $content_head_width; ?>%}
+#<?php echo $uid; ?> .cso-sez__content-col{flex:1;min-width:0}
+@media(max-width:760px){
+	#<?php echo $uid; ?> .cso-sez__row{flex-direction:column}
+	#<?php echo $uid; ?> .cso-sez__head-col{max-width:100%}
+}
+<?php endif; ?>
 </style>
 
 <section id="<?php echo $uid; ?>" class="cso-sezione" style="<?php echo $section_style; ?>">
 <div class="cso-sez__wrap">
+<div class="cso-sez__row">
 
 	<?php if ( $has_header ) : ?>
-	<div class="cso-sez__head" style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:<?php echo $head_margin_bottom; ?>px;flex-wrap:wrap;">
+	<div class="cso-sez__head-col">
+	<div class="cso-sez__head" style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;<?php if ( ! $is_side ) : ?>margin-bottom:<?php echo $head_margin_bottom; ?>px;<?php endif; ?>">
 		<div>
 			<?php if ( $eyebrow ) : ?>
 			<span class="cso-sez__eyebrow" style="display:block;font-weight:<?php echo $eyebrow_font_weight; ?>;letter-spacing:<?php echo $eyebrow_letter_spacing / 100; ?>em;text-transform:uppercase;font-size:<?php echo $eyebrow_size; ?>px;color:<?php echo esc_attr( $eyebrow_color ); ?>;margin-bottom:<?php echo $eyebrow_margin_bottom; ?>px;">
@@ -87,11 +107,15 @@ $uid = 'cso-sez-' . sprintf( '%08x', crc32( implode( ',', [ $max_width, $padding
 		</a>
 		<?php endif; ?>
 	</div>
+	</div>
 	<?php endif; ?>
 
+	<div class="cso-sez__content-col">
 	<div class="cso-sez__content">
 		<?php echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	</div>
+	</div>
+</div>
 
 </div>
 </section>

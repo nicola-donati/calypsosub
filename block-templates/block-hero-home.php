@@ -22,10 +22,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  *   text_color, overlay_color                                    — colori sfondo/testo generali
  *   eyebrow_color, eyebrow_size, eyebrow_weight                   — stile eyebrow
- *   title_color, title_em_color, title_size, title_weight, title_font — stile titolo
- *   desc_color, desc_opacity, desc_size, desc_font                — stile descrizione
+ *   eyebrow_width, eyebrow_width_tablet, eyebrow_width_mobile      — larghezza massima eyebrow (per dispositivo)
+ *   title_color, title_em_color, title_size, title_weight          — stile titolo
+ *   title_width, title_width_tablet, title_width_mobile            — larghezza massima titolo (per dispositivo)
+ *   desc_color, desc_opacity, desc_size                             — stile descrizione
+ *   desc_width, desc_width_tablet, desc_width_mobile                — larghezza massima descrizione (per dispositivo)
  *   btn1_bg, btn1_color, btn1_hover_bg, btn1_size, btn1_weight     — stile bottone primario
  *   btn2_bg, btn2_hover_bg, btn2_border, btn2_color, btn2_size, btn2_weight — stile bottone secondario
+ *   btns_width, btns_width_tablet, btns_width_mobile                — larghezza massima riga bottoni (per dispositivo)
  *   scroll_color                                                  — colore indicatore scroll
  *   pu_bg, pu_border, pu_dot_color, pu_text_color,
  *   pu_accent_color, pu_warn_color                                — stile card prossima uscita
@@ -76,32 +80,52 @@ $text_color      = csh_css_raw( $attr['text_color']      ?? '#ffffff' );
 $overlay_color   = csh_css_raw( $attr['overlay_color']   ?? '#061826' );
 
 $eyebrow_color   = csh_css_raw( $attr['eyebrow_color']   ?? '#26CBFB' );
-$eyebrow_size    = (int)        ( $attr['eyebrow_size']    ?? 14 );
+$eyebrow_size        = (int) ( $attr['eyebrow_size']        ?? 14 );
+$eyebrow_size_tablet = (int) ( $attr['eyebrow_size_tablet'] ?? 0 );
+$eyebrow_size_mobile = (int) ( $attr['eyebrow_size_mobile'] ?? 0 );
 $eyebrow_weight  = (int)        ( $attr['eyebrow_weight']  ?? 600 );
+$eyebrow_width        = csh_css_raw( $attr['eyebrow_width']        ?? '' );
+$eyebrow_width_tablet = csh_css_raw( $attr['eyebrow_width_tablet'] ?? '' );
+$eyebrow_width_mobile = csh_css_raw( $attr['eyebrow_width_mobile'] ?? '' );
 
 $title_color     = csh_css_raw( $attr['title_color']     ?? '#ffffff' );
 $title_em_color  = csh_css_raw( $attr['title_em_color']  ?? '#26CBFB' );
-$title_size      = (int)        ( $attr['title_size']      ?? 108 );
+$title_size        = (int) ( $attr['title_size']        ?? 108 );
+$title_size_tablet = (int) ( $attr['title_size_tablet'] ?? 0 );
+$title_size_mobile = (int) ( $attr['title_size_mobile'] ?? 0 );
 $title_weight    = (int)        ( $attr['title_weight']    ?? 700 );
-$title_font      = preg_replace( '/[^a-zA-Z0-9 ,\"\'\-]/', '', (string) ( $attr['title_font'] ?? '' ) );
+$title_width        = csh_css_raw( $attr['title_width']        ?? '' );
+$title_width_tablet  = csh_css_raw( $attr['title_width_tablet'] ?? '' );
+$title_width_mobile  = csh_css_raw( $attr['title_width_mobile'] ?? '' );
 
 $desc_color      = csh_css_raw( $attr['desc_color']      ?? '#ffffff' );
 $desc_opacity    = (int)        ( $attr['desc_opacity']    ?? 92 );
-$desc_size       = (int)        ( $attr['desc_size']       ?? 0 );
-$desc_font       = preg_replace( '/[^a-zA-Z0-9 ,\"\'\-]/', '', (string) ( $attr['desc_font']  ?? '' ) );
+$desc_size        = (int) ( $attr['desc_size']        ?? 0 );
+$desc_size_tablet = (int) ( $attr['desc_size_tablet'] ?? 0 );
+$desc_size_mobile = (int) ( $attr['desc_size_mobile'] ?? 0 );
+$desc_width        = csh_css_raw( $attr['desc_width']        ?? '540px' );
+$desc_width_tablet = csh_css_raw( $attr['desc_width_tablet'] ?? '' );
+$desc_width_mobile = csh_css_raw( $attr['desc_width_mobile'] ?? '' );
 
 $btn1_bg         = csh_css_raw( $attr['btn1_bg']         ?? '#ff6b4a' );
 $btn1_color      = csh_css_raw( $attr['btn1_color']      ?? '#ffffff' );
 $btn1_hover_bg   = csh_css_raw( $attr['btn1_hover_bg']   ?? '#e04a2a' );
-$btn1_size       = (int)        ( $attr['btn1_size']       ?? 15 );
+$btn1_size        = (int) ( $attr['btn1_size']        ?? 15 );
+$btn1_size_tablet = (int) ( $attr['btn1_size_tablet'] ?? 0 );
+$btn1_size_mobile = (int) ( $attr['btn1_size_mobile'] ?? 0 );
 $btn1_weight     = (int)        ( $attr['btn1_weight']     ?? 700 );
 
 $btn2_bg         = csh_css_raw( $attr['btn2_bg']         ?? 'rgba(255,255,255,.1)' );
 $btn2_hover_bg   = csh_css_raw( $attr['btn2_hover_bg']   ?? 'rgba(255,255,255,.18)' );
 $btn2_border     = csh_css_raw( $attr['btn2_border']     ?? 'rgba(255,255,255,.25)' );
 $btn2_color      = csh_css_raw( $attr['btn2_color']      ?? '#ffffff' );
-$btn2_size       = (int)        ( $attr['btn2_size']       ?? 15 );
+$btn2_size        = (int) ( $attr['btn2_size']        ?? 15 );
+$btn2_size_tablet = (int) ( $attr['btn2_size_tablet'] ?? 0 );
+$btn2_size_mobile = (int) ( $attr['btn2_size_mobile'] ?? 0 );
 $btn2_weight     = (int)        ( $attr['btn2_weight']     ?? 600 );
+$btns_width        = csh_css_raw( $attr['btns_width']        ?? '' );
+$btns_width_tablet = csh_css_raw( $attr['btns_width_tablet'] ?? '' );
+$btns_width_mobile = csh_css_raw( $attr['btns_width_mobile'] ?? '' );
 
 $scroll_color    = csh_css_raw( $attr['scroll_color']    ?? 'rgba(255,255,255,.7)' );
 
@@ -222,26 +246,29 @@ body:has(.csh-hero) .entry-content>*{margin-top:0!important;margin-block-start:0
   position:absolute;left:48px;right:48px;bottom:80px;
   display:flex;align-items:flex-end;justify-content:space-between;gap:60px;
 }
-.csh-hero__left{max-width:820px;flex:1;min-width:0}
+.csh-hero__left{flex:1;min-width:0}
 .csh-hero__eyebrow{
   color:<?php echo $eyebrow_color; ?>;display:flex;align-items:center;gap:10px;
   font-size:<?php echo $eyebrow_size; ?>px;font-weight:<?php echo $eyebrow_weight; ?>;letter-spacing:.08em;text-transform:uppercase;
+  <?php if ( $eyebrow_width ) : ?>max-width:<?php echo $eyebrow_width; ?>;<?php endif; ?>
 }
 .csh-hero__title{
   color:<?php echo $title_color; ?>;
   font-size:clamp(48px,7vw,<?php echo $title_size; ?>px);
   font-weight:<?php echo $title_weight; ?>;
-  <?php if ( $title_font ) : ?>font-family:<?php echo $title_font; ?>;<?php endif; ?>
+  <?php if ( $title_width ) : ?>max-width:<?php echo $title_width; ?>;<?php endif; ?>
   margin-top:20px;
 }
 .csh-hero__title em{font-style:normal;color:<?php echo $title_em_color; ?>}
 .csh-hero__desc{
-  max-width:540px;color:<?php echo $desc_color; ?>;
+  color:<?php echo $desc_color; ?>;
+  <?php if ( $desc_width ) : ?>max-width:<?php echo $desc_width; ?>;<?php endif; ?>
   <?php if ( $desc_size ) : ?>font-size:<?php echo $desc_size; ?>px;<?php endif; ?>
-  <?php if ( $desc_font ) : ?>font-family:<?php echo $desc_font; ?>;<?php endif; ?>
   opacity:<?php echo $desc_opacity / 100; ?>;margin-top:28px;
 }
-.csh-hero__btns{display:flex;gap:12px;margin-top:36px;flex-wrap:wrap}
+.csh-hero__btns{display:flex;gap:12px;margin-top:36px;flex-wrap:wrap;
+  <?php if ( $btns_width ) : ?>max-width:<?php echo $btns_width; ?>;<?php endif; ?>
+}
 .csh-btn-primary{
   display:inline-flex;align-items:center;gap:8px;
   padding:14px 22px;background:<?php echo $btn1_bg; ?>;color:<?php echo $btn1_color; ?>;
@@ -321,15 +348,27 @@ body:has(.csh-hero) .entry-content>*{margin-top:0!important;margin-block-start:0
     left:20px;right:20px;bottom:32px;
     flex-direction:column;align-items:flex-start;gap:0;
   }
-  .csh-hero__title{font-size:clamp(48px,13vw,72px);margin:14px 0 0}
-  .csh-hero__desc{font-size:<?php echo $desc_size ?: 15; ?>px;margin-top:18px}
-  .csh-hero__btns{flex-direction:column;align-items:stretch;margin-top:24px}
+  .csh-hero__title{font-size:clamp(32px,10vw,<?php echo $title_size_tablet ?: 72; ?>px);margin:14px 0 0;<?php if ( $title_width_tablet ) : ?>max-width:<?php echo $title_width_tablet; ?>;<?php endif; ?>}
+  .csh-hero__desc{font-size:<?php echo $desc_size_tablet ?: ( $desc_size ?: 15 ); ?>px;margin-top:18px;<?php if ( $desc_width_tablet ) : ?>max-width:<?php echo $desc_width_tablet; ?>;<?php endif; ?>}
+  .csh-hero__btns{flex-direction:column;align-items:stretch;margin-top:24px;<?php if ( $btns_width_tablet ) : ?>max-width:<?php echo $btns_width_tablet; ?>;<?php endif; ?>}
   .csh-btn-primary,.csh-btn-ghost{justify-content:center}
+  <?php if ( $btn1_size_tablet ) : ?>.csh-btn-primary{font-size:<?php echo $btn1_size_tablet; ?>px;}<?php endif; ?>
+  <?php if ( $btn2_size_tablet ) : ?>.csh-btn-ghost{font-size:<?php echo $btn2_size_tablet; ?>px;}<?php endif; ?>
   .csh-pu{display:none}
-  .csh-hero__eyebrow{font-size:11px}
+  .csh-hero__eyebrow{font-size:<?php echo $eyebrow_size_tablet ?: 11; ?>px;<?php if ( $eyebrow_width_tablet ) : ?>max-width:<?php echo $eyebrow_width_tablet; ?>;<?php endif; ?>}
   .csh-hero__scroll{display:none}
   <?php if ( ! $marquee_mob ) : ?>.csh-marquee{display:none}<?php endif; ?>
 }
+<?php if ( $eyebrow_width_mobile || $title_width_mobile || $desc_width_mobile || $btns_width_mobile || $eyebrow_size_mobile || $title_size_mobile || $desc_size_mobile || $btn1_size_mobile || $btn2_size_mobile ) : ?>
+@media(max-width:768px){
+  <?php if ( $eyebrow_width_mobile || $eyebrow_size_mobile ) : ?>.csh-hero__eyebrow{<?php if ( $eyebrow_width_mobile ) : ?>max-width:<?php echo $eyebrow_width_mobile; ?>;<?php endif; ?><?php if ( $eyebrow_size_mobile ) : ?>font-size:<?php echo $eyebrow_size_mobile; ?>px;<?php endif; ?>}<?php endif; ?>
+  <?php if ( $title_width_mobile || $title_size_mobile ) : ?>.csh-hero__title{<?php if ( $title_width_mobile ) : ?>max-width:<?php echo $title_width_mobile; ?>;<?php endif; ?><?php if ( $title_size_mobile ) : ?>font-size:clamp(28px,12vw,<?php echo $title_size_mobile; ?>px);<?php endif; ?>}<?php endif; ?>
+  <?php if ( $desc_width_mobile || $desc_size_mobile ) : ?>.csh-hero__desc{<?php if ( $desc_width_mobile ) : ?>max-width:<?php echo $desc_width_mobile; ?>;<?php endif; ?><?php if ( $desc_size_mobile ) : ?>font-size:<?php echo $desc_size_mobile; ?>px;<?php endif; ?>}<?php endif; ?>
+  <?php if ( $btns_width_mobile ) : ?>.csh-hero__btns{max-width:<?php echo $btns_width_mobile; ?>;}<?php endif; ?>
+  <?php if ( $btn1_size_mobile ) : ?>.csh-btn-primary{font-size:<?php echo $btn1_size_mobile; ?>px;}<?php endif; ?>
+  <?php if ( $btn2_size_mobile ) : ?>.csh-btn-ghost{font-size:<?php echo $btn2_size_mobile; ?>px;}<?php endif; ?>
+}
+<?php endif; ?>
 </style>
 
 <!-- ── HERO ── -->
