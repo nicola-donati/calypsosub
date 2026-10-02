@@ -25,6 +25,7 @@ INCLUDE = [
     "templates",
     "assets",
     "languages",       # opzionale, incluso se presente
+    "child-theme",     # bundlato per la sync automatica verso il tema live
 ]
 
 # Pattern da escludere (glob-style, case-insensitive)
