@@ -8,6 +8,13 @@ Version:      1.0.0
 Text Domain:  calypso-sub
 */
 
+/* Reset box-sizing: padding e border non devono più allargare
+   gli elementi oltre il 100% del contenitore (fix textbox che
+   escono dal bordo nei form, es. newsletter). */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 /* ============================================================
    0 · NOTA
    ------------------------------------------------------------

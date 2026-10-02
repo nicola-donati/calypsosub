@@ -100,7 +100,7 @@
               "fontFamily": "Big Shoulders Display",
               "fontStyle": "normal",
               "fontWeight": "600 900",
-              "src": ["https://fonts.gstatic.com/s/bigshouldersdisplay/v21/fC1MPZJEZG-e9gHhdI4-NBbfd2ys3SjJCx12wPgf9g-_3F0YdY86JF46SRP4yZQ.woff2"],
+              "src": ["file:./assets/fonts/big-shoulders-display-600-900.woff2"],
               "fontDisplay": "swap"
             }
           ]
@@ -114,14 +114,14 @@
               "fontFamily": "DM Sans",
               "fontStyle": "normal",
               "fontWeight": "400 700",
-              "src": ["https://fonts.gstatic.com/s/dmsans/v15/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwAop89WdU.woff2"],
+              "src": ["file:./assets/fonts/dm-sans-400-700-normal.woff2"],
               "fontDisplay": "swap"
             },
             {
               "fontFamily": "DM Sans",
               "fontStyle": "italic",
               "fontWeight": "400 700",
-              "src": ["https://fonts.gstatic.com/s/dmsans/v15/rP2Cp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwAop89WdU.woff2"],
+              "src": ["file:./assets/fonts/dm-sans-400-700-italic.woff2"],
               "fontDisplay": "swap"
             }
           ]
@@ -135,7 +135,7 @@
               "fontFamily": "JetBrains Mono",
               "fontStyle": "normal",
               "fontWeight": "400 500",
-              "src": ["https://fonts.gstatic.com/s/jetbrainsmono/v18/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxjOVS-.woff2"],
+              "src": ["file:./assets/fonts/jetbrains-mono-400-500.woff2"],
               "fontDisplay": "swap"
             }
           ]
