@@ -28,6 +28,7 @@ $id = get_the_ID();
 $desc_breve          = (string) get_post_meta( $id, '_uscita_desc_breve', true );
 $luogo               = (string) get_post_meta( $id, '_uscita_luogo', true );
 $ritrovo             = (string) get_post_meta( $id, '_uscita_ritrovo', true );
+$indirizzo           = (string) get_post_meta( $id, '_uscita_indirizzo', true );
 $incluso             = (string) get_post_meta( $id, '_uscita_incluso', true );
 $cosa_portare        = (string) get_post_meta( $id, '_uscita_cosa_portare', true );
 $note_cancellazione  = (string) get_post_meta( $id, '_uscita_note_cancellazione', true );
@@ -123,6 +124,21 @@ if ( ! empty( $programma_override ) ) {
 			'descrizione' => $ritrovo,
 		];
 	}
+}
+
+$maps = $indirizzo ? calypso_maps_links( $indirizzo ) : null;
+
+$cal_links = null;
+if ( $prossima ) {
+	$end_dt = '';
+	if ( $prossima_time && preg_match( '/^([01]?\d|2[0-3]):[0-5]\d$/', trim( $rientro_previsto ) ) ) {
+		$end_dt = substr( $prossima, 0, 10 ) . 'T' . trim( $rientro_previsto );
+	}
+	$cal_location = $indirizzo ?: ( $ritrovo ?: $luogo );
+	$cal_links = [
+		'gcal' => calypso_gcal_link( get_the_title(), $prossima, $end_dt, $cal_location, $desc_breve, 4.0 ),
+		'ics'  => calypso_ics_data_uri( get_the_title(), $prossima, $end_dt, $cal_location, $desc_breve, 4.0 ),
+	];
 }
 
 $related = calypso_get_prossime_uscite_escluso( $id, 3 );
@@ -277,6 +293,9 @@ $gallery_units = Calypsosub_Gallery_Helpers::build_units(
 .cso-sintesi__box-label{letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin:0 0 10px;display:block}
 .cso-sintesi .cso-sintesi__box-label{font-size:16px;color:var(--c-aqua,#26CBFB)}
 .cso .cso-sintesi__box-text{font-size:14px;line-height:1.6;color:rgba(255,255,255,.8);margin:0;white-space:pre-line}
+.cso-sintesi__linkrow{display:flex;flex-wrap:wrap;gap:8px}
+.cso-sintesi__linkrow a{flex:1;display:flex;justify-content:center;padding:9px 10px;font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,.2);border-radius:999px;color:#fff;text-decoration:none;white-space:nowrap}
+.cso-sintesi__linkrow a:hover{border-color:rgba(255,255,255,.5)}
 
 /* ── Uscite correlate ── */
 .cso-related{background:var(--c-bone,#f6f1e6);padding:80px 48px 96px}
@@ -304,30 +323,30 @@ $_ud = [
 	'hero_overlay'      => calypsosub_opt( 'uscite', 'design_hero_overlay_color',    '#061826' ),
 	'badge_bg'          => calypsosub_opt( 'uscite', 'design_badge_bg',              '#ff6b4a' ),
 	'hero_badge_color'  => calypsosub_opt( 'uscite', 'design_hero_badge_color',      '#ffffff' ),
-	'hero_badge_size'   => (int) calypsosub_opt( 'uscite', 'design_hero_badge_size', '14' ),
-	'hero_badge_weight' => (int) calypsosub_opt( 'uscite', 'design_hero_badge_weight', '600' ),
+	'hero_badge_size'   => calypsosub_opt_int( 'uscite', 'design_hero_badge_size', '14' ),
+	'hero_badge_weight' => calypsosub_opt_int( 'uscite', 'design_hero_badge_weight', '600' ),
 	'hero_title_color'  => calypsosub_opt( 'uscite', 'design_hero_title_color',      '#ffffff' ),
-	'hero_title_size'   => (int) calypsosub_opt( 'uscite', 'design_hero_title_size', '96' ),
-	'hero_title_weight' => (int) calypsosub_opt( 'uscite', 'design_hero_title_weight', '700' ),
+	'hero_title_size'   => calypsosub_opt_int( 'uscite', 'design_hero_title_size', '96' ),
+	'hero_title_weight' => calypsosub_opt_int( 'uscite', 'design_hero_title_weight', '700' ),
 	'hero_title_font'   => preg_replace( '/[^a-zA-Z0-9 ,\"\'\-]/', '', calypsosub_opt( 'uscite', 'design_hero_title_font', '' ) ),
 	'hero_sub_color'    => calypsosub_opt( 'uscite', 'design_hero_sub_color',        '#26CBFB' ),
-	'hero_sub_size'     => (int) calypsosub_opt( 'uscite', 'design_hero_sub_size',   '16' ),
-	'hero_sub_weight'   => (int) calypsosub_opt( 'uscite', 'design_hero_sub_weight', '600' ),
+	'hero_sub_size'     => calypsosub_opt_int( 'uscite', 'design_hero_sub_size',   '16' ),
+	'hero_sub_weight'   => calypsosub_opt_int( 'uscite', 'design_hero_sub_weight', '600' ),
 	'hero_lead_color'   => calypsosub_opt( 'uscite', 'design_hero_lead_color',       '#ffffff' ),
-	'hero_lead_opacity' => (int) calypsosub_opt( 'uscite', 'design_hero_lead_opacity','85' ),
-	'hero_lead_size'    => (int) calypsosub_opt( 'uscite', 'design_hero_lead_size',  '18' ),
+	'hero_lead_opacity' => calypsosub_opt_int( 'uscite', 'design_hero_lead_opacity','85' ),
+	'hero_lead_size'    => calypsosub_opt_int( 'uscite', 'design_hero_lead_size',  '18' ),
 	'hero_lead_font'    => preg_replace( '/[^a-zA-Z0-9 ,\"\'\-]/', '', calypsosub_opt( 'uscite', 'design_hero_lead_font', '' ) ),
 	'hero_stat_bg'      => calypsosub_opt( 'uscite', 'design_hero_stat_bg',          'rgba(255,255,255,.08)' ),
 	'hero_stat_label'   => calypsosub_opt( 'uscite', 'design_hero_stat_label_color', '#26CBFB' ),
 	'hero_stat_value'   => calypsosub_opt( 'uscite', 'design_hero_stat_value_color', '#ffffff' ),
 	'hero_stat_border'  => calypsosub_opt( 'uscite', 'design_hero_stat_border',      'rgba(255,255,255,.15)' ),
 	'hero_text_color'   => calypsosub_opt( 'uscite', 'design_hero_text_color',       '#ffffff' ),
-	'hero_min_height'   => (int) calypsosub_opt( 'uscite', 'design_hero_min_height', '640' ),
+	'hero_min_height'   => calypsosub_opt_int( 'uscite', 'design_hero_min_height', '640' ),
 	'hero_content_anchor' => calypsosub_opt( 'uscite', 'design_hero_content_anchor', 'flex-end' ),
 	'hero_eyebrow_text'   => calypsosub_opt( 'uscite', 'design_hero_eyebrow_text',   '' ),
 	'hero_eyebrow_color'  => calypsosub_opt( 'uscite', 'design_hero_eyebrow_color',  '#26CBFB' ),
-	'hero_eyebrow_size'   => (int) calypsosub_opt( 'uscite', 'design_hero_eyebrow_size', '14' ),
-	'hero_eyebrow_weight' => (int) calypsosub_opt( 'uscite', 'design_hero_eyebrow_weight', '600' ),
+	'hero_eyebrow_size'   => calypsosub_opt_int( 'uscite', 'design_hero_eyebrow_size', '14' ),
+	'hero_eyebrow_weight' => calypsosub_opt_int( 'uscite', 'design_hero_eyebrow_weight', '600' ),
 	'hero_eyebrow_wave'   => calypsosub_opt( 'uscite', 'design_hero_eyebrow_wave',   '1' ) === '1',
 	'hero_scroll_color'     => calypsosub_opt( 'uscite', 'design_hero_scroll_color',     'rgba(255,255,255,.7)' ),
 	'hero_breadcrumb_color' => calypsosub_opt( 'uscite', 'design_hero_breadcrumb_color', 'rgba(255,255,255,.55)' ),
@@ -599,15 +618,26 @@ $_ud = [
 	</div>
 
 	<?php
+	/* Ritrovo/Indirizzo: se c'è un ritrovo (es. "Bar Trombetta") diventa l'etichetta
+	   della riga, il cui valore è l'indirizzo vero; senza indirizzo si mostra solo
+	   l'etichetta, senza valore. */
+	$ritrovo_row_label = $ritrovo ?: calypsosub_opt( 'uscite', 'stat_ritrovo', __( 'Ritrovo', 'calypsosub' ) );
+	$show_ritrovo_row  = $ritrovo || $indirizzo;
+
 	$stats = array_filter( [
-		calypsosub_opt( 'uscite', 'stat_ritrovo',    __( 'Ritrovo', 'calypsosub' ) )          => $ritrovo,
 		calypsosub_opt( 'uscite', 'stat_imbarco',    __( 'Imbarco', 'calypsosub' ) )          => $imbarco_mezzo,
 		calypsosub_opt( 'uscite', 'stat_rientro',    __( 'Rientro previsto', 'calypsosub' ) ) => $rientro_previsto,
 		calypsosub_opt( 'uscite', 'stat_immersioni', __( 'Immersioni', 'calypsosub' ) )       => $num_immersioni ? (string) $num_immersioni : '',
 		calypsosub_opt( 'uscite', 'stat_difficolta', __( 'Difficoltà', 'calypsosub' ) )       => $livello,
 	] );
-	if ( ! empty( $stats ) ) : ?>
+	if ( $show_ritrovo_row || ! empty( $stats ) ) : ?>
 	<div class="cso-sintesi__stats">
+		<?php if ( $show_ritrovo_row ) : ?>
+		<div class="cso-stat-row">
+			<span class="cso-stat-row__label"><?php echo esc_html( $ritrovo_row_label ); ?></span>
+			<span class="cso-stat-row__val"><?php echo esc_html( $indirizzo ); ?></span>
+		</div>
+		<?php endif; ?>
 		<?php foreach ( $stats as $slabel => $val ) : ?>
 		<div class="cso-stat-row">
 			<span class="cso-stat-row__label"><?php echo esc_html( $slabel ); ?></span>
@@ -682,6 +712,27 @@ $_ud = [
 	<div class="cso-sintesi__box">
 		<span class="cso-sintesi__box-label"><?php echo esc_html( calypsosub_opt( 'uscite', 'sec_cancellazione', __( 'Cancellazione', 'calypsosub' ) ) ); ?></span>
 		<p class="cso-sintesi__box-text"><?php echo esc_html( trim( $note_cancellazione ) ); ?></p>
+	</div>
+	<?php endif; ?>
+
+	<?php if ( $maps ) : ?>
+	<div class="cso-sintesi__box">
+		<span class="cso-sintesi__box-label"><?php esc_html_e( 'Apri sul navigatore', 'calypsosub' ); ?></span>
+		<div class="cso-sintesi__linkrow">
+			<a href="<?php echo esc_url( $maps['google'] ); ?>" target="_blank" rel="noopener">Google Maps</a>
+			<a href="<?php echo esc_url( $maps['apple'] ); ?>" target="_blank" rel="noopener">Apple Maps</a>
+			<a href="<?php echo esc_url( $maps['waze'] ); ?>" target="_blank" rel="noopener">Waze</a>
+		</div>
+	</div>
+	<?php endif; ?>
+
+	<?php if ( $cal_links ) : ?>
+	<div class="cso-sintesi__box">
+		<span class="cso-sintesi__box-label"><?php esc_html_e( 'Aggiungi al calendario', 'calypsosub' ); ?></span>
+		<div class="cso-sintesi__linkrow">
+			<a href="<?php echo esc_url( $cal_links['gcal'] ); ?>" target="_blank" rel="noopener">Google</a>
+			<a href="<?php echo esc_attr( $cal_links['ics'] ); ?>" download="<?php echo esc_attr( sanitize_title( get_the_title() ) ); ?>.ics">Apple / Outlook</a>
+		</div>
 	</div>
 	<?php endif; ?>
 

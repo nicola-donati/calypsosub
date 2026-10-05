@@ -129,7 +129,7 @@ class Calypsosub_Admin_Menus {
 								'option_none_value' => 0,
 								'post_status'       => [ 'publish', 'private' ],
 							] ); ?>
-							<p class="description"><?php _e( 'Pagina che contiene il blocco "Prenotazione" — usata per generare il link "Prenota" delle uscite.', 'calypsosub' ); ?></p>
+							<p class="description"><?php _e( 'Pagina che contiene il blocco "Prenotazione" — usata per generare i link "Prenota"/"Iscriviti" di uscite, eventi e corsi (il blocco gestisce tutti e tre con un tab per tipo).', 'calypsosub' ); ?></p>
 						</td>
 					</tr>
 				</table>

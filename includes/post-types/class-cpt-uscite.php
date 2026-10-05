@@ -99,8 +99,12 @@ class Calypsosub_CPT_Uscite {
 				<input type="text" name="calypso_luogo" value="<?php echo esc_attr( $d['luogo'] ); ?>">
 			</div>
 			<div class="calypso-meta-field">
-				<label><?php _e( 'Punto di ritrovo', 'calypsosub' ); ?></label>
+				<label><?php _e( 'Punto di ritrovo', 'calypsosub' ); ?> <small><?php _e( 'es. "Bar Trombetta" — se compilato diventa l\'etichetta dell\'indirizzo qui sotto', 'calypsosub' ); ?></small></label>
 				<input type="text" name="calypso_ritrovo" value="<?php echo esc_attr( $d['ritrovo'] ); ?>">
+			</div>
+			<div class="calypso-meta-field">
+				<label><?php _e( 'Indirizzo ritrovo', 'calypsosub' ); ?> <small><?php _e( 'completo, per i link ai navigatori — es. "Via del Porto 14, Porto Ercole"', 'calypsosub' ); ?></small></label>
+				<input type="text" name="calypso_indirizzo" value="<?php echo esc_attr( $d['indirizzo'] ); ?>">
 			</div>
 			<div class="calypso-meta-field">
 				<label><?php _e( 'Imbarco (mezzo)', 'calypsosub' ); ?> <small><?php _e( 'es. "M/B Calypso II"', 'calypsosub' ); ?></small></label>
@@ -343,6 +347,7 @@ class Calypsosub_CPT_Uscite {
 			'_uscita_desc_breve'         => 'calypso_desc_breve',
 			'_uscita_luogo'              => 'calypso_luogo',
 			'_uscita_ritrovo'            => 'calypso_ritrovo',
+			'_uscita_indirizzo'          => 'calypso_indirizzo',
 			'_uscita_incluso'            => 'calypso_incluso',
 			'_uscita_cosa_portare'       => 'calypso_cosa_portare',
 			'_uscita_note_cancellazione' => 'calypso_note_cancellazione',
@@ -432,6 +437,7 @@ class Calypsosub_CPT_Uscite {
 			'desc_breve'         => (string) get_post_meta( $post_id, '_uscita_desc_breve', true ),
 			'luogo'              => (string) get_post_meta( $post_id, '_uscita_luogo', true ),
 			'ritrovo'            => (string) get_post_meta( $post_id, '_uscita_ritrovo', true ),
+			'indirizzo'          => (string) get_post_meta( $post_id, '_uscita_indirizzo', true ),
 			'incluso'            => (string) get_post_meta( $post_id, '_uscita_incluso', true ),
 			'cosa_portare'       => (string) get_post_meta( $post_id, '_uscita_cosa_portare', true ),
 			'note_cancellazione' => (string) get_post_meta( $post_id, '_uscita_note_cancellazione', true ),

@@ -36,11 +36,11 @@ $total = count( $docenti );
 $hero_img_id  = (int) get_option( 'calypsosub_hero_img_docenti', 0 );
 $hero_img_url = $hero_img_id ? wp_get_attachment_image_url( $hero_img_id, 'full' ) : '';
 $_ov_c = calypsosub_opt( 'docenti', 'overlay_color', '#061826' );
-$_ov_o = (int) calypsosub_opt( 'docenti', 'overlay_opacity', '88' );
+$_ov_o = calypsosub_opt_int( 'docenti', 'overlay_opacity', '88' );
 $_ad = [
 	'body_bg'     => calypsosub_opt( 'docenti', 'design_arch_body_bg',    '#f6f1e6' ),
 	'card_bg'     => calypsosub_opt( 'docenti', 'design_arch_card_bg',    '#ffffff' ),
-	'card_radius' => max( 0, (int) calypsosub_opt( 'docenti', 'design_arch_card_radius', '12' ) ),
+	'card_radius' => max( 0, calypsosub_opt_int( 'docenti', 'design_arch_card_radius', '12' ) ),
 	'name_color'  => calypsosub_opt( 'docenti', 'design_arch_name_color', '#1B77A7' ),
 	'role_color'  => calypsosub_opt( 'docenti', 'design_arch_role_color', '#1B77A7' ),
 	'bio_color'   => calypsosub_opt( 'docenti', 'design_arch_bio_color',  '#283d4d' ),
@@ -131,6 +131,11 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 <div class="cso-hero__overlay" style="background:<?php echo esc_attr( $overlay_gradient ); ?>"></div>
 <?php endif; ?>
 <div class="cso-hero__inner">
+	<nav class="cso-breadcrumb" aria-label="<?php esc_attr_e( 'Breadcrumb', 'calypsosub' ); ?>">
+		<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php _e( 'Home', 'calypsosub' ); ?></a>
+		<span>/</span>
+		<span class="cso-breadcrumb__current"><?php esc_html_e( 'Istruttori', 'calypsosub' ); ?></span>
+	</nav>
 	<span class="cso-hero__eyebrow">
 		<?php echo esc_html( calypsosub_opt( 'docenti', 'archive_eyebrow',
 			sprintf( /* translators: %d = number of instructors */ _n( 'Il team · %d docente', 'Il team · %d docenti', $total, 'calypsosub' ), $total )

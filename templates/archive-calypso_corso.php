@@ -35,14 +35,21 @@ $corsi = get_posts( [
 $livelli_terms = get_terms( [ 'taxonomy' => 'calypso_livello', 'hide_empty' => false ] );
 $livelli_terms = is_wp_error( $livelli_terms ) ? [] : $livelli_terms;
 
-$base_iscr_url = calypsosub_opt( 'corsi', 'link_iscrizione_base', home_url( '/iscrizione' ) );
+$prenotazioni_page_id = (int) get_option( 'calypsosub_prenotazioni_page_id', 0 );
+$prenotazioni_page_ok = $prenotazioni_page_id && get_post_status( $prenotazioni_page_id ) === 'publish';
 
 $hero_img_id  = (int) get_option( 'calypsosub_hero_img_corsi', 0 );
 $hero_img_url = $hero_img_id ? wp_get_attachment_image_url( $hero_img_id, 'full' ) : '';
 $_ov_c = calypsosub_opt( 'corsi', 'overlay_color', '#061826' );
-$_ov_o = (int) calypsosub_opt( 'corsi', 'overlay_opacity', '88' );
+$_ov_o = calypsosub_opt_int( 'corsi', 'overlay_opacity', '88' );
 list( $_r, $_g, $_b ) = array_map( 'hexdec', str_split( ltrim( $_ov_c, '#' ), 2 ) );
 $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d,%d,%.3f) 40%%,rgba(%d,%d,%d,%.3f) 100%%)', $_r, $_g, $_b, round( $_ov_o / 100 * 0.682, 3 ), $_r, $_g, $_b, round( $_ov_o / 100 * 0.170, 3 ), $_r, $_g, $_b, round( $_ov_o / 100, 3 ) );
+
+$_acd = [
+	'cta_bg'       => calypsosub_opt( 'corsi', 'design_arch_cta_bg',       '#E9BF26' ),
+	'cta_color'    => calypsosub_opt( 'corsi', 'design_arch_cta_color',    '#061826' ),
+	'cta_hover_bg' => calypsosub_opt( 'corsi', 'design_arch_cta_hover_bg', '#d4aa1e' ),
+];
 ?>
 <style>
 .cso-archive{color:var(--c-ink,#0b1a26)}
@@ -92,8 +99,7 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 .cso-corso-card__stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px 0;border-top:1px solid rgba(11,26,38,.08);margin-bottom:18px}
 .cso-corso-card__stat-val{font-size:14px;font-weight:700;color:var(--c-deep,#1B77A7);margin-bottom:2px}
 .cso-corso-card__stat-lbl{font-family:var(--f-mono,monospace);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:rgba(11,26,38,.55)}
-.cso-btn-coral{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;background:var(--c-coral,#e9bf26);color:var(--c-abyss,#061826);font-size:15px;font-weight:700;border-radius:999px;text-decoration:none;align-self:flex-start;transition:background .15s;border:none;cursor:pointer;font-family:inherit}
-.cso-btn-coral:hover{filter:brightness(.9)}
+.cso-btn-coral{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;font-size:15px;font-weight:700;border-radius:999px;text-decoration:none;align-self:flex-start;transition:background .15s;border:none;cursor:pointer;font-family:inherit}
 
 /* Empty */
 .cso-empty{padding:64px 0;text-align:center}
@@ -120,6 +126,10 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 	.cso-archive .cso-hero__title{font-size:42px}
 }
 </style>
+<style>
+.cso-archive .cso-btn-coral{background:<?php echo esc_attr( $_acd['cta_bg'] ); ?>;color:<?php echo esc_attr( $_acd['cta_color'] ); ?>}
+.cso-archive .cso-btn-coral:hover{background:<?php echo esc_attr( $_acd['cta_hover_bg'] ); ?>}
+</style>
 
 <div class="cso-archive cso-archive--corsi">
 
@@ -132,6 +142,11 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 <div class="cso-hero__overlay" style="background:<?php echo esc_attr( $overlay_gradient ); ?>"></div>
 <?php endif; ?>
 <div class="cso-hero__inner">
+	<nav class="cso-breadcrumb" aria-label="<?php esc_attr_e( 'Breadcrumb', 'calypsosub' ); ?>">
+		<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php _e( 'Home', 'calypsosub' ); ?></a>
+		<span>/</span>
+		<span class="cso-breadcrumb__current"><?php echo esc_html( calypsosub_opt( 'corsi', 'breadcrumb_archive', __( 'Corsi', 'calypsosub' ) ) ); ?></span>
+	</nav>
 	<span class="cso-hero__eyebrow"><?php echo esc_html( calypsosub_opt( 'corsi', 'archive_eyebrow', 'Corsi · ' . gmdate( 'Y' ) ) ); ?></span>
 	<h1 class="cso-hero__title display">
 		<?php echo wp_kses( calypsosub_opt( 'corsi', 'archive_h1',
@@ -186,7 +201,7 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 		$livelli_names = is_wp_error( $livelli_names ) ? [] : $livelli_names;
 		$livello_label = ! empty( $livelli_names ) ? $livelli_names[0] : $badge;
 
-		$cta_url = $link_ovr ?: add_query_arg( 'corso', $corso->post_name, $base_iscr_url );
+		$cta_url = $link_ovr ?: ( $prenotazioni_page_ok ? add_query_arg( 'prenota_id', $corso->ID, get_permalink( $prenotazioni_page_id ) ) : '' );
 		$img_url = get_the_post_thumbnail_url( $corso->ID, 'medium_large' );
 	?>
 	<article class="cso-corso-card"
@@ -244,10 +259,14 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 			</div>
 			<?php endif; ?>
 
+			<?php if ( $cta_url ) : ?>
 			<a href="<?php echo esc_url( $cta_url ); ?>" class="cso-btn-coral">
 				<?php esc_html_e( 'Iscriviti al corso', 'calypsosub' ); ?>
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
 			</a>
+			<?php elseif ( current_user_can( 'edit_posts' ) ) : ?>
+			<span class="cso-btn-coral" style="opacity:.5;cursor:default" title="<?php esc_attr_e( 'Imposta la Pagina prenotazioni in Calypso Sub → Impostazioni → Generali', 'calypsosub' ); ?>"><?php esc_html_e( 'Configura pagina prenotazioni', 'calypsosub' ); ?></span>
+			<?php endif; ?>
 
 		</div>
 	</article>

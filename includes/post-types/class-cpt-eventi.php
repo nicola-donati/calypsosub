@@ -7,6 +7,14 @@ class Calypsosub_CPT_Eventi {
 		add_action( 'init',                     [ $this, 'register_post_type' ] );
 		add_action( 'add_meta_boxes',           [ $this, 'add_meta_boxes' ] );
 		add_action( 'save_post_calypso_evento', [ $this, 'save_meta' ], 10, 2 );
+		add_action( 'admin_enqueue_scripts',    [ $this, 'enqueue_media' ] );
+	}
+
+	public function enqueue_media( string $hook ): void {
+		if ( ! in_array( $hook, [ 'post.php', 'post-new.php' ], true ) ) return;
+		$screen = get_current_screen();
+		if ( ! $screen || $screen->post_type !== 'calypso_evento' ) return;
+		wp_enqueue_media();
 	}
 
 	public function register_post_type(): void {
@@ -52,6 +60,8 @@ class Calypsosub_CPT_Eventi {
 		.calypso-repeater-row input{flex:1}
 		.calypso-btn-remove{background:#dc3545;color:#fff;border:none;border-radius:3px;padding:2px 8px;cursor:pointer}
 		.calypso-section-title{font-weight:700;font-size:13px;margin:16px 0 8px;border-bottom:1px solid #ddd;padding-bottom:4px}
+		.calypso-media-row{display:flex;align-items:center;gap:10px}
+		.calypso-media-row .calypso-thumb{width:70px;height:70px;object-fit:cover;border-radius:4px;border:1px solid #ddd}
 		</style>
 
 		<div class="calypso-meta-grid">
@@ -75,6 +85,20 @@ class Calypsosub_CPT_Eventi {
 				<label><?php _e( 'Max partecipanti (vuoto = libera)', 'calypsosub' ); ?></label>
 				<input type="number" min="0" name="calypso_max_partecipanti"
 				       value="<?php echo esc_attr( $d['max_partecipanti'] ); ?>">
+			</div>
+			<div class="calypso-meta-field" style="grid-column:1/-1">
+				<label><?php _e( 'Descrizione del luogo (opzionale — mostra la sezione "Dove" nella pagina evento solo se sia indirizzo che questo campo sono compilati)', 'calypsosub' ); ?></label>
+				<textarea name="calypso_luogo_descrizione"><?php echo esc_textarea( $d['luogo_descrizione'] ); ?></textarea>
+			</div>
+			<div class="calypso-meta-field" style="grid-column:1/-1">
+				<label><?php _e( 'Foto del luogo (opzionale — mostrata nella sezione "Dove")', 'calypsosub' ); ?></label>
+				<div class="calypso-media-row">
+					<img src="<?php echo esc_url( $d['luogo_foto_id'] ? (string) wp_get_attachment_image_url( $d['luogo_foto_id'], 'medium' ) : '' ); ?>"
+					     class="calypso-thumb" style="<?php echo $d['luogo_foto_id'] ? '' : 'display:none'; ?>">
+					<input type="hidden" name="calypso_luogo_foto_id" value="<?php echo (int) $d['luogo_foto_id']; ?>">
+					<button type="button" class="button" id="calypso-luogo-foto-choose"><?php _e( 'Scegli foto', 'calypsosub' ); ?></button>
+					<button type="button" class="button" id="calypso-luogo-foto-remove" style="<?php echo $d['luogo_foto_id'] ? '' : 'display:none'; ?>"><?php _e( 'Rimuovi', 'calypsosub' ); ?></button>
+				</div>
 			</div>
 		</div>
 
@@ -137,6 +161,38 @@ class Calypsosub_CPT_Eventi {
 					e.target.closest('.calypso-repeater-row').remove();
 				}
 			});
+
+			/* ── Foto del luogo ── */
+			var fotoBtn    = document.getElementById('calypso-luogo-foto-choose');
+			var fotoRemove = document.getElementById('calypso-luogo-foto-remove');
+			if (fotoBtn) {
+				var fotoRow   = fotoBtn.closest('.calypso-media-row');
+				var fotoImg   = fotoRow.querySelector('.calypso-thumb');
+				var fotoInput = fotoRow.querySelector('input[type=hidden]');
+				fotoBtn.addEventListener('click', function () {
+					var frame = wp.media({
+						title:  <?php echo wp_json_encode( __( 'Seleziona foto del luogo', 'calypsosub' ) ); ?>,
+						button: { text: <?php echo wp_json_encode( __( 'Seleziona', 'calypsosub' ) ); ?> },
+						multiple: false,
+						library: { type: 'image' }
+					});
+					frame.on('select', function () {
+						var a = frame.state().get('selection').first().toJSON();
+						var thumb = (a.sizes && a.sizes.medium) ? a.sizes.medium.url : a.url;
+						fotoImg.src = thumb;
+						fotoImg.style.display = '';
+						fotoInput.value = a.id;
+						fotoRemove.style.display = '';
+					});
+					frame.open();
+				});
+				fotoRemove.addEventListener('click', function () {
+					fotoImg.removeAttribute('src');
+					fotoImg.style.display = 'none';
+					fotoInput.value = '0';
+					fotoRemove.style.display = 'none';
+				});
+			}
 		})();
 		</script>
 		<?php
@@ -149,10 +205,11 @@ class Calypsosub_CPT_Eventi {
 		if ( ! current_user_can( 'edit_post', $post_id ) ) return;
 
 		$text_fields = [
-			'_evento_sottotitolo' => 'calypso_sottotitolo',
-			'_evento_desc_breve'  => 'calypso_desc_breve',
-			'_evento_luogo'       => 'calypso_luogo',
-			'_evento_indirizzo'   => 'calypso_indirizzo',
+			'_evento_sottotitolo'       => 'calypso_sottotitolo',
+			'_evento_desc_breve'        => 'calypso_desc_breve',
+			'_evento_luogo'             => 'calypso_luogo',
+			'_evento_indirizzo'         => 'calypso_indirizzo',
+			'_evento_luogo_descrizione' => 'calypso_luogo_descrizione',
 		];
 		foreach ( $text_fields as $meta_key => $post_key ) {
 			update_post_meta( $post_id, $meta_key,
@@ -161,6 +218,8 @@ class Calypsosub_CPT_Eventi {
 
 		$val = $_POST['calypso_max_partecipanti'] ?? '';
 		update_post_meta( $post_id, '_evento_max_partecipanti', $val === '' ? '' : absint( $val ) );
+
+		update_post_meta( $post_id, '_evento_luogo_foto_id', absint( $_POST['calypso_luogo_foto_id'] ?? 0 ) );
 
 		update_post_meta( $post_id, '_evento_lista_attesa',
 			isset( $_POST['calypso_lista_attesa'] ) ? 1 : 0 );
@@ -182,6 +241,8 @@ class Calypsosub_CPT_Eventi {
 			'desc_breve'       => (string) get_post_meta( $post_id, '_evento_desc_breve', true ),
 			'luogo'            => (string) get_post_meta( $post_id, '_evento_luogo', true ),
 			'indirizzo'        => (string) get_post_meta( $post_id, '_evento_indirizzo', true ),
+			'luogo_descrizione'=> (string) get_post_meta( $post_id, '_evento_luogo_descrizione', true ),
+			'luogo_foto_id'    => (int) get_post_meta( $post_id, '_evento_luogo_foto_id', true ),
 			'max_partecipanti' => get_post_meta( $post_id, '_evento_max_partecipanti', true ),
 			'lista_attesa'     => (int) get_post_meta( $post_id, '_evento_lista_attesa', true ),
 			'date'             => (array) ( get_post_meta( $post_id, '_evento_date', true ) ?: [] ),

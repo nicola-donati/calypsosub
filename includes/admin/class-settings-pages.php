@@ -217,6 +217,11 @@ class Calypsosub_Settings_Pages {
 						'design_sidebar_accent'  => [ 'label' => 'Colore accento sidebar (labels)', 'default' => '#26CBFB',  'type' => 'color' ],
 						'design_related_bg'      => [ 'label' => 'Sfondo sezione corsi correlati',  'default' => '#f6f1e6',  'type' => 'color' ],
 					],
+					'Archivio — Design' => [
+						'design_arch_cta_bg'      => [ 'label' => 'Sfondo bottone Iscriviti (card corso)', 'default' => '#E9BF26',  'type' => 'color' ],
+						'design_arch_cta_color'   => [ 'label' => 'Colore testo bottone Iscriviti',        'default' => '#061826',  'type' => 'color' ],
+						'design_arch_cta_hover_bg'=> [ 'label' => 'Sfondo bottone Iscriviti (hover)',       'default' => '#d4aa1e',  'type' => 'color' ],
+					],
 					'Hero' => [
 						'breadcrumb_archive' => [ 'label' => 'Voce breadcrumb archivio', 'default' => 'Corsi' ],
 					],
@@ -263,15 +268,15 @@ class Calypsosub_Settings_Pages {
 				'label' => 'Eventi',
 				'groups' => [
 					'Pagina singola — Hero design' => [
-						'design_accent'            => [ 'label' => 'Colore accento (badge, card head, bottone, posti)', 'default' => '#1B77A7',  'type' => 'color' ],
-						'design_deep'              => [ 'label' => 'Colore primario scuro (infobar, bottone secondario)', 'default' => '#0a2540',  'type' => 'color' ],
+						'design_accent'            => [ 'label' => 'Colore accento (badge, bottone, barra posti, numero posti)', 'default' => '#E9BF26',  'type' => 'color' ],
+						'design_deep'              => [ 'label' => 'Colore fascia hero (senza immagine) e card prenotazione', 'default' => '#1B77A7',  'type' => 'color' ],
 						'design_body_bg'           => [ 'label' => 'Sfondo corpo pagina',                                'default' => '#ffffff',  'type' => 'color' ],
-						'design_hero_overlay_color'=> [ 'label' => 'Colore overlay su immagine hero',                    'default' => '#061826',  'type' => 'color' ],
+						'design_hero_overlay_color'=> [ 'label' => 'Colore overlay (se immagine di sfondo attiva)',       'default' => '#061826',  'type' => 'color' ],
 						'design_hero_badge_color'  => [ 'label' => 'Colore testo badge',                                 'default' => '#ffffff',  'type' => 'color' ],
 						'design_hero_badge_size'   => [ 'label' => 'Dimensione testo badge (px)',                       'default' => '14',       'type' => 'number' ],
 						'design_hero_badge_weight' => [ 'label' => 'Peso testo badge (100-900)',                        'default' => '600',      'type' => 'number' ],
 						'design_hero_title_color'  => [ 'label' => 'Colore titolo (h1)',                                  'default' => '#ffffff',  'type' => 'color' ],
-						'design_hero_title_size'   => [ 'label' => 'Dimensione titolo (px, max clamp)',                 'default' => '72',       'type' => 'number' ],
+						'design_hero_title_size'   => [ 'label' => 'Dimensione titolo (px, max clamp)',                 'default' => '104',      'type' => 'number' ],
 						'design_hero_title_weight'=> [ 'label' => 'Peso titolo (100-900)',                              'default' => '700',      'type' => 'number' ],
 						'design_hero_title_font'   => [ 'label' => 'Font-family titolo (vuoto = eredita)',              'default' => '' ],
 						'design_hero_sub_color'    => [ 'label' => 'Colore sottotitolo',                                 'default' => '#ffffff',  'type' => 'color' ],
@@ -280,17 +285,25 @@ class Calypsosub_Settings_Pages {
 						'design_hero_sub_weight'   => [ 'label' => 'Peso sottotitolo (100-900)',                        'default' => '400',      'type' => 'number' ],
 					],
 					'Hero' => [
-						'badge' => [ 'label' => 'Badge hero', 'default' => 'Evento' ],
+						'badge'              => [ 'label' => 'Badge hero', 'default' => 'Evento' ],
+						'breadcrumb_archive' => [ 'label' => 'Voce breadcrumb archivio', 'default' => 'Eventi' ],
 					],
 					'Sezioni' => [
+						'sec_descrizione_eyebrow' => [ 'label' => 'Eyebrow sezione Descrizione', 'default' => "L'evento" ],
 						'sec_descrizione' => [ 'label' => 'Titolo sezione Descrizione', 'default' => 'Descrizione' ],
+						'sec_date_eyebrow' => [ 'label' => 'Eyebrow sezione Date',       'default' => 'Quando' ],
 						'sec_date'        => [ 'label' => 'Titolo sezione Date',        'default' => 'Date' ],
+						'sec_dove_eyebrow' => [ 'label' => 'Eyebrow sezione Dove',       'default' => 'Il luogo' ],
+						'sec_dove'        => [ 'label' => 'Titolo sezione Dove',        'default' => 'Dove' ],
+						'sec_correlati_eyebrow' => [ 'label' => 'Eyebrow sezione Altri eventi', 'default' => 'Vita del club' ],
+						'sec_correlati'   => [ 'label' => 'Titolo sezione Altri eventi', 'default' => 'Altri eventi in calendario' ],
 					],
 					'Sidebar prenotazione' => [
 						'card_title'         => [ 'label' => 'Titolo card',                    'default' => 'Partecipa' ],
 						'btn_iscriviti'      => [ 'label' => 'Bottone Iscriviti',               'default' => 'Iscriviti' ],
 						'btn_area_personale' => [ 'label' => 'Bottone Area personale',          'default' => 'Area personale' ],
 						'label_posti'        => [ 'label' => 'Etichetta posti disponibili',     'default' => 'posti disponibili' ],
+						'label_prenotati'    => [ 'label' => 'Etichetta prenotati (barra posti)', 'default' => 'prenotati' ],
 						'label_allergie'     => [ 'label' => 'Etichetta campo note',            'default' => 'Allergie / note' ],
 						'msg_gia_iscritto'   => [ 'label' => 'Messaggio già iscritto',          'default' => '✓ Sei già iscritto a questo evento.' ],
 						'msg_lista_avviso'   => [ 'label' => 'Avviso lista attesa',              'default' => "Posti esauriti — puoi iscriverti in lista d'attesa." ],
@@ -467,12 +480,13 @@ class Calypsosub_Settings_Pages {
 									       class="cso-color-value"
 									       value="<?php echo esc_attr( $current ); ?>">
 								</div>
-								<?php elseif ( $type === 'number' ) : ?>
+								<?php elseif ( $type === 'number' ) :
+									$current = $val !== '' ? $val : $field['default'];
+								?>
 								<input type="number"
 								       id="cso-<?php echo esc_attr( $key ); ?>"
 								       name="cso_opts[<?php echo esc_attr( $key ); ?>]"
-								       value="<?php echo esc_attr( $val ); ?>"
-								       placeholder="<?php echo esc_attr( $field['default'] ); ?>">
+								       value="<?php echo esc_attr( $current ); ?>">
 								<?php elseif ( $type === 'select' ) :
 									$current = $val !== '' ? $val : $field['default'];
 								?>

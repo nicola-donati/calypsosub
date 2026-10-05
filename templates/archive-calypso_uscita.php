@@ -154,7 +154,7 @@ $prenotazioni_page_id = (int) get_option( 'calypsosub_prenotazioni_page_id', 0 )
 $hero_img_id  = (int) get_option( 'calypsosub_hero_img_uscite', 0 );
 $hero_img_url = $hero_img_id ? wp_get_attachment_image_url( $hero_img_id, 'full' ) : '';
 $_ov_c = calypsosub_opt( 'uscite', 'overlay_color', '#061826' );
-$_ov_o = (int) calypsosub_opt( 'uscite', 'overlay_opacity', '88' );
+$_ov_o = calypsosub_opt_int( 'uscite', 'overlay_opacity', '88' );
 list( $_r, $_g, $_b ) = array_map( 'hexdec', str_split( ltrim( $_ov_c, '#' ), 2 ) );
 $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d,%d,%.3f) 40%%,rgba(%d,%d,%d,%.3f) 100%%)', $_r, $_g, $_b, round( $_ov_o / 100 * 0.682, 3 ), $_r, $_g, $_b, round( $_ov_o / 100 * 0.170, 3 ), $_r, $_g, $_b, round( $_ov_o / 100, 3 ) );
 ?>
@@ -366,6 +366,11 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 <div class="cso-hero__overlay" style="background:<?php echo esc_attr( $overlay_gradient ); ?>"></div>
 <?php endif; ?>
 <div class="cso-hero__inner">
+	<nav class="cso-breadcrumb" aria-label="<?php esc_attr_e( 'Breadcrumb', 'calypsosub' ); ?>">
+		<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php _e( 'Home', 'calypsosub' ); ?></a>
+		<span>/</span>
+		<span class="cso-breadcrumb__current"><?php echo esc_html( calypsosub_opt( 'uscite', 'breadcrumb_archive', __( 'Uscite', 'calypsosub' ) ) ); ?></span>
+	</nav>
 	<span class="cso-hero__eyebrow"><?php echo esc_html( str_replace( '{anno}', date( 'Y' ),
 		calypsosub_opt( 'uscite', 'archive_eyebrow', __( 'Calendario · stagione {anno}', 'calypsosub' ) )
 	) ); ?></span>

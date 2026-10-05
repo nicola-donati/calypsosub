@@ -19,6 +19,21 @@ function calypsosub_opt( string $section, string $key, string $default = '' ): s
 }
 
 /**
+ * Variante numerica di calypsosub_opt(): se il valore salvato è 0 (impostato
+ * volontariamente o per via del vecchio bug del pannello campi numerici),
+ * usa comunque il default — 0 non è mai un valore sensato per dimensioni/pesi
+ * font, quindi non ha senso distinguere "0 voluto" da "0 per errore".
+ *
+ * @param string $section  docenti | uscite | corsi | eventi
+ * @param string $key      chiave del campo
+ * @param string $default  valore di fallback (numerico, es. '14')
+ */
+function calypsosub_opt_int( string $section, string $key, string $default = '0' ): int {
+	$val = (int) calypsosub_opt( $section, $key, $default );
+	return $val !== 0 ? $val : (int) $default;
+}
+
+/**
  * Converte un hex (#rgb o #rrggbb) in stringa rgba() con opacità data.
  * Usata per overlay hero configurabili. Fallback su abyss se l'hex non è valido.
  */
@@ -354,4 +369,104 @@ function calypso_next_future_date( array $dates ): string {
 		if ( $dt >= $now ) return $dt;
 	}
 	return (string) end( $dates );
+}
+
+/**
+ * Link per aprire un indirizzo/luogo nei navigatori più comuni sul cellulare.
+ * $query è testo libero (indirizzo completo o nome del luogo) — tutti e tre
+ * i servizi accettano ricerca testuale, non serve geocodificare lato server.
+ *
+ * @return array{google:string,apple:string,waze:string}
+ */
+function calypso_maps_links( string $query ): array {
+	$q = rawurlencode( trim( $query ) );
+	return [
+		'google' => "https://www.google.com/maps/search/?api=1&query={$q}",
+		'apple'  => "https://maps.apple.com/?q={$q}",
+		'waze'   => "https://waze.com/ul?q={$q}&navigate=yes",
+	];
+}
+
+/**
+ * Escapa un valore di testo per un campo ICS (RFC 5545): virgole, punti e
+ * virgola e newline vanno preceduti da backslash.
+ */
+function calypso_ics_escape( string $text ): string {
+	return str_replace( [ '\\', ',', ';', "\n" ], [ '\\\\', '\\,', '\\;', '\\n' ], trim( $text ) );
+}
+
+/**
+ * Costruisce un file .ics (singolo VEVENT) e lo restituisce come data: URI,
+ * pronto per un <a href="..." download="evento.ics">. Nessun endpoint
+ * server separato necessario. L'orario è quello locale del sito (floating,
+ * senza fuso) — sufficiente per un singolo club, niente VTIMEZONE.
+ *
+ * @param string      $title     Titolo evento.
+ * @param string      $start     'Y-m-d' (tutto il giorno) o 'Y-m-d\TH:i'.
+ * @param string      $end       Come $start, stesso formato di $start; '' = calcolata da $duration_hours.
+ * @param string      $location  Luogo/indirizzo.
+ * @param string      $description
+ * @param float       $duration_hours  Usata solo se $end è vuoto e $start ha un orario.
+ */
+function calypso_ics_data_uri( string $title, string $start, string $end, string $location, string $description = '', float $duration_hours = 2.0 ): string {
+	$all_day = strlen( $start ) <= 10;
+
+	if ( $all_day ) {
+		$dtstart = 'DTSTART;VALUE=DATE:' . str_replace( '-', '', $start );
+		$end_ts  = strtotime( ( $end ?: $start ) . ' +1 day' );
+		$dtend   = 'DTEND;VALUE=DATE:' . gmdate( 'Ymd', $end_ts );
+	} else {
+		$start_ts = strtotime( str_replace( 'T', ' ', $start ) );
+		$end_ts   = $end !== '' ? strtotime( str_replace( 'T', ' ', $end ) ) : $start_ts + (int) round( $duration_hours * HOUR_IN_SECONDS );
+		$dtstart  = 'DTSTART:' . gmdate( 'Ymd\THis', $start_ts );
+		$dtend    = 'DTEND:' . gmdate( 'Ymd\THis', $end_ts );
+	}
+
+	$lines = [
+		'BEGIN:VCALENDAR',
+		'VERSION:2.0',
+		'PRODID:-//Calypso Sub Arezzo//Eventi//IT',
+		'CALSCALE:GREGORIAN',
+		'BEGIN:VEVENT',
+		'UID:' . md5( $title . $start . $location ) . '@calypsosub.it',
+		'DTSTAMP:' . gmdate( 'Ymd\THis\Z' ),
+		$dtstart,
+		$dtend,
+		'SUMMARY:' . calypso_ics_escape( $title ),
+	];
+	if ( $location )    $lines[] = 'LOCATION:' . calypso_ics_escape( $location );
+	if ( $description ) $lines[] = 'DESCRIPTION:' . calypso_ics_escape( $description );
+	$lines[] = 'END:VEVENT';
+	$lines[] = 'END:VCALENDAR';
+
+	$ics = implode( "\r\n", $lines );
+	return 'data:text/calendar;charset=utf8,' . rawurlencode( $ics );
+}
+
+/**
+ * Link "Aggiungi a Google Calendar" (web). Stessi parametri di calypso_ics_data_uri().
+ */
+function calypso_gcal_link( string $title, string $start, string $end, string $location, string $description = '', float $duration_hours = 2.0 ): string {
+	$all_day = strlen( $start ) <= 10;
+
+	if ( $all_day ) {
+		$start_fmt = str_replace( '-', '', $start );
+		$end_ts    = strtotime( ( $end ?: $start ) . ' +1 day' );
+		$end_fmt   = gmdate( 'Ymd', $end_ts );
+	} else {
+		$start_gmt = get_gmt_from_date( str_replace( 'T', ' ', $start ), 'Ymd\THis' );
+		$end_src   = $end !== '' ? str_replace( 'T', ' ', $end ) : date( 'Y-m-d H:i:s', strtotime( str_replace( 'T', ' ', $start ) ) + (int) round( $duration_hours * HOUR_IN_SECONDS ) );
+		$end_gmt   = get_gmt_from_date( $end_src, 'Ymd\THis' );
+		$start_fmt = $start_gmt . 'Z';
+		$end_fmt   = $end_gmt . 'Z';
+	}
+
+	$args = [
+		'action'   => 'TEMPLATE',
+		'text'     => $title,
+		'dates'    => $start_fmt . '/' . $end_fmt,
+		'details'  => $description,
+		'location' => $location,
+	];
+	return 'https://calendar.google.com/calendar/render?' . http_build_query( $args, '', '&', PHP_QUERY_RFC3986 );
 }

@@ -194,6 +194,10 @@ class Calypsosub_CPT_Corsi {
 				<label><?php _e( 'Nome contatto', 'calypsosub' ); ?> <small>(es. "Riccardo" — sostituisce "Chiamaci" nel pulsante)</small></label>
 				<input type="text" name="calypso_contatto_nome" value="<?php echo esc_attr( $d['contatto_nome'] ); ?>">
 			</div>
+			<div class="calypso-meta-field" style="grid-column:1/-1">
+				<label><?php _e( 'Link iscrizione personalizzato', 'calypsosub' ); ?> <small>(opzionale — sostituisce per questo corso il link alla pagina Prenotazioni; utile per un modulo esterno, es. Google Form)</small></label>
+				<input type="url" name="calypso_link_iscrizione" value="<?php echo esc_attr( $d['link_iscrizione'] ); ?>" placeholder="https://...">
+			</div>
 			<div class="calypso-meta-field">
 				<label><?php _e( 'Direttore del corso (default)', 'calypsosub' ); ?></label>
 				<select name="calypso_direttore_id">
@@ -338,6 +342,9 @@ class Calypsosub_CPT_Corsi {
 		update_post_meta( $post_id, '_corso_contatto_nome',
 			sanitize_text_field( wp_unslash( $_POST['calypso_contatto_nome'] ?? '' ) ) );
 
+		update_post_meta( $post_id, '_corso_link_iscrizione',
+			esc_url_raw( wp_unslash( $_POST['calypso_link_iscrizione'] ?? '' ) ) );
+
 		update_post_meta( $post_id, '_hero_use_featured_image',
 			isset( $_POST['calypso_hero_bg'] ) ? '1' : '0' );
 
@@ -382,6 +389,7 @@ class Calypsosub_CPT_Corsi {
 			'stat_profondita' => (string) get_post_meta( $post_id, '_corso_stat_profondita', true ),
 			'contatto'        => (string) get_post_meta( $post_id, '_corso_contatto', true ),
 			'contatto_nome'   => (string) get_post_meta( $post_id, '_corso_contatto_nome', true ),
+			'link_iscrizione' => (string) get_post_meta( $post_id, '_corso_link_iscrizione', true ),
 			'competenze'      => (string) get_post_meta( $post_id, '_corso_competenze', true ),
 			'direttore_id'    => (int)    get_post_meta( $post_id, '_corso_direttore_id', true ),
 			'docenti_ids'     => (array)  ( get_post_meta( $post_id, '_corso_docenti_ids', true ) ?: [] ),
