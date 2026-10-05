@@ -24,10 +24,6 @@
   --radius-pill: 999px;
 }
 
-/* ── WP compat reset (page templates) ───────────────────────────────────── */
-#header,#headerimg,#footer,#page>hr{display:none!important}
-#page{margin:0;padding:0;position:relative}
-
 /* ── Site header sticky wrapper ─────────────────────────────────────────── */
 .cso-site-header-wrap{position:absolute;top:0;left:0;right:0;z-index:200;width:100%}
 html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)}

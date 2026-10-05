@@ -1,12 +1,26 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+$cso_header_html = '';
+$cso_footer_html = '';
+if ( function_exists( 'block_template_part' ) ) {
+	/* Pre-renderizzati PRIMA di get_header() così gli "elements styles"
+	 * (es. colore/font dei link, .wp-elements-N) generati da questi
+	 * blocchi vengono registrati in tempo utile per essere stampati
+	 * nell'head da wp_head(), invece di arrivare troppo tardi. */
+	ob_start();
+	block_template_part( 'header' );
+	$cso_header_html = do_shortcode( ob_get_clean() );
+
+	ob_start();
+	block_template_part( 'footer' );
+	$cso_footer_html = do_shortcode( ob_get_clean() );
+}
+
 get_header();
 
-if ( function_exists( 'block_template_part' ) ) {
-	echo '<div class="cso-site-header-wrap">';
-	block_template_part( 'header' );
-	echo '</div>';
+if ( $cso_header_html !== '' ) {
+	echo '<header class="wp-block-template-part cso-site-header-wrap">' . $cso_header_html . '</header>';
 }
 
 /* ── Dati ── */
@@ -233,10 +247,8 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 </script>
 
 <?php
-if ( function_exists( 'block_template_part' ) ) {
-	echo '<div class="cso-site-footer-wrap">';
-	block_template_part( 'footer' );
-	echo '</div>';
+if ( $cso_footer_html !== '' ) {
+	echo '<footer class="wp-block-template-part cso-site-footer-wrap">' . $cso_footer_html . '</footer>';
 }
 get_footer();
 ?>
