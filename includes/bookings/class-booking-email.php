@@ -60,16 +60,18 @@ class Calypsosub_Booking_Email {
 		$post_type = get_post_type( $post_id );
 		$titolo    = get_the_title( $post_id );
 
+		$indirizzo = '';
 		if ( $post_type === 'calypso_occ_uscita' ) {
 			$uscita_id  = (int) get_post_meta( $post_id, '_occorrenza_uscita_uscita_id', true );
 			$luogo      = (string) get_post_meta( $uscita_id, '_uscita_luogo', true );
 			$date_str   = (string) get_post_meta( $post_id, '_occorrenza_uscita_data', true );
-			$prima_data = $date_str ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date_str ) ) : '';
+			$prima_data = $date_str ? calypso_format_datetime( $date_str ) : '';
 			$titolo     = $uscita_id ? get_the_title( $uscita_id ) : $titolo;
 		} else {
 			$luogo      = (string) get_post_meta( $post_id, '_evento_luogo', true );
+			$indirizzo  = (string) get_post_meta( $post_id, '_evento_indirizzo', true );
 			$date_raw   = (array) ( get_post_meta( $post_id, '_evento_date', true ) ?: [] );
-			$prima_data = ! empty( $date_raw ) ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date_raw[0] ) ) : '';
+			$prima_data = ! empty( $date_raw ) ? calypso_format_datetime( $date_raw[0] ) : '';
 		}
 
 		$accompagnatori = (int) get_post_meta( $booking_id, '_booking_companions', true );
@@ -85,6 +87,7 @@ class Calypsosub_Booking_Email {
 			'{titolo_evento}'      => $titolo,
 			'{data_evento}'        => $prima_data,
 			'{luogo}'              => $luogo,
+			'{indirizzo}'          => $indirizzo,
 			'{num_accompagnatori}' => (string) $accompagnatori,
 			'{allergie}'           => $allergie,
 			'{stato_prenotazione}' => $status,

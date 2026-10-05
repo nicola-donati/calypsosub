@@ -105,26 +105,27 @@ class Calypsosub_Seo_Enhancements {
 	}
 
 	private function build_events_evento( int $id ): array {
-		$title = get_the_title( $id );
-		$url   = get_permalink( $id );
-		$luogo = (string) get_post_meta( $id, '_evento_luogo', true );
-		$desc  = $this->excerpt_text( (string) get_post_field( 'post_content', $id ), 300 );
-		$img   = get_the_post_thumbnail_url( $id, 'large' ) ?: '';
-		$dates = (array) ( get_post_meta( $id, '_evento_date', true ) ?: [] );
+		$title     = get_the_title( $id );
+		$url       = get_permalink( $id );
+		$luogo     = (string) get_post_meta( $id, '_evento_luogo', true );
+		$indirizzo = (string) get_post_meta( $id, '_evento_indirizzo', true );
+		$desc      = $this->excerpt_text( (string) get_post_field( 'post_content', $id ), 300 );
+		$img       = get_the_post_thumbnail_url( $id, 'large' ) ?: '';
+		$dates     = (array) ( get_post_meta( $id, '_evento_date', true ) ?: [] );
 
 		$events = [];
 		foreach ( $dates as $idx => $dt ) {
 			$start = $this->iso_date( (string) $dt );
 			if ( $start === '' ) continue;
 
-			$event        = $this->base_event( $title, $url, $start, $luogo, $img, $desc );
+			$event        = $this->base_event( $title, $url, $start, $luogo, $img, $desc, $indirizzo );
 			$event['@id'] = $url . '#event-' . $idx;
 			$events[]     = $event;
 		}
 		return $events;
 	}
 
-	private function base_event( string $title, string $url, string $start, string $luogo, string $img, string $desc ): array {
+	private function base_event( string $title, string $url, string $start, string $luogo, string $img, string $desc, string $indirizzo = '' ): array {
 		$event = [
 			'@type'               => 'Event',
 			'name'                => $title,
@@ -134,7 +135,11 @@ class Calypsosub_Seo_Enhancements {
 			'eventStatus'         => 'https://schema.org/EventScheduled',
 			'organizer'           => $this->organization(),
 		];
-		if ( $luogo !== '' ) $event['location']    = [ '@type' => 'Place', 'name' => $luogo ];
+		if ( $luogo !== '' || $indirizzo !== '' ) {
+			$event['location'] = [ '@type' => 'Place' ];
+			if ( $luogo !== '' )     $event['location']['name']    = $luogo;
+			if ( $indirizzo !== '' ) $event['location']['address'] = $indirizzo;
+		}
 		if ( $img !== '' )   $event['image']       = [ $img ];
 		if ( $desc !== '' )  $event['description'] = $desc;
 		return $event;

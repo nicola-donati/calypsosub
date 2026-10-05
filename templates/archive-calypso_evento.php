@@ -1,12 +1,26 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+$cso_header_html = '';
+$cso_footer_html = '';
+if ( function_exists( 'block_template_part' ) ) {
+	/* Pre-renderizzati PRIMA di get_header() così gli "elements styles"
+	 * (es. colore/font dei link, .wp-elements-N) generati da questi
+	 * blocchi vengono registrati in tempo utile per essere stampati
+	 * nell'head da wp_head(), invece di arrivare troppo tardi. */
+	ob_start();
+	block_template_part( 'header' );
+	$cso_header_html = do_shortcode( ob_get_clean() );
+
+	ob_start();
+	block_template_part( 'footer' );
+	$cso_footer_html = do_shortcode( ob_get_clean() );
+}
+
 get_header();
 
-if ( function_exists( 'block_template_part' ) ) {
-	echo '<div class="cso-site-header-wrap">';
-	block_template_part( 'header' );
-	echo '</div>';
+if ( $cso_header_html !== '' ) {
+	echo '<header class="wp-block-template-part cso-site-header-wrap">' . $cso_header_html . '</header>';
 }
 
 /* ── Default 50 eventi via shared class ── */
@@ -32,6 +46,17 @@ $_ov_c = calypsosub_opt( 'eventi', 'overlay_color', '#061826' );
 $_ov_o = (int) calypsosub_opt( 'eventi', 'overlay_opacity', '88' );
 list( $_r, $_g, $_b ) = array_map( 'hexdec', str_split( ltrim( $_ov_c, '#' ), 2 ) );
 $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d,%d,%.3f) 40%%,rgba(%d,%d,%d,%.3f) 100%%)', $_r, $_g, $_b, round( $_ov_o / 100 * 0.682, 3 ), $_r, $_g, $_b, round( $_ov_o / 100 * 0.170, 3 ), $_r, $_g, $_b, round( $_ov_o / 100, 3 ) );
+
+/* ── Design archivio (configurabile da Calypso Sub → Eventi) ── */
+$_evarch = [
+	'hero_bg'     => calypsosub_opt( 'eventi', 'design_arch_hero_bg',      '#0a2540' ),
+	'body_bg'     => calypsosub_opt( 'eventi', 'design_arch_body_bg',      '#f6f1e6' ),
+	'list_bg'     => calypsosub_opt( 'eventi', 'design_arch_list_bg',      '#ffffff' ),
+	'accent'      => calypsosub_opt( 'eventi', 'design_arch_accent',       '#1B77A7' ),
+	'cta_bg'      => calypsosub_opt( 'eventi', 'design_arch_cta_bg',       '#0a2540' ),
+	'cta_color'   => calypsosub_opt( 'eventi', 'design_arch_cta_color',    '#ffffff' ),
+	'cta_hover_bg'=> calypsosub_opt( 'eventi', 'design_arch_cta_hover_bg', '#061826' ),
+];
 ?>
 <style>
 .cso-archive{color:var(--c-ink,#0b1a26)}
@@ -54,16 +79,16 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 
 /* Layout corpo */
 .cso-archive-body{background:var(--c-bone,#f6f1e6);padding:80px 48px 96px}
-.cso-archive-inner{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:280px 1fr;gap:60px;align-items:start}
+.cso-archive-inner{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:280px minmax(0,1fr);gap:60px;align-items:start}
 
 /* Sidebar filtri */
 .cso-filtri{position:sticky;top:24px;align-self:flex-start}
 .cso-filtri__eyebrow{font-weight:600;letter-spacing:.16em;text-transform:uppercase;margin:0 0 20px;display:block;font-size:16px;color:var(--c-wave,#1B77A7)}
 .cso-filtri__groups{display:flex;flex-direction:column;gap:20px}
 .cso-filtri__group-label{font-size:12px;font-weight:700;color:var(--c-deep,#1B77A7);margin:0 0 8px;letter-spacing:.04em;text-transform:uppercase}
-.cso-filtri__field{width:100%;padding:8px 12px;border:1.5px solid rgba(11,26,38,.15);border-radius:8px;font-size:13px;color:var(--c-ink,#0b1a26);background:#fff;outline:none;font-family:inherit;box-sizing:border-box}
+.cso-filtri__field{width:100%;min-width:0;padding:8px 12px;border:1.5px solid rgba(11,26,38,.15);border-radius:8px;font-size:13px;color:var(--c-ink,#0b1a26);background:#fff;outline:none;font-family:inherit;box-sizing:border-box}
 .cso-filtri__field:focus{border-color:var(--c-deep,#1B77A7)}
-.cso-filtri__date-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cso-filtri__date-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
 .cso-filtri__actions{margin-top:20px;display:flex;gap:10px;flex-wrap:wrap}
 .cso-filtri__btn-apply{display:inline-flex;align-items:center;padding:10px 20px;background:var(--c-deep,#1B77A7);border:none;border-radius:999px;cursor:pointer;font-weight:600;font-size:13px;color:#fff;font-family:inherit}
 .cso-filtri__btn-apply:hover{background:var(--c-abyss,#061826)}
@@ -82,7 +107,7 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 /* Riga evento */
 .cso-evento-row{
 	display:grid;
-	grid-template-columns:90px 1fr 200px 110px 120px;
+	grid-template-columns:90px minmax(0,1fr) 200px 110px 120px;
 	align-items:center;
 	padding:20px 24px;
 	border-top:1px solid rgba(11,26,38,.06);
@@ -143,12 +168,12 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 	.cso-hero{padding:calc(90px + 24px) 28px 64px}
 	.cso-archive .cso-hero__title{font-size:76px}
 	.cso-archive-body{padding:56px 28px 72px}
-	.cso-archive-inner{grid-template-columns:1fr;gap:32px}
+	.cso-archive-inner{grid-template-columns:minmax(0,1fr);gap:32px}
 	.cso-filtri{position:static;background:rgba(10,37,64,.04);border-radius:14px;padding:24px}
-	.cso-filtri__groups{display:grid;grid-template-columns:repeat(3,1fr);gap:20px 28px}
+	.cso-filtri__groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px 28px}
 	.cso-mese{margin-bottom:40px}
 	.cso-mese__heading{font-size:46px}
-	.cso-evento-row{grid-template-columns:76px 1fr 160px 96px 110px;padding:18px 20px;column-gap:12px}
+	.cso-evento-row{grid-template-columns:76px minmax(0,1fr) 160px 96px 110px;padding:18px 20px;column-gap:12px}
 }
 
 /* Responsive ≤760px */
@@ -156,7 +181,7 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 	.cso-hero{padding:calc(90px + 20px) 20px 48px}
 	.cso-archive .cso-hero__title{font-size:52px}
 	.cso-archive-body{padding:40px 20px 64px}
-	.cso-filtri__groups{grid-template-columns:1fr 1fr;gap:18px 24px}
+	.cso-filtri__groups{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px 24px}
 	.cso-mese{margin-bottom:32px}
 	.cso-mese__heading{font-size:38px;gap:12px}
 	.cso-eventi-list{box-shadow:0 10px 30px -18px rgba(10,37,64,.3)}
@@ -174,9 +199,22 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 /* Responsive ≤420px */
 @media(max-width:420px){
 	.cso-archive .cso-hero__title{font-size:42px}
-	.cso-filtri__groups{grid-template-columns:1fr}
+	.cso-filtri__groups{grid-template-columns:minmax(0,1fr)}
 	.cso-mese__heading{font-size:32px}
 }
+</style>
+<style>
+/* Design archivio — valori da Calypso Sub → Eventi → Archivio — Design.
+   Specificità .cso-archive X per vincere su ".cso-archive a{color:inherit}"
+   e sui fallback var(--c-deep,...) del blocco statico sopra. */
+.cso-archive .cso-hero{background:<?php echo esc_attr( $_evarch['hero_bg'] ); ?>}
+.cso-archive .cso-archive-body{background:<?php echo esc_attr( $_evarch['body_bg'] ); ?>}
+.cso-archive .cso-eventi-list{background:<?php echo esc_attr( $_evarch['list_bg'] ); ?>}
+.cso-archive .cso-mese__heading,
+.cso-archive .cso-evento-row__daynum,
+.cso-archive .cso-evento-row__title{color:<?php echo esc_attr( $_evarch['accent'] ); ?>}
+.cso-archive .cso-btn-dark{background:<?php echo esc_attr( $_evarch['cta_bg'] ); ?>;color:<?php echo esc_attr( $_evarch['cta_color'] ); ?>}
+.cso-archive .cso-btn-dark:hover{background:<?php echo esc_attr( $_evarch['cta_hover_bg'] ); ?>}
 </style>
 
 <div class="cso-archive cso-archive--eventi">
@@ -216,18 +254,18 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 
 	<!-- Sidebar filtri -->
 	<aside class="cso-filtri">
-		<span class="cso-filtri__eyebrow"><?php esc_html_e( 'Filtra', 'calypsosub' ); ?></span>
+		<span class="cso-filtri__eyebrow"><?php echo esc_html( calypsosub_opt( 'eventi', 'filtri_label', __( 'Filtra', 'calypsosub' ) ) ); ?></span>
 		<div class="cso-filtri__groups">
 
 			<div>
-				<div class="cso-filtri__group-label"><?php esc_html_e( 'TESTO', 'calypsosub' ); ?></div>
+				<div class="cso-filtri__group-label"><?php echo esc_html( calypsosub_opt( 'eventi', 'filtri_testo', __( 'TESTO', 'calypsosub' ) ) ); ?></div>
 				<input type="search" class="cso-filtri__field" id="cso-ev-q"
 				       placeholder="<?php esc_attr_e( 'Cerca evento…', 'calypsosub' ); ?>"
 				       aria-label="<?php esc_attr_e( 'Cerca evento per nome', 'calypsosub' ); ?>">
 			</div>
 
 			<div>
-				<div class="cso-filtri__group-label"><?php esc_html_e( 'PERIODO', 'calypsosub' ); ?></div>
+				<div class="cso-filtri__group-label"><?php echo esc_html( calypsosub_opt( 'eventi', 'filtri_periodo', __( 'PERIODO', 'calypsosub' ) ) ); ?></div>
 				<div class="cso-filtri__date-row">
 					<input type="date" class="cso-filtri__field" id="cso-ev-da"
 					       aria-label="<?php esc_attr_e( 'Dal', 'calypsosub' ); ?>">
@@ -238,10 +276,10 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 
 			<?php if ( ! empty( $all_luoghi ) ) : ?>
 			<div>
-				<div class="cso-filtri__group-label"><?php esc_html_e( 'LUOGO', 'calypsosub' ); ?></div>
+				<div class="cso-filtri__group-label"><?php echo esc_html( calypsosub_opt( 'eventi', 'filtri_luogo', __( 'LUOGO', 'calypsosub' ) ) ); ?></div>
 				<select class="cso-filtri__field" id="cso-ev-luogo"
 				        aria-label="<?php esc_attr_e( 'Filtra per luogo', 'calypsosub' ); ?>">
-					<option value=""><?php esc_html_e( 'Tutti', 'calypsosub' ); ?></option>
+					<option value=""><?php echo esc_html( calypsosub_opt( 'eventi', 'filtri_luogo_tutti', __( 'Tutti', 'calypsosub' ) ) ); ?></option>
 					<?php foreach ( $all_luoghi as $loc ) : ?>
 					<option value="<?php echo esc_attr( $loc ); ?>"><?php echo esc_html( $loc ); ?></option>
 					<?php endforeach; ?>
@@ -253,10 +291,10 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 
 		<div class="cso-filtri__actions">
 			<button type="button" class="cso-filtri__btn-apply" id="cso-ev-apply">
-				<?php esc_html_e( 'Cerca', 'calypsosub' ); ?>
+				<?php echo esc_html( calypsosub_opt( 'eventi', 'btn_applica', __( 'Cerca', 'calypsosub' ) ) ); ?>
 			</button>
 			<button type="button" class="cso-filtri__btn-reset" id="cso-ev-reset" style="display:none">
-				<?php esc_html_e( 'Rimuovi', 'calypsosub' ); ?>
+				<?php echo esc_html( calypsosub_opt( 'eventi', 'btn_rimuovi', __( 'Rimuovi', 'calypsosub' ) ) ); ?>
 			</button>
 		</div>
 	</aside>
@@ -344,10 +382,8 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 </script>
 
 <?php
-if ( function_exists( 'block_template_part' ) ) {
-	echo '<div class="cso-site-footer-wrap">';
-	block_template_part( 'footer' );
-	echo '</div>';
+if ( $cso_footer_html !== '' ) {
+	echo '<footer class="wp-block-template-part cso-site-footer-wrap">' . $cso_footer_html . '</footer>';
 }
 get_footer();
 ?>

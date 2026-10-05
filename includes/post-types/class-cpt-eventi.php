@@ -64,8 +64,12 @@ class Calypsosub_CPT_Eventi {
 				<textarea name="calypso_desc_breve"><?php echo esc_textarea( $d['desc_breve'] ); ?></textarea>
 			</div>
 			<div class="calypso-meta-field">
-				<label><?php _e( 'Luogo', 'calypsosub' ); ?></label>
+				<label><?php _e( 'Luogo (nome breve, es. "Bologna" — usato per i filtri)', 'calypsosub' ); ?></label>
 				<input type="text" name="calypso_luogo" value="<?php echo esc_attr( $d['luogo'] ); ?>">
+			</div>
+			<div class="calypso-meta-field">
+				<label><?php _e( 'Indirizzo (completo, es. "Viale della Fiera, 20, Bologna")', 'calypsosub' ); ?></label>
+				<input type="text" name="calypso_indirizzo" value="<?php echo esc_attr( $d['indirizzo'] ); ?>">
 			</div>
 			<div class="calypso-meta-field">
 				<label><?php _e( 'Max partecipanti (vuoto = libera)', 'calypsosub' ); ?></label>
@@ -148,6 +152,7 @@ class Calypsosub_CPT_Eventi {
 			'_evento_sottotitolo' => 'calypso_sottotitolo',
 			'_evento_desc_breve'  => 'calypso_desc_breve',
 			'_evento_luogo'       => 'calypso_luogo',
+			'_evento_indirizzo'   => 'calypso_indirizzo',
 		];
 		foreach ( $text_fields as $meta_key => $post_key ) {
 			update_post_meta( $post_id, $meta_key,
@@ -176,6 +181,7 @@ class Calypsosub_CPT_Eventi {
 			'sottotitolo'      => (string) get_post_meta( $post_id, '_evento_sottotitolo', true ),
 			'desc_breve'       => (string) get_post_meta( $post_id, '_evento_desc_breve', true ),
 			'luogo'            => (string) get_post_meta( $post_id, '_evento_luogo', true ),
+			'indirizzo'        => (string) get_post_meta( $post_id, '_evento_indirizzo', true ),
 			'max_partecipanti' => get_post_meta( $post_id, '_evento_max_partecipanti', true ),
 			'lista_attesa'     => (int) get_post_meta( $post_id, '_evento_lista_attesa', true ),
 			'date'             => (array) ( get_post_meta( $post_id, '_evento_date', true ) ?: [] ),

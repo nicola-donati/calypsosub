@@ -1,11 +1,25 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
+$cso_header_html = '';
+$cso_footer_html = '';
+if ( function_exists( 'block_template_part' ) ) {
+	/* Pre-renderizzati PRIMA di get_header() così gli "elements styles"
+	 * (es. colore/font dei link, .wp-elements-N) generati da questi
+	 * blocchi vengono registrati in tempo utile per essere stampati
+	 * nell'head da wp_head(), invece di arrivare troppo tardi. */
+	ob_start();
+	block_template_part( 'header' );
+	$cso_header_html = do_shortcode( ob_get_clean() );
+
+	ob_start();
+	block_template_part( 'footer' );
+	$cso_footer_html = do_shortcode( ob_get_clean() );
+}
+
 get_header();
 
-if ( function_exists( 'block_template_part' ) ) {
-	echo '<div class="cso-site-header-wrap">';
-	block_template_part( 'header' );
-	echo '</div>';
+if ( $cso_header_html !== '' ) {
+	echo '<header class="wp-block-template-part cso-site-header-wrap">' . $cso_header_html . '</header>';
 }
 
 $id = get_the_ID();
@@ -14,6 +28,7 @@ $prenotazioni_page_id = (int) get_option( 'calypsosub_prenotazioni_page_id', 0 )
 
 $sottotitolo  = (string) get_post_meta( $id, '_evento_sottotitolo', true );
 $luogo        = (string) get_post_meta( $id, '_evento_luogo', true );
+$indirizzo    = (string) get_post_meta( $id, '_evento_indirizzo', true );
 $max_part     = get_post_meta( $id, '_evento_max_partecipanti', true );
 $lista_attesa = (int) get_post_meta( $id, '_evento_lista_attesa', true );
 $date         = (array) ( get_post_meta( $id, '_evento_date', true ) ?: [] );
@@ -28,7 +43,8 @@ if ( ! $prossima && $date ) $prossima = end( $date );
 
 $fmt = static function ( string $dt ): string {
 	$ts = strtotime( $dt );
-	return $ts ? wp_date( 'j F Y — H:i', $ts ) : $dt;
+	if ( ! $ts ) return $dt;
+	return strlen( $dt ) > 10 ? wp_date( 'j F Y — H:i', $ts ) : wp_date( 'j F Y', $ts );
 };
 
 global $calypsosub_booking_manager;
@@ -166,6 +182,15 @@ $_evd = [
 		</div>
 	</div>
 	<?php endif; ?>
+	<?php if ( $indirizzo ) : ?>
+	<div class="cso-infobar__pill">
+		<span class="cso-infobar__icon">🗺️</span>
+		<div>
+			<span class="cso-infobar__label"><?php esc_html_e( 'Indirizzo', 'calypsosub' ); ?></span>
+			<span class="cso-infobar__value"><?php echo esc_html( $indirizzo ); ?></span>
+		</div>
+	</div>
+	<?php endif; ?>
 	<?php if ( $prossima ) : ?>
 	<div class="cso-infobar__pill">
 		<span class="cso-infobar__icon">📅</span>
@@ -259,4 +284,8 @@ $_evd = [
 </div>
 </div>
 
-<?php get_footer(); ?>
+<?php
+if ( $cso_footer_html !== '' ) {
+	echo '<footer class="wp-block-template-part cso-site-footer-wrap">' . $cso_footer_html . '</footer>';
+}
+get_footer();
