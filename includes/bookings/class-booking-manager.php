@@ -307,11 +307,11 @@ class Calypsosub_Booking_Manager {
 
 		if ( $post_type === 'calypso_occ_uscita' ) {
 			$date_str    = (string) get_post_meta( $post_id, '_occorrenza_uscita_data', true );
-			$data_evento = $date_str ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date_str ) ) : '—';
+			$data_evento = $date_str ? calypso_format_datetime( $date_str ) : '—';
 			$uscita_id   = (int) get_post_meta( $post_id, '_occorrenza_uscita_uscita_id', true );
 		} else {
 			$date_raw    = (array) ( get_post_meta( $post_id, '_evento_date', true ) ?: [] );
-			$data_evento = ! empty( $date_raw ) ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date_raw[0] ) ) : '—';
+			$data_evento = ! empty( $date_raw ) ? calypso_format_datetime( $date_raw[0] ) : '—';
 			$uscita_id   = 0;
 		}
 

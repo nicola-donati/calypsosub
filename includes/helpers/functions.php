@@ -35,6 +35,22 @@ function calypso_hex2rgba( string $hex, float $alpha ): string {
 }
 
 /**
+ * Formatta una data salvata come 'Y-m-d' (sola data) o 'Y-m-d\TH:i' (data +
+ * ora) usando i formati data/ora del sito. Se non è stata impostata un'ora
+ * (stringa di 10 caratteri, nessun 'T'), l'ora viene omessa invece di
+ * mostrare 00:00 — regola generale per eventi e uscite.
+ */
+function calypso_format_datetime( string $date_str ): string {
+	if ( $date_str === '' ) return '';
+	$ts = strtotime( $date_str );
+	if ( ! $ts ) return '';
+	$format = strlen( $date_str ) > 10
+		? get_option( 'date_format' ) . ' ' . get_option( 'time_format' )
+		: get_option( 'date_format' );
+	return date_i18n( $format, $ts );
+}
+
+/**
  * Valida un tag heading scelto in editor (h1-h6). Qualsiasi altro valore
  * (incluso 'none' o input non atteso) ricade sul tag non-heading originale
  * del blocco, mai un'eco diretta della stringa non controllata.

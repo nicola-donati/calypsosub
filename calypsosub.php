@@ -3,7 +3,7 @@
  * Plugin Name: Calypso Sub Arezzo
  * Plugin URI:  https://calypsosub.it
  * Description: Gestione uscite, eventi, corsi, docenti e prenotazioni per ASD Calypso Sub Arezzo.
- * Version:     1.0.0
+ * Version:     1.0.7
  * Author:      Nicola Donati
  * Text Domain: calypsosub
  * Domain Path: /languages
@@ -13,7 +13,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'CALYPSOSUB_VERSION', '1.0.0' );
+define( 'CALYPSOSUB_VERSION', '1.0.7' );
 define( 'CALYPSOSUB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CALYPSOSUB_URL', plugin_dir_url( __FILE__ ) );
 
@@ -33,6 +33,7 @@ require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-uscite.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-occorrenza-uscite.php';
 require_once CALYPSOSUB_PATH . 'includes/migrations/class-migrate-occorrenze-uscite.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-eventi.php';
+require_once CALYPSOSUB_PATH . 'includes/migrations/class-migrate-evento-luogo-indirizzo.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-corsi.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-occorrenze.php';
 require_once CALYPSOSUB_PATH . 'includes/bookings/class-booking-email.php';
@@ -76,6 +77,7 @@ add_filter( 'use_block_editor_for_post_type', function ( bool $use, string $post
 ( new Calypsosub_CPT_Occorrenza_Uscite() )->init();
 ( new Calypsosub_Migrate_Occorrenze_Uscite() )->init();
 ( new Calypsosub_CPT_Eventi() )->init();
+( new Calypsosub_Migrate_Evento_Luogo_Indirizzo() )->init();
 ( new Calypsosub_CPT_Corsi() )->init();
 ( new Calypsosub_CPT_Occorrenze() )->init();
 

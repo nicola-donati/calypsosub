@@ -78,7 +78,7 @@ $history_title_tag = calypsosub_title_tag( (string) ( ( $attributes ?? [] )['his
 			$mp         = $post_type === 'calypso_uscita' ? '_uscita' : '_evento';
 			$date_raw   = (array) ( get_post_meta( $post_id, $mp . '_date', true ) ?: [] );
 			$prima_data = ! empty( $date_raw )
-				? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date_raw[0] ) )
+				? calypso_format_datetime( $date_raw[0] )
 				: '—';
 		?>
 		<tr>
@@ -134,7 +134,7 @@ $history_title_tag = calypsosub_title_tag( (string) ( ( $attributes ?? [] )['his
 			$mp        = $post_type === 'calypso_uscita' ? '_uscita' : '_evento';
 			$date_raw  = (array) ( get_post_meta( $post_id, $mp . '_date', true ) ?: [] );
 			$prima_data = ! empty( $date_raw )
-				? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date_raw[0] ) )
+				? calypso_format_datetime( $date_raw[0] )
 				: '—';
 		?>
 		<tr>

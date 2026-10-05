@@ -1,12 +1,26 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+$cso_header_html = '';
+$cso_footer_html = '';
+if ( function_exists( 'block_template_part' ) ) {
+	/* Pre-renderizzati PRIMA di get_header() così gli "elements styles"
+	 * (es. colore/font dei link, .wp-elements-N) generati da questi
+	 * blocchi vengono registrati in tempo utile per essere stampati
+	 * nell'head da wp_head(), invece di arrivare troppo tardi. */
+	ob_start();
+	block_template_part( 'header' );
+	$cso_header_html = do_shortcode( ob_get_clean() );
+
+	ob_start();
+	block_template_part( 'footer' );
+	$cso_footer_html = do_shortcode( ob_get_clean() );
+}
+
 get_header();
 
-if ( function_exists( 'block_template_part' ) ) {
-	echo '<div class="cso-site-header-wrap">';
-	block_template_part( 'header' );
-	echo '</div>';
+if ( $cso_header_html !== '' ) {
+	echo '<header class="wp-block-template-part cso-site-header-wrap">' . $cso_header_html . '</header>';
 }
 
 /* ── Filtri da GET ── */
@@ -48,9 +62,9 @@ foreach ( $raw as $u ) {
 usort( $uscite_past_old, static fn( $a, $b ) => strcmp( $b->_prima_data, $a->_prima_data ) );
 $needed    = max( 0, 5 - count( $uscite_past_win ) );
 $past_show = array_merge( $uscite_past_win, array_slice( $uscite_past_old, 0, $needed ) );
-usort( $past_show,     static fn( $a, $b ) => strcmp( $a->_prima_data, $b->_prima_data ) );
+usort( $past_show,     static fn( $a, $b ) => strcmp( $b->_prima_data, $a->_prima_data ) );
 usort( $uscite_future, static fn( $a, $b ) => strcmp( $a->_prima_data, $b->_prima_data ) );
-$uscite = array_merge( $past_show, $uscite_future );
+$uscite = array_merge( $uscite_future, $past_show );
 
 /* ── Conteggio prenotazioni (batch) ── */
 $booking_counts = [];
@@ -585,10 +599,8 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 </div><!-- .cso-archive -->
 
 <?php
-if ( function_exists( 'block_template_part' ) ) {
-	echo '<div class="cso-site-footer-wrap">';
-	block_template_part( 'footer' );
-	echo '</div>';
+if ( $cso_footer_html !== '' ) {
+	echo '<footer class="wp-block-template-part cso-site-footer-wrap">' . $cso_footer_html . '</footer>';
 }
 get_footer();
 ?>
