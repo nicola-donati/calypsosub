@@ -38,7 +38,7 @@ class Calypsosub_Blocks {
 				'padding_y' => [ 'type' => 'integer', 'default' => 80 ],
 				'padding_x' => [ 'type' => 'integer', 'default' => 48 ],
 				/* ── Colori ── */
-				'color_accent' => [ 'type' => 'string', 'default' => '#1B77A7' ],
+				'color_accent' => [ 'type' => 'string', 'default' => '#3473A5' ],
 				'color_ink'    => [ 'type' => 'string', 'default' => '#0b1a26' ],
 				/* ── Card ── */
 				'card_bg'     => [ 'type' => 'string',  'default' => '#ffffff' ],
@@ -126,7 +126,7 @@ class Calypsosub_Blocks {
 				'featured_enabled' => [ 'type' => 'boolean', 'default' => true ],
 				'featured_index'   => [ 'type' => 'integer', 'default' => 0 ],
 				/* ── Layout sezione ── */
-				'bg_color'      => [ 'type' => 'string',  'default' => '#f6f1e6' ],
+				'bg_color'      => [ 'type' => 'string',  'default' => '#F5F1E7' ],
 				'max_width'     => [ 'type' => 'integer', 'default' => 900 ],
 				'padding_y'     => [ 'type' => 'integer', 'default' => 48 ],
 				'padding_x'     => [ 'type' => 'integer', 'default' => 24 ],
@@ -243,7 +243,7 @@ class Calypsosub_Blocks {
 				'photo_label_size'  => [ 'type' => 'integer', 'default' => 9 ],
 				/* ── Nome ── */
 				'name_tag'    => [ 'type' => 'string',  'default' => 'none' ],
-				'name_color'  => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'name_color'  => [ 'type' => 'string',  'default' => '#3473A5' ],
 				'name_size'   => [ 'type' => 'integer', 'default' => 22 ],
 				'name_weight' => [ 'type' => 'integer', 'default' => 800 ],
 				'name_upper'  => [ 'type' => 'boolean', 'default' => true ],
@@ -319,7 +319,7 @@ class Calypsosub_Blocks {
 				'text_color'      => [ 'type' => 'string',  'default' => '#ffffff' ],
 				'overlay_color'   => [ 'type' => 'string',  'default' => '#061826' ],
 				/* ── Tipografia eyebrow ── */
-				'eyebrow_color'   => [ 'type' => 'string',  'default' => '#26CBFB' ],
+				'eyebrow_color'   => [ 'type' => 'string',  'default' => '#59C6F9' ],
 				'eyebrow_size'        => [ 'type' => 'integer', 'default' => 14 ],
 				'eyebrow_size_tablet' => [ 'type' => 'integer', 'default' => 0 ],
 				'eyebrow_size_mobile' => [ 'type' => 'integer', 'default' => 0 ],
@@ -329,7 +329,7 @@ class Calypsosub_Blocks {
 				'eyebrow_width_mobile' => [ 'type' => 'string',  'default' => '' ],
 				/* ── Tipografia titolo ── */
 				'title_color'     => [ 'type' => 'string',  'default' => '#ffffff' ],
-				'title_em_color'  => [ 'type' => 'string',  'default' => '#26CBFB' ],
+				'title_em_color'  => [ 'type' => 'string',  'default' => '#59C6F9' ],
 				'title_size'        => [ 'type' => 'integer', 'default' => 108 ],
 				'title_size_tablet' => [ 'type' => 'integer', 'default' => 0 ],
 				'title_size_mobile' => [ 'type' => 'integer', 'default' => 0 ],
@@ -372,7 +372,7 @@ class Calypsosub_Blocks {
 				'pu_border'       => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.18)' ],
 				'pu_dot_color'    => [ 'type' => 'string',  'default' => '#54e09a' ],
 				'pu_text_color'   => [ 'type' => 'string',  'default' => '#ffffff' ],
-				'pu_accent_color' => [ 'type' => 'string',  'default' => '#26CBFB' ],
+				'pu_accent_color' => [ 'type' => 'string',  'default' => '#59C6F9' ],
 				'pu_warn_color'   => [ 'type' => 'string',  'default' => '#ff6b4a' ],
 				/* ── Ticker luoghi ── */
 				'marquee_bg'        => [ 'type' => 'string',  'default' => '#0a2540' ],
@@ -399,9 +399,9 @@ class Calypsosub_Blocks {
 				'bg_image_id'      => [ 'type' => 'integer', 'default' => 0 ],
 				'padding_y'        => [ 'type' => 'integer', 'default' => 80 ],
 				'max_width'        => [ 'type' => 'integer', 'default' => 1320 ],
-				'eyebrow_color'          => [ 'type' => 'string',  'default' => '#1B77A7' ],
-				'title_color'            => [ 'type' => 'string',  'default' => '#1B77A7' ],
-				'title_highlight_color'  => [ 'type' => 'string',  'default' => '#26CBFB' ],
+				'eyebrow_color'          => [ 'type' => 'string',  'default' => '#3473A5' ],
+				'title_color'            => [ 'type' => 'string',  'default' => '#3473A5' ],
+				'title_highlight_color'  => [ 'type' => 'string',  'default' => '#59C6F9' ],
 				'title_size'             => [ 'type' => 'integer', 'default' => 76 ],
 				'eyebrow_size'           => [ 'type' => 'integer', 'default' => 13 ],
 				'eyebrow_letter_spacing' => [ 'type' => 'integer', 'default' => 16 ],
@@ -452,7 +452,7 @@ class Calypsosub_Blocks {
 				'card_padding'     => [ 'type' => 'integer', 'default' => 24 ],
 				'card_shadow'      => [ 'type' => 'boolean', 'default' => true ],
 				/* ── Tipografia eyebrow ── */
-				'eyebrow_color'    => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'eyebrow_color'    => [ 'type' => 'string',  'default' => '#3473A5' ],
 				'eyebrow_size'     => [ 'type' => 'integer', 'default' => 13 ],
 				/* ── Tipografia titolo ── */
 				'title_color'      => [ 'type' => 'string',  'default' => '#061826' ],
@@ -463,7 +463,7 @@ class Calypsosub_Blocks {
 				'desc_color'       => [ 'type' => 'string',  'default' => '#3d5a6c' ],
 				'desc_size'        => [ 'type' => 'integer', 'default' => 14 ],
 				/* ── Link ── */
-				'link_color'       => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'link_color'       => [ 'type' => 'string',  'default' => '#3473A5' ],
 				'link_size'        => [ 'type' => 'integer', 'default' => 13 ],
 			],
 		],
@@ -519,7 +519,7 @@ class Calypsosub_Blocks {
 				'left_format'       => [ 'type' => 'string',  'default' => 'Y' ],
 				'left_custom_field' => [ 'type' => 'string',  'default' => '' ],
 				/* ── Layout sezione ── */
-				'bg_color'      => [ 'type' => 'string',  'default' => '#f6f1e6' ],
+				'bg_color'      => [ 'type' => 'string',  'default' => '#F5F1E7' ],
 				'max_width'     => [ 'type' => 'integer', 'default' => 1100 ],
 				'padding_y'     => [ 'type' => 'integer', 'default' => 60 ],
 				'padding_x'     => [ 'type' => 'integer', 'default' => 24 ],
@@ -536,7 +536,7 @@ class Calypsosub_Blocks {
 				'left_weight'    => [ 'type' => 'integer', 'default' => 900 ],
 				'left_col_width' => [ 'type' => 'integer', 'default' => 140 ],
 				/* ── Titolo ── */
-				'title_color'  => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'title_color'  => [ 'type' => 'string',  'default' => '#3473A5' ],
 				'title_size'   => [ 'type' => 'integer', 'default' => 22 ],
 				'title_weight' => [ 'type' => 'integer', 'default' => 800 ],
 				'title_upper'  => [ 'type' => 'boolean', 'default' => true ],
@@ -613,6 +613,9 @@ class Calypsosub_Blocks {
 				'cf7_form_uscite'    => [ 'type' => 'integer', 'default' => 0 ],
 				'cf7_form_eventi'    => [ 'type' => 'integer', 'default' => 0 ],
 				'cf7_form_corsi'     => [ 'type' => 'integer', 'default' => 0 ],
+				'cf7_form_fallback'  => [ 'type' => 'integer', 'default' => 0 ],
+				'fallback_title'     => [ 'type' => 'string', 'default' => 'Nessuna disponibilità' ],
+				'fallback_text'      => [ 'type' => 'string', 'default' => 'Al momento non ci sono elementi prenotabili per questa tipologia. Scrivi la tua richiesta nel messaggio del modulo e ti risponderemo appena possibile.' ],
 				'max_items_per_tab'  => [ 'type' => 'integer', 'default' => 60 ],
 				'cards_per_page'     => [ 'type' => 'integer', 'default' => 12 ],
 				'card_columns'       => [ 'type' => 'integer', 'default' => 4 ],
@@ -625,8 +628,10 @@ class Calypsosub_Blocks {
 				'login_message'        => [ 'type' => 'string',  'default' => 'Per prenotarti devi aver effettuato il login.' ],
 
 				/* Sezione selezione — sfondo & layout */
-				'select_bg_color'        => [ 'type' => 'string',  'default' => '#f6f1e6' ],
+				'select_bg_color'        => [ 'type' => 'string',  'default' => '#F5F1E7' ],
 				'select_padding_y'       => [ 'type' => 'integer', 'default' => 40 ],
+				/* Su mobile/tablet questa sezione diventa il riepilogo "Stai prenotando" (colore indipendente, non eredita select_bg_color: lì sotto diventa la sezione form). */
+				'mobile_select_bg_color' => [ 'type' => 'string',  'default' => '#0a2540' ],
 
 				/* Selettore tab */
 				'tabs_track_bg_color'          => [ 'type' => 'string',  'default' => '#ffffff' ],
@@ -649,19 +654,19 @@ class Calypsosub_Blocks {
 				'card_selected_badge_bg_color'    => [ 'type' => 'string',  'default' => '#f5a623' ],
 				'card_selected_badge_text_color'  => [ 'type' => 'string',  'default' => '#ffffff' ],
 				'card_date_bg_color'              => [ 'type' => 'string',  'default' => '#ffffff' ],
-				'card_date_num_color'             => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'card_date_num_color'             => [ 'type' => 'string',  'default' => '#3473A5' ],
 				'card_date_label_color'           => [ 'type' => 'string',  'default' => '#5c6b75' ],
 				'card_media_title_bg_color'       => [ 'type' => 'string',  'default' => 'rgba(10,37,64,.6)' ],
 				'card_media_title_color'          => [ 'type' => 'string',  'default' => '#ffffff' ],
 				'card_type_badge_bg_color'        => [ 'type' => 'string',  'default' => '#e6f1fa' ],
-				'card_type_badge_text_color'      => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'card_type_badge_text_color'      => [ 'type' => 'string',  'default' => '#3473A5' ],
 				'card_title_color'                => [ 'type' => 'string',  'default' => '#0a2540' ],
 				'card_title_size'                 => [ 'type' => 'integer', 'default' => 18 ],
 				'card_title_font_weight'          => [ 'type' => 'integer', 'default' => 700 ],
 				'card_meta_text_color'            => [ 'type' => 'string',  'default' => '#5c6b75' ],
 				'card_divider_color'              => [ 'type' => 'string',  'default' => '#e9edf0' ],
 				'card_level_text_color'           => [ 'type' => 'string',  'default' => '#5c6b75' ],
-				'card_spots_text_color'           => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'card_spots_text_color'           => [ 'type' => 'string',  'default' => '#3473A5' ],
 				'card_spots_warn_color'           => [ 'type' => 'string',  'default' => '#ff6b4a' ],
 
 				/* Filtri (button-group stile radio) */
@@ -670,8 +675,10 @@ class Calypsosub_Blocks {
 				'filter_active_text_color'   => [ 'type' => 'string', 'default' => '#b9790a' ],
 
 				/* Sezione dati — sfondo & layout */
-				'data_bg_color'          => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'data_bg_color'          => [ 'type' => 'string',  'default' => '#3473A5' ],
 				'data_padding_y'         => [ 'type' => 'integer', 'default' => 48 ],
+				/* Su mobile/tablet questa sezione diventa solo il form (colore indipendente, non eredita data_bg_color: lì sopra diventa il riepilogo). */
+				'mobile_data_bg_color'   => [ 'type' => 'string',  'default' => '#F5F1E7' ],
 
 				/* Form prenotazione */
 				'form_bg_color'             => [ 'type' => 'string',  'default' => '#ffffff' ],
@@ -693,6 +700,9 @@ class Calypsosub_Blocks {
 				'side_luogo_color'        => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.75)' ],
 				'side_label_color'        => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.55)' ],
 				'side_value_color'        => [ 'type' => 'string',  'default' => '#ffffff' ],
+				/* Bordo della card riepilogo "Stai prenotando" — solo mobile/tablet, non esiste un equivalente desktop (lì il riepilogo è la sidebar, senza bordo). */
+				'mobile_summary_border_color' => [ 'type' => 'string',  'default' => 'rgba(255,255,255,.15)' ],
+				'mobile_summary_border_width' => [ 'type' => 'integer', 'default' => 0 ],
 			],
 		],
 		'calypso/nav-menu' => [
@@ -799,7 +809,7 @@ class Calypsosub_Blocks {
 				'group3_margin_left'   => [ 'type' => 'integer', 'default' => 0 ],
 				/* ── Aspetto link ── */
 				'link_color'          => [ 'type' => 'string',  'default' => '#0b1a26' ],
-				'link_hover_color'    => [ 'type' => 'string',  'default' => '#1B77A7' ],
+				'link_hover_color'    => [ 'type' => 'string',  'default' => '#3473A5' ],
 				'link_size'           => [ 'type' => 'integer', 'default' => 15 ],
 				'link_weight'         => [ 'type' => 'integer', 'default' => 600 ],
 				'link_upper'          => [ 'type' => 'boolean', 'default' => false ],
@@ -1219,31 +1229,31 @@ class Calypsosub_Blocks {
 					var preview = el('div', {
 						style: { background: '#dff4f8', borderRadius: '8px', padding: '28px 24px', fontFamily: 'system-ui,sans-serif' }
 					},
-						el('div', { style: { fontSize: '10px', fontWeight: 700, letterSpacing: '.18em', textTransform: 'uppercase', color: '#26CBFB', marginBottom: '10px' } },
+						el('div', { style: { fontSize: '10px', fontWeight: 700, letterSpacing: '.18em', textTransform: 'uppercase', color: '#59C6F9', marginBottom: '10px' } },
 							a.eyebrow || 'Prossime uscite'
 						),
-						el('div', { style: { fontSize: '28px', fontWeight: 900, color: '#1B77A7', lineHeight: 1, marginBottom: '20px' } },
+						el('div', { style: { fontSize: '28px', fontWeight: 900, color: '#3473A5', lineHeight: 1, marginBottom: '20px' } },
 							titleLines.join(' · ')
 						),
 						/* Fake rows */
 						el('div', { style: { background: '#fff', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 8px 24px -10px rgba(10,37,64,.2)' } },
 							el('div', { style: { display: 'flex', alignItems: 'center', gap: '16px', padding: '14px 16px', fontSize: '12px', color: '#0b1a26' } },
-								el('div', { style: { fontWeight: 900, fontSize: '24px', color: '#1B77A7', minWidth: '32px' } }, '14'),
+								el('div', { style: { fontWeight: 900, fontSize: '24px', color: '#3473A5', minWidth: '32px' } }, '14'),
 								el('div', { style: { flex: 1 } },
-									el('div', { style: { fontWeight: 700, color: '#1B77A7' } }, 'Nome uscita di esempio'),
+									el('div', { style: { fontWeight: 700, color: '#3473A5' } }, 'Nome uscita di esempio'),
 									el('div', { style: { fontSize: '11px', color: 'rgba(11,26,38,.5)' } }, '📍 Argentario · 2 immersioni')
 								),
-								a.show_badge ? el('div', { style: { background: 'rgba(27,119,167,.1)', color: '#1B77A7', padding: '3px 8px', borderRadius: '999px', fontSize: '10px', fontWeight: 700 } }, 'OWD+') : null,
+								a.show_badge ? el('div', { style: { background: 'rgba(27,119,167,.1)', color: '#3473A5', padding: '3px 8px', borderRadius: '999px', fontSize: '10px', fontWeight: 700 } }, 'OWD+') : null,
 								a.show_posti ? el('div', { style: { fontSize: '11px', color: 'rgba(11,26,38,.5)', fontFamily: 'monospace' } }, '● 4 posti') : null,
 								a.show_cta ? el('div', { style: { background: '#061826', color: '#fff', padding: '6px 12px', borderRadius: '999px', fontSize: '11px', fontWeight: 700 } }, a.btn_prenota || 'Prenota') : null
 							),
 							el('div', { style: { display: 'flex', alignItems: 'center', gap: '16px', padding: '14px 16px', fontSize: '12px', color: '#0b1a26', borderTop: '1px solid rgba(11,26,38,.06)' } },
-								el('div', { style: { fontWeight: 900, fontSize: '24px', color: '#1B77A7', minWidth: '32px' } }, '21'),
+								el('div', { style: { fontWeight: 900, fontSize: '24px', color: '#3473A5', minWidth: '32px' } }, '21'),
 								el('div', { style: { flex: 1 } },
-									el('div', { style: { fontWeight: 700, color: '#1B77A7' } }, 'Seconda uscita di esempio'),
+									el('div', { style: { fontWeight: 700, color: '#3473A5' } }, 'Seconda uscita di esempio'),
 									el('div', { style: { fontSize: '11px', color: 'rgba(11,26,38,.5)' } }, '📍 Isola d\'Elba · weekend')
 								),
-								a.show_badge ? el('div', { style: { background: 'rgba(27,119,167,.1)', color: '#1B77A7', padding: '3px 8px', borderRadius: '999px', fontSize: '10px', fontWeight: 700 } }, 'AOWD+') : null,
+								a.show_badge ? el('div', { style: { background: 'rgba(27,119,167,.1)', color: '#3473A5', padding: '3px 8px', borderRadius: '999px', fontSize: '10px', fontWeight: 700 } }, 'AOWD+') : null,
 								a.show_posti ? el('div', { style: { fontSize: '11px', color: 'rgba(11,26,38,.5)', fontFamily: 'monospace' } }, '10 posti') : null,
 								a.show_cta ? el('div', { style: { background: '#061826', color: '#fff', padding: '6px 12px', borderRadius: '999px', fontSize: '11px', fontWeight: 700 } }, a.btn_prenota || 'Prenota') : null
 							)
@@ -1330,26 +1340,26 @@ class Calypsosub_Blocks {
 					) : null;
 
 					var preview = el('div', {
-						style: { background: '#cfe9ee', borderRadius: '8px', padding: '24px', fontFamily: 'system-ui,sans-serif' }
+						style: { background: '#D3E8EE', borderRadius: '8px', padding: '24px', fontFamily: 'system-ui,sans-serif' }
 					},
-						el('div', { style: { fontSize: '10px', fontWeight: 700, letterSpacing: '.18em', textTransform: 'uppercase', color: '#1B77A7', marginBottom: '8px' } },
+						el('div', { style: { fontSize: '10px', fontWeight: 700, letterSpacing: '.18em', textTransform: 'uppercase', color: '#3473A5', marginBottom: '8px' } },
 							a.eyebrow || '03 — Prossime uscite'
 						),
-						el('div', { style: { fontSize: '24px', fontWeight: 900, color: '#1B77A7', marginBottom: '16px', lineHeight: 1 } },
+						el('div', { style: { fontSize: '24px', fontWeight: 900, color: '#3473A5', marginBottom: '16px', lineHeight: 1 } },
 							a.heading || 'Mese e mese, il mare ci aspetta.'
 						),
 						el('div', { style: { background: '#fff', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 4px 16px -4px rgba(10,37,64,.15)' } },
 							el('div', { style: { display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', fontSize: '12px', borderBottom: '1px solid rgba(11,26,38,.06)' } },
-								el('div', { style: { fontWeight: 900, fontSize: '22px', color: '#1B77A7', minWidth: '28px' } }, '14'),
-								el('div', { style: { flex: 1, fontWeight: 700, color: '#1B77A7', fontSize: '13px' } }, 'Secche di Tor di Cala'),
-								el('div', { style: { background: 'rgba(27,119,167,.1)', color: '#1B77A7', padding: '2px 8px', borderRadius: '999px', fontSize: '10px' } }, 'OWD+'),
-								el('div', { style: { background: '#1B77A7', color: '#fff', padding: '5px 10px', borderRadius: '999px', fontSize: '11px', fontWeight: 600 } }, 'Prenota')
+								el('div', { style: { fontWeight: 900, fontSize: '22px', color: '#3473A5', minWidth: '28px' } }, '14'),
+								el('div', { style: { flex: 1, fontWeight: 700, color: '#3473A5', fontSize: '13px' } }, 'Secche di Tor di Cala'),
+								el('div', { style: { background: 'rgba(27,119,167,.1)', color: '#3473A5', padding: '2px 8px', borderRadius: '999px', fontSize: '10px' } }, 'OWD+'),
+								el('div', { style: { background: '#3473A5', color: '#fff', padding: '5px 10px', borderRadius: '999px', fontSize: '11px', fontWeight: 600 } }, 'Prenota')
 							),
 							el('div', { style: { display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', fontSize: '12px' } },
-								el('div', { style: { fontWeight: 900, fontSize: '22px', color: '#1B77A7', minWidth: '28px' } }, '21'),
-								el('div', { style: { flex: 1, fontWeight: 700, color: '#1B77A7', fontSize: '13px' } }, 'Corso OWD — Sessione 3'),
+								el('div', { style: { fontWeight: 900, fontSize: '22px', color: '#3473A5', minWidth: '28px' } }, '21'),
+								el('div', { style: { flex: 1, fontWeight: 700, color: '#3473A5', fontSize: '13px' } }, 'Corso OWD — Sessione 3'),
 								el('div', { style: { background: 'rgba(38,203,251,.12)', color: '#006f8a', padding: '2px 8px', borderRadius: '999px', fontSize: '10px' } }, 'Corso'),
-								el('div', { style: { background: '#1B77A7', color: '#fff', padding: '5px 10px', borderRadius: '999px', fontSize: '11px', fontWeight: 600 } }, 'Scopri')
+								el('div', { style: { background: '#3473A5', color: '#fff', padding: '5px 10px', borderRadius: '999px', fontSize: '11px', fontWeight: 600 } }, 'Scopri')
 							)
 						),
 						el('div', { style: { fontSize: '10px', opacity: .55, marginTop: '10px', fontFamily: 'monospace' } },
@@ -1655,12 +1665,12 @@ class Calypsosub_Blocks {
 							position: 'relative'
 						}
 					},
-						el('div', { style: { fontSize: '10px', letterSpacing: '.12em', textTransform: 'uppercase', color: '#26CBFB', marginBottom: '8px' } },
+						el('div', { style: { fontSize: '10px', letterSpacing: '.12em', textTransform: 'uppercase', color: '#59C6F9', marginBottom: '8px' } },
 							'~ ' + (a.eyebrow || 'Eyebrow')
 						),
 						el('div', { style: { fontSize: '28px', fontWeight: '900', lineHeight: '1', marginBottom: '8px' } },
 							(a.title || 'Titolo').replace(/\\n/g, ' ') + ' ',
-							el('em', { style: { color: '#26CBFB', fontStyle: 'normal' } }, a.title_em || 'em')
+							el('em', { style: { color: '#59C6F9', fontStyle: 'normal' } }, a.title_em || 'em')
 						),
 						a.description ? el('div', { style: { fontSize: '12px', opacity: '.8', marginBottom: '12px' } }, a.description.substring(0, 80) + '…') : null,
 						el('div', { style: { display: 'flex', gap: '8px' } },
@@ -1955,7 +1965,7 @@ class Calypsosub_Blocks {
 							}
 						},
 							a.image_id ? el('div', {
-								style: { position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1B77A7', fontSize: '12px', opacity: .7, pointerEvents: 'none' }
+								style: { position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3473A5', fontSize: '12px', opacity: .7, pointerEvents: 'none' }
 							}, '📷 img #' + a.image_id) : null,
 							a.overlay_text ? el('div', {
 								style: {
@@ -1974,7 +1984,7 @@ class Calypsosub_Blocks {
 						/* Body */
 						el('div', { style: { padding: previewPad } },
 							a.eyebrow ? el('div', {
-								style: { color: a.eyebrow_color || '#1B77A7', fontSize: (a.eyebrow_size || 13) + 'px', fontWeight: 700, marginBottom: '6px' }
+								style: { color: a.eyebrow_color || '#3473A5', fontSize: (a.eyebrow_size || 13) + 'px', fontWeight: 700, marginBottom: '6px' }
 							}, a.eyebrow) : null,
 							a.title ? el('div', {
 								style: {
@@ -1990,7 +2000,7 @@ class Calypsosub_Blocks {
 								style: { color: a.desc_color || '#3d5a6c', fontSize: (a.desc_size || 14) + 'px', lineHeight: 1.5, marginBottom: '14px' }
 							}, a.description) : null,
 							el('div', {
-								style: { color: a.link_color || '#1B77A7', fontSize: (a.link_size || 13) + 'px', fontWeight: 600 }
+								style: { color: a.link_color || '#3473A5', fontSize: (a.link_size || 13) + 'px', fontWeight: 600 }
 							}, (a.link_text || 'Scopri') + ' →')
 						)
 					);
@@ -2237,7 +2247,7 @@ class Calypsosub_Blocks {
 
 					var titleLines = (a.title || '').split('\\n');
 					var hasHeader  = a.eyebrow || a.title || (a.header_link_text && a.header_link_url);
-					var effLinkColor = (a.link_color && a.link_color !== '') ? a.link_color : (a.eyebrow_color || '#1B77A7');
+					var effLinkColor = (a.link_color && a.link_color !== '') ? a.link_color : (a.eyebrow_color || '#3473A5');
 					var isSideLayout = a.content_layout === 'side';
 
 					function renderHighlightedTitle(text, color) {
@@ -2253,11 +2263,11 @@ class Calypsosub_Blocks {
 					},
 						el('div', {},
 							a.eyebrow ? el('span', {
-								style: { display: 'block', fontWeight: a.eyebrow_font_weight || 600, letterSpacing: ((a.eyebrow_letter_spacing !== undefined ? a.eyebrow_letter_spacing : 16) / 100) + 'em', textTransform: 'uppercase', fontSize: (a.eyebrow_size || 13) + 'px', color: a.eyebrow_color || '#1B77A7', marginBottom: (a.eyebrow_margin_bottom !== undefined ? a.eyebrow_margin_bottom : 16) + 'px' }
+								style: { display: 'block', fontWeight: a.eyebrow_font_weight || 600, letterSpacing: ((a.eyebrow_letter_spacing !== undefined ? a.eyebrow_letter_spacing : 16) / 100) + 'em', textTransform: 'uppercase', fontSize: (a.eyebrow_size || 13) + 'px', color: a.eyebrow_color || '#3473A5', marginBottom: (a.eyebrow_margin_bottom !== undefined ? a.eyebrow_margin_bottom : 16) + 'px' }
 							}, a.eyebrow) : null,
 							a.title ? el('h2', {
-								style: { fontSize: Math.min(a.title_size || 76, 60) + 'px', lineHeight: (a.title_line_height !== undefined ? a.title_line_height : 95) / 100, color: a.title_color || '#1B77A7', margin: 0, fontWeight: a.title_font_weight || 900 }
-							}, renderHighlightedTitle(titleLines.join(' · '), a.title_highlight_color || '#26CBFB')) : null
+								style: { fontSize: Math.min(a.title_size || 76, 60) + 'px', lineHeight: (a.title_line_height !== undefined ? a.title_line_height : 95) / 100, color: a.title_color || '#3473A5', margin: 0, fontWeight: a.title_font_weight || 900 }
+							}, renderHighlightedTitle(titleLines.join(' · '), a.title_highlight_color || '#59C6F9')) : null
 						),
 						(a.header_link_text) ? el('span', {
 							style: { flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: (a.link_size || 14) + 'px', fontWeight: a.link_font_weight || 600, color: effLinkColor }
@@ -3017,13 +3027,13 @@ class Calypsosub_Blocks {
 					var a   = props.attributes;
 					var set = props.setAttributes;
 
-					var formsState = useState3({ uscite: [], eventi: [], corsi: [] });
+					var formsState = useState3({ uscite: [], eventi: [], corsi: [], all: [] });
 					var forms = formsState[0];
 					var setForms = formsState[1];
 
 					element.useEffect(function () {
 						if (!window.wp.apiFetch) return;
-						['uscite', 'eventi', 'corsi'].forEach(function (tipo) {
+						['uscite', 'eventi', 'corsi', 'all'].forEach(function (tipo) {
 							window.wp.apiFetch({ path: '/calypso/v1/cf7-forms?category=' + tipo }).then(function (list) {
 								setForms(function (prev) {
 									var next = Object.assign({}, prev);
@@ -3053,6 +3063,33 @@ class Calypsosub_Blocks {
 							(a[enableKey] !== false && (forms[tipo] || []).length === 0) ? el('p', { style: { fontSize: '11px', color: '#b32d2e' } },
 								'Nessun form CF7 categorizzato come "' + tipo + '". Categorizzalo nel tab "Calypso" dell\'editor del form CF7.'
 							) : null
+						);
+					}
+
+					function fallbackSelect() {
+						var options = [{ value: 0, label: '— nessuno —' }].concat(
+							(forms.all || []).map(function (f) { return { value: f.id, label: f.title }; })
+						);
+						return el(Fragment, {},
+							el('p', { style: { fontSize: '11px', color: '#757575', margin: '0 0 8px' } },
+								'Mostrato al posto del form di prenotazione quando la tipologia selezionata non ha nessun elemento prenotabile (nessuno disponibile o tutti scaduti/esauriti).'
+							),
+							SelectControl ? el(SelectControl, {
+								label: 'Form CF7 — fallback',
+								value: a.cf7_form_fallback || 0,
+								options: options,
+								onChange: function (v) { set({ cf7_form_fallback: parseInt(v, 10) }); }
+							}) : null,
+							TextControl ? el(TextControl, {
+								label: 'Titolo messaggio sidebar',
+								value: a.fallback_title || '',
+								onChange: function (v) { set({ fallback_title: v }); }
+							}) : null,
+							TextareaControl ? el(TextareaControl, {
+								label: 'Testo messaggio sidebar',
+								value: a.fallback_text || '',
+								onChange: function (v) { set({ fallback_text: v }); }
+							}) : null
 						);
 					}
 
@@ -3092,6 +3129,7 @@ class Calypsosub_Blocks {
 						el(PanelBody, { title: 'Uscite', initialOpen: true }, formSelect('uscite', 'enable_uscite', 'cf7_form_uscite')),
 						el(PanelBody, { title: 'Eventi', initialOpen: false }, formSelect('eventi', 'enable_eventi', 'cf7_form_eventi')),
 						el(PanelBody, { title: 'Corsi', initialOpen: false }, formSelect('corsi', 'enable_corsi', 'cf7_form_corsi')),
+						el(PanelBody, { title: 'Fallback', initialOpen: false }, fallbackSelect()),
 
 						el(PanelBody, { title: 'Comportamento', initialOpen: false },
 							subHead('Accesso richiesto (per tipo)'),
@@ -3147,13 +3185,14 @@ class Calypsosub_Blocks {
 						),
 
 						el(PanelBody, { title: 'Sezione selezione — sfondo', initialOpen: false },
-							colorRow('Colore sfondo', 'select_bg_color'),
+							colorRow('Colore sfondo (desktop)', 'select_bg_color'),
 							el(RangeControl, {
 								label: 'Padding verticale (px)',
 								value: a.select_padding_y !== undefined ? a.select_padding_y : 40,
 								min: 0, max: 120, step: 4,
 								onChange: function (v) { set({ select_padding_y: v === undefined ? 40 : v }); }
-							})
+							}),
+							colorRow('Colore sfondo (mobile/tablet — qui diventa il riepilogo "Stai prenotando")', 'mobile_select_bg_color')
 						),
 
 						el(PanelBody, { title: 'Selettore tab', initialOpen: false },
@@ -3233,13 +3272,14 @@ class Calypsosub_Blocks {
 						),
 
 						el(PanelBody, { title: 'Sezione dati — sfondo', initialOpen: false },
-							colorRow('Colore sfondo', 'data_bg_color'),
+							colorRow('Colore sfondo (desktop)', 'data_bg_color'),
 							el(RangeControl, {
 								label: 'Padding verticale (px)',
 								value: a.data_padding_y !== undefined ? a.data_padding_y : 48,
 								min: 0, max: 140, step: 4,
 								onChange: function (v) { set({ data_padding_y: v === undefined ? 48 : v }); }
-							})
+							}),
+							colorRow('Colore sfondo (mobile/tablet — qui diventa solo il form)', 'mobile_data_bg_color')
 						),
 
 						el(PanelBody, { title: 'Form prenotazione', initialOpen: false },
@@ -3284,7 +3324,15 @@ class Calypsosub_Blocks {
 							subHead('Testi'),
 							colorRow('Colore luogo (sotto il titolo)', 'side_luogo_color'),
 							colorRow('Colore etichette (Data, Posti, ecc.)', 'side_label_color'),
-							colorRow('Colore valori', 'side_value_color')
+							colorRow('Colore valori', 'side_value_color'),
+							subHead('Mobile/tablet — bordo card "Stai prenotando"'),
+							colorRow('Colore bordo', 'mobile_summary_border_color'),
+							el(RangeControl, {
+								label: 'Spessore bordo (px)',
+								value: a.mobile_summary_border_width !== undefined ? a.mobile_summary_border_width : 0,
+								min: 0, max: 10, step: 1,
+								onChange: function (v) { set({ mobile_summary_border_width: v === undefined ? 0 : v }); }
+							})
 						)
 					) : null;
 
@@ -3356,7 +3404,7 @@ class Calypsosub_Blocks {
 							el('div', { style: { padding: (a.card_body_py || 18) + 'px ' + (a.card_body_px || 20) + 'px' } },
 								el('p', { style: {
 									margin: 0, fontSize: (a.name_size || 22) + 'px', fontWeight: a.name_weight || 800,
-									color: a.name_color || '#1B77A7', lineHeight: 1.1,
+									color: a.name_color || '#3473A5', lineHeight: 1.1,
 									textTransform: a.name_upper !== false ? 'uppercase' : 'none',
 								} }, name),
 								a.show_soprannome !== false ? el('p', { style: { margin: '4px 0 0', fontSize: (a.sopr_size || 15) + 'px', color: a.sopr_color || 'rgba(10,37,64,.6)', fontStyle: 'italic' } }, 'detto "Oceano"') : null,
@@ -3745,7 +3793,7 @@ class Calypsosub_Blocks {
 
 					var preview = el('div', {
 						style: {
-							background: a.bg_color || '#f6f1e6',
+							background: a.bg_color || '#F5F1E7',
 							padding: '24px',
 							borderRadius: '4px',
 							display: 'flex', flexDirection: 'column',
@@ -4196,7 +4244,7 @@ class Calypsosub_Blocks {
 					];
 
 					var preview = el('div', {
-						style: { background: a.bg_color || '#f6f1e6', borderRadius: '8px', padding: '16px', fontFamily: 'system-ui,sans-serif' }
+						style: { background: a.bg_color || '#F5F1E7', borderRadius: '8px', padding: '16px', fontFamily: 'system-ui,sans-serif' }
 					},
 						fakeRows.map(function (row, idx) {
 							return el('div', {
@@ -4227,7 +4275,7 @@ class Calypsosub_Blocks {
 											fontSize: Math.min(a.title_size || 22, 16) + 'px',
 											fontWeight: a.title_weight || 800,
 											textTransform: a.title_upper !== false ? 'uppercase' : 'none',
-											color: a.title_color || '#1B77A7',
+											color: a.title_color || '#3473A5',
 											lineHeight: 1.2
 										}
 									}, row.title),

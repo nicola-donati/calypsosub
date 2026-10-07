@@ -149,12 +149,12 @@ if ( class_exists( 'Calypsosub_Ajax_Eventi' ) ) {
 
 .cso-badge{background:var(--c-wave);display:inline-block;padding:8px 16px;border-radius:999px;letter-spacing:.06em;text-transform:uppercase;line-height:1;margin-bottom:16px}
 .cso-hero__title{margin:0 0 14px}
-.cso-hero__loc{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--c-aqua,#26CBFB);font-weight:500;flex-wrap:wrap}
+.cso-hero__loc{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--c-aqua,#59C6F9);font-weight:500;flex-wrap:wrap}
 
 .cso-hero__lede p{font-size:16px;line-height:1.6;opacity:.85;margin:0 0 20px}
 .cso-hero__facts{display:flex;gap:12px;flex-wrap:wrap}
 .cso-fact{flex:1 1 0;min-width:110px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:12px 14px}
-.cso-fact__k{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-aqua,#26CBFB);margin-bottom:4px;opacity:.9}
+.cso-fact__k{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-aqua,#59C6F9);margin-bottom:4px;opacity:.9}
 .cso-fact__v{font-weight:800;font-size:22px;line-height:1;text-transform:uppercase}
 
 .cso-hero__img-wrap{position:relative;border-radius:14px;overflow:hidden;height:380px}
@@ -178,7 +178,7 @@ if ( class_exists( 'Calypsosub_Ajax_Eventi' ) ) {
 .cso-dove{background:#fff;border:1px solid rgba(11,26,38,.08);border-radius:var(--radius-lg);overflow:hidden;display:grid;grid-template-columns:1.1fr 1fr}
 .cso-dove--no-photo{grid-template-columns:1fr}
 @media(max-width:700px){.cso-dove{grid-template-columns:1fr}}
-.cso-dove__photo{position:relative;min-height:240px;background:linear-gradient(135deg,var(--c-aqua,#26CBFB),var(--c-deep,#1B77A7))}
+.cso-dove__photo{position:relative;min-height:240px;background:linear-gradient(135deg,var(--c-aqua,#59C6F9),var(--c-deep,#3473A5))}
 .cso-dove__photo img{width:100%;height:100%;object-fit:cover;display:block}
 .cso-dove__photo-cap{position:absolute;bottom:0;left:0;letter-spacing:.1em;text-transform:uppercase;padding:10px 14px;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);border-top-right-radius:8px;font-size:11px;color:rgba(255,255,255,.9)}
 .cso-dove__info{padding:26px;display:flex;flex-direction:column;gap:14px}
@@ -210,7 +210,7 @@ if ( class_exists( 'Calypsosub_Ajax_Eventi' ) ) {
 .cso-notice--error{background:#f8d7da;color:#721c24}
 .cso-login-cta{text-align:center;padding:24px}
 .cso-login-cta p{margin:0 0 16px;font-size:14px;color:#666}
-.cso-related{background:var(--c-bone,#f6f1e6);padding:64px 24px}
+.cso-related{background:var(--c-bone,#F5F1E7);padding:64px 24px}
 .cso-related__inner{max-width:1320px;margin:0 auto}
 .cso-related__head{display:flex;align-items:baseline;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:32px}
 .cso-related__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
@@ -220,7 +220,7 @@ if ( class_exists( 'Calypsosub_Ajax_Eventi' ) ) {
 <?php
 $_evd = [
 	'accent'           => calypsosub_opt( 'eventi', 'design_accent',           '#E9BF26' ),
-	'deep'             => calypsosub_opt( 'eventi', 'design_deep',             '#1B77A7' ),
+	'deep'             => calypsosub_opt( 'eventi', 'design_deep',             '#3473A5' ),
 	'body_bg'          => calypsosub_opt( 'eventi', 'design_body_bg',          '#ffffff' ),
 	'hero_overlay'     => calypsosub_opt( 'eventi', 'design_hero_overlay_color', '#061826' ),
 	'hero_badge_color' => calypsosub_opt( 'eventi', 'design_hero_badge_color', '#ffffff' ),

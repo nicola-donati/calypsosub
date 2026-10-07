@@ -71,7 +71,7 @@ $photo_label_size  = (int)    ( $a['photo_label_size']  ?? 9 );
 
 /* ── Nome ── */
 $name_tag    = calypsosub_title_tag( (string) ( $a['name_tag'] ?? 'none' ), 'p' );
-$name_color  = (string) ( $a['name_color']  ?? '#1B77A7' );
+$name_color  = (string) ( $a['name_color']  ?? '#3473A5' );
 $name_size   = (int)    ( $a['name_size']   ?? 22 );
 $name_weight = (int)    ( $a['name_weight'] ?? 800 );
 $name_upper  = (bool)   ( $a['name_upper']  ?? true );

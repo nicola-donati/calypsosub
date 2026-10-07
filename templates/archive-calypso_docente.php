@@ -38,11 +38,11 @@ $hero_img_url = $hero_img_id ? wp_get_attachment_image_url( $hero_img_id, 'full'
 $_ov_c = calypsosub_opt( 'docenti', 'overlay_color', '#061826' );
 $_ov_o = calypsosub_opt_int( 'docenti', 'overlay_opacity', '88' );
 $_ad = [
-	'body_bg'     => calypsosub_opt( 'docenti', 'design_arch_body_bg',    '#f6f1e6' ),
+	'body_bg'     => calypsosub_opt( 'docenti', 'design_arch_body_bg',    '#F5F1E7' ),
 	'card_bg'     => calypsosub_opt( 'docenti', 'design_arch_card_bg',    '#ffffff' ),
 	'card_radius' => max( 0, calypsosub_opt_int( 'docenti', 'design_arch_card_radius', '12' ) ),
-	'name_color'  => calypsosub_opt( 'docenti', 'design_arch_name_color', '#1B77A7' ),
-	'role_color'  => calypsosub_opt( 'docenti', 'design_arch_role_color', '#1B77A7' ),
+	'name_color'  => calypsosub_opt( 'docenti', 'design_arch_name_color', '#3473A5' ),
+	'role_color'  => calypsosub_opt( 'docenti', 'design_arch_role_color', '#3473A5' ),
 	'bio_color'   => calypsosub_opt( 'docenti', 'design_arch_bio_color',  '#283d4d' ),
 ];
 list( $_r, $_g, $_b ) = array_map( 'hexdec', str_split( ltrim( $_ov_c, '#' ), 2 ) );
@@ -53,26 +53,26 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 .cso-archive a{color:inherit;text-decoration:none}
 
 /* Hero */
-.cso-hero{background:var(--c-deep,#1B77A7);color:#fff;padding:calc(90px + 32px) 48px 80px;position:relative}
+.cso-hero{background:var(--c-deep,#3473A5);color:#fff;padding:calc(90px + 32px) 48px 80px;position:relative;height:auto;overflow:visible}
 .cso-hero__bg{position:absolute;inset:0;overflow:hidden}
 .cso-hero__bg img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
 .cso-hero__overlay{position:absolute;inset:0;background:linear-gradient(rgba(6,24,38,.6) 0%,rgba(6,24,38,.15) 40%,rgba(6,24,38,.88) 100%)}
-.cso-hero--has-img .cso-hero__inner,.cso-hero--has-img .cso-hero__scroll{position:relative;z-index:1}
+.cso-hero--has-img .cso-hero__inner{position:relative;z-index:1}
 .cso-hero h1,.cso-hero h2,.cso-hero h3{color:#fff}
-.cso-hero__inner{max-width:1320px;margin:0 auto}
-.cso-hero__eyebrow{font-weight:600;letter-spacing:.16em;text-transform:uppercase;margin:0 0 20px;display:block;font-size:16px;color:var(--c-aqua,#26CBFB)}
+.cso-hero__inner{width:100%}
+.cso-hero__eyebrow{font-weight:600;letter-spacing:.16em;text-transform:uppercase;margin:0 0 20px;display:block;font-size:16px;color:var(--c-aqua,#59C6F9)}
 .cso-hero__title{font-size:124px;color:#fff;margin:0;text-shadow:0 2px 16px rgba(0,0,0,.95),0 6px 48px rgba(0,0,0,.8)}
-.cso-hero__title em{font-style:italic;color:var(--c-aqua,#26CBFB)}
+.cso-hero__title em{font-style:italic;color:var(--c-aqua,#59C6F9)}
 .cso-hero__lead{line-height:1.65;opacity:.85;margin:32px 0 0;max-width:700px;font-size:18px;color:#fff}
 
 /* Body */
-.cso-archive-body{background:var(--c-bone,#f6f1e6);padding:80px 48px 96px}
+.cso-archive-body{background:var(--c-bone,#F5F1E7);padding:80px 48px 96px}
 .cso-archive-inner{max-width:1320px;margin:0 auto}
 
 /* Search */
 .cso-docenti-search-wrap{text-align:center;margin-bottom:40px}
 .cso-docenti-search{padding:10px 24px;border:1.5px solid rgba(11,26,38,.15);border-radius:999px;font-size:14px;color:var(--c-ink,#0b1a26);background:#fff;width:100%;max-width:360px;outline:none;font-family:inherit}
-.cso-docenti-search:focus{border-color:var(--c-deep,#1B77A7)}
+.cso-docenti-search:focus{border-color:var(--c-deep,#3473A5)}
 
 /* Griglia */
 .cso-docenti-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
@@ -80,18 +80,18 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 /* Card */
 .cso-docente-card{background:#fff;border:1px solid rgba(11,26,38,.06);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:inherit;transition:box-shadow .2s,transform .15s}
 .cso-docente-card:hover{box-shadow:0 12px 40px -16px rgba(10,37,64,.25);transform:translateY(-2px)}
-.cso-docente-card__img{height:240px;background:linear-gradient(180deg,var(--c-aqua,#26CBFB),var(--c-deep,#1B77A7) 60%,var(--c-abyss,#061826));overflow:hidden;position:relative}
+.cso-docente-card__img{height:240px;background:linear-gradient(180deg,var(--c-aqua,#59C6F9),var(--c-deep,#3473A5) 60%,var(--c-abyss,#061826));overflow:hidden;position:relative}
 .cso-docente-card__img img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
 .cso-docente-card__body{padding:22px;flex:1;display:flex;flex-direction:column}
-.cso-docente-card__name{font-size:28px;color:var(--c-deep,#1B77A7);margin:0 0 6px;line-height:1}
+.cso-docente-card__name{font-size:28px;color:var(--c-deep,#3473A5);margin:0 0 6px;line-height:1}
 .cso-docente-card__soprannome{font-size:16px;color:rgba(11,26,38,.6);font-style:italic;margin:0 0 8px}
-.cso-docente-card__ruolo{font-size:16px;color:var(--c-wave,#1B77A7);font-weight:600;margin:0 0 12px}
+.cso-docente-card__ruolo{font-size:16px;color:var(--c-wave,#3473A5);font-weight:600;margin:0 0 12px}
 .cso-docente-card__bio{font-size:15px;line-height:1.55;color:rgba(11,26,38,.7);margin:0;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .cso-docente-card__footer{margin-top:14px;padding-top:14px;border-top:1px solid rgba(11,26,38,.08);font-family:var(--f-mono,monospace);font-size:12px;color:rgba(11,26,38,.55);letter-spacing:.06em;text-transform:uppercase;line-height:1.6}
 
 /* Empty */
 .cso-empty{padding:64px 0;text-align:center}
-.cso-empty__title{font-size:24px;color:var(--c-deep,#1B77A7)}
+.cso-empty__title{font-size:24px;color:var(--c-deep,#3473A5)}
 
 /* Responsive */
 @media(max-width:1024px){

@@ -77,7 +77,7 @@ $margin_right      = (int)    ( $a['margin_right']  ?? 0 );
 $margin_bottom     = (int)    ( $a['margin_bottom'] ?? 0 );
 $margin_left       = (int)    ( $a['margin_left']   ?? 0 );
 $link_color        = (string) ( $a['link_color']       ?: '#0b1a26' );
-$link_hover_color  = (string) ( $a['link_hover_color'] ?: '#1B77A7' );
+$link_hover_color  = (string) ( $a['link_hover_color'] ?: '#3473A5' );
 $link_size         = (int)    ( $a['link_size']   ?? 15 );
 $link_weight       = (int)    ( $a['link_weight'] ?? 600 );
 $link_upper        = ! empty( $a['link_upper'] );
@@ -134,6 +134,10 @@ if ( is_user_logged_in() ) {
 	$ll_label = $login_label;
 }
 
+/* ── Area personale: icona accanto a "Esci", solo da loggato ── */
+$account_page_id = (int) get_option( 'calypsosub_account_page_id', 0 );
+$account_url     = ( is_user_logged_in() && $account_page_id ) ? get_permalink( $account_page_id ) : false;
+
 /* ── Elenco elementi da renderizzare, in ordine: logo, link, accedi/esci,
  *    pulsanti. Ogni elemento porta con sé il gruppo a cui appartiene
  *    (usato solo nella barra orizzontale, ignorato nel pannello laterale
@@ -185,7 +189,7 @@ $vis_class = static function ( array $hide ): string {
 };
 
 /* ── Rende un singolo elemento (logo/link/accedi-esci/pulsante). ── */
-$emit_item = function ( array $item ) use ( $vis_class, $logo_src, $logo_alt, $logo_height, $logo_link_home, $ll_url, $ll_label ) {
+$emit_item = function ( array $item ) use ( $vis_class, $logo_src, $logo_alt, $logo_height, $logo_link_home, $ll_url, $ll_label, $account_url ) {
 	$hide_class = $vis_class( $item['hide'] );
 
 	switch ( $item['type'] ) {
@@ -207,6 +211,11 @@ $emit_item = function ( array $item ) use ( $vis_class, $logo_src, $logo_alt, $l
 			break;
 
 		case 'login':
+			if ( $account_url ) {
+				echo '<a class="cso-nav__item cso-nav__account ' . esc_attr( $hide_class ) . '" href="' . esc_url( $account_url ) . '" title="' . esc_attr__( 'Area personale', 'calypsosub' ) . '" aria-label="' . esc_attr__( 'Area personale', 'calypsosub' ) . '">'
+					. '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'
+					. '</a>';
+			}
 			echo '<a class="cso-nav__item cso-nav__login ' . esc_attr( $hide_class ) . '" href="' . esc_url( $ll_url ) . '">'
 				. esc_html( $ll_label )
 				. '</a>';
@@ -268,6 +277,8 @@ foreach ( $items as $it ) {
 #<?php echo $uid; ?> .cso-nav__link:hover{color:<?php echo esc_attr( $link_hover_color ); ?>}
 #<?php echo $uid; ?> .cso-nav__login{color:<?php echo esc_attr( $link_color ); ?>;font-size:<?php echo $link_size; ?>px;font-weight:<?php echo $link_weight; ?>;text-decoration:none;border:1px solid currentColor;border-radius:999px;padding:6px 16px;transition:color .15s,border-color .15s}
 #<?php echo $uid; ?> .cso-nav__login:hover{color:<?php echo esc_attr( $link_hover_color ); ?>}
+#<?php echo $uid; ?> .cso-nav__account{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid currentColor;border-radius:50%;color:<?php echo esc_attr( $link_color ); ?>;transition:color .15s,border-color .15s}
+#<?php echo $uid; ?> .cso-nav__account:hover{color:<?php echo esc_attr( $link_hover_color ); ?>}
 #<?php echo $uid; ?> .cso-nav__btn{display:inline-flex;align-items:center;gap:8px;font-size:<?php echo $link_size; ?>px;font-weight:700;text-decoration:none;border-radius:999px;padding:8px 20px;transition:filter .15s}
 #<?php echo $uid; ?> .cso-nav__btn:hover{filter:brightness(.92)}
 #<?php echo $uid; ?> .cso-nav__btn--primary{background:<?php echo esc_attr( $btn_primary_bg ); ?>;color:<?php echo esc_attr( $btn_primary_color ); ?>}

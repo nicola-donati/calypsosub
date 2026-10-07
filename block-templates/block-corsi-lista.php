@@ -35,7 +35,7 @@ $title_tag    = calypsosub_title_tag( (string) ( ( $attributes ?? [] )['title_ta
   min-width:200px;transition:border-color .15s;
 }
 .calypso-list__filter-input::placeholder{color:rgba(11,26,38,.4)}
-.calypso-list__filter-input:focus{outline:none;border-color:var(--c-wave,#1B77A7)}
+.calypso-list__filter-input:focus{outline:none;border-color:var(--c-wave,#3473A5)}
 
 /* ── Grid ── */
 .calypso-corsi__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
@@ -170,7 +170,7 @@ $title_tag    = calypsosub_title_tag( (string) ( ( $attributes ?? [] )['title_ta
 		cards.forEach(function (c) {
 			var matchSearch = !q || c.dataset.search.includes(q);
 			var matchLevel  = !activeLevel || c.dataset.livello === activeLevel;
-			c.style.display = (matchSearch && matchLevel) ? '' : 'none';
+			c.style.display = (!matchSearch || !matchLevel) ? 'none' : '';
 		});
 	}
 

@@ -64,32 +64,32 @@ $gallery_units = Calypsosub_Gallery_Helpers::build_units(
 
 /* Design settings */
 $d = [
-	'hero_bg'          => calypsosub_opt( 'docenti', 'design_hero_bg',           '#1B77A7' ),
+	'hero_bg'          => calypsosub_opt( 'docenti', 'design_hero_bg',           '#3473A5' ),
 	'hero_badge_bg'    => calypsosub_opt( 'docenti', 'design_hero_badge_bg',      '#ff6b4a' ),
 	'hero_badge_color' => calypsosub_opt( 'docenti', 'design_hero_badge_color',   '#ffffff' ),
 	'hero_sopr_bg'     => calypsosub_opt( 'docenti', 'design_hero_sopr_bg',       '#2a6fa8' ),
 	'hero_sopr_color'  => calypsosub_opt( 'docenti', 'design_hero_sopr_color',    '#ffffff' ),
 	'hero_name_size'   => max( 32, calypsosub_opt_int( 'docenti', 'design_hero_name_size',  '96' ) ),
 	'hero_name_color'  => calypsosub_opt( 'docenti', 'design_hero_name_color',    '#ffffff' ),
-	'hero_sur_color'   => calypsosub_opt( 'docenti', 'design_hero_sur_color',     '#26CBFB' ),
+	'hero_sur_color'   => calypsosub_opt( 'docenti', 'design_hero_sur_color',     '#59C6F9' ),
 	'hero_role_color'  => calypsosub_opt( 'docenti', 'design_hero_role_color',    '#ffffff' ),
-	'hero_exp_color'   => calypsosub_opt( 'docenti', 'design_hero_exp_color',     '#26CBFB' ),
-	'detail_bg'        => calypsosub_opt( 'docenti', 'design_detail_bg',          '#f6f1e6' ),
-	'detail_eyebrow'   => calypsosub_opt( 'docenti', 'design_detail_eyebrow',     '#1B77A7' ),
-	'detail_heading'   => calypsosub_opt( 'docenti', 'design_detail_heading',     '#1B77A7' ),
+	'hero_exp_color'   => calypsosub_opt( 'docenti', 'design_hero_exp_color',     '#59C6F9' ),
+	'detail_bg'        => calypsosub_opt( 'docenti', 'design_detail_bg',          '#F5F1E7' ),
+	'detail_eyebrow'   => calypsosub_opt( 'docenti', 'design_detail_eyebrow',     '#3473A5' ),
+	'detail_heading'   => calypsosub_opt( 'docenti', 'design_detail_heading',     '#3473A5' ),
 	'detail_prose'     => calypsosub_opt( 'docenti', 'design_detail_prose',       '#1a2f40' ),
 	'spec_bg'          => calypsosub_opt( 'docenti', 'design_spec_bg',            '#ffffff' ),
-	'spec_color'       => calypsosub_opt( 'docenti', 'design_spec_color',         '#1B77A7' ),
-	'spec_dot'         => calypsosub_opt( 'docenti', 'design_spec_dot',           '#26CBFB' ),
-	'brev_bg'          => calypsosub_opt( 'docenti', 'design_brev_bg',            '#1B77A7' ),
+	'spec_color'       => calypsosub_opt( 'docenti', 'design_spec_color',         '#3473A5' ),
+	'spec_dot'         => calypsosub_opt( 'docenti', 'design_spec_dot',           '#59C6F9' ),
+	'brev_bg'          => calypsosub_opt( 'docenti', 'design_brev_bg',            '#3473A5' ),
 	'brev_color'       => calypsosub_opt( 'docenti', 'design_brev_color',         '#ffffff' ),
-	'vcard_bg'         => calypsosub_opt( 'docenti', 'design_vcard_bg',           '#1B77A7' ),
+	'vcard_bg'         => calypsosub_opt( 'docenti', 'design_vcard_bg',           '#3473A5' ),
 	'vcard_name_size'  => max( 16, calypsosub_opt_int( 'docenti', 'design_vcard_name_size', '28' ) ),
 	'vcard_name_color' => calypsosub_opt( 'docenti', 'design_vcard_name_color',   '#ffffff' ),
-	'vcard_role_color' => calypsosub_opt( 'docenti', 'design_vcard_role_color',   '#26CBFB' ),
-	'gallery_bg'       => calypsosub_opt( 'docenti', 'design_gallery_bg',         '#cfe9ee' ),
-	'gallery_eyebrow'  => calypsosub_opt( 'docenti', 'design_gallery_eyebrow',    '#1B77A7' ),
-	'gallery_heading'  => calypsosub_opt( 'docenti', 'design_gallery_heading',    '#1B77A7' ),
+	'vcard_role_color' => calypsosub_opt( 'docenti', 'design_vcard_role_color',   '#59C6F9' ),
+	'gallery_bg'       => calypsosub_opt( 'docenti', 'design_gallery_bg',         '#D3E8EE' ),
+	'gallery_eyebrow'  => calypsosub_opt( 'docenti', 'design_gallery_eyebrow',    '#3473A5' ),
+	'gallery_heading'  => calypsosub_opt( 'docenti', 'design_gallery_heading',    '#3473A5' ),
 ];
 
 /* mappa slug social → icona svg inline */
@@ -119,13 +119,13 @@ function cso_social_icon( string $nome ): string {
 .cso-doc{
 	color:var(--c-ink,#0b1a26);
 }
-.cso-doc h1,.cso-doc h2,.cso-doc h3,.cso-doc h4{color:var(--c-wave,#1B77A7);text-transform:uppercase}
+.cso-doc h1,.cso-doc h2,.cso-doc h3,.cso-doc h4{color:var(--c-wave,#3473A5);text-transform:uppercase}
 .cso-doc a{color:inherit;text-decoration:none}
 .cso-doc p,.cso-doc li,.cso-doc span,.cso-doc div{color:inherit}
 
 /* ── Hero ── */
 .cso-doc-hero{
-	background:var(--c-deep,#1B77A7);
+	background:var(--c-deep,#3473A5);
 	color:#fff;
 	padding:calc(var(--cso-header-h) + 32px) 48px 64px;
 }
@@ -151,7 +151,7 @@ function cso_social_icon( string $nome ): string {
 .cso-doc-hero__name{margin:0;line-height:.94;letter-spacing:-.02em;overflow-wrap:break-word}
 .cso-doc .cso-doc-hero__name{font-size:96px;color:#fff}
 .cso-doc-hero__name .sur{display:block}
-.cso-doc .cso-doc-hero__name .sur{color:var(--c-aqua,#26CBFB)}
+.cso-doc .cso-doc-hero__name .sur{color:var(--c-aqua,#59C6F9)}
 
 .cso-doc-hero__role{display:flex;align-items:center;gap:10px;font-weight:600;margin-top:16px;opacity:.92}
 .cso-doc .cso-doc-hero__role{font-size:24px;color:#fff}
@@ -162,7 +162,7 @@ function cso_social_icon( string $nome ): string {
 	border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:16px 22px;
 }
 .cso-doc-hero__exp-val{font-weight:800;line-height:.9}
-.cso-doc .cso-doc-hero__exp-val{font-size:52px;color:var(--c-aqua,#26CBFB)}
+.cso-doc .cso-doc-hero__exp-val{font-size:52px;color:var(--c-aqua,#59C6F9)}
 .cso-doc-hero__exp-label{letter-spacing:.1em;text-transform:uppercase}
 .cso-doc .cso-doc-hero__exp-label{font-size:11px;color:rgba(255,255,255,.75)}
 
@@ -170,29 +170,29 @@ function cso_social_icon( string $nome ): string {
 .cso-doc-shots{display:flex;flex-direction:column;gap:12px}
 .cso-doc-shots__main{
 	height:380px;border-radius:14px;overflow:hidden;
-	background:linear-gradient(180deg,var(--c-aqua,#26CBFB),var(--c-wave,#1B77A7) 60%,var(--c-deep,#1B77A7));
+	background:linear-gradient(180deg,var(--c-aqua,#59C6F9),var(--c-wave,#3473A5) 60%,var(--c-deep,#3473A5));
 	position:relative;
 }
 .cso-doc-shots__main img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .cso-doc-shots__thumbs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 .cso-doc-shots__thumb{
 	height:96px;border-radius:10px;overflow:hidden;
-	background:linear-gradient(135deg,var(--c-aqua,#26CBFB),var(--c-deep,#1B77A7));
+	background:linear-gradient(135deg,var(--c-aqua,#59C6F9),var(--c-deep,#3473A5));
 	position:relative;
 }
 .cso-doc-shots__thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
 /* ── Detail body (bone) ── */
-.cso-doc-detail{background:var(--c-bone,#f6f1e6);padding:80px 48px 96px}
+.cso-doc-detail{background:var(--c-bone,#F5F1E7);padding:80px 48px 96px}
 .cso-doc-detail__inner{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:1fr 380px;gap:56px;align-items:start}
 
 /* Content blocks */
 .cso-doc-content{display:flex;flex-direction:column;gap:64px;min-width:0}
 .cso-doc-block{}
 .cso-doc-block__eyebrow{font-weight:600;letter-spacing:.16em;text-transform:uppercase;margin:0 0 14px;display:block}
-.cso-doc .cso-doc-block__eyebrow{font-size:16px;color:var(--c-wave,#1B77A7)}
+.cso-doc .cso-doc-block__eyebrow{font-size:16px;color:var(--c-wave,#3473A5)}
 .cso-doc-block__heading{font-weight:800;text-transform:uppercase;letter-spacing:-.01em;line-height:.96;margin:0 0 24px}
-.cso-doc .cso-doc-block__heading{font-size:48px;color:var(--c-deep,#1B77A7)}
+.cso-doc .cso-doc-block__heading{font-size:48px;color:var(--c-deep,#3473A5)}
 
 /* Bio prose */
 .cso-doc-prose p{line-height:1.8;margin:0 0 18px;max-width:660px}
@@ -206,28 +206,28 @@ function cso_social_icon( string $nome ): string {
 	background:#fff;border:1px solid rgba(11,26,38,.1);
 	border-radius:999px;padding:11px 18px;font-weight:600;
 }
-.cso-doc .cso-doc-spec{font-size:14px;color:var(--c-deep,#1B77A7)}
-.cso-doc-spec__dot{width:7px;height:7px;border-radius:50%;background:var(--c-aqua,#26CBFB);flex:0 0 auto}
+.cso-doc .cso-doc-spec{font-size:14px;color:var(--c-deep,#3473A5)}
+.cso-doc-spec__dot{width:7px;height:7px;border-radius:50%;background:var(--c-aqua,#59C6F9);flex:0 0 auto}
 
 /* Brevetti */
 .cso-doc-brevetti{display:flex;flex-wrap:wrap;gap:8px}
 .cso-doc-brevetto{
 	display:inline-flex;align-items:center;
-	background:var(--c-deep,#1B77A7);border-radius:999px;padding:6px 14px;font-weight:600;
+	background:var(--c-deep,#3473A5);border-radius:999px;padding:6px 14px;font-weight:600;
 }
 .cso-doc .cso-doc-brevetto{font-size:13px;color:#fff}
 
 /* ── VCard sidebar (navy) ── */
 .cso-doc-aside{position:sticky;top:24px}
 .cso-doc-vcard{
-	background:var(--c-deep,#1B77A7);border-radius:18px;overflow:hidden;
+	background:var(--c-deep,#3473A5);border-radius:18px;overflow:hidden;
 	box-shadow:0 30px 80px -40px rgba(10,37,64,.6);
 }
 .cso-doc-vcard h2,.cso-doc-vcard h3,.cso-doc-vcard p,.cso-doc-vcard span,.cso-doc-vcard div{color:#fff}
 
 .cso-doc-vcard__photo{
 	height:260px;overflow:hidden;position:relative;
-	background:linear-gradient(180deg,var(--c-aqua,#26CBFB),var(--c-deep,#1B77A7));
+	background:linear-gradient(180deg,var(--c-aqua,#59C6F9),var(--c-deep,#3473A5));
 }
 .cso-doc-vcard__photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
@@ -237,7 +237,7 @@ function cso_social_icon( string $nome ): string {
 .cso-doc-vcard__soprannome{font-style:italic;margin:4px 0 0}
 .cso-doc .cso-doc-vcard__soprannome{font-size:15px;color:rgba(255,255,255,.75)}
 .cso-doc-vcard__role{font-weight:600;margin:6px 0 0}
-.cso-doc .cso-doc-vcard__role{font-size:15px;color:var(--c-aqua,#26CBFB)}
+.cso-doc .cso-doc-vcard__role{font-size:15px;color:var(--c-aqua,#59C6F9)}
 .cso-doc-vcard__exp{margin:4px 0 0}
 .cso-doc .cso-doc-vcard__exp{font-size:13px;color:rgba(255,255,255,.75)}
 
@@ -255,7 +255,7 @@ function cso_social_icon( string $nome ): string {
 	background:rgba(38,203,251,.14);
 	display:flex;align-items:center;justify-content:center;
 }
-.cso-doc .cso-doc-crow__icon{color:var(--c-aqua,#26CBFB)}
+.cso-doc .cso-doc-crow__icon{color:var(--c-aqua,#59C6F9)}
 .cso-doc-crow__label{display:block;letter-spacing:.08em;text-transform:uppercase;line-height:1.3;margin-bottom:3px}
 .cso-doc . cso-doc-crow__label{font-size:10px;color:rgba(255,255,255,.55)}
 .cso-doc-crow__val{display:block;font-weight:600;line-height:1.35;overflow-wrap:anywhere}
@@ -270,16 +270,16 @@ function cso_social_icon( string $nome ): string {
 	transition:.15s;text-decoration:none;
 }
 .cso-doc-vcard-socials a{color:rgba(255,255,255,.8)}
-.cso-doc-vcard-socials a:hover{border-color:var(--c-aqua,#26CBFB);color:var(--c-aqua,#26CBFB)}
+.cso-doc-vcard-socials a:hover{border-color:var(--c-aqua,#59C6F9);color:var(--c-aqua,#59C6F9)}
 
 /* ── Gallery (foam bg) ── */
-.cso-doc-gallery{background:var(--c-foam,#cfe9ee);padding:80px 48px 96px}
+.cso-doc-gallery{background:var(--c-foam,#D3E8EE);padding:80px 48px 96px}
 .cso-doc-gallery__inner{max-width:1320px;margin:0 auto}
 .cso-doc-gallery__header{margin-bottom:40px}
 .cso-doc-gallery__eyebrow{font-weight:600;letter-spacing:.16em;text-transform:uppercase;margin:0 0 12px;display:block}
-.cso-doc .cso-doc-gallery__eyebrow{font-size:16px;color:var(--c-wave,#1B77A7)}
+.cso-doc .cso-doc-gallery__eyebrow{font-size:16px;color:var(--c-wave,#3473A5)}
 .cso-doc-gallery__heading{font-weight:800;text-transform:uppercase;line-height:.96;margin:0}
-.cso-doc .cso-doc-gallery__heading{font-size:48px;color:var(--c-deep,#1B77A7)}
+.cso-doc .cso-doc-gallery__heading{font-size:48px;color:var(--c-deep,#3473A5)}
 
 .cso-doc-gallery__grid{
 	display:grid;
@@ -287,7 +287,7 @@ function cso_social_icon( string $nome ): string {
 	grid-auto-rows:200px;
 	gap:12px;
 }
-.cso-doc-gallery-item{border-radius:12px;overflow:hidden;position:relative;background:linear-gradient(135deg,var(--c-aqua,#26CBFB),var(--c-deep,#1B77A7))}
+.cso-doc-gallery-item{border-radius:12px;overflow:hidden;position:relative;background:linear-gradient(135deg,var(--c-aqua,#59C6F9),var(--c-deep,#3473A5))}
 .cso-doc-gallery-item img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .cso-doc-gallery-item__cap{
 	position:absolute;bottom:0;left:0;

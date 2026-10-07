@@ -167,7 +167,7 @@ $mesi_it   = [
 ?>
 <style>
 /* ── Calendario eventi — block-calendario ── */
-.cso-cal{background:var(--c-foam,#cfe9ee);padding:96px 48px;color:var(--c-ink,#0b1a26)}
+.cso-cal{background:var(--c-foam,#D3E8EE);padding:96px 48px;color:var(--c-ink,#0b1a26)}
 .cso-cal *{box-sizing:border-box}
 .cso-cal a{text-decoration:none;color:inherit}
 
@@ -175,12 +175,12 @@ $mesi_it   = [
 
 .cso-cal__header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:56px;flex-wrap:wrap;gap:24px}
 
-.cso-cal__eyebrow{font-weight:500;letter-spacing:.16em;text-transform:uppercase;margin:0 0 16px;display:block;font-size:16px;color:var(--c-wave,#1B77A7)}
+.cso-cal__eyebrow{font-weight:500;letter-spacing:.16em;text-transform:uppercase;margin:0 0 16px;display:block;font-size:16px;color:var(--c-wave,#3473A5)}
 
-.cso-cal__heading{font-weight:900;text-transform:uppercase;line-height:.92;letter-spacing:-.01em;margin:0;font-size:76px;color:var(--c-deep,#1B77A7)}
+.cso-cal__heading{font-weight:900;text-transform:uppercase;line-height:.92;letter-spacing:-.01em;margin:0;font-size:76px;color:var(--c-deep,#3473A5)}
 
-.cso-cal__link{color:var(--c-deep,#1B77A7);display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;white-space:nowrap;align-self:flex-end}
-.cso-cal__link:hover{color:var(--c-wave,#1B77A7)}
+.cso-cal__link{color:var(--c-deep,#3473A5);display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;white-space:nowrap;align-self:flex-end}
+.cso-cal__link:hover{color:var(--c-wave,#3473A5)}
 
 /* ── White card ── */
 .cso-cal__card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 30px 80px -40px rgba(10,37,64,.3)}
@@ -199,18 +199,18 @@ $mesi_it   = [
 /* Col 1 — data */
 .cso-cal-date{display:flex;flex-direction:column;align-items:flex-start}
 .cso-cal-date__dayname{font-weight:500;letter-spacing:.12em;text-transform:uppercase;margin:0;font-size:11px;color:rgba(11,26,38,.5)}
-.cso-cal-date__num{font-weight:900;line-height:1;letter-spacing:-.01em;text-transform:uppercase;margin:0;font-size:44px;color:var(--c-deep,#1B77A7)}
+.cso-cal-date__num{font-weight:900;line-height:1;letter-spacing:-.01em;text-transform:uppercase;margin:0;font-size:44px;color:var(--c-deep,#3473A5)}
 .cso-cal-date__month{font-weight:500;letter-spacing:.12em;text-transform:uppercase;margin-top:2px;font-size:11px;color:rgba(11,26,38,.5)}
 
 /* Col 2 — titolo + luogo */
-.cso-cal-info__title{font-weight:900;text-transform:uppercase;letter-spacing:-.01em;line-height:.92;display:block;margin-bottom:6px;font-size:26px;color:var(--c-deep,#1B77A7);transition:color .15s}
-.cso-cal-info__title:hover{color:var(--c-wave,#1B77A7)}
+.cso-cal-info__title{font-weight:900;text-transform:uppercase;letter-spacing:-.01em;line-height:.92;display:block;margin-bottom:6px;font-size:26px;color:var(--c-deep,#3473A5);transition:color .15s}
+.cso-cal-info__title:hover{color:var(--c-wave,#3473A5)}
 .cso-cal-info__luogo{display:flex;align-items:center;gap:6px;margin:0;font-size:13px;color:rgba(11,26,38,.65)}
 .cso-cal-info__posti{display:none} /* desktop: nascosto, visibile solo mobile */
 
 /* Col 3 — badge tipo/livello */
 .cso-cal-badge{display:inline-flex;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;justify-self:start;white-space:nowrap}
-.cso-cal-badge--uscita{background:rgba(27,119,167,.1);color:var(--c-wave,#1B77A7)}
+.cso-cal-badge--uscita{background:rgba(27,119,167,.1);color:var(--c-wave,#3473A5)}
 .cso-cal-badge--evento{background:rgba(233,191,38,.18);color:#7a5e00}
 .cso-cal-badge--corso{background:rgba(38,203,251,.12);color:#006f8a}
 
@@ -229,7 +229,7 @@ $mesi_it   = [
 .cso-cal-cta{justify-self:end}
 .cso-cal-btn{
 	display:inline-flex;align-items:center;
-	padding:10px 18px;background:var(--c-deep,#1B77A7);
+	padding:10px 18px;background:var(--c-deep,#3473A5);
 	border:none;border-radius:999px;cursor:pointer;
 	text-decoration:none;white-space:nowrap;transition:background .15s;
 	font-weight:600;font-size:12px;color:#fff;

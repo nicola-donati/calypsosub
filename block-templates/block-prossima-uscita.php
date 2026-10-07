@@ -103,7 +103,7 @@ $meta_str = implode( ' · ', $meta_parts );
 .csou-ph__posti--warn{opacity:1;color:#ff6b4a}
 .csou-ph__cta{
   margin-top:14px;display:inline-flex;align-items:center;gap:6px;
-  color:var(--c-aqua,#26CBFB);font-size:13px;font-weight:600;
+  color:var(--c-aqua,#59C6F9);font-size:13px;font-weight:600;
   text-decoration:none;letter-spacing:.02em;
 }
 .csou-ph__cta:hover{opacity:.8}
@@ -134,7 +134,7 @@ $meta_str = implode( ' · ', $meta_parts );
 }
 .csou-strip__num{
   font-size:40px;font-weight:900;line-height:1;
-  color:var(--c-aqua,#26CBFB);letter-spacing:-.02em;
+  color:var(--c-aqua,#59C6F9);letter-spacing:-.02em;
 }
 .csou-strip__label{
   font-size:10px;font-weight:600;letter-spacing:.12em;

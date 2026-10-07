@@ -30,7 +30,7 @@ $featured_enabled = (bool) ( $a['featured_enabled'] ?? true );
 $featured_index   = (int)  ( $a['featured_index']   ?? 0 );
 
 /* ── Layout sezione ── */
-$bg_color      = (string) ( $a['bg_color']      ?? '#f6f1e6' );
+$bg_color      = (string) ( $a['bg_color']      ?? '#F5F1E7' );
 $max_width     = (int)    ( $a['max_width']     ?? 900 );
 $padding_y     = (int)    ( $a['padding_y']     ?? 48 );
 $padding_x     = (int)    ( $a['padding_x']     ?? 24 );

@@ -66,7 +66,7 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
     color:var(--c-ink,#0b1a26);
 }
 /* Neutralizza FSE — heading wave (sfondo bone) */
-.cso h1,.cso h2,.cso h3,.cso h4{color:var(--c-wave,#1B77A7);text-transform:uppercase}
+.cso h1,.cso h2,.cso h3,.cso h4{color:var(--c-wave,#3473A5);text-transform:uppercase}
 .cso a{color:inherit;text-decoration:none}
 .cso p,.cso li,.cso span,.cso div{color:inherit}
 /* Related section sfondo chiaro — heading scuri */
@@ -114,7 +114,7 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 
 /* Eyebrow + heading standard */
 .cso-eyebrow{font-weight:500;letter-spacing:.16em;text-transform:uppercase;margin:0 0 14px;display:block}
-.cso .cso-eyebrow{font-size:16px;color:var(--c-wave,#1B77A7)}
+.cso .cso-eyebrow{font-size:16px;color:var(--c-wave,#3473A5)}
 .cso-display-heading{font-size:clamp(28px,4vw,56px);font-weight:800;text-transform:uppercase;line-height:.96;margin:0 0 24px}
 .cso-lead{line-height:1.7;margin:0 0 32px;max-width:640px}
 .cso .cso-lead{font-size:18px;color:var(--c-ink,#0b1a26)}
@@ -131,11 +131,11 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 .cso-fase__num{line-height:1;font-weight:800}
 .cso .cso-fase__num{font-size:28px;color:var(--c-gold,#E9BF26)}
 .cso-fase__titolo{font-weight:700;text-transform:uppercase;margin:0 0 6px;line-height:1.05}
-.cso .cso-fase__titolo{font-size:24px;color:var(--c-wave,#1B77A7)}
+.cso .cso-fase__titolo{font-size:24px;color:var(--c-wave,#3473A5)}
 .cso-fase__desc{line-height:1.6;margin:0}
 .cso .cso-fase__desc{font-size:16px;color:var(--c-ink,#0b1a26)}
 .cso-fase__ore{letter-spacing:.08em;text-transform:uppercase;text-align:right;align-self:start;padding-top:6px;line-height:1.6}
-.cso .cso-fase__ore{font-size:16px;color:var(--c-wave,#1B77A7)}
+.cso .cso-fase__ore{font-size:16px;color:var(--c-wave,#3473A5)}
 
 /* ── Competenze ── */
 .cso-competenze-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 32px}
@@ -153,7 +153,7 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 @media(max-width:700px){.cso-docenti-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:400px){.cso-docenti-grid{grid-template-columns:1fr}}
 .cso .cso-docente-mini__name{color:var(--c-deep,#0a2540)}
-.cso .cso-docente-mini__ruolo{color:var(--c-wave,#1B77A7)}
+.cso .cso-docente-mini__ruolo{color:var(--c-wave,#3473A5)}
 
 /* ── Sidebar navy ── */
 .cso-sintesi{background:var(--c-deep,#0a2540);border-radius:18px;box-shadow:0 6px 32px rgba(10,37,64,.28);position:sticky;top:24px;color:#fff;display:flex;flex-direction:column}
@@ -163,26 +163,26 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 
 .cso-sintesi__head{padding:24px 24px 20px;border-bottom:1px solid rgba(255,255,255,.12)}
 .cso-sintesi__cert{letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin:0 0 12px;display:block}
-.cso-sintesi .cso-sintesi__cert{font-size:16px;color:var(--c-aqua,#26CBFB)}
+.cso-sintesi .cso-sintesi__cert{font-size:16px;color:var(--c-aqua,#59C6F9)}
 .cso-sintesi__title{font-size:36px;font-weight:900;color:#fff;margin:0;line-height:.96;letter-spacing:-.01em}
 
 .cso-sintesi__stats{padding:8px 24px 0;border-bottom:1px solid rgba(255,255,255,.12)}
 .cso-stat-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:14px 0;border-top:1px solid rgba(255,255,255,.12)}
 .cso-stat-row:first-child{border-top:none}
 .cso-stat-row__label{letter-spacing:.08em;text-transform:uppercase;font-weight:600;flex-shrink:0}
-.cso-sintesi .cso-stat-row__label{font-size:16px;color:var(--c-aqua,#26CBFB)}
+.cso-sintesi .cso-stat-row__label{font-size:16px;color:var(--c-aqua,#59C6F9)}
 .cso-stat-row__val{font-weight:600;text-align:right}
 .cso-sintesi .cso-stat-row__val{font-size:16px;color:#fff}
 @media(max-width:600px){.cso-stat-row{flex-direction:column;gap:4px}.cso-stat-row__val{text-align:left}}
 
 .cso-sintesi__requisiti{padding:20px 24px 20px;border-bottom:1px solid rgba(255,255,255,.12)}
 .cso-sintesi__requisiti-label{letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin:0 0 14px;display:block}
-.cso-sintesi .cso-sintesi__requisiti-label{font-size:16px;color:var(--c-aqua,#26CBFB)}
+.cso-sintesi .cso-sintesi__requisiti-label{font-size:16px;color:var(--c-aqua,#59C6F9)}
 .cso-sintesi .cso-sintesi__requisiti-text{font-size:16px;font-weight:600;line-height:1.5;color:#fff;margin:0;padding:0;white-space:pre-line}
 
 .cso-sintesi__inizi{padding:20px 24px 24px;border-bottom:1px solid rgba(255,255,255,.12)}
 .cso-inizi-label{letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin:0 0 14px;display:block}
-.cso-sintesi .cso-inizi-label{font-size:16px;color:var(--c-aqua,#26CBFB)}
+.cso-sintesi .cso-inizi-label{font-size:16px;color:var(--c-aqua,#59C6F9)}
 .cso-inizio-row{font-size:16px;display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid rgba(255,255,255,.08);}
 .cso-inizio-row:first-child{border-top:none}
 .cso-inizio-row__date{font-weight:500}
@@ -202,17 +202,17 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 .cso .cso-btn-secondary:hover{border-color:#fff;background:rgba(255,255,255,.08);color:#fff}
 
 /* ── Corsi correlati ── */
-.cso-related{background:var(--c-bone,#f6f1e6);padding:80px 48px 96px}
+.cso-related{background:var(--c-bone,#F5F1E7);padding:80px 48px 96px}
 @media(max-width:1024px){.cso-related{padding:48px 20px}}
 .cso-related__inner{max-width:1320px;margin:0 auto}
 .cso-related__header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px;flex-wrap:wrap;gap:24px}
 .cso-related__all{font-size:16px;font-weight:600;color:var(--c-deep,#0a2540);text-decoration:none;display:flex;align-items:center;gap:6px}
-.cso-related__all:hover{color:var(--c-wave,#1B77A7)}
+.cso-related__all:hover{color:var(--c-wave,#3473A5)}
 .cso-related__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 @media(max-width:700px){.cso-related__grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:400px){.cso-related__grid{grid-template-columns:1fr}}
 
-.cso-thumb__level{display:inline-flex;padding:4px 10px;background:rgba(29,111,156,.1);color:var(--c-wave,#1B77A7);border-radius:999px;font-weight:600;align-self:flex-start;margin-bottom:14px}
+.cso-thumb__level{display:inline-flex;padding:4px 10px;background:rgba(29,111,156,.1);color:var(--c-wave,#3473A5);border-radius:999px;font-weight:600;align-self:flex-start;margin-bottom:14px}
 .cso .cso-thumb__title{color:var(--c-deep,#0a2540)}
 .cso .cso-thumb__desc{color:rgba(11,26,38,.65)}
 .cso-thumb__link{font-size:16px;font-weight:600;color:var(--c-coral,#ff6b4a);display:flex;align-items:center;gap:6px}
@@ -229,16 +229,16 @@ $_cd = [
 	'hero_title_size'   => calypsosub_opt_int( 'corsi', 'design_hero_title_size', '96' ),
 	'hero_title_weight' => calypsosub_opt_int( 'corsi', 'design_hero_title_weight', '700' ),
 	'hero_title_font'   => preg_replace( '/[^a-zA-Z0-9 ,\"\'\-]/', '', calypsosub_opt( 'corsi', 'design_hero_title_font', '' ) ),
-	'hero_sub_color'    => calypsosub_opt( 'corsi', 'design_hero_sub_color',   '#26CBFB' ),
+	'hero_sub_color'    => calypsosub_opt( 'corsi', 'design_hero_sub_color',   '#59C6F9' ),
 	'hero_sub_size'     => calypsosub_opt_int( 'corsi', 'design_hero_sub_size', '72' ),
 	'hero_sub_weight'   => calypsosub_opt_int( 'corsi', 'design_hero_sub_weight', '700' ),
 	'hero_lead_color'   => calypsosub_opt( 'corsi', 'design_hero_lead_color',  '#ffffff' ),
 	'hero_lead_opacity' => calypsosub_opt_int( 'corsi', 'design_hero_lead_opacity', '85' ),
 	'hero_lead_size'    => calypsosub_opt_int( 'corsi', 'design_hero_lead_size', '18' ),
 	'hero_lead_font'    => preg_replace( '/[^a-zA-Z0-9 ,\"\'\-]/', '', calypsosub_opt( 'corsi', 'design_hero_lead_font', '' ) ),
-	'eyebrow'        => calypsosub_opt( 'corsi', 'design_eyebrow',         '#1B77A7' ),
-	'sidebar_accent' => calypsosub_opt( 'corsi', 'design_sidebar_accent',  '#26CBFB' ),
-	'related_bg'     => calypsosub_opt( 'corsi', 'design_related_bg',      '#f6f1e6' ),
+	'eyebrow'        => calypsosub_opt( 'corsi', 'design_eyebrow',         '#3473A5' ),
+	'sidebar_accent' => calypsosub_opt( 'corsi', 'design_sidebar_accent',  '#59C6F9' ),
+	'related_bg'     => calypsosub_opt( 'corsi', 'design_related_bg',      '#F5F1E7' ),
 ];
 ?>
 <style>

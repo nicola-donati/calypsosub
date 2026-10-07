@@ -149,7 +149,7 @@ $gallery_units = Calypsosub_Gallery_Helpers::build_units(
 ?>
 <style>
 .cso{color:var(--c-ink,#0b1a26)}
-.cso h1,.cso h2,.cso h3,.cso h4{color:var(--c-wave,#1B77A7);text-transform:uppercase}
+.cso h1,.cso h2,.cso h3,.cso h4{color:var(--c-wave,#3473A5);text-transform:uppercase}
 .cso a{color:inherit;text-decoration:none}
 .cso p,.cso li,.cso span,.cso div{color:inherit}
 .cso-related h2,.cso-related h3,.cso-related h4{color:var(--c-deep,#0a2540)}
@@ -196,7 +196,7 @@ $gallery_units = Calypsosub_Gallery_Helpers::build_units(
 .cso-section:last-child{margin-bottom:0}
 
 .cso-eyebrow{font-weight:500;letter-spacing:.16em;text-transform:uppercase;margin:0 0 14px;display:block}
-.cso .cso-eyebrow{font-size:16px;color:var(--c-wave,#1B77A7)}
+.cso .cso-eyebrow{font-size:16px;color:var(--c-wave,#3473A5)}
 .cso-display-heading{font-size:clamp(28px,4vw,56px);font-weight:800;text-transform:uppercase;line-height:.96;margin:0 0 24px}
 .cso-prose{font-size:17px;line-height:1.75;max-width:720px}
 .cso .cso-prose{color:var(--c-ink,#0b1a26)}
@@ -207,12 +207,12 @@ $gallery_units = Calypsosub_Gallery_Helpers::build_units(
 .cso-immersioni-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 @media(max-width:700px){.cso-immersioni-grid{grid-template-columns:1fr}}
 .cso-immersione-card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 8px 24px -14px rgba(10,37,64,.3)}
-.cso-immersione-card__img{width:100%;height:180px;object-fit:cover;display:block;background:linear-gradient(135deg,var(--c-aqua,#26CBFB),var(--c-deep,#1B77A7))}
+.cso-immersione-card__img{width:100%;height:180px;object-fit:cover;display:block;background:linear-gradient(135deg,var(--c-aqua,#59C6F9),var(--c-deep,#3473A5))}
 .cso-immersione-card__body{padding:20px 22px}
 .cso-immersione-card__eyebrow{letter-spacing:.1em;text-transform:uppercase;font-weight:600}
 .cso .cso-immersione-card__eyebrow{font-size:12px;color:var(--c-gold,#E9BF26)}
 .cso-immersione-card__title{font-weight:700;text-transform:uppercase;margin:6px 0}
-.cso .cso-immersione-card__title{font-size:22px;color:var(--c-wave,#1B77A7)}
+.cso .cso-immersione-card__title{font-size:22px;color:var(--c-wave,#3473A5)}
 .cso-immersione-card__desc{line-height:1.6;margin:0 0 14px}
 .cso .cso-immersione-card__desc{font-size:15px;color:rgba(11,26,38,.75)}
 .cso-immersione-card__meta{display:flex;gap:18px;flex-wrap:wrap;border-top:1px solid rgba(11,26,38,.08);padding-top:12px}
@@ -228,19 +228,19 @@ $gallery_units = Calypsosub_Gallery_Helpers::build_units(
 .cso-tappa__ora{line-height:1.2;font-weight:800}
 .cso .cso-tappa__ora{font-size:20px;color:var(--c-gold,#E9BF26)}
 .cso-tappa__titolo{font-weight:700;text-transform:uppercase;margin:0 0 6px;line-height:1.05}
-.cso .cso-tappa__titolo{font-size:22px;color:var(--c-wave,#1B77A7)}
+.cso .cso-tappa__titolo{font-size:22px;color:var(--c-wave,#3473A5)}
 .cso-tappa__desc{line-height:1.6;margin:0}
 .cso .cso-tappa__desc{font-size:16px;color:var(--c-ink,#0b1a26)}
 
 /* ── Tag fauna ── */
 .cso-tags{display:flex;flex-wrap:wrap;gap:10px}
-.cso-tag{display:inline-flex;padding:8px 16px;background:rgba(29,111,156,.1);color:var(--c-wave,#1B77A7);border-radius:999px;font-weight:600}
+.cso-tag{display:inline-flex;padding:8px 16px;background:rgba(29,111,156,.1);color:var(--c-wave,#3473A5);border-radius:999px;font-weight:600}
 .cso .cso-tag{font-size:14px}
 
 /* ── Galleria ── */
 .cso-usc-gallery__grid{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:180px;gap:12px}
 @media(max-width:700px){.cso-usc-gallery__grid{grid-template-columns:repeat(2,1fr);grid-auto-rows:140px}}
-.cso-usc-gallery-item{border-radius:12px;overflow:hidden;position:relative;background:linear-gradient(135deg,var(--c-aqua,#26CBFB),var(--c-deep,#1B77A7))}
+.cso-usc-gallery-item{border-radius:12px;overflow:hidden;position:relative;background:linear-gradient(135deg,var(--c-aqua,#59C6F9),var(--c-deep,#3473A5))}
 .cso-usc-gallery-item img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
 /* ── Sidebar navy ── */
@@ -251,29 +251,29 @@ $gallery_units = Calypsosub_Gallery_Helpers::build_units(
 
 .cso-sintesi__head{padding:24px 24px 20px;border-bottom:1px solid rgba(255,255,255,.12)}
 .cso-sintesi__cert{letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin:0 0 12px;display:block}
-.cso .cso-sintesi__cert{font-size:16px;color:var(--c-aqua,#26CBFB)}
+.cso .cso-sintesi__cert{font-size:16px;color:var(--c-aqua,#59C6F9)}
 .cso-sintesi__title{font-size:28px;font-weight:900;color:#fff;margin:0;line-height:.96;letter-spacing:-.01em}
 
 .cso-sintesi__stats{padding:8px 24px 0;border-bottom:1px solid rgba(255,255,255,.12)}
 .cso-stat-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:14px 0;border-top:1px solid rgba(255,255,255,.12)}
 .cso-stat-row:first-child{border-top:none}
 .cso-stat-row__label{letter-spacing:.08em;text-transform:uppercase;font-weight:600;flex-shrink:0}
-.cso-sintesi .cso-stat-row__label{font-size:16px;color:var(--c-aqua,#26CBFB)}
+.cso-sintesi .cso-stat-row__label{font-size:16px;color:var(--c-aqua,#59C6F9)}
 .cso-stat-row__val{font-weight:600;text-align:right}
 .cso-sintesi .cso-stat-row__val{font-size:16px;color:#fff}
 @media(max-width:600px){.cso-stat-row{flex-direction:column;gap:4px}.cso-stat-row__val{text-align:left}}
 
 .cso-sintesi__checklist{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.12)}
 .cso-sintesi__checklist-label{letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin:0 0 14px;display:block}
-.cso-sintesi .cso-sintesi__checklist-label{font-size:16px;color:var(--c-aqua,#26CBFB)}
+.cso-sintesi .cso-sintesi__checklist-label{font-size:16px;color:var(--c-aqua,#59C6F9)}
 .cso-checklist{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
 .cso-checklist li{display:flex;align-items:flex-start;gap:8px}
 .cso .cso-checklist li{font-size:16px;color:#fff}
-.cso-checklist__check{color:var(--c-aqua,#26CBFB);flex-shrink:0}
+.cso-checklist__check{color:var(--c-aqua,#59C6F9);flex-shrink:0}
 
 .cso-sintesi__inizi{padding:20px 24px 24px;border-bottom:1px solid rgba(255,255,255,.12)}
 .cso-inizi-label{letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin:0 0 6px;display:block}
-.cso .cso-inizi-label{font-size:16px;color:var(--c-aqua,#26CBFB)}
+.cso .cso-inizi-label{font-size:16px;color:var(--c-aqua,#59C6F9)}
 .cso-inizi-note{opacity:.55;margin:0 0 14px}
 .cso .cso-inizi-note{font-size:13px}
 .cso-inizio-row{padding:12px 0;border-top:1px solid rgba(255,255,255,.08);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
@@ -291,28 +291,28 @@ $gallery_units = Calypsosub_Gallery_Helpers::build_units(
 .cso-sintesi__box{padding:20px 24px}
 .cso-sintesi__box+.cso-sintesi__box{border-top:1px solid rgba(255,255,255,.12)}
 .cso-sintesi__box-label{letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin:0 0 10px;display:block}
-.cso-sintesi .cso-sintesi__box-label{font-size:16px;color:var(--c-aqua,#26CBFB)}
+.cso-sintesi .cso-sintesi__box-label{font-size:16px;color:var(--c-aqua,#59C6F9)}
 .cso .cso-sintesi__box-text{font-size:14px;line-height:1.6;color:rgba(255,255,255,.8);margin:0;white-space:pre-line}
 .cso-sintesi__linkrow{display:flex;flex-wrap:wrap;gap:8px}
 .cso-sintesi__linkrow a{flex:1;display:flex;justify-content:center;padding:9px 10px;font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,.2);border-radius:999px;color:#fff;text-decoration:none;white-space:nowrap}
 .cso-sintesi__linkrow a:hover{border-color:rgba(255,255,255,.5)}
 
 /* ── Uscite correlate ── */
-.cso-related{background:var(--c-bone,#f6f1e6);padding:80px 48px 96px}
+.cso-related{background:var(--c-bone,#F5F1E7);padding:80px 48px 96px}
 @media(max-width:1024px){.cso-related{padding:48px 20px}}
 .cso-related__inner{max-width:1320px;margin:0 auto}
 .cso-related__header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px;flex-wrap:wrap;gap:24px}
 .cso-related__all{font-size:16px;font-weight:600;color:var(--c-deep,#0a2540);text-decoration:none;display:flex;align-items:center;gap:6px}
-.cso-related__all:hover{color:var(--c-wave,#1B77A7)}
+.cso-related__all:hover{color:var(--c-wave,#3473A5)}
 .cso-related__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 @media(max-width:900px){.cso-related__grid{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.cso-related__grid{grid-template-columns:1fr}}
 
 .cso-thumb{background:#fff;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 8px 24px -16px rgba(10,37,64,.3)}
 .cso-thumb img{width:100%;height:180px;object-fit:cover;display:block}
-.cso-thumb__placeholder{width:100%;height:180px;background:linear-gradient(135deg,var(--c-aqua,#26CBFB),var(--c-deep,#1B77A7));display:flex;align-items:center;justify-content:center;font-size:40px}
+.cso-thumb__placeholder{width:100%;height:180px;background:linear-gradient(135deg,var(--c-aqua,#59C6F9),var(--c-deep,#3473A5));display:flex;align-items:center;justify-content:center;font-size:40px}
 .cso-thumb__body{padding:18px 20px;display:flex;flex-direction:column;gap:6px;flex:1}
-.cso-thumb__level{display:inline-flex;padding:4px 10px;background:rgba(29,111,156,.1);color:var(--c-wave,#1B77A7);border-radius:999px;font-weight:600;align-self:flex-start;font-size:11px}
+.cso-thumb__level{display:inline-flex;padding:4px 10px;background:rgba(29,111,156,.1);color:var(--c-wave,#3473A5);border-radius:999px;font-weight:600;align-self:flex-start;font-size:11px}
 .cso .cso-thumb__title{color:var(--c-deep,#0a2540);font-size:19px;font-weight:700;margin:0;text-transform:uppercase}
 .cso .cso-thumb__desc{color:rgba(11,26,38,.65);font-size:14px;margin:0}
 .cso-thumb__link{font-size:14px;font-weight:600;color:var(--c-coral,#ff6b4a);display:flex;align-items:center;gap:6px;margin-top:auto}
@@ -329,7 +329,7 @@ $_ud = [
 	'hero_title_size'   => calypsosub_opt_int( 'uscite', 'design_hero_title_size', '96' ),
 	'hero_title_weight' => calypsosub_opt_int( 'uscite', 'design_hero_title_weight', '700' ),
 	'hero_title_font'   => preg_replace( '/[^a-zA-Z0-9 ,\"\'\-]/', '', calypsosub_opt( 'uscite', 'design_hero_title_font', '' ) ),
-	'hero_sub_color'    => calypsosub_opt( 'uscite', 'design_hero_sub_color',        '#26CBFB' ),
+	'hero_sub_color'    => calypsosub_opt( 'uscite', 'design_hero_sub_color',        '#59C6F9' ),
 	'hero_sub_size'     => calypsosub_opt_int( 'uscite', 'design_hero_sub_size',   '16' ),
 	'hero_sub_weight'   => calypsosub_opt_int( 'uscite', 'design_hero_sub_weight', '600' ),
 	'hero_lead_color'   => calypsosub_opt( 'uscite', 'design_hero_lead_color',       '#ffffff' ),
@@ -337,22 +337,22 @@ $_ud = [
 	'hero_lead_size'    => calypsosub_opt_int( 'uscite', 'design_hero_lead_size',  '18' ),
 	'hero_lead_font'    => preg_replace( '/[^a-zA-Z0-9 ,\"\'\-]/', '', calypsosub_opt( 'uscite', 'design_hero_lead_font', '' ) ),
 	'hero_stat_bg'      => calypsosub_opt( 'uscite', 'design_hero_stat_bg',          'rgba(255,255,255,.08)' ),
-	'hero_stat_label'   => calypsosub_opt( 'uscite', 'design_hero_stat_label_color', '#26CBFB' ),
+	'hero_stat_label'   => calypsosub_opt( 'uscite', 'design_hero_stat_label_color', '#59C6F9' ),
 	'hero_stat_value'   => calypsosub_opt( 'uscite', 'design_hero_stat_value_color', '#ffffff' ),
 	'hero_stat_border'  => calypsosub_opt( 'uscite', 'design_hero_stat_border',      'rgba(255,255,255,.15)' ),
 	'hero_text_color'   => calypsosub_opt( 'uscite', 'design_hero_text_color',       '#ffffff' ),
 	'hero_min_height'   => calypsosub_opt_int( 'uscite', 'design_hero_min_height', '640' ),
 	'hero_content_anchor' => calypsosub_opt( 'uscite', 'design_hero_content_anchor', 'flex-end' ),
 	'hero_eyebrow_text'   => calypsosub_opt( 'uscite', 'design_hero_eyebrow_text',   '' ),
-	'hero_eyebrow_color'  => calypsosub_opt( 'uscite', 'design_hero_eyebrow_color',  '#26CBFB' ),
+	'hero_eyebrow_color'  => calypsosub_opt( 'uscite', 'design_hero_eyebrow_color',  '#59C6F9' ),
 	'hero_eyebrow_size'   => calypsosub_opt_int( 'uscite', 'design_hero_eyebrow_size', '14' ),
 	'hero_eyebrow_weight' => calypsosub_opt_int( 'uscite', 'design_hero_eyebrow_weight', '600' ),
 	'hero_eyebrow_wave'   => calypsosub_opt( 'uscite', 'design_hero_eyebrow_wave',   '1' ) === '1',
 	'hero_scroll_color'     => calypsosub_opt( 'uscite', 'design_hero_scroll_color',     'rgba(255,255,255,.7)' ),
 	'hero_breadcrumb_color' => calypsosub_opt( 'uscite', 'design_hero_breadcrumb_color', 'rgba(255,255,255,.55)' ),
-	'eyebrow'        => calypsosub_opt( 'uscite', 'design_eyebrow',         '#1B77A7' ),
-	'sidebar_accent' => calypsosub_opt( 'uscite', 'design_sidebar_accent',  '#26CBFB' ),
-	'related_bg'     => calypsosub_opt( 'uscite', 'design_related_bg',      '#f6f1e6' ),
+	'eyebrow'        => calypsosub_opt( 'uscite', 'design_eyebrow',         '#3473A5' ),
+	'sidebar_accent' => calypsosub_opt( 'uscite', 'design_sidebar_accent',  '#59C6F9' ),
+	'related_bg'     => calypsosub_opt( 'uscite', 'design_related_bg',      '#F5F1E7' ),
 ];
 ?>
 <style>

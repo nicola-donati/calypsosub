@@ -40,7 +40,7 @@ $card_pad    = (int)    ( $a['card_padding'] ?? 24 );
 $card_shadow = isset( $a['card_shadow'] ) ? (bool) $a['card_shadow'] : true;
 
 /* ── Tipografia eyebrow ── */
-$eyebrow_color = (string) ( $a['eyebrow_color'] ?? '#1B77A7' );
+$eyebrow_color = (string) ( $a['eyebrow_color'] ?? '#3473A5' );
 $eyebrow_size  = (int)    ( $a['eyebrow_size']  ?? 13 );
 
 /* ── Tipografia titolo ── */
@@ -54,7 +54,7 @@ $desc_color = (string) ( $a['desc_color'] ?? '#3d5a6c' );
 $desc_size  = (int)    ( $a['desc_size']  ?? 14 );
 
 /* ── Link ── */
-$link_color = (string) ( $a['link_color'] ?? '#1B77A7' );
+$link_color = (string) ( $a['link_color'] ?? '#3473A5' );
 $link_size  = (int)    ( $a['link_size']  ?? 13 );
 
 /* ── Immagine URL ── */

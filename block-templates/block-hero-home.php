@@ -79,7 +79,7 @@ $marquee_mob   = (bool)   ( $attr['marquee_mobile'] ?? false );
 $text_color      = csh_css_raw( $attr['text_color']      ?? '#ffffff' );
 $overlay_color   = csh_css_raw( $attr['overlay_color']   ?? '#061826' );
 
-$eyebrow_color   = csh_css_raw( $attr['eyebrow_color']   ?? '#26CBFB' );
+$eyebrow_color   = csh_css_raw( $attr['eyebrow_color']   ?? '#59C6F9' );
 $eyebrow_size        = (int) ( $attr['eyebrow_size']        ?? 14 );
 $eyebrow_size_tablet = (int) ( $attr['eyebrow_size_tablet'] ?? 0 );
 $eyebrow_size_mobile = (int) ( $attr['eyebrow_size_mobile'] ?? 0 );
@@ -89,7 +89,7 @@ $eyebrow_width_tablet = csh_css_raw( $attr['eyebrow_width_tablet'] ?? '' );
 $eyebrow_width_mobile = csh_css_raw( $attr['eyebrow_width_mobile'] ?? '' );
 
 $title_color     = csh_css_raw( $attr['title_color']     ?? '#ffffff' );
-$title_em_color  = csh_css_raw( $attr['title_em_color']  ?? '#26CBFB' );
+$title_em_color  = csh_css_raw( $attr['title_em_color']  ?? '#59C6F9' );
 $title_size        = (int) ( $attr['title_size']        ?? 108 );
 $title_size_tablet = (int) ( $attr['title_size_tablet'] ?? 0 );
 $title_size_mobile = (int) ( $attr['title_size_mobile'] ?? 0 );
@@ -133,7 +133,7 @@ $pu_bg           = csh_css_raw( $attr['pu_bg']           ?? 'rgba(255,255,255,.0
 $pu_border       = csh_css_raw( $attr['pu_border']       ?? 'rgba(255,255,255,.18)' );
 $pu_dot_color    = csh_css_raw( $attr['pu_dot_color']    ?? '#54e09a' );
 $pu_text_color   = csh_css_raw( $attr['pu_text_color']   ?? '#ffffff' );
-$pu_accent_color = csh_css_raw( $attr['pu_accent_color'] ?? '#26CBFB' );
+$pu_accent_color = csh_css_raw( $attr['pu_accent_color'] ?? '#59C6F9' );
 $pu_warn_color   = csh_css_raw( $attr['pu_warn_color']   ?? '#ff6b4a' );
 $pu_dot_glow     = csh_hex2rgba( $pu_dot_color, .25 );
 

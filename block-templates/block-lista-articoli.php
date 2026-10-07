@@ -29,7 +29,7 @@ $left_format       = (string) ( $a['left_format']       ?? 'Y' );
 $left_custom_field = (string) ( $a['left_custom_field'] ?? '' );
 
 /* ── Layout sezione ── */
-$bg_color      = (string) ( $a['bg_color']      ?? '#f6f1e6' );
+$bg_color      = (string) ( $a['bg_color']      ?? '#F5F1E7' );
 $max_width     = (int)    ( $a['max_width']     ?? 1100 );
 $padding_y     = (int)    ( $a['padding_y']     ?? 60 );
 $padding_x     = (int)    ( $a['padding_x']     ?? 24 );
@@ -46,7 +46,7 @@ $left_weight = (int)    ( $a['left_weight'] ?? 900 );
 $left_col_width = (int) ( $a['left_col_width'] ?? 140 );
 
 /* ── Colori titolo ── */
-$title_color  = (string) ( $a['title_color']  ?? '#1B77A7' );
+$title_color  = (string) ( $a['title_color']  ?? '#3473A5' );
 $title_size   = (int)    ( $a['title_size']   ?? 22 );
 $title_weight = (int)    ( $a['title_weight'] ?? 800 );
 $title_upper  = (bool)   ( $a['title_upper']  ?? true );
