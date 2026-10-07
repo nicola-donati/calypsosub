@@ -319,16 +319,46 @@ function calypso_get_user_bookings( int $user_id ): array {
 }
 
 /**
- * Verifica disponibilità per prenotazione.
+ * Email di un prenotante anonimo dai dati liberi del form (CF7): i nomi dei
+ * campi sono configurati liberamente lato admin, quindi si prova una lista
+ * di alias comuni.
  */
-function calypso_can_book( int $post_id, int $user_id ): bool {
+function calypso_extract_email( array $data ): string {
+	foreach ( [ 'email', 'mail', 'e-mail', 'your-email' ] as $key ) {
+		if ( ! empty( $data[ $key ] ) && is_string( $data[ $key ] ) ) {
+			return sanitize_email( $data[ $key ] );
+		}
+	}
+	return '';
+}
+
+/**
+ * Verifica disponibilità per prenotazione. $guest_email è usata per il
+ * controllo duplicati solo quando $user_id è 0 (prenotante anonimo): non
+ * c'è un utente loggato su cui basarsi, quindi si usa l'email del form.
+ */
+function calypso_can_book( int $post_id, int $user_id, string $guest_email = '' ): bool {
 	global $calypsosub_booking_manager;
 	if ( ! $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) return false;
-	if ( $calypsosub_booking_manager->user_has_booking( $post_id, $user_id ) ) return false;
+	if ( $user_id ) {
+		if ( $calypsosub_booking_manager->user_has_booking( $post_id, $user_id ) ) return false;
+	} elseif ( $guest_email !== '' && $calypsosub_booking_manager->guest_has_booking( $post_id, $guest_email ) ) {
+		return false;
+	}
+
+	$now       = current_time( 'Y-m-d\TH:i' );
+	$post_type = get_post_type( $post_id );
+	if ( $post_type === 'calypso_occ_uscita' ) {
+		$data = (string) get_post_meta( $post_id, '_occorrenza_uscita_data', true );
+		if ( $data !== '' && $data < $now ) return false;
+	} elseif ( $post_type === 'calypso_evento' ) {
+		$dates = (array) ( get_post_meta( $post_id, '_evento_date', true ) ?: [] );
+		if ( $dates && calypso_next_future_date( $dates ) < $now ) return false;
+	}
+
 	$remaining = $calypsosub_booking_manager->get_remaining_spots( $post_id );
 	if ( $remaining === null ) return true;
 	if ( $remaining > 0 ) return true;
-	$post_type   = get_post_type( $post_id );
 	$meta_prefix = $post_type === 'calypso_occ_uscita' ? '_occorrenza_uscita' : '_evento';
 	return (bool) get_post_meta( $post_id, $meta_prefix . '_lista_attesa', true );
 }
@@ -349,12 +379,12 @@ function calypso_book( int $post_id, int $user_id, array $data ): string|WP_Erro
 /**
  * Cancella prenotazione.
  */
-function calypso_cancel_booking( int $booking_id, int $user_id ): bool|WP_Error {
+function calypso_cancel_booking( int $booking_id, int $user_id, string $token = '' ): bool|WP_Error {
 	global $calypsosub_booking_manager;
 	if ( ! $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 		return new WP_Error( 'not_init', 'Booking manager non inizializzato.' );
 	}
-	return $calypsosub_booking_manager->cancel_booking( $booking_id, $user_id );
+	return $calypsosub_booking_manager->cancel_booking( $booking_id, $user_id, $token );
 }
 
 /**

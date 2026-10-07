@@ -1,19 +1,49 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if ( ! is_user_logged_in() ) {
-	?>
-	<div class="calypso-account calypso-account--guest">
-		<p><?php _e( 'Devi accedere per visualizzare la tua area personale.', 'calypsosub' ); ?></p>
-		<a href="<?php echo esc_url( wp_login_url( get_permalink() ) ); ?>"
-		   class="calypso-btn"><?php _e( 'Accedi', 'calypsosub' ); ?></a>
-	</div>
-	<?php
-	return;
-}
+/**
+ * Modalità ospite: chi si è prenotato senza account riceve via email un
+ * link con un token univoco ("?booking_token=...") che dà accesso, senza
+ * login, alla SOLA prenotazione a cui è legato (vedi _booking_guest_token
+ * in Calypsosub_Booking_Manager::book()/get_booking_by_guest_token()).
+ */
+$booking_token      = sanitize_text_field( wp_unslash( $_GET['booking_token'] ?? '' ) );
+$is_guest_mode       = false;
+$guest_token_by_bid  = [];
 
-$user_id     = get_current_user_id();
-$booking_ids = calypso_get_user_bookings( $user_id );
+if ( ! is_user_logged_in() ) {
+	if ( $booking_token === '' ) {
+		?>
+		<div class="calypso-account calypso-account--guest">
+			<p><?php _e( 'Devi accedere per visualizzare la tua area personale.', 'calypsosub' ); ?></p>
+			<a href="<?php echo esc_url( wp_login_url( get_permalink() ) ); ?>"
+			   class="calypso-btn"><?php _e( 'Accedi', 'calypsosub' ); ?></a>
+		</div>
+		<?php
+		return;
+	}
+
+	global $calypsosub_booking_manager;
+	$guest_booking_id = $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager
+		? $calypsosub_booking_manager->get_booking_by_guest_token( $booking_token )
+		: 0;
+
+	if ( ! $guest_booking_id ) {
+		?>
+		<div class="calypso-account calypso-account--guest">
+			<p><?php _e( 'Prenotazione non trovata. Il link potrebbe non essere più valido.', 'calypsosub' ); ?></p>
+		</div>
+		<?php
+		return;
+	}
+
+	$is_guest_mode = true;
+	$booking_ids   = [ $guest_booking_id ];
+	$guest_token_by_bid[ $guest_booking_id ] = $booking_token;
+} else {
+	$user_id     = get_current_user_id();
+	$booking_ids = calypso_get_user_bookings( $user_id );
+}
 
 $active  = [];
 $history = [];
@@ -29,6 +59,7 @@ foreach ( $booking_ids as $bid ) {
 $cancel_nonce      = wp_create_nonce( 'calypso_cancel_nonce' );
 $title_tag         = calypsosub_title_tag( (string) ( ( $attributes ?? [] )['title_tag'] ?? 'h2' ), 'h2' );
 $history_title_tag = calypsosub_title_tag( (string) ( ( $attributes ?? [] )['history_title_tag'] ?? 'h3' ), 'h3' );
+$page_title        = $is_guest_mode ? __( 'La tua prenotazione', 'calypsosub' ) : __( 'Le mie prenotazioni', 'calypsosub' );
 ?>
 <style>
 .calypso-account{max-width:840px;margin:0 auto;padding:0 24px}
@@ -54,7 +85,7 @@ $history_title_tag = calypsosub_title_tag( (string) ( ( $attributes ?? [] )['his
 </style>
 
 <div class="calypso-account">
-	<<?php echo $title_tag; ?> class="calypso-account__title"><?php _e( 'Le mie prenotazioni', 'calypsosub' ); ?></<?php echo $title_tag; ?>>
+	<<?php echo $title_tag; ?> class="calypso-account__title"><?php echo esc_html( $page_title ); ?></<?php echo $title_tag; ?>>
 
 	<?php if ( empty( $active ) ) : ?>
 		<p class="calypso-empty-state"><?php _e( 'Nessuna prenotazione attiva.', 'calypsosub' ); ?></p>
@@ -106,7 +137,8 @@ $history_title_tag = calypsosub_title_tag( (string) ( ( $attributes ?? [] )['his
 			<td>
 				<button type="button" class="calypso-cancel-btn"
 				        data-booking-id="<?php echo esc_attr( $bid ); ?>"
-				        data-nonce="<?php echo esc_attr( $cancel_nonce ); ?>">
+				        data-nonce="<?php echo esc_attr( $cancel_nonce ); ?>"
+				        data-token="<?php echo esc_attr( $guest_token_by_bid[ $bid ] ?? '' ); ?>">
 					<?php _e( 'Cancella', 'calypsosub' ); ?>
 				</button>
 			</td>
@@ -165,7 +197,8 @@ $history_title_tag = calypsosub_title_tag( (string) ( ( $attributes ?? [] )['his
 			var data = new URLSearchParams({
 				action:     'calypso_cancel_booking',
 				booking_id: btn.dataset.bookingId,
-				nonce:      btn.dataset.nonce
+				nonce:      btn.dataset.nonce,
+				token:      btn.dataset.token || ''
 			});
 			fetch(ajaxUrl, { method: 'POST', body: data })
 				.then(function (r) { return r.json(); })
@@ -174,7 +207,7 @@ $history_title_tag = calypsosub_title_tag( (string) ( ( $attributes ?? [] )['his
 						btn.closest('tr').remove();
 					} else {
 						btn.disabled = false;
-						alert(res.data && res.data.message ? res.data.message : msgError);
+						alert((res.data ? res.data.message : '') || msgError);
 					}
 				})
 				.catch(function () {

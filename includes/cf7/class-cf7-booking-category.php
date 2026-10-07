@@ -49,14 +49,6 @@ class Calypsosub_CF7_Booking_Category {
 			$category = '';
 		}
 		update_post_meta( $contact_form->id(), self::META_KEY, $category );
-
-		$missing = $category !== '' ? $this->missing_required_fields( $contact_form, $category ) : [];
-		$transient_key = 'calypso_cf7_missing_' . $contact_form->id();
-		if ( $missing ) {
-			set_transient( $transient_key, $missing, 5 * MINUTE_IN_SECONDS );
-		} else {
-			delete_transient( $transient_key );
-		}
 	}
 
 	private function missing_required_fields( WPCF7_ContactForm $contact_form, string $category ): array {
@@ -76,11 +68,16 @@ class Calypsosub_CF7_Booking_Category {
 	}
 
 	public function admin_notice(): void {
-		$screen = get_current_screen();
-		if ( ! $screen || $screen->id !== 'wpcf7' || ! isset( $_GET['post'] ) ) return;
+		if ( ! isset( $_GET['page'], $_GET['post'] ) || $_GET['page'] !== 'wpcf7' ) return;
 
 		$form_id = absint( $_GET['post'] );
-		$missing = get_transient( 'calypso_cf7_missing_' . $form_id );
+		$category = (string) get_post_meta( $form_id, self::META_KEY, true );
+		if ( $category === '' || ! array_key_exists( $category, self::CATEGORIES ) ) return;
+
+		$contact_form = WPCF7_ContactForm::get_instance( $form_id );
+		if ( ! $contact_form ) return;
+
+		$missing = $this->missing_required_fields( $contact_form, $category );
 		if ( ! $missing ) return;
 		?>
 		<div class="notice notice-error">
@@ -105,6 +102,27 @@ class Calypsosub_CF7_Booking_Category {
 			'posts_per_page' => -1,
 			'meta_key'       => self::META_KEY,
 			'meta_value'     => $category,
+		] );
+
+		return array_map(
+			static fn( WP_Post $p ) => [ 'id' => $p->ID, 'title' => get_the_title( $p ) ],
+			$query->posts
+		);
+	}
+
+	/**
+	 * Tutti i form CF7 pubblicati, senza filtro di categoria — usato per
+	 * scegliere il form di fallback nel blocco Prenotazione.
+	 *
+	 * @return array{id:int,title:string}[]
+	 */
+	public function all_forms(): array {
+		$query = new WP_Query( [
+			'post_type'      => 'wpcf7_contact_form',
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'orderby'        => 'title',
+			'order'          => 'ASC',
 		] );
 
 		return array_map(

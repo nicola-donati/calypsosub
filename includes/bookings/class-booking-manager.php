@@ -12,7 +12,8 @@ class Calypsosub_Booking_Manager {
 	public function init(): void {
 		add_action( 'init',                          [ $this, 'register_post_type' ] );
 		add_action( 'wp_ajax_calypso_book',          [ $this, 'ajax_book' ] );
-		add_action( 'wp_ajax_calypso_cancel_booking',[ $this, 'ajax_cancel' ] );
+		add_action( 'wp_ajax_calypso_cancel_booking',        [ $this, 'ajax_cancel' ] );
+		add_action( 'wp_ajax_nopriv_calypso_cancel_booking', [ $this, 'ajax_cancel' ] );
 		add_action( 'add_meta_boxes',                [ $this, 'add_booking_meta_box' ] );
 		add_action( 'admin_head',                    [ $this, 'booking_admin_css' ] );
 		add_action( 'admin_action_calypso_confirm_booking', [ $this, 'handle_confirm_booking' ] );
@@ -65,12 +66,15 @@ class Calypsosub_Booking_Manager {
 		check_ajax_referer( 'calypso_cancel_nonce', 'nonce' );
 
 		$booking_id = absint( $_POST['booking_id'] ?? 0 );
+		$token      = sanitize_text_field( wp_unslash( $_POST['token'] ?? '' ) );
 
-		if ( ! $booking_id || ! is_user_logged_in() ) {
+		// Un ospite (non loggato) può annullare solo con il token della
+		// propria prenotazione — niente login richiesto in quel caso.
+		if ( ! $booking_id || ( ! is_user_logged_in() && $token === '' ) ) {
 			wp_send_json_error( [ 'message' => __( 'Accesso non autorizzato.', 'calypsosub' ) ] );
 		}
 
-		$result = $this->cancel_booking( $booking_id, get_current_user_id() );
+		$result = $this->cancel_booking( $booking_id, get_current_user_id(), $token );
 
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( [ 'message' => $result->get_error_message() ] );
@@ -101,8 +105,14 @@ class Calypsosub_Booking_Manager {
 			return new WP_Error( 'invalid_post', __( 'Tipo di contenuto non prenotabile.', 'calypsosub' ) );
 		}
 
-		// Prenotazione già esistente?
-		if ( $this->user_has_booking( $post_id, $user_id ) ) {
+		// Prenotazione già esistente? Per i prenotanti anonimi (user_id 0)
+		// non c'è uno user_id su cui basarsi: si usa l'email del form.
+		$guest_email = $user_id ? '' : calypso_extract_email( $form_data );
+		if ( $user_id ) {
+			if ( $this->user_has_booking( $post_id, $user_id ) ) {
+				return new WP_Error( 'already_booked', __( 'Hai già una richiesta per questo elemento.', 'calypsosub' ) );
+			}
+		} elseif ( $guest_email !== '' && $this->guest_has_booking( $post_id, $guest_email ) ) {
 			return new WP_Error( 'already_booked', __( 'Hai già una richiesta per questo elemento.', 'calypsosub' ) );
 		}
 
@@ -130,6 +140,11 @@ class Calypsosub_Booking_Manager {
 		update_post_meta( $booking_id, '_booking_date',         current_time( 'mysql' ) );
 		update_post_meta( $booking_id, '_booking_form_data',    $form_data );
 
+		if ( ! $user_id ) {
+			update_post_meta( $booking_id, '_booking_guest_email', strtolower( $guest_email ) );
+			update_post_meta( $booking_id, '_booking_guest_token', wp_generate_password( 32, false ) );
+		}
+
 		$this->email->send_booking_received( $booking_id );
 		$this->email->send_admin_notification( $booking_id );
 
@@ -139,9 +154,17 @@ class Calypsosub_Booking_Manager {
 	/**
 	 * Cancella una prenotazione. Promuove il primo in lista d'attesa se presente.
 	 */
-	public function cancel_booking( int $booking_id, int $user_id ): bool|WP_Error {
-		$owner = (int) get_post_meta( $booking_id, '_booking_user_id', true );
-		if ( $owner !== $user_id && ! current_user_can( 'calypsosub_manage' ) ) {
+	public function cancel_booking( int $booking_id, int $user_id, string $token = '' ): bool|WP_Error {
+		$owner       = (int) get_post_meta( $booking_id, '_booking_user_id', true );
+		$guest_token = (string) get_post_meta( $booking_id, '_booking_guest_token', true );
+
+		// Owner loggato: user_id deve corrispondere. Ospite: serve il token
+		// della propria prenotazione — "owner === 0" da solo non basta, o
+		// un ospite qualsiasi potrebbe annullare la prenotazione di un altro.
+		$is_owner = $owner !== 0 && $owner === $user_id;
+		$is_guest = $owner === 0 && $guest_token !== '' && $token !== '' && hash_equals( $guest_token, $token );
+
+		if ( ! $is_owner && ! $is_guest && ! current_user_can( 'calypsosub_manage' ) ) {
 			return new WP_Error( 'forbidden', __( 'Non autorizzato.', 'calypsosub' ) );
 		}
 
@@ -242,6 +265,48 @@ class Calypsosub_Booking_Manager {
 		return $count > 0;
 	}
 
+	/**
+	 * Equivalente di user_has_booking() per i prenotanti anonimi: non c'è
+	 * uno user_id su cui basarsi, quindi il controllo duplicati usa l'email
+	 * inserita nel form (salvata in _booking_guest_email, minuscola).
+	 */
+	public function guest_has_booking( int $post_id, string $email ): bool {
+		if ( $email === '' ) return false;
+		global $wpdb;
+		$count = (int) $wpdb->get_var( $wpdb->prepare(
+			"SELECT COUNT(p.ID)
+			 FROM {$wpdb->posts} p
+			 INNER JOIN {$wpdb->postmeta} pm_pid ON p.ID = pm_pid.post_id
+			   AND pm_pid.meta_key = '_booking_post_id' AND pm_pid.meta_value = %d
+			 INNER JOIN {$wpdb->postmeta} pm_email ON p.ID = pm_email.post_id
+			   AND pm_email.meta_key = '_booking_guest_email' AND pm_email.meta_value = %s
+			 INNER JOIN {$wpdb->postmeta} pm_status ON p.ID = pm_status.post_id
+			   AND pm_status.meta_key = '_booking_status'
+			   AND pm_status.meta_value IN ('confermata','lista_attesa','in_attesa')
+			 WHERE p.post_type = 'calypso_prenotazione' AND p.post_status = 'publish'",
+			$post_id,
+			strtolower( $email )
+		) );
+		return $count > 0;
+	}
+
+	/**
+	 * ID della prenotazione associata a un token ospite (link "gestisci la
+	 * tua prenotazione" nelle email), o 0 se non trovato/non valido.
+	 */
+	public function get_booking_by_guest_token( string $token ): int {
+		if ( $token === '' ) return 0;
+		global $wpdb;
+		return (int) $wpdb->get_var( $wpdb->prepare(
+			"SELECT p.ID FROM {$wpdb->posts} p
+			 INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
+			   AND pm.meta_key = '_booking_guest_token' AND pm.meta_value = %s
+			 WHERE p.post_type = 'calypso_prenotazione' AND p.post_status = 'publish'
+			 LIMIT 1",
+			$token
+		) );
+	}
+
 	public function get_user_bookings( int $user_id, bool $active_only = false ): array {
 		global $wpdb;
 		$status_clause = $active_only
@@ -303,7 +368,15 @@ class Calypsosub_Booking_Manager {
 		$allergies  = (string) get_post_meta( $post->ID, '_booking_allergies', true );
 		$date       = (string) get_post_meta( $post->ID, '_booking_date', true );
 		$post_type  = (string) get_post_meta( $post->ID, '_booking_post_type', true );
-		$user       = get_user_by( 'id', $user_id );
+		$user       = $user_id ? get_user_by( 'id', $user_id ) : false;
+		$form_data  = (array) get_post_meta( $post->ID, '_booking_form_data', true );
+
+		$email_display = $user ? $user->user_email : '';
+		if ( ! $email_display ) {
+			foreach ( [ 'email', 'mail', 'e-mail', 'your-email' ] as $k ) {
+				if ( ! empty( $form_data[ $k ] ) ) { $email_display = (string) $form_data[ $k ]; break; }
+			}
+		}
 
 		if ( $post_type === 'calypso_occ_uscita' ) {
 			$date_str    = (string) get_post_meta( $post_id, '_occorrenza_uscita_data', true );
@@ -341,11 +414,11 @@ class Calypsosub_Booking_Manager {
 			</div>
 			<div class="calpren-field">
 				<label><?php _e( 'Utente', 'calypsosub' ); ?></label>
-				<span class="val"><?php echo $user ? esc_html( $user->display_name ) : esc_html( $user_id ); ?></span>
+				<span class="val"><?php echo $user ? esc_html( $user->display_name ) : esc_html__( 'Ospite (non registrato)', 'calypsosub' ); ?></span>
 			</div>
 			<div class="calpren-field">
 				<label><?php _e( 'Email', 'calypsosub' ); ?></label>
-				<span class="val"><?php echo $user ? esc_html( $user->user_email ) : '—'; ?></span>
+				<span class="val"><?php echo $email_display ? esc_html( $email_display ) : '—'; ?></span>
 			</div>
 			<div class="calpren-field">
 				<label><?php _e( 'Evento', 'calypsosub' ); ?></label>
@@ -373,6 +446,21 @@ class Calypsosub_Booking_Manager {
 			<div class="calpren-field" style="grid-column:1/-1">
 				<label><?php _e( 'Allergie / note', 'calypsosub' ); ?></label>
 				<span class="val"><?php echo esc_html( $allergies ); ?></span>
+			</div>
+			<?php endif; ?>
+			<?php if ( $form_data ) : ?>
+			<div class="calpren-field" style="grid-column:1/-1">
+				<label><?php _e( 'Dati inviati dal form', 'calypsosub' ); ?></label>
+				<table style="width:100%;border-collapse:collapse;margin-top:4px">
+					<?php foreach ( $form_data as $campo => $valore ) :
+						if ( is_array( $valore ) ) $valore = implode( ', ', $valore );
+					?>
+					<tr>
+						<td style="padding:4px 10px 4px 0;font-weight:600;color:#555;white-space:nowrap;vertical-align:top"><?php echo esc_html( $campo ); ?></td>
+						<td style="padding:4px 0;color:#1d2327"><?php echo esc_html( (string) $valore ); ?></td>
+					</tr>
+					<?php endforeach; ?>
+				</table>
 			</div>
 			<?php endif; ?>
 		</div>
@@ -465,13 +553,17 @@ class Calypsosub_Booking_Manager {
 			echo '<a href="' . esc_url( get_edit_post_link( $pid ) ) . '">' . esc_html( get_the_title( $pid ) ) . '</a>';
 		} elseif ( $col === 'booking_user' ) {
 			$uid  = (int) get_post_meta( $post_id, '_booking_user_id', true );
-			$user = get_user_by( 'id', $uid );
+			$user = $uid ? get_user_by( 'id', $uid ) : false;
 			if ( $user ) {
-				$nome    = trim( $user->first_name . ' ' . $user->last_name );
+				$nome = trim( $user->first_name . ' ' . $user->last_name );
 				echo esc_html( $nome ?: $user->display_name );
-			} else {
-				echo esc_html( $uid );
+				return;
 			}
+			$form_data = (array) get_post_meta( $post_id, '_booking_form_data', true );
+			$nome      = trim( ( $form_data['nome'] ?? '' ) . ' ' . ( $form_data['cognome'] ?? '' ) );
+			echo $nome !== ''
+				? esc_html( $nome ) . ' <span style="color:#888">(' . esc_html__( 'ospite', 'calypsosub' ) . ')</span>'
+				: esc_html__( 'Ospite', 'calypsosub' );
 		}
 	}
 
