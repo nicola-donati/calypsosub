@@ -39,9 +39,14 @@ class Calypsosub_SystemeIO_Client {
 			return $create;
 		}
 
-		$newsletter_id = $create['id'] ?? null;
+		$newsletter_id = $create['data']['id'] ?? null;
 		if ( ! $newsletter_id ) {
-			return new WP_Error( 'calypso_systemeio_no_id', __( 'systeme.io non ha restituito un ID newsletter.', 'calypsosub' ) );
+			// The request succeeded (2xx) but the response didn't have the
+			// shape this code expects — exactly the case the class-level
+			// comment warns about (payload never verified against a real
+			// key). Still attach the actual response here, or this failure
+			// mode is a dead end with nothing to debug from.
+			return new WP_Error( 'calypso_systemeio_no_id', __( 'systeme.io non ha restituito un ID newsletter.', 'calypsosub' ), $create['debug'] );
 		}
 
 		$send = $this->request( 'POST', "/newsletters/{$newsletter_id}/send", $api_key, [] );
@@ -53,9 +58,12 @@ class Calypsosub_SystemeIO_Client {
 	}
 
 	/**
-	 * @return array|WP_Error  Corpo JSON decodificato, o errore (con i dettagli
-	 *                         della richiesta/risposta in get_error_data(), per
-	 *                         il log mostrato in Calypsosub_CPT_Communications).
+	 * @return array{data:array,debug:array}|WP_Error  'data' è il corpo JSON
+	 *               decodificato; 'debug' è sempre presente (anche su
+	 *               successo) così un fallimento "logico" a valle — come un
+	 *               200 senza il campo atteso — può comunque allegarlo al suo
+	 *               WP_Error invece di restarne senza. Su errore, lo stesso
+	 *               identico 'debug' è già dentro get_error_data().
 	 */
 	private function request( string $method, string $path, string $api_key, array $body ) {
 		$url     = self::API_BASE . $path;
@@ -96,7 +104,10 @@ class Calypsosub_SystemeIO_Client {
 			);
 		}
 
-		return is_array( $data ) ? $data : [];
+		return [
+			'data'  => is_array( $data ) ? $data : [],
+			'debug' => self::debug_data( $method, $url, $headers, $body_json, $code, $resp_body ),
+		];
 	}
 
 	/** @param array<string,string> $headers */

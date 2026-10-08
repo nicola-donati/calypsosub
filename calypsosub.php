@@ -3,7 +3,7 @@
  * Plugin Name: Calypso Sub Arezzo
  * Plugin URI:  https://calypsosub.it
  * Description: Gestione uscite, eventi, corsi, docenti e prenotazioni per ASD Calypso Sub Arezzo.
- * Version:     1.0.34
+ * Version:     1.0.35
  * Author:      Nicola Donati
  * Text Domain: calypsosub
  * Domain Path: /languages
@@ -13,7 +13,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'CALYPSOSUB_VERSION', '1.0.34' );
+define( 'CALYPSOSUB_VERSION', '1.0.35' );
 define( 'CALYPSOSUB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CALYPSOSUB_URL', plugin_dir_url( __FILE__ ) );
 
