@@ -27,20 +27,36 @@ class Calypsosub_Communication_Dispatcher {
 		// WordPress's hook-firing order for the normal "edit in admin,
 		// click Pubblica" path).
 		//
-		// This hook is a SAFETY NET, not a fallback for ordering: a
-		// "Programma per..." (scheduled) communication's actual future→publish
-		// transition happens later, from WP-Cron's own check_and_publish_future_post()
-		// — a request with no $_POST/nonce at all, so save_meta() no-ops on
-		// its very first guard and never reaches the schedule() call. This
-		// hook is the only thing that fires dispatch for that case; its
-		// priority doesn't matter since schedule() itself is idempotent
-		// (guarded by the _com_dispatched check), so it's a harmless no-op
-		// on the already-handled direct-publish path.
+		// This hook exists ONLY for a "Programma per..." (scheduled)
+		// communication's actual future→publish transition, which happens
+		// later from WP-Cron's own check_and_publish_future_post() — a
+		// request with no $_POST/nonce at all, so save_meta() no-ops on its
+		// very first guard and never reaches its own schedule() call.
+		//
+		// It must NOT fire during a normal admin form submission: WordPress
+		// calls publish_{post_type} BEFORE save_post_{post_type} on every
+		// publish (direct or transition), so if this ran unconditionally
+		// here it would lock the post (schedule() sets _com_dispatched)
+		// before save_meta() ever got to persist _com_category/_com_channels
+		// — reproducing the exact bug this whole mechanism exists to avoid.
+		// maybe_dispatch_on_publish() below checks for the form's own nonce
+		// to tell the two cases apart.
 		add_action( 'publish_' . Calypsosub_CPT_Communications::POST_TYPE, [ $this, 'maybe_dispatch_on_publish' ] );
 		add_action( self::DISPATCH_HOOK, [ $this, 'dispatch' ] );
 	}
 
 	public function maybe_dispatch_on_publish( int $post_id ): void {
+		// Present only on a real admin form submission (the edit screen's
+		// own meta box renders it) — never on a WP-Cron request. When it's
+		// there, save_meta() is about to run in this same request (on
+		// save_post_{post_type}, which always fires after this hook) and
+		// will call schedule() itself once category/channels are safely
+		// persisted. Calling it here too would be redundant at best, and a
+		// race at worst — so skip entirely rather than rely on schedule()'s
+		// idempotency to paper over it.
+		if ( isset( $_POST[ Calypsosub_CPT_Communications::POST_TYPE . '_nonce' ] ) ) {
+			return;
+		}
 		if ( get_post_meta( $post_id, '_com_dispatched', true ) ) return;
 		self::schedule( $post_id );
 	}
