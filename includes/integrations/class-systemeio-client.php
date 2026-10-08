@@ -5,35 +5,45 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Client per l'invio di newsletter via API pubblica systeme.io
  * (https://developer.systeme.io/reference — autenticazione: header X-API-Key).
  *
- * NB: la forma esatta del payload di /api/newsletters (nomi campi per
- * contenuto HTML, tag di targeting, invio immediato vs bozza) è ricostruita
- * dalla documentazione pubblica systeme.io, non da un test end-to-end con una
- * chiave reale — al primo invio vero, se l'API risponde con un errore di
- * validazione, il messaggio di errore restituito da systeme.io (loggato in
- * $result->get_error_message()) indica quale campo rinominare qui.
+ * Verificato contro lo schema OpenAPI pubblico il 2026-10-08
+ * (developer.systeme.io/reference/api_mailingnewsletters_post.md e
+ * .../newsletter_send.md) dopo che la prima versione — endpoint
+ * `/newsletters` con body piatto e un campo `includedTags` inventato — si è
+ * rivelata un 404, mai testata contro una chiave reale. Due cose non ovvie
+ * dallo schema:
+ * - L'endpoint vive sotto `/mailing/`, non alla radice: `/mailing/newsletters`.
+ * - Il corpo della richiesta di creazione annida subject/HTML dentro un
+ *   oggetto `content`, non li mette come campi diretti.
+ * Limite noto: lo schema pubblico di creazione/invio newsletter NON ha
+ * nessun campo di targeting (tag, segmento, lista) — un invio va quindi
+ * all'intera lista contatti systeme.io, non c'è modo di restringerlo per tag
+ * passando dall'API. Il concetto di "tag per categoria" nelle impostazioni
+ * di questo plugin resta configurabile ma non è più usato da questa classe.
  */
 class Calypsosub_SystemeIO_Client {
 
 	private const API_BASE = 'https://api.systeme.io/api';
 
 	/**
-	 * Crea e invia subito una newsletter broadcast, targettizzata sui tag indicati.
+	 * Crea e invia subito una newsletter broadcast a tutta la lista contatti
+	 * (l'API pubblica di systeme.io non supporta targeting per tag/segmento
+	 * in creazione o invio — vedi il commento di classe).
 	 *
-	 * @param string   $subject
-	 * @param string   $body_html
-	 * @param string[] $include_tags  Nomi dei tag systeme.io dei contatti da includere.
+	 * @param string $subject
+	 * @param string $body_html
 	 * @return true|WP_Error
 	 */
-	public function send_newsletter( string $subject, string $body_html, array $include_tags ) {
+	public function send_newsletter( string $subject, string $body_html ) {
 		$api_key = trim( (string) get_option( 'calypsosub_systemeio_api_key', '' ) );
 		if ( $api_key === '' ) {
 			return new WP_Error( 'calypso_systemeio_no_key', __( 'API key systeme.io non configurata.', 'calypsosub' ) );
 		}
 
-		$create = $this->request( 'POST', '/newsletters', $api_key, [
-			'subject'      => $subject,
-			'content'      => $body_html,
-			'includedTags' => array_values( $include_tags ),
+		$create = $this->request( 'POST', '/mailing/newsletters', $api_key, [
+			'content' => [
+				'subject'  => $subject,
+				'bodyHtml' => $body_html,
+			],
 		] );
 		if ( is_wp_error( $create ) ) {
 			return $create;
@@ -42,14 +52,15 @@ class Calypsosub_SystemeIO_Client {
 		$newsletter_id = $create['data']['id'] ?? null;
 		if ( ! $newsletter_id ) {
 			// The request succeeded (2xx) but the response didn't have the
-			// shape this code expects — exactly the case the class-level
-			// comment warns about (payload never verified against a real
-			// key). Still attach the actual response here, or this failure
-			// mode is a dead end with nothing to debug from.
+			// shape this code expects. Still attach the actual response
+			// here, or this failure mode is a dead end with nothing to
+			// debug from.
 			return new WP_Error( 'calypso_systemeio_no_id', __( 'systeme.io non ha restituito un ID newsletter.', 'calypsosub' ), $create['debug'] );
 		}
 
-		$send = $this->request( 'POST', "/newsletters/{$newsletter_id}/send", $api_key, [] );
+		// No request body: the send endpoint's schema doesn't accept or
+		// need one, it just transitions the already-created newsletter to sent.
+		$send = $this->request( 'POST', "/mailing/newsletters/{$newsletter_id}/send", $api_key, [] );
 		if ( is_wp_error( $send ) ) {
 			return $send;
 		}

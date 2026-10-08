@@ -87,10 +87,11 @@ class Calypsosub_Communication_Dispatcher {
 		$all_ok    = true;
 
 		if ( in_array( 'email', $channels, true ) ) {
-			$tag = (string) $category['tag_systemeio'];
-			$result = $tag !== ''
-				? $this->systemeio->send_newsletter( $subject, $body_html, [ $tag ] )
-				: new WP_Error( 'calypso_com_no_tag', __( 'Nessun tag systeme.io impostato per questa categoria.', 'calypsosub' ) );
+			// systeme.io's public API has no tag/segment targeting on newsletter
+			// create or send (see Calypsosub_SystemeIO_Client) — every email send
+			// goes to the whole contact list regardless of the category's
+			// tag_systemeio setting, which this call no longer reads.
+			$result = $this->systemeio->send_newsletter( $subject, $body_html );
 
 			$results['email'] = is_wp_error( $result )
 				? [ 'ok' => false, 'msg' => $result->get_error_message(), 'debug' => $result->get_error_data() ]
