@@ -71,6 +71,29 @@ class Calypsosub_SystemeIO_Client {
 			return $tags;
 		}
 
+		// A 2xx here doesn't guarantee the tag actually got attached —
+		// systeme.io's own docs describe this endpoint's tagIds field as tags
+		// to EXCLUDE from the audience (same wording as the separate
+		// excluded-tags endpoint, likely a doc copy-paste bug, but observed
+		// 2026-10-08: the /send call still failed with "must have at least
+		// one tag" right after this call reported success). Checking the
+		// response's own items list catches that mismatch here, with full
+		// request/response debug, instead of a confusing failure two steps
+		// later with nothing to go on.
+		$applied_ids = array_map(
+			static function ( $item ) {
+				return isset( $item['id'] ) ? (int) $item['id'] : null;
+			},
+			(array) ( $tags['data']['items'] ?? [] )
+		);
+		if ( ! in_array( $tag_id, $applied_ids, true ) ) {
+			return new WP_Error(
+				'calypso_systemeio_tag_not_applied',
+				__( 'systeme.io ha accettato la richiesta di assegnazione tag, ma il tag non risulta applicato alla newsletter.', 'calypsosub' ),
+				$tags['debug']
+			);
+		}
+
 		// No request body: the send endpoint's schema doesn't accept or
 		// need one, it just transitions the already-created newsletter to sent.
 		$send = $this->request( 'POST', "/mailing/newsletters/{$newsletter_id}/send", $api_key, [] );

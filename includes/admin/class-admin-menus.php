@@ -16,8 +16,11 @@ class Calypsosub_Admin_Menus {
 	 * avviso separato dal successo del salvataggio (le impostazioni locali
 	 * si salvano comunque; è solo la sincronizzazione del tag su systeme.io
 	 * a non essere andata a buon fine, recuperabile risalvando più tardi).
+	 * Include il 'debug' (richiesta/risposta) di get_error_data() quando
+	 * presente, stessa logica usata per i fallimenti di invio comunicazioni —
+	 * senza, un fallimento qui è praticamente indiagnosticabile da remoto.
 	 *
-	 * @var string[]
+	 * @var array{message:string,debug:?array}[]
 	 */
 	private array $tag_sync_warnings = [];
 
@@ -76,7 +79,11 @@ class Calypsosub_Admin_Menus {
 			$active_tab = sanitize_key( $_POST['cso_active_tab'] ?? 'generali' );
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Impostazioni salvate.', 'calypsosub' ) . '</p></div>';
 			foreach ( $this->tag_sync_warnings as $warning ) {
-				echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html( $warning ) . '</p></div>';
+				echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html( $warning['message'] ) . '</p>';
+				if ( ! empty( $warning['debug'] ) ) {
+					$this->render_tag_sync_debug( $warning['debug'] );
+				}
+				echo '</div>';
 			}
 		} elseif ( isset( $_GET['cso_tab'] ) ) {
 			$active_tab = sanitize_key( $_GET['cso_tab'] );
@@ -644,13 +651,16 @@ class Calypsosub_Admin_Menus {
 				// communication is sent for this category.
 				$ensured = $systemeio->ensure_tag( $tag );
 				if ( is_wp_error( $ensured ) ) {
-					$this->tag_sync_warnings[] = sprintf(
-						/* translators: 1: category name, 2: tag name, 3: error message from systeme.io */
-						__( 'Categoria "%1$s": impossibile verificare/creare il tag systeme.io "%2$s" (%3$s). La categoria è stata salvata comunque, ma l\'invio email potrebbe fallire finché il tag non esiste davvero su systeme.io.', 'calypsosub' ),
-						$label,
-						$tag,
-						$ensured->get_error_message()
-					);
+					$this->tag_sync_warnings[] = [
+						'message' => sprintf(
+							/* translators: 1: category name, 2: tag name, 3: error message from systeme.io */
+							__( 'Categoria "%1$s": impossibile verificare/creare il tag systeme.io "%2$s" (%3$s). La categoria è stata salvata comunque, ma l\'invio email potrebbe fallire finché il tag non esiste davvero su systeme.io.', 'calypsosub' ),
+							$label,
+							$tag,
+							$ensured->get_error_message()
+						),
+						'debug' => $ensured->get_error_data(),
+					];
 				}
 			}
 
@@ -673,6 +683,41 @@ class Calypsosub_Admin_Menus {
 			$categories[ $key ] = [ 'label' => $label, 'tag_systemeio' => $tag, 'groups' => $selected_groups ];
 		}
 		update_option( 'calypsosub_communication_categories', $categories );
+	}
+
+	/**
+	 * Stessa forma/scopo di Calypsosub_CPT_Communications::render_debug_details() —
+	 * duplicato qui invece di condiviso perché queste due classi non hanno
+	 * nessun'altra dipendenza reciproca, e il formato del 'debug' che
+	 * entrambe ricevono da Calypsosub_SystemeIO_Client è lo stesso.
+	 *
+	 * @param array{method?:string,url?:string,headers?:array<string,string>,body?:?string,response_code?:?int,response_body?:?string} $debug
+	 */
+	private function render_tag_sync_debug( array $debug ): void {
+		echo '<details style="margin:4px 0 2px;font-size:12px">';
+		echo '<summary style="cursor:pointer;color:#6d6d6f">' . esc_html__( 'Dettagli tecnici', 'calypsosub' ) . '</summary>';
+		echo '<pre style="white-space:pre-wrap;word-break:break-all;background:#f6f7f7;border:1px solid #dcdcde;padding:8px;border-radius:4px;margin-top:4px">';
+
+		if ( isset( $debug['method'], $debug['url'] ) ) {
+			echo esc_html( $debug['method'] . ' ' . $debug['url'] ) . "\n\n";
+		}
+		if ( ! empty( $debug['headers'] ) && is_array( $debug['headers'] ) ) {
+			foreach ( $debug['headers'] as $name => $value ) {
+				echo esc_html( $name . ': ' . $value ) . "\n";
+			}
+			echo "\n";
+		}
+		if ( ! empty( $debug['body'] ) ) {
+			echo esc_html__( 'Body inviato:', 'calypsosub' ) . "\n" . esc_html( $debug['body'] ) . "\n\n";
+		}
+		if ( isset( $debug['response_code'] ) && null !== $debug['response_code'] ) {
+			echo esc_html__( 'Risposta:', 'calypsosub' ) . ' HTTP ' . esc_html( (string) $debug['response_code'] ) . "\n";
+		}
+		if ( ! empty( $debug['response_body'] ) ) {
+			echo esc_html( $debug['response_body'] );
+		}
+
+		echo '</pre></details>';
 	}
 
 	/** @param string[] $used */
