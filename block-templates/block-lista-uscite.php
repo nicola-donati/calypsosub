@@ -22,7 +22,7 @@ $attr_lbl_liberi   = (string)  ( $attributes['lbl_liberi']       ?? 'Posti liber
 $attr_empty_title  = (string)  ( $attributes['empty_title']      ?? 'Nessuna uscita in programma.' );
 
 /* ── Stile ── */
-$bg_color         = (string) ( $attributes['bg_color']         ?? '#dff4f8' );
+$bg_color         = (string) ( $attributes['bg_color']         ?? '#D3E8EE' );
 $max_width        = (int)    ( $attributes['max_width']        ?? 1320 );
 $padding_y        = (int)    ( $attributes['padding_y']        ?? 80 );
 $padding_x        = (int)    ( $attributes['padding_x']        ?? 48 );
@@ -30,7 +30,7 @@ $color_accent     = (string) ( $attributes['color_accent']     ?? '#3473A5' );
 $color_ink        = (string) ( $attributes['color_ink']        ?? '#0b1a26' );
 $card_bg          = (string) ( $attributes['card_bg']          ?? '#ffffff' );
 $card_radius      = (int)    ( $attributes['card_radius']      ?? 16 );
-$card_shadow      = (string) ( $attributes['card_shadow']      ?? '0 4px 32px -8px rgba(10,37,64,.12)' );
+$card_shadow      = (string) ( $attributes['card_shadow']      ?? '0 30px 80px -40px rgba(10,37,64,.3)' );
 $row_padding_y    = (int)    ( $attributes['row_padding_y']    ?? 28 );
 $row_padding_x    = (int)    ( $attributes['row_padding_x']    ?? 32 );
 $row_border_color = (string) ( $attributes['row_border_color'] ?? 'rgba(11,26,38,.07)' );
@@ -46,10 +46,10 @@ $head_link_size    = (int)    ( $attributes['head_link_size']    ?? 14 );
 $head_link_weight  = (int)    ( $attributes['head_link_weight']  ?? 600 );
 /* ── Testo righe ── */
 $dayname_size       = (int) ( $attributes['dayname_size']       ?? 10 );
-$daynum_size        = (int) ( $attributes['daynum_size']        ?? 58 );
-$daynum_weight      = (int) ( $attributes['daynum_weight']      ?? 900 );
+$daynum_size        = (int) ( $attributes['daynum_size']        ?? 44 );
+$daynum_weight      = (int) ( $attributes['daynum_weight']      ?? 800 );
 $month_size         = (int) ( $attributes['month_size']         ?? 10 );
-$name_size          = (int) ( $attributes['name_size']          ?? 20 );
+$name_size          = (int) ( $attributes['name_size']          ?? 26 );
 $name_weight        = (int) ( $attributes['name_weight']        ?? 700 );
 $luogo_size         = (int) ( $attributes['luogo_size']         ?? 13 );
 $ritrovo_label_size = (int) ( $attributes['ritrovo_label_size'] ?? 9 );
@@ -85,7 +85,15 @@ foreach ( $raw as $u ) {
 	$u->_passata    = $prima < $today;
 	$uscite[]       = $u;
 }
-usort( $uscite, static fn( $a, $b ) => strcmp( $a->_prima_data, $b->_prima_data ) );
+/* Future prima (più vicina in cima), passate dopo (più recente in cima) —
+ * così con "mostra passate" attivo la prossima uscita resta sempre la
+ * prima riga, invece di finire sepolta sotto lo storico. */
+usort( $uscite, static function ( $a, $b ) {
+	if ( $a->_passata !== $b->_passata ) return $a->_passata ? 1 : -1;
+	return $a->_passata
+		? strcmp( $b->_prima_data, $a->_prima_data )
+		: strcmp( $a->_prima_data, $b->_prima_data );
+} );
 if ( $attr_max_items > 0 ) {
 	$uscite = array_slice( $uscite, 0, $attr_max_items );
 }
@@ -121,11 +129,11 @@ foreach ( $uscite as $u ) {
 $prenotazioni_page_id = (int) get_option( 'calypsosub_prenotazioni_page_id', 0 );
 
 /* ── Grid columns dinamica ── */
-$gcols = [ '90px', '1fr' ];
-if ( $attr_show_badge )   $gcols[] = '160px';
+$gcols = [ '120px', '1fr' ];
+if ( $attr_show_badge )   $gcols[] = '180px';
 if ( $attr_show_ritrovo ) $gcols[] = '220px';
-if ( $attr_show_posti )   $gcols[] = '120px';
-if ( $attr_show_cta )     $gcols[] = '140px';
+if ( $attr_show_posti )   $gcols[] = '140px';
+if ( $attr_show_cta )     $gcols[] = '160px';
 $grid_template = implode( ' ', $gcols );
 
 $mesi_short = [
@@ -160,23 +168,25 @@ $daynum_xs = max( 16, (int) round( $daynum_size * 0.517 ) );
 #<?php echo $uid; ?> .cso-lu__card{background:<?php echo $css( $card_bg ); ?>;border-radius:<?php echo $card_radius; ?>px;overflow:hidden;box-shadow:<?php echo $css( $card_shadow ); ?>}
 #<?php echo $uid; ?> .cso-lu__row{display:grid;grid-template-columns:<?php echo esc_attr( $grid_template ); ?>;align-items:center;padding:<?php echo $row_padding_y; ?>px <?php echo $row_padding_x; ?>px;column-gap:0;border-bottom:1px solid <?php echo $css( $row_border_color ); ?>}
 #<?php echo $uid; ?> .cso-lu__row:last-child{border-bottom:none}
+#<?php echo $uid; ?> .cso-lu__row--next{background:rgba(255,107,74,.04)}
+#<?php echo $uid; ?> .cso-lu__row--passata{opacity:.55}
 #<?php echo $uid; ?> .cso-lu__date{display:flex;flex-direction:column;line-height:1}
 #<?php echo $uid; ?> .cso-lu__dayname{font-family:var(--f-mono,monospace);font-size:<?php echo $dayname_size; ?>px;color:rgba(11,26,38,.45);letter-spacing:.14em;margin-bottom:1px}
 #<?php echo $uid; ?> .cso-lu__daynum{font-size:<?php echo $daynum_size; ?>px;font-weight:<?php echo $daynum_weight; ?>;color:var(--c-deep);line-height:1;margin:0}
 #<?php echo $uid; ?> .cso-lu__month{font-family:var(--f-mono,monospace);font-size:<?php echo $month_size; ?>px;color:rgba(11,26,38,.45);letter-spacing:.14em;margin-top:2px}
-#<?php echo $uid; ?> .cso-lu__name{font-size:<?php echo $name_size; ?>px;font-weight:<?php echo $name_weight; ?>;color:var(--c-deep);text-transform:uppercase;margin:0 0 5px;line-height:1.1}
+#<?php echo $uid; ?> .cso-lu__name{font-family:var(--f-display,inherit);font-size:<?php echo $name_size; ?>px;font-weight:<?php echo $name_weight; ?>;color:var(--c-deep);text-transform:uppercase;margin:0 0 5px;line-height:1.1}
 #<?php echo $uid; ?> .cso-lu__name:hover{opacity:.8}
 #<?php echo $uid; ?> .cso-lu__luogo{display:flex;align-items:center;gap:5px;font-size:<?php echo $luogo_size; ?>px;color:rgba(11,26,38,.55);margin:0}
-#<?php echo $uid; ?> .cso-lu__badge{display:inline-flex;padding:5px 12px;border-radius:999px;background:rgba(27,119,167,.12);color:var(--c-deep);font-size:<?php echo $badge_size; ?>px;font-weight:<?php echo $badge_weight; ?>;justify-self:start}
+#<?php echo $uid; ?> .cso-lu__badge{display:inline-flex;padding:5px 12px;border-radius:999px;background:rgba(52,115,165,.12);color:var(--c-deep);font-size:<?php echo $badge_size; ?>px;font-weight:<?php echo $badge_weight; ?>;justify-self:start}
 #<?php echo $uid; ?> .cso-lu__ritrovo-label{display:block;font-family:var(--f-mono,monospace);font-size:<?php echo $ritrovo_label_size; ?>px;letter-spacing:.12em;text-transform:uppercase;color:rgba(11,26,38,.4);margin-bottom:4px}
 #<?php echo $uid; ?> .cso-lu__ritrovo-val{font-family:var(--f-mono,monospace);font-size:<?php echo $ritrovo_val_size; ?>px;letter-spacing:.06em;text-transform:uppercase;color:rgba(11,26,38,.55)}
 #<?php echo $uid; ?> .cso-lu__posti{font-family:var(--f-mono,monospace);font-size:<?php echo $posti_size; ?>px;letter-spacing:.06em}
-#<?php echo $uid; ?> .cso-lu__posti--warn{color:var(--c-coral,#e9bf26);font-weight:600}
+#<?php echo $uid; ?> .cso-lu__posti--warn{color:var(--c-coral,#ff6b4a);font-weight:600}
 #<?php echo $uid; ?> .cso-lu__posti--ok{color:rgba(11,26,38,.45)}
 #<?php echo $uid; ?> .cso-lu__posti--full{color:rgba(11,26,38,.25)}
 #<?php echo $uid; ?> .cso-lu__posti--libera{color:rgba(11,26,38,.35)}
-#<?php echo $uid; ?> .cso-lu__btn{display:inline-flex;align-items:center;justify-content:center;padding:11px 20px;background:var(--c-abyss);color:<?php echo $css( $btn_color ); ?>;border-radius:999px;font-size:<?php echo $btn_size; ?>px;font-weight:<?php echo $btn_weight; ?>;white-space:nowrap;border:none;cursor:pointer;transition:background .15s;justify-self:end}
-#<?php echo $uid; ?> .cso-lu__btn:hover{background:var(--c-deep);color:<?php echo $css( $btn_color ); ?>}
+#<?php echo $uid; ?> .cso-lu__btn{display:inline-flex;align-items:center;justify-content:center;padding:11px 20px;background:var(--c-deep);color:<?php echo $css( $btn_color ); ?>;border-radius:999px;font-size:<?php echo $btn_size; ?>px;font-weight:<?php echo $btn_weight; ?>;white-space:nowrap;border:none;cursor:pointer;transition:background .15s;justify-self:end}
+#<?php echo $uid; ?> .cso-lu__btn:hover{background:var(--c-abyss);color:<?php echo $css( $btn_color ); ?>}
 #<?php echo $uid; ?> .cso-lu__btn--disabled{background:rgba(11,26,38,.08);color:rgba(11,26,38,.3);pointer-events:none;cursor:default}
 #<?php echo $uid; ?> .cso-lu__empty{padding:48px 32px;text-align:center;font-size:<?php echo $empty_size; ?>px;color:rgba(11,26,38,.5)}
 @media(max-width:1024px){
@@ -199,7 +209,7 @@ $daynum_xs = max( 16, (int) round( $daynum_size * 0.517 ) );
 	#<?php echo $uid; ?> .cso-lu__badge{display:none}
 	#<?php echo $uid; ?> .cso-lu__ritrovo{display:none}
 	#<?php echo $uid; ?> .cso-lu__daynum{font-size:<?php echo $daynum_sm; ?>px}
-	#<?php echo $uid; ?> .cso-lu__name{font-size:<?php echo $name_sm; ?>px}
+	#<?php echo $uid; ?> .cso-lu__name{font-family:inherit;font-size:<?php echo $name_sm; ?>px;text-transform:none}
 	#<?php echo $uid; ?> .cso-lu__luogo{font-size:<?php echo $luogo_sm; ?>px}
 	#<?php echo $uid; ?> .cso-lu__posti{font-size:12px;margin-top:3px}
 	#<?php echo $uid; ?> .cso-lu__btn{padding:9px 14px;font-size:12px}
@@ -235,6 +245,7 @@ $daynum_xs = max( 16, (int) round( $daynum_size * 0.517 ) );
 		<p class="cso-lu__empty"><?php echo esc_html( $attr_empty_title ); ?></p>
 	<?php else : ?>
 
+	<?php $next_highlighted = false; ?>
 	<?php foreach ( $uscite as $u ) :
 		$ts      = strtotime( $u->_prima_data );
 		$mm      = date( 'm', $ts );
@@ -277,8 +288,12 @@ $daynum_xs = max( 16, (int) round( $daynum_size * 0.517 ) );
 		$book_url = $prenotazioni_page_id
 			? add_query_arg( 'prenota_id', $u->ID, get_permalink( $prenotazioni_page_id ) )
 			: get_permalink( $u->_uscita_id );
+
+		/* La prima uscita non ancora passata è "la prossima" — riga in evidenza. */
+		$is_next = ! $u->_passata && ! $next_highlighted;
+		if ( $is_next ) $next_highlighted = true;
 	?>
-	<div class="cso-lu__row<?php echo $u->_passata ? ' cso-lu__row--passata' : ''; ?>">
+	<div class="cso-lu__row<?php echo $u->_passata ? ' cso-lu__row--passata' : ''; ?><?php echo $is_next ? ' cso-lu__row--next' : ''; ?>">
 
 		<!-- Data -->
 		<div class="cso-lu__date">
@@ -289,7 +304,7 @@ $daynum_xs = max( 16, (int) round( $daynum_size * 0.517 ) );
 
 		<!-- Info -->
 		<div class="cso-lu__info">
-			<a href="<?php echo esc_url( get_permalink( $u->_uscita_id ) ); ?>" class="cso-lu__name display">
+			<a href="<?php echo esc_url( get_permalink( $u->_uscita_id ) ); ?>" class="cso-lu__name">
 				<?php echo esc_html( get_the_title( $u->_uscita_id ) ); ?>
 			</a>
 			<?php if ( $luogo ) : ?>

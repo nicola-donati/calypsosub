@@ -3,7 +3,7 @@
  * Plugin Name: Calypso Sub Arezzo
  * Plugin URI:  https://calypsosub.it
  * Description: Gestione uscite, eventi, corsi, docenti e prenotazioni per ASD Calypso Sub Arezzo.
- * Version:     1.0.9
+ * Version:     1.0.34
  * Author:      Nicola Donati
  * Text Domain: calypsosub
  * Domain Path: /languages
@@ -13,7 +13,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'CALYPSOSUB_VERSION', '1.0.9' );
+define( 'CALYPSOSUB_VERSION', '1.0.34' );
 define( 'CALYPSOSUB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CALYPSOSUB_URL', plugin_dir_url( __FILE__ ) );
 
@@ -38,6 +38,11 @@ require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-corsi.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-occorrenze.php';
 require_once CALYPSOSUB_PATH . 'includes/bookings/class-booking-email.php';
 require_once CALYPSOSUB_PATH . 'includes/bookings/class-booking-manager.php';
+require_once CALYPSOSUB_PATH . 'includes/integrations/class-systemeio-client.php';
+require_once CALYPSOSUB_PATH . 'includes/integrations/class-telegram-client.php';
+require_once CALYPSOSUB_PATH . 'includes/communications/class-communications-settings.php';
+require_once CALYPSOSUB_PATH . 'includes/communications/class-cpt-communications.php';
+require_once CALYPSOSUB_PATH . 'includes/communications/class-communication-dispatcher.php';
 require_once CALYPSOSUB_PATH . 'includes/admin/class-admin-menus.php';
 require_once CALYPSOSUB_PATH . 'includes/admin/class-email-templates.php';
 require_once CALYPSOSUB_PATH . 'includes/admin/class-settings-pages.php';
@@ -60,7 +65,7 @@ add_action( 'wp_enqueue_scripts', function (): void {
 } );
 
 add_filter( 'use_block_editor_for_post_type', function ( bool $use, string $post_type ): bool {
-	$types = [ 'calypso_uscita', 'calypso_evento', 'calypso_corso', 'calypso_docente', 'calypso_prenotazione', 'calypso_occorrenza' ];
+	$types = [ 'calypso_uscita', 'calypso_evento', 'calypso_corso', 'calypso_docente', 'calypso_prenotazione', 'calypso_occorrenza', Calypsosub_CPT_Communications::POST_TYPE ];
 	return in_array( $post_type, $types, true ) ? false : $use;
 }, 10, 2 );
 
@@ -84,6 +89,9 @@ add_filter( 'use_block_editor_for_post_type', function ( bool $use, string $post
 $email_manager                       = new Calypsosub_Booking_Email();
 $GLOBALS['calypsosub_booking_manager'] = new Calypsosub_Booking_Manager( $email_manager );
 $GLOBALS['calypsosub_booking_manager']->init();
+
+( new Calypsosub_CPT_Communications() )->init();
+( new Calypsosub_Communication_Dispatcher( new Calypsosub_SystemeIO_Client(), new Calypsosub_Telegram_Client() ) )->init();
 
 ( new Calypsosub_Seo_Enhancements() )->init();
 ( new Calypsosub_Template_Loader() )->init();

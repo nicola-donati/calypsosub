@@ -8,12 +8,12 @@
 :root {
   --c-ink:   #0b1a26;
   --c-deep:  #0a2540;
-  --c-wave:  #1B77A7;
-  --c-aqua:  #26CBFB;
+  --c-wave:  #3473A5;
+  --c-aqua:  #59C6F9;
   --c-coral: #ff6b4a;
-  --c-gold:  var(--wp--preset--color--gold, #E9BF26);
-  --c-bone:  #f6f1e6;
-  --c-foam:  #cfe9ee;
+  --c-gold:  var(--wp--preset--color--gold, #E4C33C);
+  --c-bone:  #F5F1E7;
+  --c-foam:  #D3E8EE;
   --c-abyss: #061826;
   --c-sand:  rgba(255,255,255,.55);
   --cso-header-h: 90px;
@@ -68,7 +68,7 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 .calypso-card__img-placeholder{
   width:100%;height:220px;
   display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(135deg,var(--c-deep,#0a2540),var(--c-wave,#1B77A7));
+  background:linear-gradient(135deg,var(--c-deep,#0a2540),var(--c-wave,#3473A5));
   font-size:48px;
 }
 /* Docenti: ritratto più alto (portrait) */
@@ -78,7 +78,7 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 .calypso-docente-card__avatar-placeholder{
   width:100%;height:300px;
   display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(160deg,var(--c-deep,#0a2540),var(--c-wave,#1B77A7));
+  background:linear-gradient(160deg,var(--c-deep,#0a2540),var(--c-wave,#3473A5));
   font-size:72px;
 }
 
@@ -123,7 +123,7 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 /* Override temi che sovrascrivono colori card */
 .cso-docente-mini__name,.cso-thumb__title,.calypso-corso-card__title,.calypso-docente-card__name,.calypso-card__title{color:var(--c-deep,#0a2540) !important}
 .cso-thumb__desc,.calypso-corso-card__desc,.calypso-docente-card__bio,.calypso-card__desc{color:rgba(11,26,38,.65) !important}
-.cso-docente-mini__ruolo{color:var(--c-wave,#1B77A7) !important}
+.cso-docente-mini__ruolo{color:var(--c-wave,#3473A5) !important}
 
 /* ── Card badge livello — 13px normalizzato ─────────────────────────────── */
 .cso-thumb__level,
@@ -143,7 +143,7 @@ html.admin-bar .cso-site-header-wrap{top:var(--wp-admin--admin-bar--height,32px)
 /* ── Bottone oro (block corsi) ──────────────────────────────────────────── */
 .calypso-btn-gold{
   display:inline-block;
-  background:var(--c-gold,#E9BF26);
+  background:var(--c-gold,#E4C33C);
   color:var(--c-deep,#0a2540);
   font-size:13px;
   font-weight:700;

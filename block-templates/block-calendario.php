@@ -167,7 +167,7 @@ $mesi_it   = [
 ?>
 <style>
 /* ── Calendario eventi — block-calendario ── */
-.cso-cal{background:var(--c-foam,#D3E8EE);padding:96px 48px;color:var(--c-ink,#0b1a26)}
+.cso-cal{background:var(--c-foam,#D3E8EE);padding:96px 48px}
 .cso-cal *{box-sizing:border-box}
 .cso-cal a{text-decoration:none;color:inherit}
 

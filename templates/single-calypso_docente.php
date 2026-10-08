@@ -116,9 +116,6 @@ function cso_social_icon( string $nome ): string {
 ?>
 <style>
 /* ── Token locali ── */
-.cso-doc{
-	color:var(--c-ink,#0b1a26);
-}
 .cso-doc h1,.cso-doc h2,.cso-doc h3,.cso-doc h4{color:var(--c-wave,#3473A5);text-transform:uppercase}
 .cso-doc a{color:inherit;text-decoration:none}
 .cso-doc p,.cso-doc li,.cso-doc span,.cso-doc div{color:inherit}

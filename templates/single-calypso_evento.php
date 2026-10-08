@@ -117,7 +117,7 @@ if ( class_exists( 'Calypsosub_Ajax_Eventi' ) ) {
 }
 ?>
 <style>
-.cso{color:var(--c-ink,#0b1a26);--radius:4px;--radius-lg:12px}
+.cso{--radius:4px;--radius-lg:12px}
 
 /* ── Hero: fascia colore piena + griglia datecard/titolo/fact, foto in box sotto (fedele al mockup) ── */
 .cso .cso-hero{height:auto;overflow:visible;position:relative;color:#fff;padding:calc(var(--cso-header-h) + 40px) 48px 56px}
@@ -168,7 +168,7 @@ if ( class_exists( 'Calypsosub_Ajax_Eventi' ) ) {
 .cso-section:last-child{margin-bottom:0}
 .cso-eyebrow{font-weight:500;letter-spacing:.16em;text-transform:uppercase;margin:0 0 14px;display:block;font-size:16px;color:var(--c-wave)}
 .cso-display-heading{font-size:clamp(28px,4vw,56px);font-weight:800;text-transform:uppercase;letter-spacing:-.01em;line-height:.96;color:var(--c-deep);margin:0 0 20px}
-.cso-prose{font-size:17px;line-height:1.75;color:var(--c-ink);max-width:720px}
+.cso-prose{font-size:17px;line-height:1.75;max-width:720px}
 .cso-prose p{margin:0 0 1em}
 .cso-prose p:last-child{margin-bottom:0}
 .cso-dates-list{list-style:none;margin:0;padding:0}

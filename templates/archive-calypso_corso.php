@@ -52,7 +52,6 @@ $_acd = [
 ];
 ?>
 <style>
-.cso-archive{color:var(--c-ink,#0b1a26)}
 .cso-archive h1,.cso-archive h2,.cso-archive h3,.cso-archive h4{color:var(--c-wave,#3473A5);text-transform:uppercase}
 .cso-archive a{color:inherit;text-decoration:none}
 .cso-archive p,.cso-archive li,.cso-archive span,.cso-archive div{color:inherit}

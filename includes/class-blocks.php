@@ -454,17 +454,21 @@ class Calypsosub_Blocks {
 				/* ── Tipografia eyebrow ── */
 				'eyebrow_color'    => [ 'type' => 'string',  'default' => '#3473A5' ],
 				'eyebrow_size'     => [ 'type' => 'integer', 'default' => 13 ],
+				'eyebrow_font'     => [ 'type' => 'string',  'default' => 'mono' ],
 				/* ── Tipografia titolo ── */
 				'title_color'      => [ 'type' => 'string',  'default' => '#061826' ],
 				'title_size'       => [ 'type' => 'integer', 'default' => 42 ],
 				'title_weight'     => [ 'type' => 'string',  'default' => '900' ],
 				'title_transform'  => [ 'type' => 'string',  'default' => 'uppercase' ],
+				'title_font'       => [ 'type' => 'string',  'default' => 'display' ],
 				/* ── Tipografia descrizione ── */
 				'desc_color'       => [ 'type' => 'string',  'default' => '#3d5a6c' ],
 				'desc_size'        => [ 'type' => 'integer', 'default' => 14 ],
+				'desc_font'        => [ 'type' => 'string',  'default' => 'body' ],
 				/* ── Link ── */
 				'link_color'       => [ 'type' => 'string',  'default' => '#3473A5' ],
 				'link_size'        => [ 'type' => 'integer', 'default' => 13 ],
+				'link_font'        => [ 'type' => 'string',  'default' => 'body' ],
 			],
 		],
 		'calypso/galleria' => [
@@ -1715,6 +1719,19 @@ class Calypsosub_Blocks {
 						);
 					}
 
+					function fontRow(key, defaultValue) {
+						return SelectControl ? el(SelectControl, {
+							label: 'Font',
+							value: a[key] || defaultValue,
+							options: [
+								{ value: 'display', label: 'Display (Big Shoulders — titoli)' },
+								{ value: 'body',    label: 'Body (DM Sans — testo)' },
+								{ value: 'mono',    label: 'Mono (JetBrains Mono — etichette)' }
+							],
+							onChange: function (v) { var u = {}; u[key] = v; set(u); }
+						}) : null;
+					}
+
 					var mediaBtn = (MediaUploadCheck && MediaUpload)
 						? el(MediaUploadCheck, {},
 							el(MediaUpload, {
@@ -1864,6 +1881,7 @@ class Calypsosub_Blocks {
 
 						/* ── Tipografia eyebrow ── */
 						el(PanelBody, { title: 'Tipografia — Eyebrow', initialOpen: false },
+							fontRow('eyebrow_font', 'mono'),
 							colorRow('Colore', 'eyebrow_color'),
 							el(RangeControl, {
 								label: 'Font size (px)',
@@ -1877,6 +1895,7 @@ class Calypsosub_Blocks {
 
 						/* ── Tipografia titolo ── */
 						el(PanelBody, { title: 'Tipografia — Titolo', initialOpen: false },
+							fontRow('title_font', 'display'),
 							colorRow('Colore', 'title_color'),
 							el(RangeControl, {
 								label: 'Font size (px)',
@@ -1912,6 +1931,7 @@ class Calypsosub_Blocks {
 
 						/* ── Tipografia descrizione ── */
 						el(PanelBody, { title: 'Tipografia — Descrizione', initialOpen: false },
+							fontRow('desc_font', 'body'),
 							colorRow('Colore', 'desc_color'),
 							el(RangeControl, {
 								label: 'Font size (px)',
@@ -1925,6 +1945,7 @@ class Calypsosub_Blocks {
 
 						/* ── Link ── */
 						el(PanelBody, { title: 'Tipografia — Link', initialOpen: false },
+							fontRow('link_font', 'body'),
 							colorRow('Colore', 'link_color'),
 							el(RangeControl, {
 								label: 'Font size (px)',

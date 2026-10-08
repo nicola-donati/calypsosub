@@ -191,7 +191,7 @@
   "styles": {
     "color": {
       "background": "var(--wp--preset--color--bone)",
-      "text": "var(--wp--preset--color--ink)"
+      "text": "rgba(11,26,38,.75)"
     },
     "typography": {
       "fontFamily": "var(--wp--preset--font-family--body)",
@@ -200,7 +200,7 @@
       "fontWeight": "400"
     },
     "spacing": {
-      "blockGap": "1.5rem",
+      "blockGap": "0",
       "padding": {
         "left": "var(--wp--preset--spacing--40)",
         "right": "var(--wp--preset--spacing--40)"

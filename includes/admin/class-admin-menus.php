@@ -13,6 +13,21 @@ class Calypsosub_Admin_Menus {
 	public function init(): void {
 		add_action( 'admin_menu',            [ $this, 'register_menus' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		add_action( 'wp_ajax_calypso_detect_telegram_groups', [ $this, 'ajax_detect_telegram_groups' ] );
+	}
+
+	public function ajax_detect_telegram_groups(): void {
+		check_ajax_referer( 'calypso_detect_telegram_groups', 'nonce' );
+		if ( ! current_user_can( 'calypsosub_manage' ) ) {
+			wp_send_json_error( [ 'message' => __( 'Permesso negato.', 'calypsosub' ) ] );
+		}
+
+		$groups = ( new Calypsosub_Telegram_Client() )->discover_groups();
+		if ( is_wp_error( $groups ) ) {
+			wp_send_json_error( [ 'message' => $groups->get_error_message() ] );
+		}
+
+		wp_send_json_success( [ 'groups' => $groups ] );
 	}
 
 	public function register_menus(): void {
@@ -52,13 +67,18 @@ class Calypsosub_Admin_Menus {
 		} elseif ( isset( $_GET['cso_tab'] ) ) {
 			$active_tab = sanitize_key( $_GET['cso_tab'] );
 		}
-		if ( $active_tab !== 'generali' && ! array_key_exists( $active_tab, self::ARCHIVE_TABS ) ) {
+		if ( $active_tab !== 'generali' && $active_tab !== 'comunicazioni' && ! array_key_exists( $active_tab, self::ARCHIVE_TABS ) ) {
 			$active_tab = 'generali';
 		}
 
 		$notification_emails = get_option( 'calypsosub_notification_emails', '' );
 		$account_page_id     = (int) get_option( 'calypsosub_account_page_id', 0 );
 		$prenotazioni_page_id = (int) get_option( 'calypsosub_prenotazioni_page_id', 0 );
+
+		$systemeio_api_key   = (string) get_option( 'calypsosub_systemeio_api_key', '' );
+		$telegram_bot_token  = (string) get_option( 'calypsosub_telegram_bot_token', '' );
+		$telegram_groups     = Calypsosub_Communications_Settings::get_telegram_groups();
+		$communication_cats  = Calypsosub_Communications_Settings::get_categories();
 
 		/* Dati per ogni tab archivio */
 		$tabs_data = [];
@@ -80,6 +100,7 @@ class Calypsosub_Admin_Menus {
 			<?php foreach ( self::ARCHIVE_TABS as $slug => $label ) : ?>
 			<a href="#" class="nav-tab cso-tab-btn" data-tab="<?php echo esc_attr( $slug ); ?>"><?php echo esc_html( $label ); ?></a>
 			<?php endforeach; ?>
+			<a href="#" class="nav-tab cso-tab-btn" data-tab="comunicazioni"><?php _e( 'Comunicazioni', 'calypsosub' ); ?></a>
 		</nav>
 
 		<form method="post">
@@ -256,10 +277,84 @@ class Calypsosub_Admin_Menus {
 			</div>
 			<?php endforeach; ?>
 
+			<!-- ── Tab: Comunicazioni ── -->
+			<div id="cso-tab-comunicazioni" class="cso-tab-panel" style="display:none">
+				<h2><?php _e( 'Integrazioni', 'calypsosub' ); ?></h2>
+				<table class="form-table">
+					<tr>
+						<th scope="row"><label for="com_systemeio_key"><?php _e( 'API key systeme.io', 'calypsosub' ); ?></label></th>
+						<td>
+							<input type="text" id="com_systemeio_key" name="com_systemeio_key"
+							       value="<?php echo esc_attr( $systemeio_api_key ); ?>" class="regular-text">
+							<p class="description"><?php _e( 'Profilo systeme.io → "MCP & API keys" → Public API keys.', 'calypsosub' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="com_telegram_token"><?php _e( 'Token bot Telegram', 'calypsosub' ); ?></label></th>
+						<td>
+							<input type="text" id="com_telegram_token" name="com_telegram_token"
+							       value="<?php echo esc_attr( $telegram_bot_token ); ?>" class="regular-text">
+							<p class="description"><?php _e( 'Ottenuto da @BotFather su Telegram con /newbot.', 'calypsosub' ); ?></p>
+						</td>
+					</tr>
+				</table>
+
+				<h2><?php _e( 'Gruppi Telegram predefiniti', 'calypsosub' ); ?></h2>
+				<p class="description"><?php _e( 'Il bot deve essere nel gruppo (consigliato: come amministratore). Salva prima il token qui sopra, poi usa "Rileva gruppi" per trovare automaticamente i gruppi in cui l\'hai appena aggiunto — funziona solo per gruppi con attività recente (ultime ~24h). In alternativa inserisci il chat_id a mano.', 'calypsosub' ); ?></p>
+				<div id="cso-com-groups">
+					<?php foreach ( $telegram_groups as $key => $g ) : ?>
+					<div class="calypso-repeater-row">
+						<input type="text" name="tg_label[]" placeholder="<?php esc_attr_e( 'Nome gruppo (es. Uscite)', 'calypsosub' ); ?>" value="<?php echo esc_attr( $g['label'] ); ?>" style="flex:2">
+						<input type="text" name="tg_chat_id[]" placeholder="<?php esc_attr_e( 'chat_id (es. -100123456789)', 'calypsosub' ); ?>" value="<?php echo esc_attr( $g['chat_id'] ); ?>" style="flex:1">
+						<input type="hidden" name="tg_key[]" value="<?php echo esc_attr( $key ); ?>">
+						<button type="button" class="calypso-btn-remove">&#x2715;</button>
+					</div>
+					<?php endforeach; ?>
+				</div>
+				<button type="button" class="button" id="cso-com-groups-add"><?php _e( '+ Aggiungi gruppo manualmente', 'calypsosub' ); ?></button>
+				<button type="button" class="button" id="cso-com-groups-detect"><?php _e( '🔍 Rileva gruppi', 'calypsosub' ); ?></button>
+				<span id="cso-com-groups-detect-status" style="margin-left:8px;color:#666"></span>
+				<div id="cso-com-groups-detected" style="margin-top:10px"></div>
+
+				<h2 style="margin-top:28px"><?php _e( 'Categorie comunicazioni', 'calypsosub' ); ?></h2>
+				<p class="description"><?php _e( 'Ogni categoria collega un tag systeme.io (destinatari email) ai gruppi Telegram che devono riceverla.', 'calypsosub' ); ?></p>
+				<div id="cso-com-categories">
+					<?php $cat_i = 0; foreach ( $communication_cats as $key => $cat ) : ?>
+					<div class="cso-com-cat-row" style="border:1px solid #ddd;border-radius:4px;padding:12px;margin-bottom:10px">
+						<input type="hidden" name="cat_key[]" value="<?php echo esc_attr( $key ); ?>">
+						<p style="display:flex;gap:10px">
+							<input type="text" name="cat_label[]" placeholder="<?php esc_attr_e( 'Nome categoria (es. Uscite)', 'calypsosub' ); ?>" value="<?php echo esc_attr( $cat['label'] ); ?>" style="flex:1">
+							<input type="text" name="cat_tag[]" placeholder="<?php esc_attr_e( 'Tag systeme.io (es. newsletter-uscite)', 'calypsosub' ); ?>" value="<?php echo esc_attr( $cat['tag_systemeio'] ); ?>" style="flex:1">
+							<button type="button" class="calypso-btn-remove-cat button">&#x2715;</button>
+						</p>
+						<p>
+							<strong><?php _e( 'Gruppi Telegram:', 'calypsosub' ); ?></strong><br>
+							<?php foreach ( $telegram_groups as $gkey => $g ) : ?>
+							<label style="margin-right:12px">
+								<input type="checkbox" name="cat_groups[<?php echo (int) $cat_i; ?>][]" value="<?php echo esc_attr( $gkey ); ?>"
+								       <?php checked( in_array( $gkey, (array) $cat['groups'], true ) ); ?>>
+								<?php echo esc_html( $g['label'] ); ?>
+							</label>
+							<?php endforeach; ?>
+							<?php if ( empty( $telegram_groups ) ) : ?>
+							<em><?php _e( 'Nessun gruppo salvato ancora.', 'calypsosub' ); ?></em>
+							<?php endif; ?>
+						</p>
+					</div>
+					<?php $cat_i++; endforeach; ?>
+				</div>
+				<button type="button" class="button" id="cso-com-cat-add"><?php _e( '+ Aggiungi categoria', 'calypsosub' ); ?></button>
+				<p class="description"><?php _e( 'I gruppi Telegram sono preselezionati tutti di default per una categoria nuova — deseleziona quelli che non devono riceverla.', 'calypsosub' ); ?></p>
+			</div>
+
 			<?php submit_button( __( 'Salva impostazioni', 'calypsosub' ) ); ?>
 		</form>
 		</div>
 
+		<style>
+		.calypso-repeater-row{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+		.calypso-btn-remove{background:#dc3545;color:#fff;border:none;border-radius:3px;padding:2px 8px;cursor:pointer}
+		</style>
 		<script>
 		(function () {
 			var initialTab = <?php echo wp_json_encode( $active_tab ); ?>;
@@ -319,6 +414,134 @@ class Calypsosub_Admin_Menus {
 					btn.style.display = 'none';
 				});
 			});
+
+			/* ── Comunicazioni: repeater gruppi Telegram e categorie ── */
+			function addGroupRow(label, chatId) {
+				var row = document.createElement('div');
+				row.className = 'calypso-repeater-row';
+				row.innerHTML = '<input type="text" name="tg_label[]" placeholder="<?php echo esc_js( __( 'Nome gruppo (es. Uscite)', 'calypsosub' ) ); ?>" style="flex:2">' +
+					'<input type="text" name="tg_chat_id[]" placeholder="<?php echo esc_js( __( 'chat_id (es. -100123456789)', 'calypsosub' ) ); ?>" style="flex:1">' +
+					'<input type="hidden" name="tg_key[]" value="">' +
+					'<button type="button" class="calypso-btn-remove">✕</button>';
+				document.getElementById('cso-com-groups').appendChild(row);
+				if (label) row.querySelector('input[name="tg_label[]"]').value = label;
+				if (chatId) row.querySelector('input[name="tg_chat_id[]"]').value = chatId;
+				return row;
+			}
+
+			var groupsAddBtn = document.getElementById('cso-com-groups-add');
+			if (groupsAddBtn) {
+				groupsAddBtn.addEventListener('click', function () { addGroupRow('', ''); });
+			}
+
+			/* ── Rileva gruppi via getUpdates del bot ── */
+			var detectBtn    = document.getElementById('cso-com-groups-detect');
+			var detectStatus = document.getElementById('cso-com-groups-detect-status');
+			var detectedBox  = document.getElementById('cso-com-groups-detected');
+			if (detectBtn) {
+				detectBtn.addEventListener('click', function () {
+					detectStatus.textContent = <?php echo wp_json_encode( __( 'Ricerca in corso…', 'calypsosub' ) ); ?>;
+					detectedBox.innerHTML = '';
+
+					var data = new URLSearchParams();
+					data.append('action', 'calypso_detect_telegram_groups');
+					data.append('nonce', <?php echo wp_json_encode( wp_create_nonce( 'calypso_detect_telegram_groups' ) ); ?>);
+
+					fetch(ajaxurl, { method: 'POST', credentials: 'same-origin', body: data })
+						.then(function (r) { return r.json(); })
+						.then(function (res) {
+							if (!res.success) {
+								detectStatus.textContent = (res.data && res.data.message) || <?php echo wp_json_encode( __( 'Errore.', 'calypsosub' ) ); ?>;
+								return;
+							}
+							var groups = res.data.groups || [];
+							if (!groups.length) {
+								detectStatus.textContent = <?php echo wp_json_encode( __( 'Nessun gruppo rilevato — aggiungi il bot a un gruppo e riprova.', 'calypsosub' ) ); ?>;
+								return;
+							}
+							detectStatus.textContent = '';
+							var existingIds = Array.prototype.map.call(
+								document.querySelectorAll('input[name="tg_chat_id[]"]'),
+								function (i) { return i.value; }
+							);
+							groups.forEach(function (g) {
+								var already = existingIds.indexOf(g.id) !== -1;
+								var row = document.createElement('div');
+								row.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:4px';
+								var span = document.createElement('span');
+								var code = document.createElement('code');
+								code.textContent = g.id;
+								span.appendChild( document.createTextNode( g.title + ' ' ) );
+								span.appendChild( code );
+								span.appendChild( document.createTextNode( ' (' + g.type + ')' ) );
+								row.appendChild(span);
+								var btn = document.createElement('button');
+								btn.type = 'button';
+								btn.className = 'button button-small';
+								if (already) {
+									btn.textContent = <?php echo wp_json_encode( __( 'Già aggiunto', 'calypsosub' ) ); ?>;
+									btn.disabled = true;
+								} else {
+									btn.textContent = <?php echo wp_json_encode( __( '+ Aggiungi', 'calypsosub' ) ); ?>;
+									btn.addEventListener('click', function () {
+										addGroupRow(g.title, g.id);
+										btn.textContent = <?php echo wp_json_encode( __( 'Aggiunto', 'calypsosub' ) ); ?>;
+										btn.disabled = true;
+									});
+								}
+								row.appendChild(btn);
+								detectedBox.appendChild(row);
+							});
+						})
+						.catch(function () {
+							detectStatus.textContent = <?php echo wp_json_encode( __( 'Errore di rete.', 'calypsosub' ) ); ?>;
+						});
+				});
+			}
+
+			var csoTelegramGroups = <?php echo wp_json_encode( array_map(
+				static fn( $gkey, $g ) => [ 'key' => $gkey, 'label' => $g['label'] ],
+				array_keys( $telegram_groups ), array_values( $telegram_groups )
+			) ); ?>;
+			var catIdx = document.querySelectorAll('.cso-com-cat-row').length;
+
+			var catAddBtn = document.getElementById('cso-com-cat-add');
+			if (catAddBtn) {
+				catAddBtn.addEventListener('click', function () {
+					var idx = catIdx++;
+					var row = document.createElement('div');
+					row.className = 'cso-com-cat-row';
+					row.style.cssText = 'border:1px solid #ddd;border-radius:4px;padding:12px;margin-bottom:10px';
+
+					var groupsHtml = '';
+					if (csoTelegramGroups.length) {
+						csoTelegramGroups.forEach(function (g) {
+							groupsHtml += '<label style="margin-right:12px">' +
+								'<input type="checkbox" name="cat_groups[' + idx + '][]" value="' + g.key + '" checked> ' +
+								g.label + '</label>';
+						});
+					} else {
+						groupsHtml = '<em><?php echo esc_js( __( 'Nessun gruppo salvato ancora.', 'calypsosub' ) ); ?></em>';
+					}
+
+					row.innerHTML = '<input type="hidden" name="cat_key[]" value="">' +
+						'<p style="display:flex;gap:10px">' +
+						'<input type="text" name="cat_label[]" placeholder="<?php echo esc_js( __( 'Nome categoria (es. Uscite)', 'calypsosub' ) ); ?>" style="flex:1">' +
+						'<input type="text" name="cat_tag[]" placeholder="<?php echo esc_js( __( 'Tag systeme.io (es. newsletter-uscite)', 'calypsosub' ) ); ?>" style="flex:1">' +
+						'<button type="button" class="calypso-btn-remove-cat button">✕</button>' +
+						'</p><p><strong><?php echo esc_js( __( 'Gruppi Telegram:', 'calypsosub' ) ); ?></strong><br>' + groupsHtml + '</p>';
+					document.getElementById('cso-com-categories').appendChild(row);
+				});
+			}
+
+			document.addEventListener('click', function (e) {
+				if ( e.target.classList.contains('calypso-btn-remove') ) {
+					e.target.closest('.calypso-repeater-row').remove();
+				}
+				if ( e.target.classList.contains('calypso-btn-remove-cat') ) {
+					e.target.closest('.cso-com-cat-row').remove();
+				}
+			});
 		}());
 		</script>
 		<?php
@@ -346,5 +569,86 @@ class Calypsosub_Admin_Menus {
 			$existing['overlay_opacity'] = min( 100, max( 0, (int) ( $_POST[ 'cso_' . $slug . '_overlay_opacity' ]       ?? 88 ) ) );
 			update_option( 'calypsosub_opts_' . $slug, $existing );
 		}
+
+		$this->save_communications_settings();
+	}
+
+	private function save_communications_settings(): void {
+		update_option( 'calypsosub_systemeio_api_key', sanitize_text_field( wp_unslash( $_POST['com_systemeio_key'] ?? '' ) ) );
+		update_option( 'calypsosub_telegram_bot_token', sanitize_text_field( wp_unslash( $_POST['com_telegram_token'] ?? '' ) ) );
+
+		$existing_groups = Calypsosub_Communications_Settings::get_telegram_groups();
+		$labels   = (array) ( $_POST['tg_label'] ?? [] );
+		$chat_ids = (array) ( $_POST['tg_chat_id'] ?? [] );
+		$keys_in  = (array) ( $_POST['tg_key'] ?? [] );
+
+		$used_keys = [];
+		$groups    = [];
+		foreach ( $labels as $i => $label ) {
+			$label   = sanitize_text_field( wp_unslash( $label ) );
+			$chat_id = sanitize_text_field( wp_unslash( $chat_ids[ $i ] ?? '' ) );
+			if ( $label === '' && $chat_id === '' ) continue;
+
+			$key = sanitize_key( wp_unslash( $keys_in[ $i ] ?? '' ) );
+			if ( $key === '' || ! isset( $existing_groups[ $key ] ) ) {
+				/*
+				 * sanitize_title() percent-encoda caratteri non-ASCII (es.
+				 * emoji nel nome gruppo) invece di rimuoverli — sanitize_key()
+				 * più avanti (qui e nel confronto cat_groups) toglierebbe solo
+				 * i simboli '%', producendo una stringa diversa da questa e
+				 * rompendo il confronto. Si pulisce la chiave una volta sola
+				 * qui, alla creazione, così resta stabile per sempre dopo.
+				 */
+				$key = $this->unique_key( sanitize_key( sanitize_title( $label ) ) ?: 'group', $used_keys );
+			}
+			$used_keys[]  = $key;
+			$groups[ $key ] = [ 'label' => $label, 'chat_id' => $chat_id ];
+		}
+		update_option( 'calypsosub_telegram_groups', $groups );
+
+		$existing_cats = Calypsosub_Communications_Settings::get_categories();
+		$cat_labels = (array) ( $_POST['cat_label'] ?? [] );
+		$cat_tags   = (array) ( $_POST['cat_tag']   ?? [] );
+		$cat_keys   = (array) ( $_POST['cat_key']   ?? [] );
+
+		$cat_groups_in = (array) ( $_POST['cat_groups'] ?? [] );
+
+		$used_cat_keys = [];
+		$categories    = [];
+		foreach ( $cat_labels as $i => $label ) {
+			$label = sanitize_text_field( wp_unslash( $label ) );
+			$tag   = sanitize_text_field( wp_unslash( $cat_tags[ $i ] ?? '' ) );
+			if ( $label === '' ) continue;
+
+			$key = sanitize_key( wp_unslash( $cat_keys[ $i ] ?? '' ) );
+			if ( $key === '' || ! isset( $existing_cats[ $key ] ) ) {
+				$key = $this->unique_key( sanitize_key( sanitize_title( $label ) ) ?: 'category', $used_cat_keys );
+			}
+			$used_cat_keys[] = $key;
+
+			/*
+			 * Indicizzato per posizione (cat_groups[i][]), non per chiave
+			 * categoria: la chiave può essere rigenerata nello stesso submit
+			 * (categoria nuova), quindi non è un riferimento stabile da usare
+			 * come nome di campo — l'indice $i invece è sempre coerente con
+			 * cat_label[$i]/cat_tag[$i] perché viene dallo stesso array.
+			 */
+			$selected_groups = array_map( 'sanitize_key', (array) ( $cat_groups_in[ $i ] ?? [] ) );
+			$selected_groups = array_values( array_intersect( $selected_groups, array_keys( $groups ) ) );
+
+			$categories[ $key ] = [ 'label' => $label, 'tag_systemeio' => $tag, 'groups' => $selected_groups ];
+		}
+		update_option( 'calypsosub_communication_categories', $categories );
+	}
+
+	/** @param string[] $used */
+	private function unique_key( string $base, array $used ): string {
+		$key = $base;
+		$i   = 2;
+		while ( in_array( $key, $used, true ) ) {
+			$key = $base . '-' . $i;
+			$i++;
+		}
+		return $key;
 	}
 }

@@ -52,7 +52,11 @@ if ( $bg_img_url ) {
 
 $has_header = $eyebrow || $title || $description || ( $link_text && $link_url );
 
-$uid = 'cso-sez-' . sprintf( '%08x', crc32( implode( ',', [ $max_width, $padding_y, $padding_x, $title_size, $eyebrow_size, $eyebrow_margin_bottom, $head_margin_bottom ] ) ) );
+$uid = 'cso-sez-' . sprintf( '%08x', crc32( implode( ',', [
+	$max_width, $padding_y, $padding_x, $title_size, $eyebrow_size, $eyebrow_margin_bottom, $head_margin_bottom,
+	$content_layout, $content_align, $content_head_width, $content_gap, $content_reverse ? '1' : '0',
+	$eyebrow, $title, $description,
+] ) ) );
 ?>
 <style>
 #<?php echo $uid; ?> .cso-sez__wrap{max-width:<?php echo $max_width; ?>px;margin:0 auto;padding:<?php echo $padding_y; ?>px <?php echo $padding_x; ?>px}

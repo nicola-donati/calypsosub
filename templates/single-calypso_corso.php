@@ -62,9 +62,6 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 ?>
 <style>
 /* ── Token locali ── */
-.cso{
-    color:var(--c-ink,#0b1a26);
-}
 /* Neutralizza FSE — heading wave (sfondo bone) */
 .cso h1,.cso h2,.cso h3,.cso h4{color:var(--c-wave,#3473A5);text-transform:uppercase}
 .cso a{color:inherit;text-decoration:none}
@@ -117,9 +114,8 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 .cso .cso-eyebrow{font-size:16px;color:var(--c-wave,#3473A5)}
 .cso-display-heading{font-size:clamp(28px,4vw,56px);font-weight:800;text-transform:uppercase;line-height:.96;margin:0 0 24px}
 .cso-lead{line-height:1.7;margin:0 0 32px;max-width:640px}
-.cso .cso-lead{font-size:18px;color:var(--c-ink,#0b1a26)}
+.cso .cso-lead{font-size:18px}
 .cso-prose{font-size:17px;line-height:1.75;max-width:720px}
-.cso .cso-prose{color:var(--c-ink,#0b1a26)}
 .cso-prose p{margin:0 0 1em}
 .cso-prose p:last-child{margin-bottom:0}
 
@@ -133,7 +129,7 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 .cso-fase__titolo{font-weight:700;text-transform:uppercase;margin:0 0 6px;line-height:1.05}
 .cso .cso-fase__titolo{font-size:24px;color:var(--c-wave,#3473A5)}
 .cso-fase__desc{line-height:1.6;margin:0}
-.cso .cso-fase__desc{font-size:16px;color:var(--c-ink,#0b1a26)}
+.cso .cso-fase__desc{font-size:16px}
 .cso-fase__ore{letter-spacing:.08em;text-transform:uppercase;text-align:right;align-self:start;padding-top:6px;line-height:1.6}
 .cso .cso-fase__ore{font-size:16px;color:var(--c-wave,#3473A5)}
 
@@ -141,7 +137,7 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 .cso-competenze-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 32px}
 @media(max-width:600px){.cso-competenze-grid{grid-template-columns:1fr}}
 .cso-competenza{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid rgba(11,26,38,.08);line-height:1.5}
-.cso .cso-competenza{font-size:18px;color:var(--c-ink,#0b1a26)}
+.cso .cso-competenza{font-size:18px}
 .cso-competenza__plus{font-weight:700;flex-shrink:0;line-height:1.4;min-width:14px}
 .cso .cso-competenza__plus{font-size:22px;color:var(--c-gold,#E9BF26)}
 

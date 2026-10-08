@@ -148,7 +148,6 @@ $gallery_units = Calypsosub_Gallery_Helpers::build_units(
 );
 ?>
 <style>
-.cso{color:var(--c-ink,#0b1a26)}
 .cso h1,.cso h2,.cso h3,.cso h4{color:var(--c-wave,#3473A5);text-transform:uppercase}
 .cso a{color:inherit;text-decoration:none}
 .cso p,.cso li,.cso span,.cso div{color:inherit}
@@ -199,7 +198,6 @@ $gallery_units = Calypsosub_Gallery_Helpers::build_units(
 .cso .cso-eyebrow{font-size:16px;color:var(--c-wave,#3473A5)}
 .cso-display-heading{font-size:clamp(28px,4vw,56px);font-weight:800;text-transform:uppercase;line-height:.96;margin:0 0 24px}
 .cso-prose{font-size:17px;line-height:1.75;max-width:720px}
-.cso .cso-prose{color:var(--c-ink,#0b1a26)}
 .cso-prose p{margin:0 0 1em}
 .cso-prose p:last-child{margin-bottom:0}
 
@@ -230,7 +228,7 @@ $gallery_units = Calypsosub_Gallery_Helpers::build_units(
 .cso-tappa__titolo{font-weight:700;text-transform:uppercase;margin:0 0 6px;line-height:1.05}
 .cso .cso-tappa__titolo{font-size:22px;color:var(--c-wave,#3473A5)}
 .cso-tappa__desc{line-height:1.6;margin:0}
-.cso .cso-tappa__desc{font-size:16px;color:var(--c-ink,#0b1a26)}
+.cso .cso-tappa__desc{font-size:16px}
 
 /* ── Tag fauna ── */
 .cso-tags{display:flex;flex-wrap:wrap;gap:10px}

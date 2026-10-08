@@ -39,23 +39,33 @@ $card_radius = (int)    ( $a['card_radius']  ?? 16 );
 $card_pad    = (int)    ( $a['card_padding'] ?? 24 );
 $card_shadow = isset( $a['card_shadow'] ) ? (bool) $a['card_shadow'] : true;
 
+/* ── Font per sezione: display/body/mono -> var(--f-*) definita in child-theme/style.css ── */
+$font_var = static function ( string $key ): string {
+	$allowed = [ 'display', 'body', 'mono' ];
+	return 'var(--f-' . ( in_array( $key, $allowed, true ) ? $key : 'body' ) . ')';
+};
+
 /* ── Tipografia eyebrow ── */
 $eyebrow_color = (string) ( $a['eyebrow_color'] ?? '#3473A5' );
 $eyebrow_size  = (int)    ( $a['eyebrow_size']  ?? 13 );
+$eyebrow_font  = $font_var( (string) ( $a['eyebrow_font'] ?? 'mono' ) );
 
 /* ── Tipografia titolo ── */
 $title_color     = (string) ( $a['title_color']    ?? '#061826' );
 $title_size      = (int)    ( $a['title_size']      ?? 42 );
 $title_weight    = (string) ( $a['title_weight']    ?? '900' );
 $title_transform = (string) ( $a['title_transform'] ?? 'uppercase' );
+$title_font      = $font_var( (string) ( $a['title_font'] ?? 'display' ) );
 
 /* ── Tipografia descrizione ── */
 $desc_color = (string) ( $a['desc_color'] ?? '#3d5a6c' );
 $desc_size  = (int)    ( $a['desc_size']  ?? 14 );
+$desc_font  = $font_var( (string) ( $a['desc_font'] ?? 'body' ) );
 
 /* ── Link ── */
 $link_color = (string) ( $a['link_color'] ?? '#3473A5' );
 $link_size  = (int)    ( $a['link_size']  ?? 13 );
+$link_font  = $font_var( (string) ( $a['link_font'] ?? 'body' ) );
 
 /* ── Immagine URL ── */
 $img_url = $image_id ? ( wp_get_attachment_image_url( $image_id, 'large' ) ?: '' ) : '';
@@ -72,11 +82,12 @@ if ( $card_shadow ) {
 
 /* ── Title style ── */
 $title_css = sprintf(
-	'color:%s;font-size:%dpx;font-weight:%s;text-transform:%s;line-height:1;margin:0 0 12px;',
+	'color:%s;font-size:%dpx;font-weight:%s;text-transform:%s;font-family:%s;line-height:1;margin:0 0 12px;',
 	esc_attr( $title_color ),
 	$title_size,
 	esc_attr( $title_weight ),
-	esc_attr( $title_transform )
+	esc_attr( $title_transform ),
+	esc_attr( $title_font )
 );
 ?>
 <div class="calypso-promo-card" style="<?php echo $card_css; ?>">
@@ -103,7 +114,7 @@ $title_css = sprintf(
 
 		<?php if ( $eyebrow ) : ?>
 		<div class="calypso-promo-card__eyebrow"
-		     style="color:<?php echo esc_attr( $eyebrow_color ); ?>;font-size:<?php echo $eyebrow_size; ?>px;font-weight:700;margin:0 0 6px;">
+		     style="color:<?php echo esc_attr( $eyebrow_color ); ?>;font-size:<?php echo $eyebrow_size; ?>px;font-family:<?php echo esc_attr( $eyebrow_font ); ?>;font-weight:700;margin:0 0 6px;">
 			<?php echo esc_html( $eyebrow ); ?>
 		</div>
 		<?php endif; ?>
@@ -116,7 +127,7 @@ $title_css = sprintf(
 
 		<?php if ( $desc ) : ?>
 		<div class="calypso-promo-card__desc"
-		     style="color:<?php echo esc_attr( $desc_color ); ?>;font-size:<?php echo $desc_size; ?>px;line-height:1.5;margin:0 0 16px;flex:1;">
+		     style="color:<?php echo esc_attr( $desc_color ); ?>;font-size:<?php echo $desc_size; ?>px;font-family:<?php echo esc_attr( $desc_font ); ?>;line-height:1.5;margin:0 0 16px;flex:1;">
 			<?php echo esc_html( $desc ); ?>
 		</div>
 		<?php endif; ?>
@@ -124,7 +135,7 @@ $title_css = sprintf(
 		<?php if ( $link_text && $link_url ) : ?>
 		<a href="<?php echo esc_url( $link_url ); ?>"
 		   class="calypso-promo-card__link"
-		   style="color:<?php echo esc_attr( $link_color ); ?>;font-size:<?php echo $link_size; ?>px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;"
+		   style="color:<?php echo esc_attr( $link_color ); ?>;font-size:<?php echo $link_size; ?>px;font-family:<?php echo esc_attr( $link_font ); ?>;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;"
 		   <?php echo $link_tab ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>>
 			<?php echo esc_html( $link_text ); ?> <span aria-hidden="true">→</span>
 		</a>

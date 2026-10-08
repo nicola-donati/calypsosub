@@ -49,7 +49,6 @@ list( $_r, $_g, $_b ) = array_map( 'hexdec', str_split( ltrim( $_ov_c, '#' ), 2 
 $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d,%d,%.3f) 40%%,rgba(%d,%d,%d,%.3f) 100%%)', $_r, $_g, $_b, round( $_ov_o / 100 * 0.682, 3 ), $_r, $_g, $_b, round( $_ov_o / 100 * 0.170, 3 ), $_r, $_g, $_b, round( $_ov_o / 100, 3 ) );
 ?>
 <style>
-.cso-archive{color:var(--c-ink,#0b1a26)}
 .cso-archive a{color:inherit;text-decoration:none}
 
 /* Hero */
