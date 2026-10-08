@@ -10,6 +10,17 @@ class Calypsosub_Admin_Menus {
 		'eventi'  => 'Eventi',
 	];
 
+	/**
+	 * Popolato da save_communications_settings() quando Calypsosub_SystemeIO_Client::ensure_tag()
+	 * fallisce per una categoria — mostrato da render_settings_page() come
+	 * avviso separato dal successo del salvataggio (le impostazioni locali
+	 * si salvano comunque; è solo la sincronizzazione del tag su systeme.io
+	 * a non essere andata a buon fine, recuperabile risalvando più tardi).
+	 *
+	 * @var string[]
+	 */
+	private array $tag_sync_warnings = [];
+
 	public function init(): void {
 		add_action( 'admin_menu',            [ $this, 'register_menus' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
@@ -64,6 +75,9 @@ class Calypsosub_Admin_Menus {
 			$this->save_settings();
 			$active_tab = sanitize_key( $_POST['cso_active_tab'] ?? 'generali' );
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Impostazioni salvate.', 'calypsosub' ) . '</p></div>';
+			foreach ( $this->tag_sync_warnings as $warning ) {
+				echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html( $warning ) . '</p></div>';
+			}
 		} elseif ( isset( $_GET['cso_tab'] ) ) {
 			$active_tab = sanitize_key( $_GET['cso_tab'] );
 		}
@@ -613,12 +627,32 @@ class Calypsosub_Admin_Menus {
 
 		$cat_groups_in = (array) ( $_POST['cat_groups'] ?? [] );
 
+		$systemeio = new Calypsosub_SystemeIO_Client();
+
 		$used_cat_keys = [];
 		$categories    = [];
 		foreach ( $cat_labels as $i => $label ) {
 			$label = sanitize_text_field( wp_unslash( $label ) );
 			$tag   = sanitize_text_field( wp_unslash( $cat_tags[ $i ] ?? '' ) );
 			if ( $label === '' ) continue;
+
+			if ( $tag !== '' ) {
+				// Creates the tag in systeme.io right now if it doesn't
+				// already exist there, instead of leaving a free-typed name
+				// that only ever gets checked (and could fail with "must
+				// have at least one tag") the first time a real
+				// communication is sent for this category.
+				$ensured = $systemeio->ensure_tag( $tag );
+				if ( is_wp_error( $ensured ) ) {
+					$this->tag_sync_warnings[] = sprintf(
+						/* translators: 1: category name, 2: tag name, 3: error message from systeme.io */
+						__( 'Categoria "%1$s": impossibile verificare/creare il tag systeme.io "%2$s" (%3$s). La categoria è stata salvata comunque, ma l\'invio email potrebbe fallire finché il tag non esiste davvero su systeme.io.', 'calypsosub' ),
+						$label,
+						$tag,
+						$ensured->get_error_message()
+					);
+				}
+			}
 
 			$key = sanitize_key( wp_unslash( $cat_keys[ $i ] ?? '' ) );
 			if ( $key === '' || ! isset( $existing_cats[ $key ] ) ) {

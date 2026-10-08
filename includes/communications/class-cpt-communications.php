@@ -251,6 +251,21 @@ class Calypsosub_CPT_Communications {
 			[ 'email', 'telegram' ]
 		) );
 		update_post_meta( $post_id, '_com_channels', $channels );
+
+		// Scheduling the dispatch is triggered HERE, right after persisting
+		// the fields it reads, instead of from a separate publish_{post_type}
+		// (or even a lower-priority save_post_{post_type}) hook. WordPress
+		// fires publish_{post_type} before save_post_{post_type} on a post's
+		// first publish, and in practice a second callback on the same
+		// save_post_{post_type} action — even at a later priority — was NOT
+		// a reliable enough guarantee that this method had already run
+		// first (confirmed 2026-10-08: a newly published communication was
+		// still locked with empty category/channels). Calling it as a plain
+		// method call from inside the same function, after the updates
+		// above, removes any dependency on hook ordering entirely.
+		if ( 'publish' === $post->post_status && ! $this->is_locked( $post_id ) ) {
+			Calypsosub_Communication_Dispatcher::schedule( $post_id );
+		}
 	}
 
 	public function add_columns( array $cols ): array {
