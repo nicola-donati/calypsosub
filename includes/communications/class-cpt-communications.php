@@ -159,8 +159,21 @@ class Calypsosub_CPT_Communications {
 			echo '<p><a href="' . esc_url( $retry_url ) . '" class="button button-primary">' . esc_html__( 'Riprova invio', 'calypsosub' ) . '</a></p>';
 		}
 
-		$results = (array) get_post_meta( $post->ID, '_com_results', true );
-		if ( ! $results ) return;
+		$results_raw = get_post_meta( $post->ID, '_com_results', true );
+		// A single non-existent meta value comes back as '' from WP, and
+		// (array) '' is [0 => ''] — a non-empty array that `! $results`
+		// would have let straight through, past every check below, printing
+		// nothing visible and leaving a "Fallita" status with zero
+		// explanation (exactly the symptom reported 2026-10-08).
+		$results = is_array( $results_raw ) ? $results_raw : [];
+		if ( ! isset( $results['email'] ) && ! isset( $results['telegram'] ) && ! isset( $results['error'] ) ) {
+			echo '<p class="description">' . esc_html__( 'Nessun dettaglio disponibile per questo tentativo.', 'calypsosub' ) . '</p>';
+			return;
+		}
+
+		if ( isset( $results['error'] ) ) {
+			echo '<p style="color:#991b1b">' . esc_html( $results['error'] ) . '</p>';
+		}
 
 		echo '<ul style="margin-left:4px">';
 		if ( isset( $results['email'] ) ) {
