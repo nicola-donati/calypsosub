@@ -188,7 +188,6 @@ $_acd = [
 	<!-- Griglia -->
 	<div class="cso-corsi-grid" id="cso-corsi-grid">
 	<?php foreach ( $corsi as $corso ) :
-		$badge    = (string) get_post_meta( $corso->ID, '_corso_badge',           true );
 		$periodo  = (string) get_post_meta( $corso->ID, '_corso_periodo',          true );
 		$desc     = (string) get_post_meta( $corso->ID, '_corso_desc_breve',       true );
 		$durata   = (string) get_post_meta( $corso->ID, '_corso_stat_durata',      true );
@@ -200,7 +199,11 @@ $_acd = [
 		$livelli_slugs = is_wp_error( $livelli_slugs ) ? [] : $livelli_slugs;
 		$livelli_names = wp_get_post_terms( $corso->ID, 'calypso_livello', [ 'fields' => 'names' ] );
 		$livelli_names = is_wp_error( $livelli_names ) ? [] : $livelli_names;
-		$livello_label = ! empty( $livelli_names ) ? $livelli_names[0] : $badge;
+		// Niente fallback sul badge certificazione (_corso_badge, es. "PADI · CMAS"):
+		// è un campo distinto (vedi .cso-sintesi__cert in single-calypso_corso.php),
+		// non un sostituto del livello. Nessun termine assegnato = "va bene per
+		// qualsiasi livello", quindi niente pill invece di mostrare il badge per sbaglio.
+		$livello_label = ! empty( $livelli_names ) ? $livelli_names[0] : '';
 
 		$cta_url = $link_ovr ?: ( $prenotazioni_page_ok ? add_query_arg( 'prenota_id', $corso->ID, get_permalink( $prenotazioni_page_id ) ) : '' );
 		$img_url = get_the_post_thumbnail_url( $corso->ID, 'medium_large' );
