@@ -74,7 +74,12 @@ $uid = 'cso-sez-' . sprintf( '%08x', crc32( implode( ',', [
 #<?php echo $uid; ?> .cso-sez__head-col{flex:0 0 <?php echo $content_head_width; ?>%;max-width:<?php echo $content_head_width; ?>%}
 #<?php echo $uid; ?> .cso-sez__content-col{flex:1;min-width:0}
 @media(max-width:760px){
-	#<?php echo $uid; ?> .cso-sez__row{flex-direction:column}
+	/* flex-direction passa a colonna ma, senza questo reset, l'align-items
+	 * della riga (spesso "center"/"flex-end" per il layout a riga) impedisce
+	 * a head/content-col di stendersi al 100%: si dimensionano invece sul
+	 * contenuto più largo non spezzabile (es. testo nowrap), sborda e la
+	 * pagina acquisisce scroll orizzontale. */
+	#<?php echo $uid; ?> .cso-sez__row{flex-direction:column;align-items:stretch}
 	#<?php echo $uid; ?> .cso-sez__head-col{max-width:100%}
 }
 <?php endif; ?>
