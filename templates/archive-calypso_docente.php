@@ -44,6 +44,7 @@ $_ad = [
 	'name_color'  => calypsosub_opt( 'docenti', 'design_arch_name_color', '#3473A5' ),
 	'role_color'  => calypsosub_opt( 'docenti', 'design_arch_role_color', '#3473A5' ),
 	'bio_color'   => calypsosub_opt( 'docenti', 'design_arch_bio_color',  '#283d4d' ),
+	'card_aspect' => calypsosub_opt( 'docenti', 'design_arch_card_aspect', '3/4' ),
 ];
 list( $_r, $_g, $_b ) = array_map( 'hexdec', str_split( ltrim( $_ov_c, '#' ), 2 ) );
 $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d,%d,%.3f) 40%%,rgba(%d,%d,%d,%.3f) 100%%)', $_r, $_g, $_b, round( $_ov_o / 100 * 0.682, 3 ), $_r, $_g, $_b, round( $_ov_o / 100 * 0.170, 3 ), $_r, $_g, $_b, round( $_ov_o / 100, 3 ) );
@@ -79,8 +80,9 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 /* Card */
 .cso-docente-card{background:#fff;border:1px solid rgba(11,26,38,.06);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:inherit;transition:box-shadow .2s,transform .15s}
 .cso-docente-card:hover{box-shadow:0 12px 40px -16px rgba(10,37,64,.25);transform:translateY(-2px)}
-.cso-docente-card__img{height:240px;background:linear-gradient(180deg,var(--c-aqua,#59C6F9),var(--c-deep,#3473A5) 60%,var(--c-abyss,#061826));overflow:hidden;position:relative}
-.cso-docente-card__img img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
+.cso-docente-card__img{aspect-ratio:3/4;background:linear-gradient(180deg,var(--c-aqua,#59C6F9),var(--c-deep,#3473A5) 60%,var(--c-abyss,#061826));overflow:hidden;position:relative}
+.cso-docente-card__img img{width:100%;height:100%;object-fit:cover;object-position:center 15%;display:block}
+.cso-docente-card__cap{position:absolute;bottom:0;left:0;font-family:monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:400;padding:10px 12px;background:rgba(0,0,0,.35);color:#fff;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border-top-right-radius:4px}
 .cso-docente-card__body{padding:22px;flex:1;display:flex;flex-direction:column}
 .cso-docente-card__name{font-size:28px;color:var(--c-deep,#3473A5);margin:0 0 6px;line-height:1}
 .cso-docente-card__soprannome{font-size:16px;color:rgba(11,26,38,.6);font-style:italic;margin:0 0 8px}
@@ -114,6 +116,7 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 <style>
 .cso-archive-body{background:<?php echo esc_attr($_ad['body_bg']); ?>}
 .cso-docente-card{background:<?php echo esc_attr($_ad['card_bg']); ?>;border-radius:<?php echo esc_attr($_ad['card_radius']); ?>px}
+.cso-docente-card__img{aspect-ratio:<?php echo esc_attr($_ad['card_aspect']); ?>}
 .cso-docente-card__name{color:<?php echo esc_attr($_ad['name_color']); ?>}
 .cso-docente-card__ruolo{color:<?php echo esc_attr($_ad['role_color']); ?>}
 .cso-docente-card__bio{color:<?php echo esc_attr($_ad['bio_color']); ?>}
@@ -180,7 +183,9 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 		$specs   = (array) ( get_post_meta( $docente->ID, '_docente_specializzazioni', true ) ?: [] );
 		$specs   = array_filter( $specs );
 
-		$img_url     = get_the_post_thumbnail_url( $docente->ID, 'medium_large' );
+		$thumb_id    = get_post_thumbnail_id( $docente->ID );
+		$img_url     = $thumb_id ? wp_get_attachment_image_url( $thumb_id, 'medium_large' ) : '';
+		$overlay_cap = $thumb_id ? Calypsosub_Gallery_Helpers::resolve_overlay_text( $thumb_id ) : '';
 		$full_name   = trim( $nome . ' ' . $cognome ) ?: $docente->post_title;
 		$search_attr = strtolower( $full_name );
 
@@ -196,6 +201,9 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 			<?php if ( $img_url ) : ?>
 			<img src="<?php echo esc_url( $img_url ); ?>"
 			     alt="<?php echo esc_attr( $full_name ); ?>" loading="lazy">
+			<?php if ( $overlay_cap ) : ?>
+			<div class="cso-docente-card__cap"><?php echo esc_html( $overlay_cap ); ?></div>
+			<?php endif; ?>
 			<?php endif; ?>
 		</div>
 

@@ -76,6 +76,7 @@ class Calypsosub_Settings_Pages {
 						'design_arch_body_bg'    => [ 'label' => 'Sfondo corpo archivio',                'default' => '#F5F1E7',  'type' => 'color' ],
 						'design_arch_card_bg'    => [ 'label' => 'Sfondo card docente',                  'default' => '#ffffff',  'type' => 'color' ],
 						'design_arch_card_radius'=> [ 'label' => 'Border radius card (px)',              'default' => '12',       'type' => 'number' ],
+						'design_arch_card_aspect'=> [ 'label' => 'Proporzioni immagine card',             'default' => '3/4',      'type' => 'select', 'options' => [ '1/1' => 'Quadrata (1:1)', '4/5' => 'Verticale leggera (4:5)', '3/4' => 'Verticale (3:4)', '2/3' => 'Verticale marcata (2:3)' ] ],
 						'design_arch_name_color' => [ 'label' => 'Colore nome in card',                  'default' => '#3473A5',  'type' => 'color' ],
 						'design_arch_role_color' => [ 'label' => 'Colore ruolo in card',                 'default' => '#3473A5',  'type' => 'color' ],
 						'design_arch_bio_color'  => [ 'label' => 'Colore bio in card',                  'default' => '#283d4d',  'type' => 'color' ],
