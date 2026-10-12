@@ -417,6 +417,19 @@ class Calypsosub_Settings_Pages {
 		$opts    = (array) get_option( 'calypsosub_opts_' . $section, [] );
 		$saved   = isset( $_GET['saved'] );
 		$palette = self::palette();
+
+		/* ── Schede: una per gruppo di campi, più "Campi prenotazione" ── */
+		$tab_slugs = [];
+		foreach ( array_keys( $cfg['groups'] ) as $group_label ) {
+			$tab_slugs[ $group_label ] = sanitize_title( $group_label );
+		}
+		$campi_tab_slug = 'campi-prenotazione';
+		$valid_tabs     = array_merge( array_values( $tab_slugs ), [ $campi_tab_slug ] );
+
+		$active_tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : '';
+		if ( ! in_array( $active_tab, $valid_tabs, true ) ) {
+			$active_tab = $valid_tabs[0];
+		}
 		?>
 		<div class="wrap cso-settings-wrap">
 			<h1><?php echo esc_html( 'Impostazioni — ' . $cfg['label'] ); ?></h1>
@@ -424,13 +437,23 @@ class Calypsosub_Settings_Pages {
 			<div class="notice notice-success is-dismissible"><p>Impostazioni salvate.</p></div>
 			<?php endif; ?>
 
+			<nav class="nav-tab-wrapper" id="cso-settings-tabs-nav">
+				<?php foreach ( $tab_slugs as $group_label => $slug ) : ?>
+				<a href="#" class="nav-tab cso-settings-tab-btn" data-tab="<?php echo esc_attr( $slug ); ?>"><?php echo esc_html( $group_label ); ?></a>
+				<?php endforeach; ?>
+				<a href="#" class="nav-tab cso-settings-tab-btn" data-tab="<?php echo esc_attr( $campi_tab_slug ); ?>"><?php esc_html_e( 'Campi prenotazione', 'calypsosub' ); ?></a>
+			</nav>
+
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<?php wp_nonce_field( 'calypsosub_settings_' . $section, '_cso_nonce' ); ?>
 				<input type="hidden" name="action" value="calypsosub_save_settings">
 				<input type="hidden" name="_cso_section" value="<?php echo esc_attr( $section ); ?>">
+				<input type="hidden" name="_cso_active_tab" id="cso-settings-active-tab" value="<?php echo esc_attr( $active_tab ); ?>">
 
-				<?php foreach ( $cfg['groups'] as $group_label => $fields ) : ?>
-				<div class="cso-settings-group">
+				<?php foreach ( $cfg['groups'] as $group_label => $fields ) :
+					$slug = $tab_slugs[ $group_label ];
+				?>
+				<div id="cso-settings-tab-<?php echo esc_attr( $slug ); ?>" class="cso-settings-group cso-settings-tab-panel" style="display:none">
 					<h3><?php echo esc_html( $group_label ); ?></h3>
 					<table class="cso-settings-table">
 						<?php foreach ( $fields as $key => $field ) :
@@ -519,7 +542,7 @@ class Calypsosub_Settings_Pages {
 				</div>
 				<?php endforeach; ?>
 
-				<div class="cso-settings-group">
+				<div id="cso-settings-tab-<?php echo esc_attr( $campi_tab_slug ); ?>" class="cso-settings-group cso-settings-tab-panel" style="display:none">
 					<h3><?php esc_html_e( 'Campi prenotazione (per il form CF7 collegato)', 'calypsosub' ); ?></h3>
 					<div style="padding:14px 18px 4px">
 						<p class="description" style="margin:0 0 12px;font-size:12px;color:#666">
@@ -556,6 +579,30 @@ class Calypsosub_Settings_Pages {
 
 				<script>
 				(function () {
+					var cstInitialTab = <?php echo wp_json_encode( $active_tab ); ?>;
+					var cstBtns   = document.querySelectorAll('.cso-settings-tab-btn');
+					var cstPanels = document.querySelectorAll('.cso-settings-tab-panel');
+					var cstHidden = document.getElementById('cso-settings-active-tab');
+
+					function cstActivate(tab) {
+						cstBtns.forEach(function (b) {
+							b.classList.toggle('nav-tab-active', b.dataset.tab === tab);
+						});
+						cstPanels.forEach(function (p) {
+							p.style.display = (p.id === 'cso-settings-tab-' + tab) ? '' : 'none';
+						});
+						if (cstHidden) cstHidden.value = tab;
+					}
+
+					cstBtns.forEach(function (btn) {
+						btn.addEventListener('click', function (e) {
+							e.preventDefault();
+							cstActivate(btn.dataset.tab);
+						});
+					});
+
+					cstActivate(cstInitialTab);
+
 					document.getElementById('cso-campi-pren-add').addEventListener('click', function () {
 						var row = document.createElement('div');
 						row.className = 'cso-campo-pren-row';
@@ -677,7 +724,8 @@ class Calypsosub_Settings_Pages {
 		$clean['campi_prenotazione'] = $campi_clean;
 		update_option( 'calypsosub_opts_' . $section, $clean );
 
-		wp_redirect( add_query_arg( [ 'page' => 'calypsosub-settings-' . $section, 'saved' => '1' ],
+		$active_tab = sanitize_key( wp_unslash( $_POST['_cso_active_tab'] ?? '' ) );
+		wp_redirect( add_query_arg( [ 'page' => 'calypsosub-settings-' . $section, 'saved' => '1', 'tab' => $active_tab ],
 			admin_url( 'edit.php?post_type=' . $cfg['cpt'] ) ) );
 		exit;
 	}
