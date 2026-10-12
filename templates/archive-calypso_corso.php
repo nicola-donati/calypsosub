@@ -82,7 +82,7 @@ $_acd = [
 .cso-corsi-search:focus{border-color:var(--c-deep,#3473A5)}
 
 /* Griglia */
-.cso-corsi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.cso-corsi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 
 /* Card */
 .cso-corso-card{background:#fff;border:1px solid rgba(11,26,38,.08);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
@@ -96,7 +96,9 @@ $_acd = [
 .cso-corso-card__title a{color:inherit;text-decoration:none}
 .cso-corso-card__desc{font-size:15px;line-height:1.55;color:rgba(11,26,38,.7);margin:0 0 20px;flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .cso-corso-card__stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px 0;border-top:1px solid rgba(11,26,38,.08);margin-bottom:18px}
-.cso-corso-card__stat-val{font-size:14px;font-weight:700;color:var(--c-deep,#3473A5);margin-bottom:2px}
+.cso-corso-card__stat{display:flex;flex-direction:column;justify-content:flex-end}
+.cso-corso-card__stat:not(:first-child){border-left:1px solid rgba(11,26,38,.1);padding-left:12px}
+.cso-corso-card__stat-val{font-size:14px;font-weight:700;color:var(--c-ink,#0b1a26);margin-bottom:2px}
 .cso-corso-card__stat-lbl{font-family:var(--f-mono,monospace);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:rgba(11,26,38,.55)}
 .cso-btn-coral{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;font-size:15px;font-weight:700;border-radius:999px;text-decoration:none;align-self:flex-start;transition:background .15s;border:none;cursor:pointer;font-family:inherit}
 
