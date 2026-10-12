@@ -34,6 +34,14 @@ $logo_hide         = [
 ];
 $logo_src = $logo_id ? wp_get_attachment_image_url( $logo_id, 'medium' ) : '';
 
+/* Logo persistente nella barra mobile collassata (accanto all'hamburger).
+ * Sotto il breakpoint hamburger tutta .cso-nav__bar viene nascosta — il
+ * logo "normale" sparisce con essa finché non si apre il pannello
+ * laterale — quindi questo è un elemento del tutto separato. */
+$logo_show_mobile     = ! empty( $a['logo_show_mobile'] );
+$logo_height_mobile   = max( 12, (int) ( $a['logo_height_mobile'] ?? 28 ) );
+$logo_mobile_position = ( $a['logo_mobile_position'] ?? 'start' ) === 'end' ? 'end' : 'start';
+
 $nav_links = array_values( array_filter( (array) ( $a['nav_links'] ?? [] ), static fn( $it ) => is_array( $it ) && ( $it['label'] ?? '' ) !== '' ) );
 $buttons   = array_values( array_filter( (array) ( $a['buttons']   ?? [] ), static fn( $it ) => is_array( $it ) && ( $it['label'] ?? '' ) !== '' ) );
 
@@ -284,6 +292,8 @@ foreach ( $items as $it ) {
 #<?php echo $uid; ?> .cso-nav__btn--primary{background:<?php echo esc_attr( $btn_primary_bg ); ?>;color:<?php echo esc_attr( $btn_primary_color ); ?>}
 #<?php echo $uid; ?> .cso-nav__btn--secondary{background:<?php echo esc_attr( $btn_secondary_bg ); ?>;color:<?php echo esc_attr( $btn_secondary_color ); ?>}
 
+#<?php echo $uid; ?> .cso-nav__logo-mobile{display:none;align-items:center;order:<?php echo $logo_mobile_position === 'end' ? '5' : '-5'; ?>}
+#<?php echo $uid; ?> .cso-nav__logo-mobile img{display:block;width:auto;object-fit:contain}
 #<?php echo $uid; ?> .cso-nav__hamburger{display:none;align-items:center;justify-content:center;width:40px;height:40px;border:none;background:transparent;cursor:pointer;padding:0}
 #<?php echo $uid; ?> .cso-nav__hamburger span,
 #<?php echo $uid; ?> .cso-nav__hamburger span::before,
@@ -331,6 +341,7 @@ if ( $hamburger_breakpoint !== 'none' ) {
 	echo "@media(max-width:{$hb_max}px){\n"
 		. "\t#{$uid} .cso-nav__bar{display:none}\n"
 		. "\t#{$uid} .cso-nav__hamburger{display:inline-flex}\n"
+		. ( $logo_show_mobile && $logo_src ? "\t#{$uid} .cso-nav__logo-mobile{display:inline-flex}\n" : '' )
 		. "}\n";
 }
 ?>
@@ -350,6 +361,14 @@ if ( $hamburger_breakpoint !== 'none' ) {
 	</nav>
 
 	<?php if ( $hamburger_breakpoint !== 'none' ) : ?>
+	<?php if ( $logo_show_mobile && $logo_src ) :
+		$logo_mobile_img = '<img src="' . esc_url( $logo_src ) . '" alt="' . esc_attr( $logo_alt ) . '" style="height:' . (int) $logo_height_mobile . 'px;width:auto;display:block">';
+		if ( $logo_link_home ) :
+	?>
+	<a class="cso-nav__logo-mobile" href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php echo $logo_mobile_img; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */ ?></a>
+	<?php else : ?>
+	<span class="cso-nav__logo-mobile"><?php echo $logo_mobile_img; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */ ?></span>
+	<?php endif; endif; ?>
 	<button type="button" class="cso-nav__hamburger" id="<?php echo esc_attr( $uid ); ?>-toggle"
 	        aria-label="<?php esc_attr_e( 'Apri menu', 'calypsosub' ); ?>"
 	        aria-expanded="false" aria-controls="<?php echo esc_attr( $uid ); ?>-sidebar">

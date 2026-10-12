@@ -723,6 +723,13 @@ class Calypsosub_Blocks {
 				'logo_hide_desktop'  => [ 'type' => 'boolean', 'default' => false ],
 				'logo_hide_tablet'   => [ 'type' => 'boolean', 'default' => false ],
 				'logo_hide_mobile'   => [ 'type' => 'boolean', 'default' => false ],
+				/* Logo persistente nella barra mobile collassata (accanto all'hamburger):
+				 * sotto il breakpoint hamburger l'intera .cso-nav__bar (che contiene anche
+				 * il logo "normale") viene nascosta, quindi senza questo il logo scompare
+				 * del tutto finché non si apre il pannello laterale. */
+				'logo_show_mobile'     => [ 'type' => 'boolean', 'default' => false ],
+				'logo_height_mobile'   => [ 'type' => 'integer', 'default' => 28 ],
+				'logo_mobile_position' => [ 'type' => 'string',  'default' => 'start' ],
 				/* ── Link di navigazione ── */
 				'nav_links' => [
 					'type'    => 'array',
@@ -4589,7 +4596,31 @@ class Calypsosub_Blocks {
 								el(ToggleControl, { label: 'Nascondi desktop', checked: !!a.logo_hide_desktop, onChange: function (v) { set({ logo_hide_desktop: v }); } }),
 								el(ToggleControl, { label: 'Nascondi tablet',  checked: !!a.logo_hide_tablet,  onChange: function (v) { set({ logo_hide_tablet: v }); } }),
 								el(ToggleControl, { label: 'Nascondi mobile', checked: !!a.logo_hide_mobile, onChange: function (v) { set({ logo_hide_mobile: v }); } })
-							) : null
+							) : null,
+							/* Sotto il breakpoint hamburger l'intera barra (link + logo "normale")
+							 * viene nascosta: senza questo il logo non è mai visibile su mobile
+							 * finché non si apre il pannello laterale. */
+							a.logo_id ? el('p', { style: { fontSize: '11px', fontWeight: 500, margin: '14px 0 0', color: '#1e1e1e', borderTop: '1px solid #e0e0e0', paddingTop: '10px' } }, 'Barra mobile (accanto all’hamburger)') : null,
+							a.logo_id ? el(ToggleControl, {
+								label: 'Mostra logo nella barra mobile',
+								checked: !!a.logo_show_mobile,
+								onChange: function (v) { set({ logo_show_mobile: v }); }
+							}) : null,
+							( a.logo_id && a.logo_show_mobile ) ? el(RangeControl, {
+								label: 'Altezza logo mobile (px)',
+								value: a.logo_height_mobile || 28,
+								min: 12, max: 120, step: 2,
+								onChange: function (v) { set({ logo_height_mobile: v || 28 }); }
+							}) : null,
+							( a.logo_id && a.logo_show_mobile ) ? el(SelectControl, {
+								label: 'Posizione',
+								value: a.logo_mobile_position || 'start',
+								options: [
+									{ label: 'Sinistra', value: 'start' },
+									{ label: 'Destra',   value: 'end' }
+								],
+								onChange: function (v) { set({ logo_mobile_position: v }); }
+							}) : null
 						),
 
 						repeaterPanel('Link di navigazione', 'nav_links', null),
