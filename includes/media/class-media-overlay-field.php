@@ -19,7 +19,7 @@ class Calypsosub_Media_Overlay_Field {
 			'label' => __( 'Testo overlay', 'calypsosub' ),
 			'input' => 'text',
 			'value' => get_post_meta( $post->ID, self::META_KEY, true ),
-			'helps' => __( "Testo mostrato in overlay sopra l'immagine nei blocchi galleria. Se vuoto: didascalia, poi testo alternativo.", 'calypsosub' ),
+			'helps' => __( "Testo mostrato in overlay sopra l'immagine nei blocchi galleria. Se vuoto, non viene mostrato nessun testo.", 'calypsosub' ),
 		];
 
 		return $form_fields;

@@ -30,9 +30,14 @@ class Calypsosub_Gallery_Helpers {
 		return $big ? self::SHAPE_CELLS_BIG[ $shape ] : self::SHAPE_CELLS[ $shape ];
 	}
 
+	/**
+	 * Testo overlay mostrato sopra l'immagine nei blocchi galleria: solo il
+	 * valore impostato esplicitamente sull'attachment (vedi
+	 * Calypsosub_Media_Overlay_Field); nessun fallback su didascalia, titolo
+	 * o testo alternativo — se non è impostato, non va mostrato nulla.
+	 */
 	public static function resolve_overlay_text( int $attachment_id ): string {
-		$caption = wp_get_attachment_caption( $attachment_id );
-		return $caption !== '' ? $caption : (string) get_the_title( $attachment_id );
+		return (string) get_post_meta( $attachment_id, Calypsosub_Media_Overlay_Field::META_KEY, true );
 	}
 
 	/**
