@@ -3,7 +3,7 @@
  * Plugin Name: Calypso Sub Arezzo
  * Plugin URI:  https://calypsosub.it
  * Description: Gestione uscite, eventi, corsi, docenti e prenotazioni per ASD Calypso Sub Arezzo.
- * Version:     1.0.49
+ * Version:     1.0.50
  * Author:      Nicola Donati
  * Text Domain: calypsosub
  * Domain Path: /languages
@@ -13,9 +13,10 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'CALYPSOSUB_VERSION', '1.0.49' );
+define( 'CALYPSOSUB_VERSION', '1.0.50' );
 define( 'CALYPSOSUB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CALYPSOSUB_URL', plugin_dir_url( __FILE__ ) );
+define( 'CALYPSOSUB_PLUGIN_FILE', __FILE__ );
 
 require_once CALYPSOSUB_PATH . 'includes/helpers/functions.php';
 require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-brevetti.php';
@@ -53,6 +54,7 @@ require_once CALYPSOSUB_PATH . 'includes/class-template-loader.php';
 require_once CALYPSOSUB_PATH . 'includes/class-blocks.php';
 require_once CALYPSOSUB_PATH . 'includes/ajax/class-ajax-eventi.php';
 require_once CALYPSOSUB_PATH . 'includes/seo/class-seo-enhancements.php';
+require_once CALYPSOSUB_PATH . 'includes/updates/class-updater.php';
 add_action( 'wp_ajax_calypso_eventi_search',        [ 'Calypsosub_Ajax_Eventi', 'handle' ] );
 add_action( 'wp_ajax_nopriv_calypso_eventi_search', [ 'Calypsosub_Ajax_Eventi', 'handle' ] );
 
@@ -96,6 +98,7 @@ $GLOBALS['calypsosub_booking_manager']->init();
 ( new Calypsosub_Communication_Dispatcher( new Calypsosub_SystemeIO_Client(), new Calypsosub_Telegram_Client() ) )->init();
 
 ( new Calypsosub_Seo_Enhancements() )->init();
+( new Calypsosub_Updater() )->init();
 ( new Calypsosub_Template_Loader() )->init();
 ( new Calypsosub_Admin_Menus() )->init();
 ( new Calypsosub_Settings_Pages() )->init();
