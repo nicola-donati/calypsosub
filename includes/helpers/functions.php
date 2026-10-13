@@ -127,18 +127,39 @@ function calypso_get_uscite( array $args = [] ): array {
 }
 
 /**
- * Lista eventi.
+ * Lista eventi, futuri (per prossima data) in ordine cronologico crescente,
+ * poi passati in ordine decrescente — stesso criterio usato per le uscite.
+ *
+ * _evento_date è un array (un evento può avere più date), quindi non si può
+ * ordinare lato query con 'orderby' => 'meta_value': su un meta serializzato
+ * quello ordina sulla stringa serializzata, non sulle date contenute. Si
+ * recupera tutto e si ordina qui in PHP usando la data di riferimento di
+ * calypso_next_future_date() (prima data futura, o l'ultima se tutte passate).
  */
 function calypso_get_eventi( array $args = [] ): array {
 	$query = new WP_Query( array_merge( [
 		'post_type'      => 'calypso_evento',
 		'post_status'    => 'publish',
 		'posts_per_page' => -1,
-		'orderby'        => 'meta_value',
-		'meta_key'       => '_evento_date',
-		'order'          => 'ASC',
 	], $args ) );
-	return $query->posts;
+
+	$now    = current_time( 'Y-m-d\TH:i' );
+	$future = [];
+	$past   = [];
+	foreach ( $query->posts as $post ) {
+		$dates = (array) ( get_post_meta( $post->ID, '_evento_date', true ) ?: [] );
+		$ref   = calypso_next_future_date( $dates );
+		if ( $ref !== '' && $ref >= $now ) {
+			$future[] = [ 'post' => $post, 'date' => $ref ];
+		} else {
+			$past[] = [ 'post' => $post, 'date' => $ref ];
+		}
+	}
+
+	usort( $future, static fn( $a, $b ) => $a['date'] <=> $b['date'] );
+	usort( $past, static fn( $a, $b ) => $b['date'] <=> $a['date'] );
+
+	return array_map( static fn( $x ) => $x['post'], array_merge( $future, $past ) );
 }
 
 /**
