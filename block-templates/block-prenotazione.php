@@ -406,7 +406,7 @@ if ( $effective_preselect_id && isset( $items_by_tipo[ $preselect_tab ] ) ) {
 #<?php echo $uid; ?> .cso-pren__toolbar{display:flex;align-items:center;gap:28px;flex-wrap:wrap;margin-bottom:28px;}
 #<?php echo $uid; ?> .cso-pren__toolbar .cso-pren__tabs{margin-bottom:0;}
 
-#<?php echo $uid; ?> .cso-pren__filters{display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;}
+#<?php echo $uid; ?> .cso-pren__filters{display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;flex-basis:100%;}
 #<?php echo $uid; ?> .cso-pren__filter-group{display:flex;flex-direction:column;gap:7px;}
 #<?php echo $uid; ?> .cso-pren__filter-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:<?php echo esc_attr( $card_level_text_color ); ?>;}
 #<?php echo $uid; ?> .cso-pren__filter-options{display:flex;gap:8px;flex-wrap:wrap;}
