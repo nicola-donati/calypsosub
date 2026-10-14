@@ -225,6 +225,9 @@ class Calypsosub_Settings_Pages {
 					],
 					'Hero' => [
 						'breadcrumb_archive' => [ 'label' => 'Voce breadcrumb archivio', 'default' => 'Corsi' ],
+						'archive_eyebrow'    => [ 'label' => 'Eyebrow  (usa {anno} come segnaposto)', 'default' => 'Corsi · {anno}' ],
+						'archive_h1'         => [ 'label' => 'Titolo H1 (HTML consentito: &lt;em&gt; &lt;br&gt;)', 'default' => 'Sei corsi.<br>Una sola idea:<br><em>scendere bene.</em>', 'type' => 'textarea' ],
+						'archive_lead'       => [ 'label' => 'Testo introduttivo', 'default' => 'Tutti i nostri corsi sono certificati FIAS, riconosciuti CMAS in tutto il mondo. Si parte dalla piscina di Arezzo, si finisce in mare aperto.', 'type' => 'textarea' ],
 					],
 					'Sezione Descrizione' => [
 						'sec_descrizione_eyebrow' => [ 'label' => 'Eyebrow',  'default' => 'Il corso' ],

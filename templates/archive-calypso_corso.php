@@ -148,7 +148,9 @@ $_acd = [
 		<span>/</span>
 		<span class="cso-breadcrumb__current"><?php echo esc_html( calypsosub_opt( 'corsi', 'breadcrumb_archive', __( 'Corsi', 'calypsosub' ) ) ); ?></span>
 	</nav>
-	<span class="cso-hero__eyebrow"><?php echo esc_html( calypsosub_opt( 'corsi', 'archive_eyebrow', 'Corsi · ' . gmdate( 'Y' ) ) ); ?></span>
+	<span class="cso-hero__eyebrow"><?php echo esc_html( str_replace( '{anno}', gmdate( 'Y' ),
+		calypsosub_opt( 'corsi', 'archive_eyebrow', __( 'Corsi · {anno}', 'calypsosub' ) )
+	) ); ?></span>
 	<h1 class="cso-hero__title display">
 		<?php echo wp_kses( calypsosub_opt( 'corsi', 'archive_h1',
 			__( 'Sei corsi.<br>Una sola idea:<br><em>scendere bene.</em>', 'calypsosub' )
