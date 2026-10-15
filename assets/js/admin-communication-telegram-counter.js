@@ -103,6 +103,14 @@
 			btn.addEventListener( 'click', function () { setTimeout( update, 50 ); } );
 		} );
 
+		// Rete di sicurezza: in alcuni ambienti gli eventi 'input' sopra non
+		// arrivano in modo affidabile (verificato 2026-10-15 anche con un
+		// listener nativo appena creato, quindi non è un problema di questo
+		// script) — un controllo periodico garantisce comunque il
+		// conteggio aggiornato, indipendentemente dal perché gli eventi
+		// siano incoerenti in quel contesto.
+		setInterval( update, 500 );
+
 		update();
 	}
 
