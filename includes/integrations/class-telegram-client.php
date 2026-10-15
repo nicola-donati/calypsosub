@@ -22,50 +22,11 @@ class Calypsosub_Telegram_Client {
 			return new WP_Error( 'calypso_telegram_no_chat_id', __( 'chat_id mancante.', 'calypsosub' ) );
 		}
 
-		$url     = "https://api.telegram.org/bot{$token}/sendMessage";
-		$headers = [ 'Content-Type' => 'application/json' ];
-		$body    = wp_json_encode( [
+		return $this->post_telegram_api( $token, 'sendMessage', [
 			'chat_id'                  => $chat_id,
 			'text'                     => $text,
 			'disable_web_page_preview' => true,
-		] );
-
-		$response = wp_remote_post( $url, [
-			'timeout' => 15,
-			'headers' => $headers,
-			'body'    => $body,
-		] );
-
-		// The bot token lives in the URL path itself (Telegram's API has no
-		// separate auth header) — masked here too, same as systeme.io's
-		// X-API-Key, before it ever reaches the admin-visible log.
-		$masked_url = self::mask_token_in_url( $url, $token );
-
-		if ( is_wp_error( $response ) ) {
-			return new WP_Error(
-				$response->get_error_code(),
-				$response->get_error_message(),
-				self::debug_data( 'POST', $masked_url, $headers, $body, null, null )
-			);
-		}
-
-		$code      = wp_remote_retrieve_response_code( $response );
-		$resp_body = wp_remote_retrieve_body( $response );
-		$data      = json_decode( $resp_body, true );
-
-		if ( $code !== 200 || empty( $data['ok'] ) ) {
-			$desc = is_array( $data ) && isset( $data['description'] ) ? $data['description'] : 'HTTP ' . $code;
-			return new WP_Error(
-				'calypso_telegram_api_error',
-				sprintf(
-					/* translators: %s: Telegram API error description */
-					__( 'Telegram API: %s', 'calypsosub' ), $desc
-				),
-				self::debug_data( 'POST', $masked_url, $headers, $body, $code, $resp_body )
-			);
-		}
-
-		return true;
+		], 15 );
 	}
 
 	/** @param array<string,string> $headers */
@@ -105,6 +66,166 @@ class Calypsosub_Telegram_Client {
 			$results[ $chat_id ] = $this->send_message( $chat_id, $text );
 		}
 		return $results;
+	}
+
+	/**
+	 * Manda una singola foto, passando l'URL direttamente a Telegram (lo
+	 * scarica lui stesso lato server — deve quindi essere pubblicamente
+	 * raggiungibile da internet, non un path locale). $caption è troncata a
+	 * 1024 caratteri, il limite Telegram per le didascalie foto (molto più
+	 * basso del limite testo normale di sendMessage).
+	 *
+	 * @return true|WP_Error
+	 */
+	public function send_photo( string $chat_id, string $photo_url, string $caption = '' ) {
+		$token = trim( (string) get_option( 'calypsosub_telegram_bot_token', '' ) );
+		if ( $token === '' ) {
+			return new WP_Error( 'calypso_telegram_no_token', __( 'Token del bot Telegram non configurato.', 'calypsosub' ) );
+		}
+		if ( $chat_id === '' ) {
+			return new WP_Error( 'calypso_telegram_no_chat_id', __( 'chat_id mancante.', 'calypsosub' ) );
+		}
+
+		$payload = [ 'chat_id' => $chat_id, 'photo' => $photo_url ];
+		$caption = trim( $caption );
+		if ( $caption !== '' ) {
+			$payload['caption'] = mb_substr( $caption, 0, 1024 );
+		}
+
+		return $this->post_telegram_api( $token, 'sendPhoto', $payload, 20 );
+	}
+
+	/**
+	 * Manda un album di 2-10 foto (vincolo imposto da Telegram — sotto 2 si
+	 * usa sendPhoto). La didascalia va solo sul primo elemento: Telegram la
+	 * mostra come didascalia dell'intero album, non serve ripeterla.
+	 *
+	 * @param string[] $photo_urls
+	 * @return true|WP_Error
+	 */
+	public function send_media_group( string $chat_id, array $photo_urls, string $caption = '' ) {
+		$token = trim( (string) get_option( 'calypsosub_telegram_bot_token', '' ) );
+		if ( $token === '' ) {
+			return new WP_Error( 'calypso_telegram_no_token', __( 'Token del bot Telegram non configurato.', 'calypsosub' ) );
+		}
+		if ( $chat_id === '' ) {
+			return new WP_Error( 'calypso_telegram_no_chat_id', __( 'chat_id mancante.', 'calypsosub' ) );
+		}
+
+		$photo_urls = array_slice( array_values( $photo_urls ), 0, 10 );
+		$caption    = trim( $caption );
+
+		$media = [];
+		foreach ( $photo_urls as $i => $url ) {
+			$item = [ 'type' => 'photo', 'media' => $url ];
+			if ( 0 === $i && $caption !== '' ) {
+				$item['caption'] = mb_substr( $caption, 0, 1024 );
+			}
+			$media[] = $item;
+		}
+
+		return $this->post_telegram_api( $token, 'sendMediaGroup', [ 'chat_id' => $chat_id, 'media' => $media ], 30 );
+	}
+
+	/**
+	 * Manda una comunicazione completa a un chat: con immagini, prima
+	 * foto/album (didascalia = solo l'oggetto — il corpo intero quasi
+	 * sempre supera il limite di 1024 caratteri delle didascalie Telegram),
+	 * poi il testo completo come messaggio separato. Senza immagini resta
+	 * un unico messaggio oggetto+testo, come prima di questo metodo esistere.
+	 *
+	 * @param string[] $image_urls
+	 * @return true|WP_Error
+	 */
+	public function send_communication( string $chat_id, string $subject, string $text, array $image_urls = [] ) {
+		if ( empty( $image_urls ) ) {
+			return $this->send_message( $chat_id, trim( $subject . "\n\n" . $text ) );
+		}
+
+		$photo_result = count( $image_urls ) === 1
+			? $this->send_photo( $chat_id, $image_urls[0], $subject )
+			: $this->send_media_group( $chat_id, $image_urls, $subject );
+
+		if ( is_wp_error( $photo_result ) ) {
+			return $photo_result;
+		}
+
+		$text = trim( $text );
+		return $text === '' ? true : $this->send_message( $chat_id, $text );
+	}
+
+	/**
+	 * URL delle immagini embeddate in un corpo HTML, in ordine di
+	 * apparizione e senza duplicati — usate da send_communication() per
+	 * sendPhoto/sendMediaGroup. Il classic editor di WP inserisce sempre URL
+	 * assoluti, ma un eventuale src relativo viene comunque normalizzato
+	 * rispetto a home_url(): Telegram deve scaricarlo lui stesso da
+	 * internet, non da un path locale.
+	 *
+	 * @return string[]
+	 */
+	public function extract_image_urls( string $html ): array {
+		if ( ! preg_match_all( '/<img[^>]+src=["\']([^"\']+)["\']/i', $html, $matches ) ) {
+			return [];
+		}
+
+		$urls = [];
+		foreach ( $matches[1] as $src ) {
+			$src = html_entity_decode( $src, ENT_QUOTES, 'UTF-8' );
+			if ( $src === '' ) continue;
+			if ( ! preg_match( '#^https?://#i', $src ) ) {
+				$src = home_url( $src );
+			}
+			$urls[ $src ] = $src;
+		}
+		return array_values( $urls );
+	}
+
+	/**
+	 * POST generico verso un metodo della Telegram Bot API, con lo stesso
+	 * schema di gestione errori/debug già usato da send_message() — estratto
+	 * qui perché sendPhoto e sendMediaGroup lo ripetevano identico.
+	 *
+	 * @return true|WP_Error
+	 */
+	private function post_telegram_api( string $token, string $method, array $payload, int $timeout ) {
+		$url     = "https://api.telegram.org/bot{$token}/{$method}";
+		$headers = [ 'Content-Type' => 'application/json' ];
+		$body    = wp_json_encode( $payload );
+
+		$response = wp_remote_post( $url, [
+			'timeout' => $timeout,
+			'headers' => $headers,
+			'body'    => $body,
+		] );
+
+		$masked_url = self::mask_token_in_url( $url, $token );
+
+		if ( is_wp_error( $response ) ) {
+			return new WP_Error(
+				$response->get_error_code(),
+				$response->get_error_message(),
+				self::debug_data( 'POST', $masked_url, $headers, $body, null, null )
+			);
+		}
+
+		$code      = wp_remote_retrieve_response_code( $response );
+		$resp_body = wp_remote_retrieve_body( $response );
+		$data      = json_decode( $resp_body, true );
+
+		if ( $code !== 200 || empty( $data['ok'] ) ) {
+			$desc = is_array( $data ) && isset( $data['description'] ) ? $data['description'] : 'HTTP ' . $code;
+			return new WP_Error(
+				'calypso_telegram_api_error',
+				sprintf(
+					/* translators: %s: Telegram API error description */
+					__( 'Telegram API: %s', 'calypsosub' ), $desc
+				),
+				self::debug_data( 'POST', $masked_url, $headers, $body, $code, $resp_body )
+			);
+		}
+
+		return true;
 	}
 
 	/**

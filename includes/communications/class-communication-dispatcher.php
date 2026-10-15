@@ -114,6 +114,7 @@ class Calypsosub_Communication_Dispatcher {
 			$groups     = Calypsosub_Communications_Settings::get_telegram_groups();
 			$group_keys = $category['groups'];
 			$text       = $this->telegram->html_to_plain_text( $body_html );
+			$image_urls = $this->telegram->extract_image_urls( $body_html );
 			$results['telegram'] = [];
 
 			if ( empty( $group_keys ) ) {
@@ -131,7 +132,7 @@ class Calypsosub_Communication_Dispatcher {
 					$all_ok = false;
 					continue;
 				}
-				$result = $this->telegram->send_message( $group['chat_id'], $subject . "\n\n" . $text );
+				$result = $this->telegram->send_communication( $group['chat_id'], $subject, $text, $image_urls );
 				$results['telegram'][ $label ] = is_wp_error( $result )
 					? [ 'ok' => false, 'msg' => $result->get_error_message(), 'debug' => $result->get_error_data() ]
 					: [ 'ok' => true ];
