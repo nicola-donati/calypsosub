@@ -87,28 +87,32 @@ class Calypsosub_CPT_Communications {
 	public function render_meta_box( WP_Post $post ): void {
 		wp_nonce_field( self::POST_TYPE . '_meta', self::POST_TYPE . '_nonce' );
 
-		$category_sel = (string) get_post_meta( $post->ID, '_com_category', true );
-		$channels_sel = (array) get_post_meta( $post->ID, '_com_channels', true );
-		$categories   = Calypsosub_Communications_Settings::get_categories();
-		$locked       = $this->is_locked( $post->ID );
-		$dis          = $locked ? 'disabled' : '';
+		$channels_sel   = (array) get_post_meta( $post->ID, '_com_channels', true );
+		$categories     = Calypsosub_Communications_Settings::get_categories();
+		$active_cat_key = Calypsosub_Communications_Settings::get_active_category_key();
+		$active_cat     = $categories[ $active_cat_key ] ?? null;
+		$locked         = $this->is_locked( $post->ID );
+		$dis            = $locked ? 'disabled' : '';
 		?>
 		<p>
-			<label for="cso_com_category"><strong><?php _e( 'Categoria', 'calypsosub' ); ?></strong></label><br>
-			<select name="cso_com_category" id="cso_com_category" style="width:100%" <?php echo $dis; ?>>
-				<option value=""><?php _e( '— seleziona —', 'calypsosub' ); ?></option>
-				<?php foreach ( $categories as $key => $cat ) : ?>
-				<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $category_sel, $key ); ?>>
-					<?php echo esc_html( $cat['label'] ); ?>
-				</option>
-				<?php endforeach; ?>
-			</select>
-			<?php if ( empty( $categories ) ) : ?>
+			<strong><?php _e( 'Categoria', 'calypsosub' ); ?></strong><br>
+			<?php if ( $active_cat ) : ?>
+				<?php echo esc_html( $active_cat['label'] ); ?>
+				<p class="description">
+					<?php
+					printf(
+						/* translators: %s: link to settings page */
+						__( 'Impostata una sola volta per tutte le comunicazioni in %s.', 'calypsosub' ),
+						'<a href="' . esc_url( admin_url( 'admin.php?page=calypsosub&cso_tab=comunicazioni' ) ) . '">' . esc_html__( 'Calypso Sub → Impostazioni → Comunicazioni', 'calypsosub' ) . '</a>'
+					);
+					?>
+				</p>
+			<?php else : ?>
 			<p class="description" style="color:#b32d2e">
 				<?php
 				printf(
 					/* translators: %s: link to settings page */
-					__( 'Nessuna categoria configurata. Vai in %s per crearne almeno una (definisce tag systeme.io + gruppi Telegram).', 'calypsosub' ),
+					__( 'Nessuna categoria attiva configurata. Vai in %s per crearne una e selezionarla (definisce tag systeme.io + gruppi Telegram).', 'calypsosub' ),
 					'<a href="' . esc_url( admin_url( 'admin.php?page=calypsosub&cso_tab=comunicazioni' ) ) . '">' . esc_html__( 'Calypso Sub → Impostazioni → Comunicazioni', 'calypsosub' ) . '</a>'
 				);
 				?>
@@ -244,7 +248,7 @@ class Calypsosub_CPT_Communications {
 		if ( ! current_user_can( 'edit_post', $post_id ) ) return;
 		if ( $this->is_locked( $post_id ) ) return;
 
-		update_post_meta( $post_id, '_com_category', sanitize_key( $_POST['cso_com_category'] ?? '' ) );
+		update_post_meta( $post_id, '_com_category', Calypsosub_Communications_Settings::get_active_category_key() );
 
 		$channels = array_values( array_intersect(
 			(array) ( $_POST['cso_com_channels'] ?? [] ),

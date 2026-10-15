@@ -100,6 +100,7 @@ class Calypsosub_Admin_Menus {
 		$telegram_bot_token  = (string) get_option( 'calypsosub_telegram_bot_token', '' );
 		$telegram_groups     = Calypsosub_Communications_Settings::get_telegram_groups();
 		$communication_cats  = Calypsosub_Communications_Settings::get_categories();
+		$active_category     = (string) get_option( 'calypsosub_active_communication_category', '' );
 
 		/* Dati per ogni tab archivio */
 		$tabs_data = [];
@@ -339,6 +340,16 @@ class Calypsosub_Admin_Menus {
 
 				<h2 style="margin-top:28px"><?php _e( 'Categorie comunicazioni', 'calypsosub' ); ?></h2>
 				<p class="description"><?php _e( 'Ogni categoria collega un tag systeme.io (destinatari email) ai gruppi Telegram che devono riceverla.', 'calypsosub' ); ?></p>
+				<p>
+					<label for="com_active_category"><strong><?php _e( 'Categoria usata per le comunicazioni', 'calypsosub' ); ?></strong></label><br>
+					<select name="com_active_category" id="com_active_category">
+						<option value=""><?php _e( '— nessuna —', 'calypsosub' ); ?></option>
+						<?php foreach ( $communication_cats as $key => $cat ) : ?>
+						<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $active_category, $key ); ?>><?php echo esc_html( $cat['label'] ); ?></option>
+						<?php endforeach; ?>
+					</select>
+					<p class="description"><?php _e( 'Tutte le comunicazioni (nuove e già programmate non ancora inviate) useranno questa categoria — non si sceglie più per singola comunicazione.', 'calypsosub' ); ?></p>
+				</p>
 				<div id="cso-com-categories">
 					<?php $cat_i = 0; foreach ( $communication_cats as $key => $cat ) : ?>
 					<div class="cso-com-cat-row" style="border:1px solid #ddd;border-radius:4px;padding:12px;margin-bottom:10px">
@@ -683,6 +694,15 @@ class Calypsosub_Admin_Menus {
 			$categories[ $key ] = [ 'label' => $label, 'tag_systemeio' => $tag, 'groups' => $selected_groups ];
 		}
 		update_option( 'calypsosub_communication_categories', $categories );
+
+		// Validato contro $categories (appena finalizzato, non quello letto a
+		// inizio funzione): se la categoria scelta è stata rinominata/rimossa
+		// in questo stesso salvataggio, la chiave potrebbe non esistere più.
+		$active_category = sanitize_key( wp_unslash( $_POST['com_active_category'] ?? '' ) );
+		if ( ! isset( $categories[ $active_category ] ) ) {
+			$active_category = $categories ? (string) array_key_first( $categories ) : '';
+		}
+		update_option( 'calypsosub_active_communication_category', $active_category );
 	}
 
 	/**

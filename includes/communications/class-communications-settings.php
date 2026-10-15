@@ -20,4 +20,15 @@ class Calypsosub_Communications_Settings {
 	public static function get_categories(): array {
 		return (array) get_option( 'calypsosub_communication_categories', [] );
 	}
+
+	/**
+	 * Categoria usata per tutte le comunicazioni, scelta una volta in
+	 * Impostazioni invece che per singola comunicazione (in pratica ce n'è
+	 * sempre e solo una configurata). Stringa vuota se non impostata o se la
+	 * categoria salvata non esiste più nell'elenco.
+	 */
+	public static function get_active_category_key(): string {
+		$key = (string) get_option( 'calypsosub_active_communication_category', '' );
+		return isset( self::get_categories()[ $key ] ) ? $key : '';
+	}
 }
