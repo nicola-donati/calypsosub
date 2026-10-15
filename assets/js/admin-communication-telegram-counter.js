@@ -40,12 +40,17 @@
 		var box = document.getElementById( 'cso-com-telegram-counter' );
 		var title = document.getElementById( 'title' );
 		var telegramCheckbox = document.querySelector( 'input[name="cso_com_channels[]"][value="telegram"]' );
+		var imageIdsInput = document.getElementById( 'cso_com_image_ids' );
 		if ( ! box || ! title ) return;
 
 		function update() {
 			var telegramOn = !! ( telegramCheckbox && telegramCheckbox.checked );
 			var body = getBodyHtmlAndText();
-			var hasImage = /<img[\s>]/i.test( body.html );
+			// Le immagini ora si scelgono col picker dedicato (vedi
+			// admin-communication-images.js), non più inserite nel corpo —
+			// questo campo hidden è la fonte di verità, non il markup
+			// dell'editor.
+			var hasImage = !! ( imageIdsInput && imageIdsInput.value.trim() !== '' );
 
 			if ( ! telegramOn || ! hasImage ) {
 				box.style.display = 'none';
@@ -71,6 +76,7 @@
 
 		title.addEventListener( 'input', update );
 		if ( telegramCheckbox ) telegramCheckbox.addEventListener( 'change', update );
+		if ( imageIdsInput ) imageIdsInput.addEventListener( 'change', update );
 
 		var textarea = document.getElementById( 'content' );
 		if ( textarea ) textarea.addEventListener( 'input', update );

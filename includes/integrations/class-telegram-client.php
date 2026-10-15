@@ -340,9 +340,19 @@ class Calypsosub_Telegram_Client {
 	 * letterale nel testo non convertito in '&amp;', che Telegram in modalità
 	 * HTML rifiuterebbe con un errore di parsing.
 	 */
+	/**
+	 * Ogni pressione di Enter nell'editor classico crea un nuovo <p>, non un
+	 * <br> dentro lo stesso paragrafo — anche per quello che l'operatore
+	 * intendeva come un semplice ritorno a capo (es. ogni riga di un elenco
+	 * con emoji). Convertire </p> in "\n\n" raddoppiava quindi OGNI ritorno
+	 * a capo (bug osservato 2026-10-15): un singolo \n qui tratta ogni Enter
+	 * come un singolo a capo, uniformemente — chi vuole una riga vuota vera
+	 * tra due paragrafi può ancora ottenerla premendo Enter due volte (due
+	 * </p> consecutivi producono comunque \n\n).
+	 */
 	public function html_to_plain_text( string $html ): string {
 		$text = preg_replace( '/<\s*br\s*\/?\s*>/i', "\n", $html );
-		$text = preg_replace( '/<\s*\/p\s*>/i', "\n\n", (string) $text );
+		$text = preg_replace( '/<\s*\/p\s*>/i', "\n", (string) $text );
 		$text = wp_strip_all_tags( (string) $text );
 		$text = html_entity_decode( $text, ENT_QUOTES, 'UTF-8' );
 		$text = preg_replace( "/\n{3,}/", "\n\n", $text );

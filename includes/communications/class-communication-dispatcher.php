@@ -98,10 +98,30 @@ class Calypsosub_Communication_Dispatcher {
 		$results   = [];
 		$all_ok    = true;
 
+		// Scelte col picker dedicato (vedi Calypsosub_CPT_Communications),
+		// non inserite nel corpo: si risolve sempre la dimensione 'full' qui,
+		// indipendentemente da quale anteprima l'operatore vedeva nel picker
+		// — l'editor classico inserirebbe di default una versione ridotta,
+		// questo evita del tutto quel problema.
+		$image_ids  = (array) get_post_meta( $post_id, '_com_image_ids', true );
+		$image_urls = array_values( array_filter( array_map(
+			static fn( $id ) => wp_get_attachment_image_url( (int) $id, 'full' ),
+			$image_ids
+		) ) );
+
 		if ( in_array( 'email', $channels, true ) ) {
+			$email_body = $body_html;
+			if ( ! empty( $image_urls ) ) {
+				$images_html = implode( '', array_map(
+					static fn( $url ) => '<p><img src="' . esc_url( $url ) . '" style="max-width:100%"></p>',
+					$image_urls
+				) );
+				$email_body = $images_html . $email_body;
+			}
+
 			$tag = (string) $category['tag_systemeio'];
 			$result = $tag !== ''
-				? $this->systemeio->send_newsletter( $subject, $body_html, $tag )
+				? $this->systemeio->send_newsletter( $subject, $email_body, $tag )
 				: new WP_Error( 'calypso_com_no_tag', __( 'Nessun tag systeme.io impostato per questa categoria.', 'calypsosub' ) );
 
 			$results['email'] = is_wp_error( $result )
@@ -114,7 +134,6 @@ class Calypsosub_Communication_Dispatcher {
 			$groups     = Calypsosub_Communications_Settings::get_telegram_groups();
 			$group_keys = $category['groups'];
 			$text       = $this->telegram->html_to_plain_text( $body_html );
-			$image_urls = calypso_extract_image_urls( $body_html );
 			$results['telegram'] = [];
 
 			if ( empty( $group_keys ) ) {

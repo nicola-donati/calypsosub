@@ -32,6 +32,7 @@ class Calypsosub_CPT_Communications {
 
 		add_filter( 'wp_insert_post_data',                    [ $this, 'lock_dispatched_content' ], 10, 2 );
 		add_action( 'edit_form_after_title',                  [ $this, 'render_top_notices' ] );
+		add_action( 'admin_enqueue_scripts',                  [ $this, 'enqueue_image_picker_script' ] );
 		add_action( 'admin_enqueue_scripts',                  [ $this, 'enqueue_telegram_counter_script' ] );
 		add_action( 'admin_print_footer_scripts-post.php',    [ $this, 'print_lock_script' ] );
 		add_action( 'admin_post_calypso_cancel_communication', [ $this, 'handle_cancel' ] );
@@ -94,7 +95,15 @@ class Calypsosub_CPT_Communications {
 		$active_cat     = $categories[ $active_cat_key ] ?? null;
 		$locked         = $this->is_locked( $post->ID );
 		$dis            = $locked ? 'disabled' : '';
+		$image_ids      = (array) get_post_meta( $post->ID, '_com_image_ids', true );
 		?>
+		<p>
+			<strong><?php _e( 'Immagini', 'calypsosub' ); ?></strong><br>
+			<div id="cso-com-images-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0"></div>
+			<button type="button" class="button" id="cso-com-images-pick" <?php echo $dis; ?>><?php _e( 'Scegli immagini', 'calypsosub' ); ?></button>
+			<input type="hidden" name="cso_com_image_ids" id="cso_com_image_ids" value="<?php echo esc_attr( implode( ',', $image_ids ) ); ?>">
+			<p class="description"><?php _e( 'Solo anteprima qui, non vanno inserite nel testo: all\'invio viene sempre usata la versione originale a piena risoluzione, indipendentemente dalla dimensione scelta nel picker.', 'calypsosub' ); ?></p>
+		</p>
 		<p>
 			<strong><?php _e( 'Categoria', 'calypsosub' ); ?></strong><br>
 			<?php if ( $active_cat ) : ?>
@@ -257,14 +266,14 @@ class Calypsosub_CPT_Communications {
 		) );
 		update_post_meta( $post_id, '_com_channels', $channels );
 
-		// Raggruppa nella libreria media le immagini appena inserite nel
-		// corpo sotto un termine dedicato a questa comunicazione — con
-		// save_post il post_content è già scritto su DB, quindi $post qui
-		// (passato dall'hook) è già quello aggiornato.
-		$image_ids = array_filter( array_map(
-			'attachment_url_to_postid',
-			calypso_extract_image_urls( (string) $post->post_content )
-		) );
+		// Immagini scelte col picker dedicato (non inserite nel corpo — vedi
+		// render_meta_box()): si salvano solo gli ID, mai URL/dimensioni, così
+		// l'invio può sempre risolvere la versione a piena risoluzione.
+		$image_ids = array_values( array_filter( array_map( 'absint', explode( ',', (string) ( $_POST['cso_com_image_ids'] ?? '' ) ) ) ) );
+		update_post_meta( $post_id, '_com_image_ids', $image_ids );
+
+		// Raggruppa nella libreria media le immagini sotto un termine
+		// dedicato a questa comunicazione.
 		Calypsosub_Tax_Communication_Media::tag_attachments_for_post( $post_id, $image_ids );
 
 		// Scheduling the dispatch is triggered HERE, right after persisting
@@ -359,6 +368,34 @@ class Calypsosub_CPT_Communications {
 		// corpo, nessun flash di contenuto sbagliato prima che lo script
 		// esegua.
 		echo '<div id="cso-com-telegram-counter" style="display:none;margin:15px 0 0;padding:10px 14px;border-left:4px solid;border-radius:4px;font-size:13px"></div>';
+	}
+
+	public function enqueue_image_picker_script(): void {
+		$screen = get_current_screen();
+		if ( ! $screen || $screen->post_type !== self::POST_TYPE || $screen->base !== 'post' ) return;
+
+		$post_id        = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
+		$initial_images = [];
+		foreach ( (array) get_post_meta( $post_id, '_com_image_ids', true ) as $image_id ) {
+			$thumb = wp_get_attachment_image_url( (int) $image_id, 'thumbnail' );
+			if ( $thumb ) $initial_images[] = [ 'id' => (int) $image_id, 'thumb' => $thumb ];
+		}
+
+		wp_enqueue_media();
+		wp_enqueue_script(
+			'calypsosub-admin-com-images',
+			CALYPSOSUB_URL . 'assets/js/admin-communication-images.js',
+			[ 'jquery', 'media-editor' ],
+			CALYPSOSUB_VERSION,
+			true
+		);
+
+		wp_add_inline_script(
+			'calypsosub-admin-com-images',
+			'window.calypsoComPickTitle = ' . wp_json_encode( __( 'Scegli immagini', 'calypsosub' ) ) . ';'
+			. 'window.calypsoComInitialImages = ' . wp_json_encode( $initial_images ) . ';',
+			'before'
+		);
 	}
 
 	public function enqueue_telegram_counter_script(): void {
