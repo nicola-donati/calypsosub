@@ -17,10 +17,11 @@
 	}
 
 	function getBodyHtmlAndText() {
-		var textarea = document.getElementById( 'content' );
-		var visualHidden = textarea && textarea.offsetParent === null;
-
-		if ( window.tinymce && visualHidden !== true ) {
+		// editor.isHidden() è la fonte di verità su quale dei due è
+		// davvero attivo (true quando switchEditors ha nascosto TinyMCE
+		// per mostrare il tab "Testo") — più robusto di un controllo di
+		// visibilità separato sul textarea, che può disallinearsi.
+		if ( window.tinymce ) {
 			var editor = tinymce.get( 'content' );
 			if ( editor && ! editor.isHidden() ) {
 				return {
@@ -30,6 +31,7 @@
 			}
 		}
 
+		var textarea = document.getElementById( 'content' );
 		var html = textarea ? textarea.value : '';
 		return { html: html, text: stripTags( html ) };
 	}
