@@ -15,6 +15,42 @@ class Calypsosub_Tax_Communication_Media {
 
 	public function init(): void {
 		add_action( 'init', [ $this, 'register' ] );
+		// register_taxonomy(..., 'show_admin_column' => true) adds a column
+		// to the Media list table, but — unlike post categories/tags — WP
+		// core does NOT add a filter dropdown for custom attachment
+		// taxonomies on its own; restrict_manage_posts/pre_get_posts here
+		// do that explicitly. Only the list view of Media (the grid/modal
+		// view has no UI for arbitrary taxonomy filters at all) shows it.
+		add_filter( 'restrict_manage_posts', [ $this, 'render_filter_dropdown' ], 10, 2 );
+		add_action( 'pre_get_posts',         [ $this, 'apply_filter_to_query' ] );
+	}
+
+	public function render_filter_dropdown( string $post_type, string $which ): void {
+		if ( $post_type !== 'attachment' ) return;
+
+		wp_dropdown_categories( [
+			'taxonomy'        => self::TAXONOMY,
+			'name'            => self::TAXONOMY,
+			'show_option_all' => get_taxonomy( self::TAXONOMY )->labels->all_items,
+			'hide_empty'      => true,
+			'hierarchical'    => false,
+			'selected'        => isset( $_GET[ self::TAXONOMY ] ) ? sanitize_title( wp_unslash( $_GET[ self::TAXONOMY ] ) ) : '',
+			'value_field'     => 'slug',
+			'orderby'         => 'name',
+		] );
+	}
+
+	public function apply_filter_to_query( WP_Query $query ): void {
+		if ( ! is_admin() || ! $query->is_main_query() ) return;
+		if ( $query->get( 'post_type' ) !== 'attachment' ) return;
+		$selected = isset( $_GET[ self::TAXONOMY ] ) ? sanitize_title( wp_unslash( $_GET[ self::TAXONOMY ] ) ) : '';
+		if ( $selected === '' ) return;
+
+		$query->set( 'tax_query', [ [
+			'taxonomy' => self::TAXONOMY,
+			'field'    => 'slug',
+			'terms'    => $selected,
+		] ] );
 	}
 
 	public function register(): void {
