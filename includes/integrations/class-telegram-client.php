@@ -351,6 +351,14 @@ class Calypsosub_Telegram_Client {
 	 * </p> consecutivi producono comunque \n\n).
 	 */
 	public function html_to_plain_text( string $html ): string {
+		// Whitespace puro tra due tag (es. il \n che il salvataggio
+		// dell'editor lascia tra </p> e il <p> successivo, leggibilità del
+		// codice HTML salvato) non è dentro nessun tag — nessuna delle
+		// sostituzioni sotto lo tocca, e si somma al \n già inserito per
+		// </p>, raddoppiando ogni ritorno a capo anche dopo aver reso quella
+		// sostituzione singola (bug persistito, osservato ancora 2026-10-15
+		// — va eliminato PRIMA, qui, non dopo).
+		$html = preg_replace( '/>\s+</', '><', $html );
 		$text = preg_replace( '/<\s*br\s*\/?\s*>/i', "\n", $html );
 		$text = preg_replace( '/<\s*\/p\s*>/i', "\n", (string) $text );
 		$text = wp_strip_all_tags( (string) $text );
