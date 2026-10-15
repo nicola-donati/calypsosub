@@ -114,7 +114,7 @@ class Calypsosub_Communication_Dispatcher {
 			$groups     = Calypsosub_Communications_Settings::get_telegram_groups();
 			$group_keys = $category['groups'];
 			$text       = $this->telegram->html_to_plain_text( $body_html );
-			$image_urls = $this->telegram->extract_image_urls( $body_html );
+			$image_urls = calypso_extract_image_urls( $body_html );
 			$results['telegram'] = [];
 
 			if ( empty( $group_keys ) ) {

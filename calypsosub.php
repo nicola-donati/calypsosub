@@ -23,6 +23,7 @@ require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-brevetti.php';
 require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-livelli.php';
 require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-fauna.php';
 require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-media-tag.php';
+require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-communication-media.php';
 require_once CALYPSOSUB_PATH . 'includes/media/class-media-overlay-field.php';
 require_once CALYPSOSUB_PATH . 'includes/blocks/class-gallery-helpers.php';
 require_once CALYPSOSUB_PATH . 'includes/blocks/class-storia-helpers.php';
@@ -76,6 +77,7 @@ add_filter( 'use_block_editor_for_post_type', function ( bool $use, string $post
 ( new Calypsosub_Tax_Livelli() )->init();
 ( new Calypsosub_Tax_Fauna() )->init();
 ( new Calypsosub_Tax_Media_Tag() )->init();
+( new Calypsosub_Tax_Communication_Media() )->init();
 ( new Calypsosub_Media_Overlay_Field() )->init();
 ( new Calypsosub_Article_Timeline_Fields() )->init();
 ( new Calypsosub_CF7_Booking_Category() )->init();

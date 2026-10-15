@@ -256,6 +256,16 @@ class Calypsosub_CPT_Communications {
 		) );
 		update_post_meta( $post_id, '_com_channels', $channels );
 
+		// Raggruppa nella libreria media le immagini appena inserite nel
+		// corpo sotto un termine dedicato a questa comunicazione — con
+		// save_post il post_content è già scritto su DB, quindi $post qui
+		// (passato dall'hook) è già quello aggiornato.
+		$image_ids = array_filter( array_map(
+			'attachment_url_to_postid',
+			calypso_extract_image_urls( (string) $post->post_content )
+		) );
+		Calypsosub_Tax_Communication_Media::tag_attachments_for_post( $post_id, $image_ids );
+
 		// Scheduling the dispatch is triggered HERE, right after persisting
 		// the fields it reads, instead of from a separate publish_{post_type}
 		// (or even a lower-priority save_post_{post_type}) hook. WordPress

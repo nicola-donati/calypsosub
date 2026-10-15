@@ -155,33 +155,6 @@ class Calypsosub_Telegram_Client {
 	}
 
 	/**
-	 * URL delle immagini embeddate in un corpo HTML, in ordine di
-	 * apparizione e senza duplicati — usate da send_communication() per
-	 * sendPhoto/sendMediaGroup. Il classic editor di WP inserisce sempre URL
-	 * assoluti, ma un eventuale src relativo viene comunque normalizzato
-	 * rispetto a home_url(): Telegram deve scaricarlo lui stesso da
-	 * internet, non da un path locale.
-	 *
-	 * @return string[]
-	 */
-	public function extract_image_urls( string $html ): array {
-		if ( ! preg_match_all( '/<img[^>]+src=["\']([^"\']+)["\']/i', $html, $matches ) ) {
-			return [];
-		}
-
-		$urls = [];
-		foreach ( $matches[1] as $src ) {
-			$src = html_entity_decode( $src, ENT_QUOTES, 'UTF-8' );
-			if ( $src === '' ) continue;
-			if ( ! preg_match( '#^https?://#i', $src ) ) {
-				$src = home_url( $src );
-			}
-			$urls[ $src ] = $src;
-		}
-		return array_values( $urls );
-	}
-
-	/**
 	 * POST generico verso un metodo della Telegram Bot API, con lo stesso
 	 * schema di gestione errori/debug già usato da send_message() — estratto
 	 * qui perché sendPhoto e sendMediaGroup lo ripetevano identico.

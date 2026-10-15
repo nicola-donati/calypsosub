@@ -2,6 +2,33 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
+ * URL delle immagini embeddate in un corpo HTML, in ordine di apparizione e
+ * senza duplicati. Il classic editor di WP inserisce sempre URL assoluti, ma
+ * un eventuale src relativo viene comunque normalizzato rispetto a
+ * home_url() — usata sia per inviare le immagini delle comunicazioni su
+ * Telegram (deve scaricarle lui stesso da internet) sia per taggarle nella
+ * libreria media.
+ *
+ * @return string[]
+ */
+function calypso_extract_image_urls( string $html ): array {
+	if ( ! preg_match_all( '/<img[^>]+src=["\']([^"\']+)["\']/i', $html, $matches ) ) {
+		return [];
+	}
+
+	$urls = [];
+	foreach ( $matches[1] as $src ) {
+		$src = html_entity_decode( $src, ENT_QUOTES, 'UTF-8' );
+		if ( $src === '' ) continue;
+		if ( ! preg_match( '#^https?://#i', $src ) ) {
+			$src = home_url( $src );
+		}
+		$urls[ $src ] = $src;
+	}
+	return array_values( $urls );
+}
+
+/**
  * Legge un'opzione di impostazioni del plugin.
  * Se vuota restituisce il default.
  *
