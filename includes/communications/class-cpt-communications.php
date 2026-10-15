@@ -32,6 +32,7 @@ class Calypsosub_CPT_Communications {
 
 		add_filter( 'wp_insert_post_data',                    [ $this, 'lock_dispatched_content' ], 10, 2 );
 		add_action( 'edit_form_after_title',                  [ $this, 'render_top_notices' ] );
+		add_action( 'admin_enqueue_scripts',                  [ $this, 'enqueue_telegram_counter_script' ] );
 		add_action( 'admin_print_footer_scripts-post.php',    [ $this, 'print_lock_script' ] );
 		add_action( 'admin_post_calypso_cancel_communication', [ $this, 'handle_cancel' ] );
 		add_action( 'admin_post_calypso_retry_communication',  [ $this, 'handle_retry' ] );
@@ -93,17 +94,6 @@ class Calypsosub_CPT_Communications {
 		$active_cat     = $categories[ $active_cat_key ] ?? null;
 		$locked         = $this->is_locked( $post->ID );
 		$dis            = $locked ? 'disabled' : '';
-
-		// Calcolato sullo stato salvato (titolo/contenuto), non mentre si
-		// digita — si aggiorna al prossimo salvataggio/ricarica della
-		// pagina, come gli altri avvisi statici di questo meta box.
-		$image_urls          = calypso_extract_image_urls( (string) $post->post_content );
-		$caption_too_long    = false;
-		if ( in_array( 'telegram', $channels_sel, true ) && ! empty( $image_urls ) ) {
-			$body_text        = ( new Calypsosub_Telegram_Client() )->html_to_plain_text( wpautop( (string) $post->post_content ) );
-			$combined         = trim( $post->post_title . "\n\n" . $body_text );
-			$caption_too_long = Calypsosub_Telegram_Client::utf16_length( $combined ) > Calypsosub_Telegram_Client::CAPTION_MAX_LENGTH;
-		}
 		?>
 		<p>
 			<strong><?php _e( 'Categoria', 'calypsosub' ); ?></strong><br>
@@ -141,11 +131,6 @@ class Calypsosub_CPT_Communications {
 				<?php _e( 'Telegram', 'calypsosub' ); ?>
 			</label>
 		</p>
-		<?php if ( $caption_too_long ) : ?>
-		<p class="description" style="color:#b32d2e">
-			<?php _e( 'Oggetto + descrizione superano il limite di una didascalia Telegram (1024 caratteri): verranno inviati due messaggi separati (foto con solo l\'oggetto, poi il testo completo).', 'calypsosub' ); ?>
-		</p>
-		<?php endif; ?>
 		<p class="description">
 			<?php if ( $locked ) : ?>
 				<?php _e( 'Comunicazione già inviata (o invio tentato) — non più modificabile.', 'calypsosub' ); ?>
@@ -367,6 +352,36 @@ class Calypsosub_CPT_Communications {
 				' <a href="' . esc_url( $cancel_url ) . '" class="button">' . esc_html__( 'Annulla programmazione', 'calypsosub' ) . '</a>' .
 				'</p></div>';
 		}
+
+		// Riempito e mostrato/nascosto via JS (vedi
+		// enqueue_telegram_counter_script()) — resta vuoto e display:none
+		// finché non c'è un canale Telegram selezionato con un'immagine nel
+		// corpo, nessun flash di contenuto sbagliato prima che lo script
+		// esegua.
+		echo '<div id="cso-com-telegram-counter" style="display:none;margin:15px 0 0;padding:10px 14px;border-left:4px solid;border-radius:4px;font-size:13px"></div>';
+	}
+
+	public function enqueue_telegram_counter_script(): void {
+		$screen = get_current_screen();
+		if ( ! $screen || $screen->post_type !== self::POST_TYPE || $screen->base !== 'post' ) return;
+
+		wp_enqueue_script(
+			'calypsosub-admin-com-telegram-counter',
+			CALYPSOSUB_URL . 'assets/js/admin-communication-telegram-counter.js',
+			[],
+			CALYPSOSUB_VERSION,
+			true
+		);
+
+		wp_add_inline_script(
+			'calypsosub-admin-com-telegram-counter',
+			'window.calypsoComTelegramCaptionMax = ' . (int) Calypsosub_Telegram_Client::CAPTION_MAX_LENGTH . ';'
+			. 'window.calypsoComTelegramCounterLabel = ' . wp_json_encode( __( 'Telegram', 'calypsosub' ) ) . ';'
+			. 'window.calypsoComTelegramCharsLabel = ' . wp_json_encode( __( 'caratteri', 'calypsosub' ) ) . ';'
+			. 'window.calypsoComTelegramFitsLabel = ' . wp_json_encode( __( 'entra in un unico messaggio (foto + testo).', 'calypsosub' ) ) . ';'
+			. 'window.calypsoComTelegramTooLongLabel = ' . wp_json_encode( __( 'verranno inviati due messaggi separati (foto con solo l’oggetto, poi il testo completo).', 'calypsosub' ) ) . ';',
+			'before'
+		);
 	}
 
 	/**
