@@ -23,6 +23,51 @@ class Calypsosub_Tax_Communication_Media {
 		// view has no UI for arbitrary taxonomy filters at all) shows it.
 		add_filter( 'restrict_manage_posts', [ $this, 'render_filter_dropdown' ], 10, 2 );
 		add_action( 'pre_get_posts',         [ $this, 'apply_filter_to_query' ] );
+
+		// Stessa cosa ma per la vista a griglia: lì il filtro va nel
+		// Backbone JS del media grid (enqueue_grid_filter_script()), e il
+		// valore scelto arriva via la query AJAX di quella griglia, non da
+		// $_GET — va applicato con ajax_query_attachments_args, non con
+		// pre_get_posts (che per la griglia non intercetta nulla di utile).
+		add_action( 'wp_enqueue_media',             [ $this, 'enqueue_grid_filter_script' ] );
+		add_filter( 'ajax_query_attachments_args',  [ $this, 'apply_filter_to_grid_query' ] );
+	}
+
+	public function enqueue_grid_filter_script(): void {
+		$terms = get_terms( [ 'taxonomy' => self::TAXONOMY, 'hide_empty' => true ] );
+		if ( is_wp_error( $terms ) || empty( $terms ) ) return;
+
+		wp_enqueue_script(
+			'calypsosub-admin-com-media-filter',
+			CALYPSOSUB_URL . 'assets/js/admin-com-media-filter.js',
+			[ 'media-views' ],
+			CALYPSOSUB_VERSION,
+			true
+		);
+
+		wp_add_inline_script(
+			'calypsosub-admin-com-media-filter',
+			'window.calypsoComMediaTerms = ' . wp_json_encode( array_map(
+				static fn( WP_Term $t ) => [ 'slug' => $t->slug, 'name' => $t->name ],
+				$terms
+			) ) . ';window.calypsoComMediaAllLabel = ' . wp_json_encode( __( 'Tutte le comunicazioni', 'calypsosub' ) ) . ';',
+			'before'
+		);
+	}
+
+	/** @param array<string,mixed> $query */
+	public function apply_filter_to_grid_query( array $query ): array {
+		$selected = isset( $_REQUEST['query']['calypso_com_media'] )
+			? sanitize_title( wp_unslash( $_REQUEST['query']['calypso_com_media'] ) )
+			: '';
+		if ( $selected === '' ) return $query;
+
+		$query['tax_query'] = [ [
+			'taxonomy' => self::TAXONOMY,
+			'field'    => 'slug',
+			'terms'    => $selected,
+		] ];
+		return $query;
 	}
 
 	public function render_filter_dropdown( string $post_type, string $which ): void {
