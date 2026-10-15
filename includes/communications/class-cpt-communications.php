@@ -34,6 +34,8 @@ class Calypsosub_CPT_Communications {
 		add_action( 'edit_form_after_title',                  [ $this, 'render_top_notices' ] );
 		add_action( 'admin_enqueue_scripts',                  [ $this, 'enqueue_image_picker_script' ] );
 		add_action( 'admin_enqueue_scripts',                  [ $this, 'enqueue_telegram_counter_script' ] );
+		add_action( 'admin_head-post.php',                    [ $this, 'remove_editor_media_button' ] );
+		add_action( 'admin_head-post-new.php',                [ $this, 'remove_editor_media_button' ] );
 		add_action( 'admin_print_footer_scripts-post.php',    [ $this, 'print_lock_script' ] );
 		add_action( 'admin_post_calypso_cancel_communication', [ $this, 'handle_cancel' ] );
 		add_action( 'admin_post_calypso_retry_communication',  [ $this, 'handle_retry' ] );
@@ -368,6 +370,19 @@ class Calypsosub_CPT_Communications {
 		// corpo, nessun flash di contenuto sbagliato prima che lo script
 		// esegua.
 		echo '<div id="cso-com-telegram-counter" style="display:none;margin:15px 0 0;padding:10px 14px;border-left:4px solid;border-radius:4px;font-size:13px"></div>';
+	}
+
+	/**
+	 * Il bottone "Aggiungi media" sopra l'editor classico resta lì di
+	 * default anche con il picker dedicato — toglie la stessa scorciatoia
+	 * per inserire immagini nel corpo che il picker è nato per evitare
+	 * (bug osservato 2026-10-15: l'operatore lo usava ancora).
+	 */
+	public function remove_editor_media_button(): void {
+		$screen = get_current_screen();
+		if ( $screen && $screen->post_type === self::POST_TYPE ) {
+			remove_action( 'media_buttons', 'media_buttons' );
+		}
 	}
 
 	public function enqueue_image_picker_script(): void {
