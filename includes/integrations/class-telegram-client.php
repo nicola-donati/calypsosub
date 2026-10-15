@@ -8,6 +8,42 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  */
 class Calypsosub_Telegram_Client {
 
+	/** Limite Telegram per le didascalie foto/album, in unità UTF-16. */
+	public const CAPTION_MAX_LENGTH = 1024;
+
+	/**
+	 * Lunghezza di una stringa in unità UTF-16 — quella che Telegram usa
+	 * davvero per i suoi limiti (stesso criterio di JS string.length), non
+	 * i codepoint Unicode: un'emoji fuori dal BMP (la maggioranza di quelle
+	 * usate nei messaggi, es. 🌊🐟🤿) occupa 2 unità UTF-16 anche se è un
+	 * solo "carattere" per mb_strlen().
+	 */
+	public static function utf16_length( string $text ): int {
+		return (int) ( strlen( mb_convert_encoding( $text, 'UTF-16LE', 'UTF-8' ) ) / 2 );
+	}
+
+	/**
+	 * Come utf16_length(), ma troncando a $max_units unità UTF-16 invece di
+	 * limitarsi a misurare — usata per le didascalie, che Telegram
+	 * rifiuterebbe del tutto se troppo lunghe anche di una sola unità.
+	 * Non tronca mai a metà di una coppia surrogata (l'emoji risulterebbe
+	 * corrotta/illeggibile anziché solo più corta).
+	 */
+	public static function utf16_truncate( string $text, int $max_units ): string {
+		$utf16     = mb_convert_encoding( $text, 'UTF-16LE', 'UTF-8' );
+		$truncated = substr( $utf16, 0, $max_units * 2 );
+
+		$len = strlen( $truncated );
+		if ( $len >= 2 ) {
+			$last_unit = unpack( 'v', substr( $truncated, $len - 2, 2 ) )[1];
+			if ( $last_unit >= 0xD800 && $last_unit <= 0xDBFF ) {
+				$truncated = substr( $truncated, 0, $len - 2 );
+			}
+		}
+
+		return mb_convert_encoding( $truncated, 'UTF-8', 'UTF-16LE' );
+	}
+
 	/**
 	 * Manda $text (plain text) a un singolo chat_id.
 	 *
@@ -89,7 +125,7 @@ class Calypsosub_Telegram_Client {
 		$payload = [ 'chat_id' => $chat_id, 'photo' => $photo_url ];
 		$caption = trim( $caption );
 		if ( $caption !== '' ) {
-			$payload['caption'] = mb_substr( $caption, 0, 1024 );
+			$payload['caption'] = self::utf16_truncate( $caption, self::CAPTION_MAX_LENGTH );
 		}
 
 		return $this->post_telegram_api( $token, 'sendPhoto', $payload, 20 );
@@ -119,7 +155,7 @@ class Calypsosub_Telegram_Client {
 		foreach ( $photo_urls as $i => $url ) {
 			$item = [ 'type' => 'photo', 'media' => $url ];
 			if ( 0 === $i && $caption !== '' ) {
-				$item['caption'] = mb_substr( $caption, 0, 1024 );
+				$item['caption'] = self::utf16_truncate( $caption, self::CAPTION_MAX_LENGTH );
 			}
 			$media[] = $item;
 		}
@@ -128,18 +164,26 @@ class Calypsosub_Telegram_Client {
 	}
 
 	/**
-	 * Manda una comunicazione completa a un chat: con immagini, prima
-	 * foto/album (didascalia = solo l'oggetto — il corpo intero quasi
-	 * sempre supera il limite di 1024 caratteri delle didascalie Telegram),
-	 * poi il testo completo come messaggio separato. Senza immagini resta
-	 * un unico messaggio oggetto+testo, come prima di questo metodo esistere.
+	 * Manda una comunicazione completa a un chat. Con immagini: se oggetto+
+	 * testo ci stanno in una didascalia (<= CAPTION_MAX_LENGTH unità UTF-16),
+	 * un unico messaggio foto+didascalia; altrimenti due messaggi separati —
+	 * foto con didascalia solo l'oggetto, poi il testo completo. Senza
+	 * immagini resta sempre un unico messaggio oggetto+testo.
 	 *
 	 * @param string[] $image_urls
 	 * @return true|WP_Error
 	 */
 	public function send_communication( string $chat_id, string $subject, string $text, array $image_urls = [] ) {
+		$combined = trim( $subject . "\n\n" . $text );
+
 		if ( empty( $image_urls ) ) {
-			return $this->send_message( $chat_id, trim( $subject . "\n\n" . $text ) );
+			return $this->send_message( $chat_id, $combined );
+		}
+
+		if ( self::utf16_length( $combined ) <= self::CAPTION_MAX_LENGTH ) {
+			return count( $image_urls ) === 1
+				? $this->send_photo( $chat_id, $image_urls[0], $combined )
+				: $this->send_media_group( $chat_id, $image_urls, $combined );
 		}
 
 		$photo_result = count( $image_urls ) === 1

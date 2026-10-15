@@ -93,6 +93,17 @@ class Calypsosub_CPT_Communications {
 		$active_cat     = $categories[ $active_cat_key ] ?? null;
 		$locked         = $this->is_locked( $post->ID );
 		$dis            = $locked ? 'disabled' : '';
+
+		// Calcolato sullo stato salvato (titolo/contenuto), non mentre si
+		// digita — si aggiorna al prossimo salvataggio/ricarica della
+		// pagina, come gli altri avvisi statici di questo meta box.
+		$image_urls          = calypso_extract_image_urls( (string) $post->post_content );
+		$caption_too_long    = false;
+		if ( in_array( 'telegram', $channels_sel, true ) && ! empty( $image_urls ) ) {
+			$body_text        = ( new Calypsosub_Telegram_Client() )->html_to_plain_text( wpautop( (string) $post->post_content ) );
+			$combined         = trim( $post->post_title . "\n\n" . $body_text );
+			$caption_too_long = Calypsosub_Telegram_Client::utf16_length( $combined ) > Calypsosub_Telegram_Client::CAPTION_MAX_LENGTH;
+		}
 		?>
 		<p>
 			<strong><?php _e( 'Categoria', 'calypsosub' ); ?></strong><br>
@@ -130,6 +141,11 @@ class Calypsosub_CPT_Communications {
 				<?php _e( 'Telegram', 'calypsosub' ); ?>
 			</label>
 		</p>
+		<?php if ( $caption_too_long ) : ?>
+		<p class="description" style="color:#b32d2e">
+			<?php _e( 'Oggetto + descrizione superano il limite di una didascalia Telegram (1024 caratteri): verranno inviati due messaggi separati (foto con solo l\'oggetto, poi il testo completo).', 'calypsosub' ); ?>
+		</p>
+		<?php endif; ?>
 		<p class="description">
 			<?php if ( $locked ) : ?>
 				<?php _e( 'Comunicazione già inviata (o invio tentato) — non più modificabile.', 'calypsosub' ); ?>
