@@ -373,6 +373,14 @@ class Calypsosub_CPT_Communications {
 	 * Disabilita titolo ed editor via JS quando bloccata — la vera difesa è
 	 * server-side (save_meta()/lock_dispatched_content()), questo è solo per
 	 * non mostrare campi modificabili che poi non salverebbero comunque.
+	 *
+	 * tinymce.get('content') chiamato una volta sola, nel momento in cui
+	 * questo script esegue, può restare null se TinyMCE non ha ancora
+	 * finito di inizializzare l'editor (l'init è asincrono) — in quel caso
+	 * il blocco semplicemente non scattava mai, lasciando l'editor visuale
+	 * modificabile (bug osservato 2026-10-15). Si gestiscono entrambi gli
+	 * ordini possibili: editor già pronto → blocca subito; non ancora →
+	 * resta in ascolto di AddEditor/init e blocca quando arriva.
 	 */
 	public function print_lock_script(): void {
 		$screen = get_current_screen();
@@ -385,10 +393,28 @@ class Calypsosub_CPT_Communications {
 		(function () {
 			var t = document.getElementById('title'); if (t) t.readOnly = true;
 			var c = document.getElementById('content'); if (c) c.readOnly = true;
-			if (window.tinymce) {
-				var ed = tinymce.get('content');
-				if (ed) ed.getBody().setAttribute('contenteditable', 'false');
+
+			function lockEditor(editor) {
+				if (typeof editor.setMode === 'function') {
+					editor.setMode('readonly');
+				} else {
+					var body = editor.getBody();
+					if (body) body.setAttribute('contenteditable', 'false');
+				}
 			}
+
+			if (window.tinymce) {
+				var existing = tinymce.get('content');
+				if (existing) {
+					lockEditor(existing);
+				} else {
+					tinymce.on('AddEditor', function (e) {
+						if (e.editor.id !== 'content') return;
+						e.editor.on('init', function () { lockEditor(e.editor); });
+					});
+				}
+			}
+
 			var pub = document.getElementById('publishing-action');
 			if (pub) pub.style.display = 'none';
 		})();
