@@ -280,11 +280,17 @@ class Calypsosub_Seo_Enhancements {
 
 	/** Testo semplice per il JSON-LD: niente entità HTML (es. "&#232;" → "è"). */
 	private function plain( string $text ): string {
-		return html_entity_decode( $text, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+		// Alcuni testi importati sono codificati due volte ("&amp;#232;"): si decodifica finché il testo non cambia più.
+		for ( $i = 0; $i < 3; $i++ ) {
+			$decoded = html_entity_decode( $text, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+			if ( $decoded === $text ) break;
+			$text = $decoded;
+		}
+		return $text;
 	}
 
 	private function excerpt_text( string $text, int $len ): string {
-		$text = html_entity_decode( wp_strip_all_tags( $text ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+		$text = $this->plain( wp_strip_all_tags( $text ) );
 		$text = trim( preg_replace( '/\s+/u', ' ', $text ) );
 		if ( $text === '' || mb_strlen( $text ) <= $len ) return $text;
 		return mb_substr( $text, 0, $len - 1 ) . '…';
