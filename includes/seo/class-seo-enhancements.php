@@ -55,7 +55,7 @@ class Calypsosub_Seo_Enhancements {
 		echo '<script type="application/ld+json" class="calypsosub-schema">'
 			. wp_json_encode(
 				[ '@context' => 'https://schema.org', '@graph' => $graph ],
-				JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+				JSON_UNESCAPED_SLASHES
 			)
 			. '</script>' . "\n";
 	}
