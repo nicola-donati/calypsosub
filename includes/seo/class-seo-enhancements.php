@@ -18,6 +18,10 @@ class Calypsosub_Seo_Enhancements {
 	}
 
 	public function output_schema(): void {
+		if ( is_front_page() ) {
+			$this->print_graph( [ $this->organization() ] );
+			return;
+		}
 		if ( ! is_singular( [ 'calypso_uscita', 'calypso_evento', 'calypso_corso', 'calypso_docente' ] ) ) {
 			return;
 		}
@@ -42,6 +46,10 @@ class Calypsosub_Seo_Enhancements {
 				$graph = [];
 		}
 
+		$this->print_graph( $graph );
+	}
+
+	private function print_graph( array $graph ): void {
 		if ( empty( $graph ) ) return;
 
 		echo '<script type="application/ld+json" class="calypsosub-schema">'
@@ -69,16 +77,39 @@ class Calypsosub_Seo_Enhancements {
 		return $bio !== '' ? $this->excerpt_text( $bio, 155 ) : $metadesc;
 	}
 
-	private function organization(): array {
-		return [
-			'@type' => 'Organization',
-			'name'  => get_bloginfo( 'name' ),
-			'url'   => home_url( '/' ),
+	/**
+	 * Sede del club per i dati strutturati (NAP). Valori predefiniti presi dalla
+	 * scheda Google del club; sovrascrivibili con il filtro 'calypsosub_club_address'.
+	 */
+	private function club_address(): array {
+		$defaults = [
+			'streetAddress'   => 'Via Anconetana 129',
+			'postalCode'      => '52100',
+			'addressLocality' => 'Arezzo',
+			'addressRegion'   => 'AR',
+			'addressCountry'  => 'IT',
 		];
+		$address = (array) apply_filters( 'calypsosub_club_address', $defaults );
+		return array_filter( array_map( 'strval', $address ), static fn( string $v ): bool => $v !== '' );
+	}
+
+	private function organization(): array {
+		$org = [
+			'@type' => 'SportsClub',
+			'@id'   => home_url( '/#club' ),
+			'name'  => $this->plain( get_bloginfo( 'name' ) ),
+			'url'   => home_url( '/' ),
+			'email' => 'calypso@fias.it',
+		];
+		$address = $this->club_address();
+		if ( $address ) {
+			$org['address'] = [ '@type' => 'PostalAddress' ] + $address;
+		}
+		return $org;
 	}
 
 	private function build_events_uscita( int $id ): array {
-		$title  = get_the_title( $id );
+		$title  = $this->plain( get_the_title( $id ) );
 		$url    = get_permalink( $id );
 		$luogo  = (string) get_post_meta( $id, '_uscita_luogo', true );
 		$desc   = (string) get_post_meta( $id, '_uscita_desc_breve', true );
@@ -105,7 +136,7 @@ class Calypsosub_Seo_Enhancements {
 	}
 
 	private function build_events_evento( int $id ): array {
-		$title     = get_the_title( $id );
+		$title     = $this->plain( get_the_title( $id ) );
 		$url       = get_permalink( $id );
 		$luogo     = (string) get_post_meta( $id, '_evento_luogo', true );
 		$indirizzo = (string) get_post_meta( $id, '_evento_indirizzo', true );
@@ -146,7 +177,7 @@ class Calypsosub_Seo_Enhancements {
 	}
 
 	private function build_course( int $id ): array {
-		$title = get_the_title( $id );
+		$title = $this->plain( get_the_title( $id ) );
 		$url   = get_permalink( $id );
 		$desc  = (string) get_post_meta( $id, '_corso_desc_breve', true );
 		if ( $desc === '' ) {
@@ -165,7 +196,7 @@ class Calypsosub_Seo_Enhancements {
 			);
 			$instructors[] = [
 				'@type' => 'Person',
-				'name'  => $nome !== '' ? $nome : get_the_title( $did ),
+				'name'  => $nome !== '' ? $nome : $this->plain( get_the_title( $did ) ),
 				'url'   => get_permalink( $did ),
 			];
 		}
@@ -189,7 +220,7 @@ class Calypsosub_Seo_Enhancements {
 	private function build_person( int $id ): array {
 		$nome    = (string) get_post_meta( $id, '_docente_nome', true );
 		$cognome = (string) get_post_meta( $id, '_docente_cognome', true );
-		$full    = trim( "$nome $cognome" ) ?: get_the_title( $id );
+		$full    = trim( "$nome $cognome" ) ?: $this->plain( get_the_title( $id ) );
 		$ruolo   = (string) get_post_meta( $id, '_docente_ruolo', true );
 
 		$bio = (string) get_post_meta( $id, '_docente_bio_breve', true );
@@ -253,8 +284,14 @@ class Calypsosub_Seo_Enhancements {
 		}
 	}
 
+	/** Testo semplice per il JSON-LD: niente entità HTML (es. "&#232;" → "è"). */
+	private function plain( string $text ): string {
+		return html_entity_decode( $text, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+	}
+
 	private function excerpt_text( string $text, int $len ): string {
-		$text = trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( $text ) ) );
+		$text = html_entity_decode( wp_strip_all_tags( $text ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+		$text = trim( preg_replace( '/\s+/u', ' ', $text ) );
 		if ( $text === '' || mb_strlen( $text ) <= $len ) return $text;
 		return mb_substr( $text, 0, $len - 1 ) . '…';
 	}
