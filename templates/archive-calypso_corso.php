@@ -53,7 +53,21 @@ foreach ( $corsi as $corso ) {
 }
 $gruppi = array_filter( $gruppi, fn( $g ) => ! empty( $g['corsi'] ) );
 $mostra_titoli_gruppo = count( $gruppi ) > 1 || ! isset( $gruppi['altri'] );
-$eta_presenti = array_filter( array_map( fn( $c ) => get_post_meta( $c->ID, '_corso_eta_min', true ), $corsi ), fn( $v ) => $v !== '' );
+$eta_presenti = array_map( 'intval', array_filter( array_map( fn( $c ) => get_post_meta( $c->ID, '_corso_eta_min', true ), $corsi ), fn( $v ) => $v !== '' ) );
+/* Fasce di età per il filtro: valore URL, etichetta, età minima del corso da/a. Si mostrano solo le fasce con almeno un corso. */
+$fasce_eta = array_values( array_filter( [
+	[ '0-8',   __( 'Fino a 8 anni', 'calypsosub' ),    0,  8 ],
+	[ '9-11',  __( 'Da 9 a 11 anni', 'calypsosub' ),   9,  11 ],
+	[ '12-13', __( 'Da 12 a 13 anni', 'calypsosub' ),  12, 13 ],
+	[ '14-15', __( 'Da 14 a 15 anni', 'calypsosub' ),  14, 15 ],
+	[ '16-17', __( 'Da 16 a 17 anni', 'calypsosub' ),  16, 17 ],
+	[ '18-',   __( 'Da 18 anni in su', 'calypsosub' ), 18, 999 ],
+], function ( $f ) use ( $eta_presenti ) {
+	foreach ( $eta_presenti as $e ) {
+		if ( $e >= $f[2] && $e <= $f[3] ) return true;
+	}
+	return false;
+} ) );
 
 $prenotazioni_page_id = (int) get_option( 'calypsosub_prenotazioni_page_id', 0 );
 $prenotazioni_page_ok = $prenotazioni_page_id && get_post_status( $prenotazioni_page_id ) === 'publish';
@@ -103,10 +117,10 @@ html.admin-bar .cso-corsi-filters{top:var(--wp-admin--admin-bar--height,32px)}
 .cso-corsi-chip__count{font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;background:rgba(11,26,38,.07)}
 .cso-corsi-chip--active .cso-corsi-chip__count{background:rgba(255,255,255,.22)}
 .cso-corsi-controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-.cso-corsi-field{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:rgba(11,26,38,.65)}
-.cso-corsi-select,.cso-corsi-age,.cso-corsi-search{padding:9px 16px;border:1.5px solid rgba(11,26,38,.15);border-radius:999px;font-size:14px;color:var(--c-ink,#0b1a26);background:#fff;outline:none;font-family:inherit}
-.cso-corsi-select:focus,.cso-corsi-age:focus,.cso-corsi-search:focus{border-color:var(--c-deep,#3473A5)}
-.cso-corsi-age{width:90px}
+.cso-corsi-field{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:rgba(11,26,38,.65);white-space:nowrap;flex-shrink:0}
+.cso-corsi-select,.cso-corsi-search{padding:9px 16px;border:1.5px solid rgba(11,26,38,.15);border-radius:999px;font-size:14px;color:var(--c-ink,#0b1a26);background:#fff;outline:none;font-family:inherit}
+.cso-corsi-select:focus,.cso-corsi-search:focus{border-color:var(--c-deep,#3473A5)}
+.cso-corsi-select{cursor:pointer;padding-right:36px}
 .cso-corsi-search{min-width:220px;flex:1;max-width:340px}
 .cso-corsi-count{margin-left:auto;font-size:14px;font-weight:600;color:rgba(11,26,38,.6)}
 .cso-corsi-reset{font-size:14px;font-weight:600;color:var(--c-wave,#3473A5)!important;text-decoration:underline!important;background:none;border:none;cursor:pointer;font-family:inherit;padding:0}
@@ -166,6 +180,8 @@ html.admin-bar .cso-corsi-filters{top:var(--wp-admin--admin-bar--height,32px)}
 	.cso-corsi-chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
 	.cso-corsi-chip{flex:0 0 auto}
 	.cso-corsi-search{max-width:none;width:100%}
+	.cso-corsi-field{flex:1 1 calc(50% - 6px);min-width:0}
+	.cso-corsi-field .cso-corsi-select{width:100%;min-width:0;text-overflow:ellipsis}
 	.cso-corsi-count{margin-left:0}
 	.cso-corsi-group__title{font-size:26px}
 }
@@ -249,10 +265,15 @@ html.admin-bar .cso-corsi-filters{top:var(--wp-admin--admin-bar--height,32px)}
 			</label>
 			<?php endif; ?>
 
-			<?php if ( $eta_presenti ) : ?>
+			<?php if ( count( $fasce_eta ) > 1 ) : ?>
 			<label class="cso-corsi-field">
-				<?php esc_html_e( 'La tua età', 'calypsosub' ); ?>
-				<input type="number" class="cso-corsi-age" id="cso-corsi-eta" min="3" max="99" inputmode="numeric" placeholder="<?php esc_attr_e( 'anni', 'calypsosub' ); ?>">
+				<span class="screen-reader-text"><?php esc_html_e( 'Età di accesso', 'calypsosub' ); ?></span>
+				<select class="cso-corsi-select" id="cso-corsi-eta">
+					<option value=""><?php esc_html_e( 'Tutte le età', 'calypsosub' ); ?></option>
+					<?php foreach ( $fasce_eta as $f ) : ?>
+					<option value="<?php echo esc_attr( $f[0] ); ?>"><?php echo esc_html( $f[1] ); ?></option>
+					<?php endforeach; ?>
+				</select>
 			</label>
 			<?php endif; ?>
 
@@ -418,13 +439,15 @@ html.admin-bar .cso-corsi-filters{top:var(--wp-admin--admin-bar--height,32px)}
 
 	function apply() {
 		var q   = state.q.toLowerCase().trim();
-		var age = parseInt(state.eta, 10);
+		var range = state.eta ? state.eta.split('-') : null;
+		var ageMin = range ? parseInt(range[0], 10) : NaN;
+		var ageMax = range && range[1] !== '' ? parseInt(range[1], 10) : Infinity;
 		var tot = 0;
 		cards.forEach(function (card) {
 			var cardAge = parseInt(card.dataset.eta, 10);
 			var ok = (!state.categoria || card.dataset.categoria === state.categoria)
 				&& (!state.livello || (' ' + card.dataset.livello + ' ').indexOf(' ' + state.livello + ' ') !== -1)
-				&& (isNaN(age) || isNaN(cardAge) || cardAge <= age)
+				&& (!range || (!isNaN(cardAge) && cardAge >= ageMin && cardAge <= ageMax))
 				&& (!q || card.dataset.search.indexOf(q) !== -1);
 			card.hidden = !ok;
 			if (ok) tot++;
@@ -473,7 +496,7 @@ html.admin-bar .cso-corsi-filters{top:var(--wp-admin--admin-bar--height,32px)}
 		});
 	});
 	if (livello) livello.addEventListener('change', function () { state.livello = livello.value; apply(); });
-	if (eta) eta.addEventListener('input', function () { state.eta = eta.value; apply(); });
+	if (eta) eta.addEventListener('change', function () { state.eta = eta.value; apply(); });
 	if (search) {
 		var t;
 		search.addEventListener('input', function () {
@@ -491,7 +514,7 @@ html.admin-bar .cso-corsi-filters{top:var(--wp-admin--admin-bar--height,32px)}
 	state.livello = livello && params.get('livello') ? params.get('livello') : '';
 	if (livello) { livello.value = state.livello; state.livello = livello.value; }
 	state.eta = eta && params.get('eta') ? params.get('eta') : '';
-	if (eta) eta.value = state.eta;
+	if (eta) { eta.value = state.eta; state.eta = eta.value; }
 	state.q = search && params.get('q') ? params.get('q') : '';
 	if (search) search.value = state.q;
 	apply();
