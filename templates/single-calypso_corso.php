@@ -476,7 +476,7 @@ $_cd = [
 		<?php if ( $prenotazioni_page_id ) : ?>
 			<a href="<?php echo esc_url( add_query_arg( 'prenota_id', $id, get_permalink( $prenotazioni_page_id ) ) ); ?>"
 			   class="cso-btn-primary">
-				<?php echo esc_html( calypsosub_opt( 'corsi', 'btn_iscrivi', __( 'Iscriviti al corso →', 'calypsosub' ) ) ); ?>
+				<?php echo esc_html( calypsosub_opt( 'corsi', 'btn_iscrivi', __( 'Richiedi iscrizione →', 'calypsosub' ) ) ); ?>
 			</a>
 		<?php endif; ?>
 		<?php if ( $contatto ) :

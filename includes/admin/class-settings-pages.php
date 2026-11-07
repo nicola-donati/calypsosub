@@ -255,7 +255,7 @@ class Calypsosub_Settings_Pages {
 						'stat_profondita' => [ 'label' => 'Etichetta Profondità',        'default' => 'Profondità' ],
 						'stat_periodo'    => [ 'label' => 'Etichetta Periodo',           'default' => 'Periodo' ],
 						'inizi_label'     => [ 'label' => 'Etichetta Prossime lezioni',  'default' => 'Prossime lezioni' ],
-						'btn_iscrivi'     => [ 'label' => 'Bottone Iscriviti',           'default' => 'Iscriviti al corso →' ],
+						'btn_iscrivi'     => [ 'label' => 'Bottone Iscriviti',           'default' => 'Richiedi iscrizione →' ],
 					],
 					'Corsi correlati' => [
 						'related_eyebrow' => [ 'label' => 'Eyebrow',              'default' => 'Continua a scendere' ],

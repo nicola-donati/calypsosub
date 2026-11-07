@@ -146,7 +146,7 @@ $title_tag    = calypsosub_title_tag( (string) ( ( $attributes ?? [] )['title_ta
 				<?php if ( $link_iscrizione ) : ?>
 					<a href="<?php echo esc_url( $link_iscrizione ); ?>"
 					   class="calypso-btn-gold" target="_blank" rel="noopener">
-						<?php _e( 'Iscriviti →', 'calypsosub' ); ?>
+						<?php _e( 'Richiedi iscrizione →', 'calypsosub' ); ?>
 					</a>
 				<?php endif; ?>
 			</div>

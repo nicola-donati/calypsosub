@@ -364,7 +364,7 @@ html.admin-bar .cso-corsi-filters{top:var(--wp-admin--admin-bar--height,32px)}
 
 				<?php if ( $cta_url ) : ?>
 				<a href="<?php echo esc_url( $cta_url ); ?>" class="cso-btn-coral">
-					<?php esc_html_e( 'Pre-iscriviti al corso', 'calypsosub' ); ?>
+					<?php esc_html_e( 'Richiedi iscrizione', 'calypsosub' ); ?>
 					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
 				</a>
 				<?php elseif ( current_user_can( 'edit_posts' ) ) : ?>
