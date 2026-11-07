@@ -60,6 +60,8 @@ class Calypsosub_Course_Importer {
 			$this->handle_preview();
 		} elseif ( $step === 'import' ) {
 			$this->handle_import();
+		} elseif ( $step === 'images' ) {
+			$this->handle_images();
 		} else {
 			$this->render_upload_form();
 		}
@@ -114,7 +116,153 @@ class Calypsosub_Course_Importer {
 			</table>
 			<?php submit_button( __( 'Mostra anteprima', 'calypsosub' ) ); ?>
 		</form>
+
+		<hr>
+		<h2><?php esc_html_e( 'Immagini dei corsi', 'calypsosub' ); ?></h2>
+		<p class="calypso-import__intro">
+			<?php esc_html_e( 'Carica uno ZIP di immagini (.jpg, .png o .webp). Ogni file deve chiamarsi come lo slug del corso, per esempio corso-base.jpg: diventa l\'immagine in evidenza di quel corso.', 'calypsosub' ); ?>
+		</p>
+		<form method="post" enctype="multipart/form-data" class="calypso-import__form">
+			<?php wp_nonce_field( self::NONCE_ACTION ); ?>
+			<input type="hidden" name="calypso_import_step" value="images">
+			<table class="form-table" role="presentation">
+				<tr>
+					<th scope="row"><label for="calypso-import-images"><?php esc_html_e( 'File ZIP', 'calypsosub' ); ?></label></th>
+					<td><input type="file" id="calypso-import-images" name="calypso_import_images" accept=".zip" required></td>
+				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Corsi con un\'immagine', 'calypsosub' ); ?></th>
+					<td><label><input type="checkbox" name="calypso_images_overwrite" value="1">
+						<?php esc_html_e( 'Sostituisci l\'immagine in evidenza già presente', 'calypsosub' ); ?></label>
+						<p class="description"><?php esc_html_e( 'Se il caricamento si interrompe per i tempi del server, ricarica lo stesso ZIP: i corsi che hanno già l\'immagine vengono saltati.', 'calypsosub' ); ?></p></td>
+				</tr>
+			</table>
+			<?php submit_button( __( 'Carica immagini', 'calypsosub' ), 'secondary' ); ?>
+		</form>
 		<?php
+	}
+
+	/* ───────────── Immagini da ZIP ───────────── */
+
+	const IMAGE_EXTENSIONS   = [ 'jpg', 'jpeg', 'png', 'webp' ];
+	const MAX_ZIP_BYTES      = 40 * 1024 * 1024;
+	const MAX_IMAGE_BYTES    = 8 * 1024 * 1024;
+
+	private function handle_images(): void {
+		$file = $_FILES['calypso_import_images'] ?? null;
+		if ( ! $file || ! empty( $file['error'] ) || empty( $file['tmp_name'] ) || ! is_uploaded_file( $file['tmp_name'] ) ) {
+			$this->render_upload_form( __( 'Caricamento dello ZIP non riuscito: controlla che non superi il limite di upload del server.', 'calypsosub' ) );
+			return;
+		}
+		if ( strtolower( pathinfo( (string) $file['name'], PATHINFO_EXTENSION ) ) !== 'zip' || (int) $file['size'] > self::MAX_ZIP_BYTES ) {
+			$this->render_upload_form( __( 'Serve un file .zip di massimo 40 MB.', 'calypsosub' ) );
+			return;
+		}
+		if ( ! class_exists( 'ZipArchive' ) ) {
+			$this->render_upload_form( __( 'Il server non ha l\'estensione PHP zip.', 'calypsosub' ) );
+			return;
+		}
+		$zip = new ZipArchive();
+		if ( $zip->open( $file['tmp_name'] ) !== true ) {
+			$this->render_upload_form( __( 'Lo ZIP non è leggibile.', 'calypsosub' ) );
+			return;
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/media.php';
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+		if ( function_exists( 'set_time_limit' ) ) {
+			@set_time_limit( 300 ); // phpcs:ignore WordPress.PHP.NoSilencedErrors
+		}
+
+		$overwrite = ! empty( $_POST['calypso_images_overwrite'] );
+		$index     = $this->course_slug_index();
+		$results   = [];
+
+		for ( $i = 0; $i < $zip->numFiles; $i++ ) {
+			$stat = $zip->statIndex( $i );
+			$name = basename( (string) $stat['name'] );
+			if ( $name === '' || str_starts_with( $name, '.' ) || str_contains( (string) $stat['name'], '__MACOSX' ) || str_ends_with( (string) $stat['name'], '/' ) ) {
+				continue;
+			}
+			$ext = strtolower( pathinfo( $name, PATHINFO_EXTENSION ) );
+			if ( ! in_array( $ext, self::IMAGE_EXTENSIONS, true ) ) {
+				$results[] = [ $name, '', __( 'Saltato: non è un\'immagine', 'calypsosub' ) ];
+				continue;
+			}
+			if ( (int) $stat['size'] > self::MAX_IMAGE_BYTES ) {
+				$results[] = [ $name, '', __( 'Saltato: immagine troppo grande', 'calypsosub' ) ];
+				continue;
+			}
+			$slug    = sanitize_title( pathinfo( $name, PATHINFO_FILENAME ) );
+			$post_id = $index[ $slug ] ?? 0;
+			if ( ! $post_id ) {
+				$results[] = [ $name, '', __( 'Nessun corso con questo slug', 'calypsosub' ) ];
+				continue;
+			}
+			$title = get_the_title( $post_id );
+			if ( has_post_thumbnail( $post_id ) && ! $overwrite ) {
+				$results[] = [ $name, $post_id, __( 'Già con immagine: saltato', 'calypsosub' ) ];
+				continue;
+			}
+
+			$tmp = wp_tempnam( $name );
+			if ( ! $tmp || file_put_contents( $tmp, $zip->getFromIndex( $i ) ) === false ) {
+				$results[] = [ $name, $post_id, __( 'Errore: file temporaneo non scrivibile', 'calypsosub' ) ];
+				continue;
+			}
+			/* translators: %s: course title */
+			$label = sprintf( __( 'Brevetto %s', 'calypsosub' ), $title );
+			$att   = media_handle_sideload( [ 'name' => $slug . '.' . $ext, 'tmp_name' => $tmp ], $post_id, $label );
+			if ( is_wp_error( $att ) ) {
+				if ( file_exists( $tmp ) ) {
+					wp_delete_file( $tmp );
+				}
+				$results[] = [ $name, $post_id, __( 'Errore:', 'calypsosub' ) . ' ' . $att->get_error_message() ];
+				continue;
+			}
+			update_post_meta( $att, '_wp_attachment_image_alt', $label );
+			set_post_thumbnail( $post_id, $att );
+			$results[] = [ $name, $post_id, __( 'Immagine impostata', 'calypsosub' ) ];
+		}
+		$zip->close();
+
+		$done = count( array_filter( $results, fn( $r ) => $r[2] === __( 'Immagine impostata', 'calypsosub' ) ) );
+		echo '<div class="notice notice-success inline"><p>' . esc_html( sprintf(
+			/* translators: %d: number of images */
+			_n( 'Impostata %d immagine.', 'Impostate %d immagini.', $done, 'calypsosub' ),
+			$done
+		) ) . '</p></div>';
+		echo '<table class="widefat striped calypso-import__table"><thead><tr><th>' . esc_html__( 'File', 'calypsosub' ) . '</th><th>' . esc_html__( 'Corso', 'calypsosub' ) . '</th><th>' . esc_html__( 'Esito', 'calypsosub' ) . '</th></tr></thead><tbody>';
+		foreach ( $results as [ $name, $post_id, $msg ] ) {
+			$course = $post_id
+				? '<a href="' . esc_url( get_edit_post_link( (int) $post_id ) ?? '' ) . '">' . esc_html( get_the_title( (int) $post_id ) ) . '</a>'
+				: '—';
+			echo '<tr><td><code>' . esc_html( $name ) . '</code></td><td>' . $course . '</td><td>' . esc_html( $msg ) . '</td></tr>'; // phpcs:ignore WordPress.Security.EscapeOutput -- $course escaped above
+		}
+		echo '</tbody></table>';
+		echo '<p><a class="button" href="' . esc_url( $this->page_url() ) . '">' . esc_html__( 'Torna all\'importazione', 'calypsosub' ) . '</a></p>';
+	}
+
+	/** @return array<string, int> Course slug (and sanitized title) → post ID. */
+	private function course_slug_index(): array {
+		$posts = get_posts( [
+			'post_type'      => 'calypso_corso',
+			'post_status'    => [ 'publish', 'draft', 'pending', 'private', 'future' ],
+			'posts_per_page' => -1,
+			'orderby'        => 'ID',
+			'order'          => 'ASC',
+		] );
+		$index = [];
+		foreach ( $posts as $p ) {
+			if ( $p->post_name !== '' ) {
+				$index[ $p->post_name ] ??= $p->ID;
+			}
+		}
+		foreach ( $posts as $p ) {
+			$index[ sanitize_title( $p->post_title ) ] ??= $p->ID;
+		}
+		return $index;
 	}
 
 	/* ───────────── Step 1: preview ───────────── */
