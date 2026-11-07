@@ -54,20 +54,9 @@ foreach ( $corsi as $corso ) {
 $gruppi = array_filter( $gruppi, fn( $g ) => ! empty( $g['corsi'] ) );
 $mostra_titoli_gruppo = count( $gruppi ) > 1 || ! isset( $gruppi['altri'] );
 $eta_presenti = array_map( 'intval', array_filter( array_map( fn( $c ) => get_post_meta( $c->ID, '_corso_eta_min', true ), $corsi ), fn( $v ) => $v !== '' ) );
-/* Fasce di età per il filtro: valore URL, etichetta, età minima del corso da/a. Si mostrano solo le fasce con almeno un corso. */
-$fasce_eta = array_values( array_filter( [
-	[ '0-8',   __( 'Fino a 8 anni', 'calypsosub' ),    0,  8 ],
-	[ '9-11',  __( 'Da 9 a 11 anni', 'calypsosub' ),   9,  11 ],
-	[ '12-13', __( 'Da 12 a 13 anni', 'calypsosub' ),  12, 13 ],
-	[ '14-15', __( 'Da 14 a 15 anni', 'calypsosub' ),  14, 15 ],
-	[ '16-17', __( 'Da 16 a 17 anni', 'calypsosub' ),  16, 17 ],
-	[ '18-',   __( 'Da 18 anni in su', 'calypsosub' ), 18, 999 ],
-], function ( $f ) use ( $eta_presenti ) {
-	foreach ( $eta_presenti as $e ) {
-		if ( $e >= $f[2] && $e <= $f[3] ) return true;
-	}
-	return false;
-} ) );
+/* Età di accesso per il filtro: una voce per ogni età minima presente («Dai 12 anni»). */
+$eta_opzioni = array_values( array_unique( $eta_presenti ) );
+sort( $eta_opzioni );
 
 $prenotazioni_page_id = (int) get_option( 'calypsosub_prenotazioni_page_id', 0 );
 $prenotazioni_page_ok = $prenotazioni_page_id && get_post_status( $prenotazioni_page_id ) === 'publish';
@@ -265,13 +254,13 @@ html.admin-bar .cso-corsi-filters{top:var(--wp-admin--admin-bar--height,32px)}
 			</label>
 			<?php endif; ?>
 
-			<?php if ( count( $fasce_eta ) > 1 ) : ?>
+			<?php if ( count( $eta_opzioni ) > 1 ) : ?>
 			<label class="cso-corsi-field">
 				<span class="screen-reader-text"><?php esc_html_e( 'Età di accesso', 'calypsosub' ); ?></span>
 				<select class="cso-corsi-select" id="cso-corsi-eta">
 					<option value=""><?php esc_html_e( 'Tutte le età', 'calypsosub' ); ?></option>
-					<?php foreach ( $fasce_eta as $f ) : ?>
-					<option value="<?php echo esc_attr( $f[0] ); ?>"><?php echo esc_html( $f[1] ); ?></option>
+					<?php foreach ( $eta_opzioni as $e ) : ?>
+					<option value="<?php echo esc_attr( (string) $e ); ?>"><?php echo esc_html( sprintf( __( 'Dai %d anni', 'calypsosub' ), $e ) ); ?></option>
 					<?php endforeach; ?>
 				</select>
 			</label>
@@ -439,15 +428,13 @@ html.admin-bar .cso-corsi-filters{top:var(--wp-admin--admin-bar--height,32px)}
 
 	function apply() {
 		var q   = state.q.toLowerCase().trim();
-		var range = state.eta ? state.eta.split('-') : null;
-		var ageMin = range ? parseInt(range[0], 10) : NaN;
-		var ageMax = range && range[1] !== '' ? parseInt(range[1], 10) : Infinity;
+		var age = state.eta ? parseInt(state.eta, 10) : NaN;
 		var tot = 0;
 		cards.forEach(function (card) {
 			var cardAge = parseInt(card.dataset.eta, 10);
 			var ok = (!state.categoria || card.dataset.categoria === state.categoria)
 				&& (!state.livello || (' ' + card.dataset.livello + ' ').indexOf(' ' + state.livello + ' ') !== -1)
-				&& (!range || (!isNaN(cardAge) && cardAge >= ageMin && cardAge <= ageMax))
+				&& (isNaN(age) || cardAge === age)
 				&& (!q || card.dataset.search.indexOf(q) !== -1);
 			card.hidden = !ok;
 			if (ok) tot++;
