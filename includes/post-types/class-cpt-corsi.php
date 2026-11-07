@@ -6,6 +6,7 @@ class Calypsosub_CPT_Corsi {
 	public function init(): void {
 		add_action( 'init',                    [ $this, 'register_post_type' ] );
 		add_action( 'add_meta_boxes',          [ $this, 'add_meta_boxes' ] );
+		add_action( 'admin_enqueue_scripts',   [ $this, 'enqueue_media' ] );
 		add_action( 'save_post_calypso_corso', [ $this, 'save_meta' ], 10, 2 );
 		add_filter( 'admin_post_thumbnail_html', [ $this, 'featured_image_hero_checkbox' ], 10, 2 );
 		add_action( 'admin_action_calypso_duplicate_corso', [ $this, 'duplicate_corso' ] );
@@ -105,7 +106,65 @@ class Calypsosub_CPT_Corsi {
 		] );
 	}
 
+	public function enqueue_media( string $hook ): void {
+		if ( ! in_array( $hook, [ 'post.php', 'post-new.php' ], true ) ) return;
+		$screen = get_current_screen();
+		if ( ! $screen || $screen->post_type !== 'calypso_corso' ) return;
+		wp_enqueue_media();
+	}
+
+	/** Side box: image of the certification card shown in the course sidebar. */
+	public function render_brevetto_box( WP_Post $post ): void {
+		$img_id = (int) get_post_meta( $post->ID, '_corso_brevetto_img_id', true );
+		$url    = $img_id ? wp_get_attachment_image_url( $img_id, 'medium' ) : '';
+		?>
+		<div id="calypso-brevetto-box">
+			<p style="margin-top:0;color:#666"><?php esc_html_e( 'La tessera del brevetto, mostrata nella sidebar «In sintesi» della pagina del corso.', 'calypsosub' ); ?></p>
+			<div class="calypso-brevetto-preview" style="background:#0b3550;border-radius:6px;padding:10px;margin-bottom:8px;<?php echo $url ? '' : 'display:none'; ?>">
+				<img src="<?php echo esc_url( $url ); ?>" alt="" style="width:100%;height:auto;display:block">
+			</div>
+			<input type="hidden" name="calypso_brevetto_img_id" value="<?php echo esc_attr( $img_id ?: '' ); ?>">
+			<button type="button" class="button calypso-brevetto-choose"><?php esc_html_e( 'Scegli immagine', 'calypsosub' ); ?></button>
+			<button type="button" class="button-link calypso-brevetto-remove" style="color:#b32d2e;margin-left:8px;<?php echo $url ? '' : 'display:none'; ?>"><?php esc_html_e( 'Rimuovi', 'calypsosub' ); ?></button>
+		</div>
+		<script>
+		(function () {
+			var box = document.getElementById('calypso-brevetto-box');
+			if (!box || typeof wp === 'undefined' || !wp.media) return;
+			var input = box.querySelector('input[name="calypso_brevetto_img_id"]');
+			var prev  = box.querySelector('.calypso-brevetto-preview');
+			var img   = prev.querySelector('img');
+			var rm    = box.querySelector('.calypso-brevetto-remove');
+			var frame;
+			box.querySelector('.calypso-brevetto-choose').addEventListener('click', function () {
+				if (!frame) {
+					frame = wp.media({ title: '<?php echo esc_js( __( 'Immagine del brevetto', 'calypsosub' ) ); ?>', library: { type: 'image' }, multiple: false });
+					frame.on('select', function () {
+						var a = frame.state().get('selection').first().toJSON();
+						input.value = a.id;
+						img.src = (a.sizes && a.sizes.medium ? a.sizes.medium.url : a.url);
+						prev.style.display = ''; rm.style.display = '';
+					});
+				}
+				frame.open();
+			});
+			rm.addEventListener('click', function () {
+				input.value = ''; img.src = ''; prev.style.display = 'none'; rm.style.display = 'none';
+			});
+		})();
+		</script>
+		<?php
+	}
+
 	public function add_meta_boxes(): void {
+		add_meta_box(
+			'calypso_corso_brevetto',
+			__( 'Immagine del brevetto', 'calypsosub' ),
+			[ $this, 'render_brevetto_box' ],
+			'calypso_corso',
+			'side',
+			'low'
+		);
 		add_meta_box(
 			'calypso_corso_meta',
 			__( 'Dettagli corso', 'calypsosub' ),
@@ -341,6 +400,13 @@ class Calypsosub_CPT_Corsi {
 		foreach ( $text_fields as $meta_key => $post_key ) {
 			update_post_meta( $post_id, $meta_key,
 				sanitize_text_field( wp_unslash( $_POST[ $post_key ] ?? '' ) ) );
+		}
+
+		$brevetto_id = absint( $_POST['calypso_brevetto_img_id'] ?? 0 );
+		if ( $brevetto_id ) {
+			update_post_meta( $post_id, '_corso_brevetto_img_id', $brevetto_id );
+		} else {
+			delete_post_meta( $post_id, '_corso_brevetto_img_id' );
 		}
 
 		$eta_raw = trim( (string) wp_unslash( $_POST['calypso_eta_min'] ?? '' ) );

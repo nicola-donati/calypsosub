@@ -157,6 +157,10 @@ $hero_bg   = get_post_meta( $id, '_hero_use_featured_image', true ) === '1' && $
 .cso-sintesi h2,.cso-sintesi h3{color:#fff}
 .cso-sintesi p,.cso-sintesi span,.cso-sintesi div{color:inherit}
 
+.cso-sintesi__brevetto{margin:0;padding:24px 24px 18px;border-bottom:1px solid rgba(255,255,255,.12);text-align:center}
+.cso-sintesi__brevetto-img{display:block;width:100%;max-width:260px;height:auto;margin:0 auto;filter:drop-shadow(0 10px 22px rgba(0,0,0,.35))}
+@media(min-width:901px) and (max-height:860px){.cso-sintesi{position:static}}
+.cso-sintesi .cso-sintesi__brevetto-cap{display:block;margin-top:12px;font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--c-aqua,#59C6F9)}
 .cso-sintesi__head{padding:24px 24px 20px;border-bottom:1px solid rgba(255,255,255,.12)}
 .cso-sintesi__cert{letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin:0 0 12px;display:block}
 .cso-sintesi .cso-sintesi__cert{font-size:16px;color:var(--c-aqua,#59C6F9)}
@@ -402,6 +406,21 @@ $_cd = [
 <!-- SIDEBAR -->
 <aside>
 <div class="cso-sintesi">
+
+	<?php
+	$brevetto_img_id = (int) get_post_meta( $id, '_corso_brevetto_img_id', true );
+	if ( $brevetto_img_id && wp_attachment_is_image( $brevetto_img_id ) ) : ?>
+	<figure class="cso-sintesi__brevetto">
+		<?php echo wp_get_attachment_image( $brevetto_img_id, 'medium_large', false, [
+			'class'   => 'cso-sintesi__brevetto-img',
+			'loading' => 'lazy',
+			/* translators: %s: course title */
+			'alt'     => sprintf( __( 'Tessera del brevetto %s', 'calypsosub' ), get_the_title( $id ) ),
+			'sizes'   => '(max-width: 900px) 90vw, 360px',
+		] ); ?>
+		<figcaption class="cso-sintesi__brevetto-cap"><?php echo esc_html( calypsosub_opt( 'corsi', 'sidebar_brevetto_label', __( 'Il brevetto che otterrai', 'calypsosub' ) ) ); ?></figcaption>
+	</figure>
+	<?php endif; ?>
 
 	<div class="cso-sintesi__head">
 		<?php if ( $badge ) : ?>

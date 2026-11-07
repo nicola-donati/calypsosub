@@ -169,6 +169,7 @@ class Calypsosub_Settings_Pages {
 					'Pagina singola — Sidebar' => [
 						'sidebar_eyebrow' => [ 'label' => 'Eyebrow sidebar',          'default' => 'Itinerario' ],
 						'sidebar_title'   => [ 'label' => 'Titolo sidebar',           'default' => 'Informazioni pratiche' ],
+						'sidebar_brevetto_label' => [ 'label' => 'Didascalia immagine brevetto', 'default' => 'Il brevetto che otterrai' ],
 						'stat_ritrovo'    => [ 'label' => 'Etichetta Ritrovo',        'default' => 'Ritrovo' ],
 						'stat_imbarco'    => [ 'label' => 'Etichetta Imbarco',        'default' => 'Imbarco' ],
 						'stat_rientro'    => [ 'label' => 'Etichetta Rientro',        'default' => 'Rientro previsto' ],

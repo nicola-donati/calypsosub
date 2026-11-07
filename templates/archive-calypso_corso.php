@@ -129,6 +129,7 @@ html.admin-bar .cso-corsi-filters{top:var(--wp-admin--admin-bar--height,32px)}
 .cso-corso-card{background:#fff;border:1px solid rgba(11,26,38,.08);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
 .cso-corso-card__img{height:240px;background:linear-gradient(180deg,var(--c-aqua,#59C6F9),var(--c-deep,#3473A5) 60%,var(--c-abyss,#061826));position:relative;overflow:hidden}
 .cso-corso-card__img img{width:100%;height:100%;object-fit:cover;display:block}
+.cso-corso-card__img--card img{object-fit:contain;padding:24px 32px;box-sizing:border-box;filter:drop-shadow(0 8px 18px rgba(0,0,0,.3))}
 .cso-corso-card__body{padding:28px;flex:1;display:flex;flex-direction:column}
 .cso-corso-card__meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .cso-corso-card__badge{display:inline-flex;padding:4px 12px;background:rgba(27,119,167,.1);color:var(--c-wave,#3473A5);border-radius:999px;font-size:14px;font-weight:600}
@@ -300,7 +301,14 @@ html.admin-bar .cso-corsi-filters{top:var(--wp-admin--admin-bar--height,32px)}
 			$livello_label = ! empty( $livelli_names ) ? $livelli_names[0] : '';
 
 			$cta_url = $link_ovr ?: ( $prenotazioni_page_ok ? add_query_arg( 'prenota_id', $corso->ID, get_permalink( $prenotazioni_page_id ) ) : '' );
-			$img_url = get_the_post_thumbnail_url( $corso->ID, 'medium_large' );
+			$img_url     = get_the_post_thumbnail_url( $corso->ID, 'medium_large' );
+			$img_is_card = false;
+			if ( ! $img_url ) {
+				/* Nessuna immagine in evidenza: si usa la tessera del brevetto. */
+				$card_id = (int) get_post_meta( $corso->ID, '_corso_brevetto_img_id', true );
+				$img_url = $card_id ? (string) wp_get_attachment_image_url( $card_id, 'medium_large' ) : '';
+				$img_is_card = $img_url !== '';
+			}
 			$search  = mb_strtolower( wp_strip_all_tags( implode( ' ', [ $corso->post_title, $desc, $term ? $term->name : '', implode( ' ', $livelli_names ) ] ) ) );
 		?>
 		<article class="cso-corso-card"
@@ -309,7 +317,7 @@ html.admin-bar .cso-corsi-filters{top:var(--wp-admin--admin-bar--height,32px)}
 		         data-eta="<?php echo esc_attr( $eta_min ); ?>"
 		         data-search="<?php echo esc_attr( $search ); ?>">
 
-			<div class="cso-corso-card__img">
+			<div class="cso-corso-card__img<?php echo $img_is_card ? ' cso-corso-card__img--card' : ''; ?>">
 				<?php if ( $img_url ) : ?>
 				<img src="<?php echo esc_url( $img_url ); ?>"
 				     alt="<?php echo esc_attr( $corso->post_title ); ?>" loading="lazy">

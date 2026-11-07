@@ -120,7 +120,7 @@ class Calypsosub_Course_Importer {
 		<hr>
 		<h2><?php esc_html_e( 'Immagini dei corsi', 'calypsosub' ); ?></h2>
 		<p class="calypso-import__intro">
-			<?php esc_html_e( 'Carica uno ZIP di immagini (.jpg, .png o .webp). Ogni file deve chiamarsi come lo slug del corso, per esempio corso-base.jpg: diventa l\'immagine in evidenza di quel corso.', 'calypsosub' ); ?>
+			<?php esc_html_e( 'Carica uno ZIP di immagini (.jpg, .png o .webp) con il nome dello slug del corso. corso-base.jpg diventa l\'immagine in evidenza, solo se il corso non ne ha già una. corso-base-brevetto.png diventa l\'immagine del brevetto mostrata nella pagina del corso.', 'calypsosub' ); ?>
 		</p>
 		<form method="post" enctype="multipart/form-data" class="calypso-import__form">
 			<?php wp_nonce_field( self::NONCE_ACTION ); ?>
@@ -131,10 +131,10 @@ class Calypsosub_Course_Importer {
 					<td><input type="file" id="calypso-import-images" name="calypso_import_images" accept=".zip" required></td>
 				</tr>
 				<tr>
-					<th scope="row"><?php esc_html_e( 'Corsi con un\'immagine', 'calypsosub' ); ?></th>
+					<th scope="row"><?php esc_html_e( 'Immagini già presenti', 'calypsosub' ); ?></th>
 					<td><label><input type="checkbox" name="calypso_images_overwrite" value="1">
-						<?php esc_html_e( 'Sostituisci l\'immagine in evidenza già presente', 'calypsosub' ); ?></label>
-						<p class="description"><?php esc_html_e( 'Se il caricamento si interrompe per i tempi del server, ricarica lo stesso ZIP: i corsi che hanno già l\'immagine vengono saltati.', 'calypsosub' ); ?></p></td>
+						<?php esc_html_e( 'Sostituisci le immagini già presenti (sconsigliato)', 'calypsosub' ); ?></label>
+						<p class="description"><?php esc_html_e( 'Se il caricamento si interrompe per i tempi del server, ricarica lo stesso ZIP: le immagini già impostate vengono saltate.', 'calypsosub' ); ?></p></td>
 				</tr>
 			</table>
 			<?php submit_button( __( 'Carica immagini', 'calypsosub' ), 'secondary' ); ?>
@@ -178,56 +178,81 @@ class Calypsosub_Course_Importer {
 		$overwrite = ! empty( $_POST['calypso_images_overwrite'] );
 		$index     = $this->course_slug_index();
 		$results   = [];
+		$by_course  = [];
 
+		/* Collect files per course: "<slug>.jpg" = featured image, "<slug>-brevetto.png" = card image. */
 		for ( $i = 0; $i < $zip->numFiles; $i++ ) {
 			$stat = $zip->statIndex( $i );
-			$name = basename( (string) $stat['name'] );
-			if ( $name === '' || str_starts_with( $name, '.' ) || str_contains( (string) $stat['name'], '__MACOSX' ) || str_ends_with( (string) $stat['name'], '/' ) ) {
+			$path = (string) $stat['name'];
+			$name = basename( $path );
+			if ( $name === '' || str_starts_with( $name, '.' ) || str_contains( $path, '__MACOSX' ) || str_ends_with( $path, '/' ) ) {
 				continue;
 			}
 			$ext = strtolower( pathinfo( $name, PATHINFO_EXTENSION ) );
 			if ( ! in_array( $ext, self::IMAGE_EXTENSIONS, true ) ) {
-				$results[] = [ $name, '', __( 'Saltato: non è un\'immagine', 'calypsosub' ) ];
+				$results[] = [ $name, 0, __( 'Saltato: non è un\'immagine', 'calypsosub' ) ];
 				continue;
 			}
 			if ( (int) $stat['size'] > self::MAX_IMAGE_BYTES ) {
-				$results[] = [ $name, '', __( 'Saltato: immagine troppo grande', 'calypsosub' ) ];
+				$results[] = [ $name, 0, __( 'Saltato: immagine troppo grande', 'calypsosub' ) ];
 				continue;
 			}
-			$slug    = sanitize_title( pathinfo( $name, PATHINFO_FILENAME ) );
-			$post_id = $index[ $slug ] ?? 0;
+			$base = pathinfo( $name, PATHINFO_FILENAME );
+			$kind = 'featured';
+			if ( preg_match( '/-brevetto$/i', $base ) ) {
+				$kind = 'brevetto';
+				$base = preg_replace( '/-brevetto$/i', '', $base );
+			}
+			$post_id = $index[ sanitize_title( $base ) ] ?? 0;
 			if ( ! $post_id ) {
-				$results[] = [ $name, '', __( 'Nessun corso con questo slug', 'calypsosub' ) ];
+				$results[] = [ $name, 0, __( 'Nessun corso con questo slug', 'calypsosub' ) ];
 				continue;
 			}
-			$title = get_the_title( $post_id );
-			if ( has_post_thumbnail( $post_id ) && ! $overwrite ) {
-				$results[] = [ $name, $post_id, __( 'Già con immagine: saltato', 'calypsosub' ) ];
-				continue;
+			$by_course[ $post_id ][ $kind ] = [ 'index' => $i, 'name' => $name, 'ext' => $ext ];
+		}
+
+		foreach ( $by_course as $post_id => $files ) {
+			$title    = get_the_title( $post_id );
+			$featured = 0;
+
+			if ( isset( $files['featured'] ) ) {
+				$f = $files['featured'];
+				if ( has_post_thumbnail( $post_id ) && ! $overwrite ) {
+					$results[] = [ $f['name'], $post_id, __( 'Ha già un\'immagine in evidenza: lasciata com\'è', 'calypsosub' ) ];
+				} else {
+					/* translators: %s: course title */
+					$featured = $this->sideload_from_zip( $zip, $f, $post_id, sprintf( __( 'Corso %s', 'calypsosub' ), $title ), $results );
+					if ( $featured ) {
+						set_post_thumbnail( $post_id, $featured );
+						$results[] = [ $f['name'], $post_id, __( 'Immagine in evidenza impostata', 'calypsosub' ) ];
+					}
+				}
 			}
 
-			$tmp = wp_tempnam( $name );
-			if ( ! $tmp || file_put_contents( $tmp, $zip->getFromIndex( $i ) ) === false ) {
-				$results[] = [ $name, $post_id, __( 'Errore: file temporaneo non scrivibile', 'calypsosub' ) ];
+			$has_card = (int) get_post_meta( $post_id, '_corso_brevetto_img_id', true ) > 0;
+			if ( $has_card && ! $overwrite ) {
+				if ( isset( $files['brevetto'] ) ) {
+					$results[] = [ $files['brevetto']['name'], $post_id, __( 'Ha già l\'immagine del brevetto: lasciata com\'è', 'calypsosub' ) ];
+				}
 				continue;
 			}
 			/* translators: %s: course title */
 			$label = sprintf( __( 'Brevetto %s', 'calypsosub' ), $title );
-			$att   = media_handle_sideload( [ 'name' => $slug . '.' . $ext, 'tmp_name' => $tmp ], $post_id, $label );
-			if ( is_wp_error( $att ) ) {
-				if ( file_exists( $tmp ) ) {
-					wp_delete_file( $tmp );
-				}
-				$results[] = [ $name, $post_id, __( 'Errore:', 'calypsosub' ) . ' ' . $att->get_error_message() ];
-				continue;
+			$card  = 0;
+			if ( isset( $files['brevetto'] ) ) {
+				$card = $this->sideload_from_zip( $zip, $files['brevetto'], $post_id, $label, $results );
+			} elseif ( $featured ) {
+				$card = $featured;
 			}
-			update_post_meta( $att, '_wp_attachment_image_alt', $label );
-			set_post_thumbnail( $post_id, $att );
-			$results[] = [ $name, $post_id, __( 'Immagine impostata', 'calypsosub' ) ];
+			if ( $card ) {
+				update_post_meta( $post_id, '_corso_brevetto_img_id', $card );
+				$results[] = [ $files['brevetto']['name'] ?? $files['featured']['name'], $post_id, __( 'Immagine del brevetto impostata', 'calypsosub' ) ];
+			}
 		}
 		$zip->close();
 
-		$done = count( array_filter( $results, fn( $r ) => $r[2] === __( 'Immagine impostata', 'calypsosub' ) ) );
+		$set  = [ __( 'Immagine in evidenza impostata', 'calypsosub' ), __( 'Immagine del brevetto impostata', 'calypsosub' ) ];
+		$done = count( array_filter( $results, fn( $r ) => in_array( $r[2], $set, true ) ) );
 		echo '<div class="notice notice-success inline"><p>' . esc_html( sprintf(
 			/* translators: %d: number of images */
 			_n( 'Impostata %d immagine.', 'Impostate %d immagini.', $done, 'calypsosub' ),
@@ -242,6 +267,30 @@ class Calypsosub_Course_Importer {
 		}
 		echo '</tbody></table>';
 		echo '<p><a class="button" href="' . esc_url( $this->page_url() ) . '">' . esc_html__( 'Torna all\'importazione', 'calypsosub' ) . '</a></p>';
+	}
+
+	/**
+	 * Copies one ZIP entry to a temp file and adds it to the media library.
+	 *
+	 * @param array{index: int, name: string, ext: string} $file
+	 * @return int Attachment ID, 0 on error (the error is added to $results).
+	 */
+	private function sideload_from_zip( ZipArchive $zip, array $file, int $post_id, string $label, array &$results ): int {
+		$tmp = wp_tempnam( $file['name'] );
+		if ( ! $tmp || file_put_contents( $tmp, $zip->getFromIndex( $file['index'] ) ) === false ) {
+			$results[] = [ $file['name'], $post_id, __( 'Errore: file temporaneo non scrivibile', 'calypsosub' ) ];
+			return 0;
+		}
+		$att = media_handle_sideload( [ 'name' => sanitize_file_name( $file['name'] ), 'tmp_name' => $tmp ], $post_id, $label );
+		if ( is_wp_error( $att ) ) {
+			if ( file_exists( $tmp ) ) {
+				wp_delete_file( $tmp );
+			}
+			$results[] = [ $file['name'], $post_id, __( 'Errore:', 'calypsosub' ) . ' ' . $att->get_error_message() ];
+			return 0;
+		}
+		update_post_meta( $att, '_wp_attachment_image_alt', $label );
+		return (int) $att;
 	}
 
 	/** @return array<string, int> Course slug (and sanitized title) → post ID. */
