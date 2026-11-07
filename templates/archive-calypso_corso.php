@@ -28,12 +28,32 @@ $corsi = get_posts( [
 	'post_type'      => 'calypso_corso',
 	'posts_per_page' => -1,
 	'post_status'    => 'publish',
-	'orderby'        => 'title',
-	'order'          => 'ASC',
+	'orderby'        => [ 'menu_order' => 'ASC', 'title' => 'ASC' ],
 ] );
 
-$livelli_terms = get_terms( [ 'taxonomy' => 'calypso_livello', 'hide_empty' => false ] );
+$cat_tax       = Calypsosub_Tax_Categorie_Corsi::TAXONOMY;
+$categorie     = Calypsosub_Tax_Categorie_Corsi::get_sorted_terms( true );
+$livelli_terms = get_terms( [ 'taxonomy' => 'calypso_livello', 'hide_empty' => true ] );
 $livelli_terms = is_wp_error( $livelli_terms ) ? [] : $livelli_terms;
+
+/* Raggruppa i corsi per categoria, nell'ordine delle categorie. */
+$gruppi = [];
+foreach ( $categorie as $cat_term ) {
+	$gruppi[ $cat_term->slug ] = [ 'term' => $cat_term, 'corsi' => [] ];
+}
+$gruppi['altri'] = [ 'term' => null, 'corsi' => [] ];
+foreach ( $corsi as $corso ) {
+	$cat_slugs = wp_get_post_terms( $corso->ID, $cat_tax, [ 'fields' => 'slugs' ] );
+	$cat_slugs = is_wp_error( $cat_slugs ) ? [] : $cat_slugs;
+	$gkey      = 'altri';
+	foreach ( array_keys( $gruppi ) as $g ) {
+		if ( in_array( $g, $cat_slugs, true ) ) { $gkey = $g; break; }
+	}
+	$gruppi[ $gkey ]['corsi'][] = $corso;
+}
+$gruppi = array_filter( $gruppi, fn( $g ) => ! empty( $g['corsi'] ) );
+$mostra_titoli_gruppo = count( $gruppi ) > 1 || ! isset( $gruppi['altri'] );
+$eta_presenti = array_filter( array_map( fn( $c ) => get_post_meta( $c->ID, '_corso_eta_min', true ), $corsi ), fn( $v ) => $v !== '' );
 
 $prenotazioni_page_id = (int) get_option( 'calypsosub_prenotazioni_page_id', 0 );
 $prenotazioni_page_ok = $prenotazioni_page_id && get_post_status( $prenotazioni_page_id ) === 'publish';
@@ -74,12 +94,33 @@ $_acd = [
 .cso-archive-inner{max-width:1320px;margin:0 auto}
 
 /* Filtri corsi */
-.cso-corsi-filters{display:flex;align-items:center;gap:16px;margin-bottom:32px;flex-wrap:wrap}
-.cso-corsi-chips{display:flex;gap:8px;flex-wrap:wrap}
-.cso-corsi-chip{padding:8px 18px;border-radius:999px;border:1.5px solid rgba(11,26,38,.15);background:transparent;color:rgba(11,26,38,.7);font-size:13px;font-weight:600;cursor:pointer;transition:background .15s,color .15s,border-color .15s;font-family:inherit}
-.cso-corsi-chip:hover,.cso-corsi-chip--active{background:var(--c-deep,#3473A5);border-color:var(--c-deep,#3473A5);color:#fff}
-.cso-corsi-search{padding:9px 18px;border:1.5px solid rgba(11,26,38,.15);border-radius:999px;font-size:13px;color:var(--c-ink,#0b1a26);background:#fff;min-width:200px;outline:none;font-family:inherit}
-.cso-corsi-search:focus{border-color:var(--c-deep,#3473A5)}
+.cso-corsi-filters{position:sticky;top:0;z-index:5;background:var(--c-bone,#F5F1E7);padding:16px 0 20px;margin-bottom:24px;border-bottom:1px solid rgba(11,26,38,.08)}
+html.admin-bar .cso-corsi-filters{top:var(--wp-admin--admin-bar--height,32px)}
+.cso-corsi-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.cso-corsi-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;border:1.5px solid rgba(11,26,38,.15);background:#fff;color:rgba(11,26,38,.75);font-size:14px;font-weight:600;cursor:pointer;transition:background .15s,color .15s,border-color .15s;font-family:inherit}
+.cso-corsi-chip:hover{border-color:var(--c-deep,#3473A5);color:var(--c-deep,#3473A5)}
+.cso-corsi-chip--active,.cso-corsi-chip--active:hover{background:var(--c-deep,#3473A5);border-color:var(--c-deep,#3473A5);color:#fff}
+.cso-corsi-chip__count{font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;background:rgba(11,26,38,.07)}
+.cso-corsi-chip--active .cso-corsi-chip__count{background:rgba(255,255,255,.22)}
+.cso-corsi-controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.cso-corsi-field{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:rgba(11,26,38,.65)}
+.cso-corsi-select,.cso-corsi-age,.cso-corsi-search{padding:9px 16px;border:1.5px solid rgba(11,26,38,.15);border-radius:999px;font-size:14px;color:var(--c-ink,#0b1a26);background:#fff;outline:none;font-family:inherit}
+.cso-corsi-select:focus,.cso-corsi-age:focus,.cso-corsi-search:focus{border-color:var(--c-deep,#3473A5)}
+.cso-corsi-age{width:90px}
+.cso-corsi-search{min-width:220px;flex:1;max-width:340px}
+.cso-corsi-count{margin-left:auto;font-size:14px;font-weight:600;color:rgba(11,26,38,.6)}
+.cso-corsi-reset{font-size:14px;font-weight:600;color:var(--c-wave,#3473A5)!important;text-decoration:underline!important;background:none;border:none;cursor:pointer;font-family:inherit;padding:0}
+.cso-corsi-reset[hidden]{display:none}
+
+/* Gruppi */
+.cso-corsi-group{margin-bottom:56px}
+.cso-corsi-group[hidden]{display:none}
+.cso-corsi-group__head{display:flex;align-items:baseline;gap:14px;margin:0 0 20px;padding-bottom:10px;border-bottom:2px solid var(--c-deep,#3473A5)}
+.cso-corsi-group__title{font-size:34px;margin:0;line-height:1.1}
+.cso-corsi-group__count{font-family:var(--f-mono,monospace);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:rgba(11,26,38,.55)}
+.cso-corsi-group__desc{margin:-8px 0 20px;max-width:760px;font-size:16px;line-height:1.55;color:rgba(11,26,38,.7)}
+.cso-corso-card__age{font-size:13px;font-weight:600;color:rgba(11,26,38,.6)}
+.cso-corso-card[hidden]{display:none}
 
 /* Griglia */
 .cso-corsi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
@@ -120,8 +161,12 @@ $_acd = [
 	.cso-archive .cso-hero__lead{font-size:15px;margin-top:24px}
 	.cso-archive-body{padding:40px 20px 64px}
 	.cso-corsi-grid{grid-template-columns:1fr}
-	.cso-corsi-filters{flex-direction:column;align-items:flex-start}
-	.cso-corsi-search{width:100%}
+	.cso-corsi-filters{position:static}
+	.cso-corsi-chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
+	.cso-corsi-chip{flex:0 0 auto}
+	.cso-corsi-search{max-width:none;width:100%}
+	.cso-corsi-count{margin-left:0}
+	.cso-corsi-group__title{font-size:26px}
 }
 @media(max-width:420px){
 	.cso-archive .cso-hero__title{font-size:42px}
@@ -173,116 +218,171 @@ $_acd = [
 <div class="cso-archive-inner">
 
 	<!-- Filtri -->
-	<div class="cso-corsi-filters">
-		<div class="cso-corsi-chips" role="group" aria-label="<?php esc_attr_e( 'Filtra per livello', 'calypsosub' ); ?>">
-			<button class="cso-corsi-chip cso-corsi-chip--active" data-livello=""><?php esc_html_e( 'Tutti', 'calypsosub' ); ?></button>
-			<?php foreach ( $livelli_terms as $term ) : ?>
-			<button class="cso-corsi-chip" data-livello="<?php echo esc_attr( $term->slug ); ?>">
-				<?php echo esc_html( $term->name ); ?>
+	<div class="cso-corsi-filters" id="cso-corsi-filters">
+		<?php if ( count( $categorie ) > 1 ) : ?>
+		<div class="cso-corsi-chips" role="group" aria-label="<?php esc_attr_e( 'Filtra per categoria', 'calypsosub' ); ?>">
+			<button type="button" class="cso-corsi-chip cso-corsi-chip--active" data-categoria="" aria-pressed="true">
+				<?php esc_html_e( 'Tutti', 'calypsosub' ); ?>
+				<span class="cso-corsi-chip__count"><?php echo esc_html( (string) count( $corsi ) ); ?></span>
+			</button>
+			<?php foreach ( $gruppi as $key => $gruppo ) :
+				if ( ! $gruppo['term'] ) continue; ?>
+			<button type="button" class="cso-corsi-chip" data-categoria="<?php echo esc_attr( $key ); ?>" aria-pressed="false">
+				<?php echo esc_html( $gruppo['term']->name ); ?>
+				<span class="cso-corsi-chip__count"><?php echo esc_html( (string) count( $gruppo['corsi'] ) ); ?></span>
 			</button>
 			<?php endforeach; ?>
 		</div>
-		<input type="search" class="cso-corsi-search"
-		       placeholder="<?php esc_attr_e( 'Cerca corso…', 'calypsosub' ); ?>"
-		       aria-label="<?php esc_attr_e( 'Cerca corso per nome', 'calypsosub' ); ?>">
+		<?php endif; ?>
+
+		<div class="cso-corsi-controls">
+			<?php if ( count( $livelli_terms ) > 1 ) : ?>
+			<label class="cso-corsi-field">
+				<span class="screen-reader-text"><?php esc_html_e( 'Livello', 'calypsosub' ); ?></span>
+				<select class="cso-corsi-select" id="cso-corsi-livello">
+					<option value=""><?php esc_html_e( 'Tutti i livelli', 'calypsosub' ); ?></option>
+					<?php foreach ( $livelli_terms as $term ) : ?>
+					<option value="<?php echo esc_attr( $term->slug ); ?>"><?php echo esc_html( $term->name ); ?></option>
+					<?php endforeach; ?>
+				</select>
+			</label>
+			<?php endif; ?>
+
+			<?php if ( $eta_presenti ) : ?>
+			<label class="cso-corsi-field">
+				<?php esc_html_e( 'La tua età', 'calypsosub' ); ?>
+				<input type="number" class="cso-corsi-age" id="cso-corsi-eta" min="3" max="99" inputmode="numeric" placeholder="<?php esc_attr_e( 'anni', 'calypsosub' ); ?>">
+			</label>
+			<?php endif; ?>
+
+			<input type="search" class="cso-corsi-search" id="cso-corsi-search"
+			       placeholder="<?php esc_attr_e( 'Cerca un corso…', 'calypsosub' ); ?>"
+			       aria-label="<?php esc_attr_e( 'Cerca un corso', 'calypsosub' ); ?>">
+
+			<button type="button" class="cso-corsi-reset" id="cso-corsi-reset" hidden><?php esc_html_e( 'Azzera filtri', 'calypsosub' ); ?></button>
+			<span class="cso-corsi-count" id="cso-corsi-count" aria-live="polite"></span>
+		</div>
 	</div>
 
-	<!-- Griglia -->
-	<div class="cso-corsi-grid" id="cso-corsi-grid">
-	<?php foreach ( $corsi as $corso ) :
-		$periodo  = (string) get_post_meta( $corso->ID, '_corso_periodo',          true );
-		$desc     = (string) get_post_meta( $corso->ID, '_corso_desc_breve',       true );
-		$durata   = (string) get_post_meta( $corso->ID, '_corso_stat_durata',      true );
-		$pratica  = (string) get_post_meta( $corso->ID, '_corso_stat_pratica',     true );
-		$prof     = (string) get_post_meta( $corso->ID, '_corso_stat_profondita',  true );
-		$link_ovr = (string) get_post_meta( $corso->ID, '_corso_link_iscrizione',  true );
-
-		$livelli_slugs = wp_get_post_terms( $corso->ID, 'calypso_livello', [ 'fields' => 'slugs' ] );
-		$livelli_slugs = is_wp_error( $livelli_slugs ) ? [] : $livelli_slugs;
-		$livelli_names = wp_get_post_terms( $corso->ID, 'calypso_livello', [ 'fields' => 'names' ] );
-		$livelli_names = is_wp_error( $livelli_names ) ? [] : $livelli_names;
-		// Niente fallback sul badge certificazione (_corso_badge, es. "PADI · CMAS"):
-		// è un campo distinto (vedi .cso-sintesi__cert in single-calypso_corso.php),
-		// non un sostituto del livello. Nessun termine assegnato = "va bene per
-		// qualsiasi livello", quindi niente pill invece di mostrare il badge per sbaglio.
-		$livello_label = ! empty( $livelli_names ) ? $livelli_names[0] : '';
-
-		$cta_url = $link_ovr ?: ( $prenotazioni_page_ok ? add_query_arg( 'prenota_id', $corso->ID, get_permalink( $prenotazioni_page_id ) ) : '' );
-		$img_url = get_the_post_thumbnail_url( $corso->ID, 'medium_large' );
-	?>
-	<article class="cso-corso-card"
-	         data-livello="<?php echo esc_attr( implode( ' ', $livelli_slugs ) ); ?>"
-	         data-title="<?php echo esc_attr( strtolower( $corso->post_title ) ); ?>">
-
-		<div class="cso-corso-card__img">
-			<?php if ( $img_url ) : ?>
-			<img src="<?php echo esc_url( $img_url ); ?>"
-			     alt="<?php echo esc_attr( $corso->post_title ); ?>" loading="lazy">
-			<?php endif; ?>
+	<!-- Gruppi -->
+	<div id="cso-corsi-groups">
+	<?php foreach ( $gruppi as $key => $gruppo ) :
+		$term = $gruppo['term']; ?>
+	<section class="cso-corsi-group" data-group="<?php echo esc_attr( $key ); ?>"<?php echo $mostra_titoli_gruppo ? ' aria-labelledby="cso-gruppo-' . esc_attr( $key ) . '"' : ''; ?>>
+		<?php if ( $mostra_titoli_gruppo ) : ?>
+		<div class="cso-corsi-group__head">
+			<h2 class="cso-corsi-group__title display" id="cso-gruppo-<?php echo esc_attr( $key ); ?>">
+				<?php echo esc_html( $term ? $term->name : __( 'Altri corsi', 'calypsosub' ) ); ?>
+			</h2>
+			<span class="cso-corsi-group__count" data-group-count></span>
 		</div>
+		<?php if ( $term && $term->description ) : ?>
+		<p class="cso-corsi-group__desc"><?php echo esc_html( $term->description ); ?></p>
+		<?php endif; ?>
+		<?php endif; ?>
 
-		<div class="cso-corso-card__body">
+		<div class="cso-corsi-grid">
+		<?php foreach ( $gruppo['corsi'] as $corso ) :
+			$periodo  = (string) get_post_meta( $corso->ID, '_corso_periodo',          true );
+			$desc     = (string) get_post_meta( $corso->ID, '_corso_desc_breve',       true );
+			$durata   = (string) get_post_meta( $corso->ID, '_corso_stat_durata',      true );
+			$pratica  = (string) get_post_meta( $corso->ID, '_corso_stat_pratica',     true );
+			$prof     = (string) get_post_meta( $corso->ID, '_corso_stat_profondita',  true );
+			$link_ovr = (string) get_post_meta( $corso->ID, '_corso_link_iscrizione',  true );
+			$eta_min  = (string) get_post_meta( $corso->ID, '_corso_eta_min',          true );
 
-			<div class="cso-corso-card__meta">
-				<?php if ( $livello_label ) : ?>
-				<span class="cso-corso-card__badge"><?php echo esc_html( $livello_label ); ?></span>
-				<?php endif; ?>
-				<?php if ( $periodo ) : ?>
-				<span class="cso-corso-card__periodo"><?php echo esc_html( $periodo ); ?></span>
+			$livelli_slugs = wp_get_post_terms( $corso->ID, 'calypso_livello', [ 'fields' => 'slugs' ] );
+			$livelli_slugs = is_wp_error( $livelli_slugs ) ? [] : $livelli_slugs;
+			$livelli_names = wp_get_post_terms( $corso->ID, 'calypso_livello', [ 'fields' => 'names' ] );
+			$livelli_names = is_wp_error( $livelli_names ) ? [] : $livelli_names;
+			// Niente fallback sul badge certificazione (_corso_badge): è un campo
+			// distinto, non un sostituto del livello. Nessun termine = nessuna pill.
+			$livello_label = ! empty( $livelli_names ) ? $livelli_names[0] : '';
+
+			$cta_url = $link_ovr ?: ( $prenotazioni_page_ok ? add_query_arg( 'prenota_id', $corso->ID, get_permalink( $prenotazioni_page_id ) ) : '' );
+			$img_url = get_the_post_thumbnail_url( $corso->ID, 'medium_large' );
+			$search  = mb_strtolower( wp_strip_all_tags( implode( ' ', [ $corso->post_title, $desc, $term ? $term->name : '', implode( ' ', $livelli_names ) ] ) ) );
+		?>
+		<article class="cso-corso-card"
+		         data-categoria="<?php echo esc_attr( $key ); ?>"
+		         data-livello="<?php echo esc_attr( implode( ' ', $livelli_slugs ) ); ?>"
+		         data-eta="<?php echo esc_attr( $eta_min ); ?>"
+		         data-search="<?php echo esc_attr( $search ); ?>">
+
+			<div class="cso-corso-card__img">
+				<?php if ( $img_url ) : ?>
+				<img src="<?php echo esc_url( $img_url ); ?>"
+				     alt="<?php echo esc_attr( $corso->post_title ); ?>" loading="lazy">
 				<?php endif; ?>
 			</div>
 
-			<h3 class="cso-corso-card__title display">
-				<a href="<?php echo esc_url( get_permalink( $corso->ID ) ); ?>">
-					<?php echo esc_html( $corso->post_title ); ?>
+			<div class="cso-corso-card__body">
+
+				<div class="cso-corso-card__meta">
+					<?php if ( $livello_label ) : ?>
+					<span class="cso-corso-card__badge"><?php echo esc_html( $livello_label ); ?></span>
+					<?php endif; ?>
+					<?php if ( $eta_min !== '' ) : ?>
+					<span class="cso-corso-card__age"><?php echo esc_html( sprintf( __( 'Dai %s anni', 'calypsosub' ), $eta_min ) ); ?></span>
+					<?php elseif ( $periodo ) : ?>
+					<span class="cso-corso-card__periodo"><?php echo esc_html( $periodo ); ?></span>
+					<?php endif; ?>
+				</div>
+
+				<h3 class="cso-corso-card__title display">
+					<a href="<?php echo esc_url( get_permalink( $corso->ID ) ); ?>">
+						<?php echo esc_html( $corso->post_title ); ?>
+					</a>
+				</h3>
+
+				<?php if ( $desc ) : ?>
+				<p class="cso-corso-card__desc"><?php echo esc_html( $desc ); ?></p>
+				<?php endif; ?>
+
+				<?php if ( $durata || $pratica || $prof ) : ?>
+				<div class="cso-corso-card__stats">
+					<?php if ( $durata ) : ?>
+					<div class="cso-corso-card__stat">
+						<div class="cso-corso-card__stat-val"><?php echo esc_html( $durata ); ?></div>
+						<div class="cso-corso-card__stat-lbl"><?php esc_html_e( 'Durata', 'calypsosub' ); ?></div>
+					</div>
+					<?php endif; ?>
+					<?php if ( $pratica ) : ?>
+					<div class="cso-corso-card__stat">
+						<div class="cso-corso-card__stat-val"><?php echo esc_html( $pratica ); ?></div>
+						<div class="cso-corso-card__stat-lbl"><?php esc_html_e( 'Pratica', 'calypsosub' ); ?></div>
+					</div>
+					<?php endif; ?>
+					<?php if ( $prof ) : ?>
+					<div class="cso-corso-card__stat">
+						<div class="cso-corso-card__stat-val"><?php echo esc_html( $prof ); ?></div>
+						<div class="cso-corso-card__stat-lbl"><?php esc_html_e( 'Profondità', 'calypsosub' ); ?></div>
+					</div>
+					<?php endif; ?>
+				</div>
+				<?php endif; ?>
+
+				<?php if ( $cta_url ) : ?>
+				<a href="<?php echo esc_url( $cta_url ); ?>" class="cso-btn-coral">
+					<?php esc_html_e( 'Pre-iscriviti al corso', 'calypsosub' ); ?>
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
 				</a>
-			</h3>
+				<?php elseif ( current_user_can( 'edit_posts' ) ) : ?>
+				<span class="cso-btn-coral" style="opacity:.5;cursor:default" title="<?php esc_attr_e( 'Imposta la Pagina prenotazioni in Calypso Sub → Impostazioni → Generali', 'calypsosub' ); ?>"><?php esc_html_e( 'Configura pagina prenotazioni', 'calypsosub' ); ?></span>
+				<?php endif; ?>
 
-			<?php if ( $desc ) : ?>
-			<p class="cso-corso-card__desc"><?php echo esc_html( $desc ); ?></p>
-			<?php endif; ?>
-
-			<?php if ( $durata || $pratica || $prof ) : ?>
-			<div class="cso-corso-card__stats">
-				<?php if ( $durata ) : ?>
-				<div class="cso-corso-card__stat">
-					<div class="cso-corso-card__stat-val"><?php echo esc_html( $durata ); ?></div>
-					<div class="cso-corso-card__stat-lbl"><?php esc_html_e( 'Durata', 'calypsosub' ); ?></div>
-				</div>
-				<?php endif; ?>
-				<?php if ( $pratica ) : ?>
-				<div class="cso-corso-card__stat">
-					<div class="cso-corso-card__stat-val"><?php echo esc_html( $pratica ); ?></div>
-					<div class="cso-corso-card__stat-lbl"><?php esc_html_e( 'Pratica', 'calypsosub' ); ?></div>
-				</div>
-				<?php endif; ?>
-				<?php if ( $prof ) : ?>
-				<div class="cso-corso-card__stat">
-					<div class="cso-corso-card__stat-val"><?php echo esc_html( $prof ); ?></div>
-					<div class="cso-corso-card__stat-lbl"><?php esc_html_e( 'Profondità', 'calypsosub' ); ?></div>
-				</div>
-				<?php endif; ?>
 			</div>
-			<?php endif; ?>
-
-			<?php if ( $cta_url ) : ?>
-			<a href="<?php echo esc_url( $cta_url ); ?>" class="cso-btn-coral">
-				<?php esc_html_e( 'Iscriviti al corso', 'calypsosub' ); ?>
-				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-			</a>
-			<?php elseif ( current_user_can( 'edit_posts' ) ) : ?>
-			<span class="cso-btn-coral" style="opacity:.5;cursor:default" title="<?php esc_attr_e( 'Imposta la Pagina prenotazioni in Calypso Sub → Impostazioni → Generali', 'calypsosub' ); ?>"><?php esc_html_e( 'Configura pagina prenotazioni', 'calypsosub' ); ?></span>
-			<?php endif; ?>
-
-		</div>
-	</article>
+		</article>
+		<?php endforeach; ?>
+		</div><!-- .cso-corsi-grid -->
+	</section>
 	<?php endforeach; ?>
-	</div><!-- .cso-corsi-grid -->
+	</div><!-- #cso-corsi-groups -->
 
-	<div class="cso-empty" id="cso-corsi-empty" style="display:none">
+	<div class="cso-empty" id="cso-corsi-empty" hidden>
 		<p class="cso-empty__title"><?php esc_html_e( 'Nessun corso trovato.', 'calypsosub' ); ?></p>
 		<p class="cso-empty__sub">
-			<a href="#" id="cso-corsi-reset"><?php esc_html_e( 'Rimuovi filtri', 'calypsosub' ); ?></a>
+			<a href="#" id="cso-corsi-empty-reset"><?php esc_html_e( 'Rimuovi filtri', 'calypsosub' ); ?></a>
 		</p>
 	</div>
 
@@ -292,49 +392,101 @@ $_acd = [
 
 <script>
 (function () {
-	var grid    = document.getElementById('cso-corsi-grid');
-	var empty   = document.getElementById('cso-corsi-empty');
-	var resetEl = document.getElementById('cso-corsi-reset');
-	var chips   = document.querySelectorAll('.cso-corsi-chip');
-	var search  = document.querySelector('.cso-corsi-search');
-	var active  = '';
+	var root     = document.getElementById('cso-corsi-groups');
+	if (!root) return;
+	var groups   = root.querySelectorAll('.cso-corsi-group');
+	var cards    = root.querySelectorAll('.cso-corso-card');
+	var chips    = document.querySelectorAll('.cso-corsi-chip');
+	var livello  = document.getElementById('cso-corsi-livello');
+	var eta      = document.getElementById('cso-corsi-eta');
+	var search   = document.getElementById('cso-corsi-search');
+	var reset    = document.getElementById('cso-corsi-reset');
+	var count    = document.getElementById('cso-corsi-count');
+	var empty    = document.getElementById('cso-corsi-empty');
+	var emptyRst = document.getElementById('cso-corsi-empty-reset');
+	var state    = { categoria: '', livello: '', eta: '', q: '' };
 
-	function filter() {
-		var q   = search ? search.value.toLowerCase().trim() : '';
-		var cnt = 0;
-		grid.querySelectorAll('.cso-corso-card').forEach(function (card) {
-			var matchLiv = !active || card.dataset.livello.split(' ').indexOf(active) !== -1;
-			var matchQ   = !q     || card.dataset.title.indexOf(q) !== -1;
-			var show     = matchLiv && matchQ;
-			card.style.display = show ? '' : 'none';
-			if (show) cnt++;
+	function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
+
+	function apply() {
+		var q   = state.q.toLowerCase().trim();
+		var age = parseInt(state.eta, 10);
+		var tot = 0;
+		cards.forEach(function (card) {
+			var cardAge = parseInt(card.dataset.eta, 10);
+			var ok = (!state.categoria || card.dataset.categoria === state.categoria)
+				&& (!state.livello || (' ' + card.dataset.livello + ' ').indexOf(' ' + state.livello + ' ') !== -1)
+				&& (isNaN(age) || isNaN(cardAge) || cardAge <= age)
+				&& (!q || card.dataset.search.indexOf(q) !== -1);
+			card.hidden = !ok;
+			if (ok) tot++;
 		});
-		if (empty) empty.style.display = cnt === 0 ? '' : 'none';
+		groups.forEach(function (group) {
+			var visible = group.querySelectorAll('.cso-corso-card:not([hidden])').length;
+			group.hidden = visible === 0;
+			var label = group.querySelector('[data-group-count]');
+			if (label) label.textContent = plural(visible, '<?php echo esc_js( __( 'corso', 'calypsosub' ) ); ?>', '<?php echo esc_js( __( 'corsi', 'calypsosub' ) ); ?>');
+		});
+		chips.forEach(function (chip) {
+			var on = chip.dataset.categoria === state.categoria;
+			chip.classList.toggle('cso-corsi-chip--active', on);
+			chip.setAttribute('aria-pressed', on ? 'true' : 'false');
+		});
+		var filtered = state.categoria || state.livello || state.eta || state.q;
+		if (count) count.textContent = plural(tot, '<?php echo esc_js( __( 'corso', 'calypsosub' ) ); ?>', '<?php echo esc_js( __( 'corsi', 'calypsosub' ) ); ?>');
+		if (reset) reset.hidden = !filtered;
+		if (empty) empty.hidden = tot !== 0;
+		syncUrl();
+	}
+
+	function syncUrl() {
+		if (!window.history || !history.replaceState) return;
+		var params = new URLSearchParams(window.location.search);
+		['categoria', 'livello', 'eta', 'q'].forEach(function (k) {
+			if (state[k]) params.set(k, state[k]); else params.delete(k);
+		});
+		var qs = params.toString();
+		history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : '') + window.location.hash);
+	}
+
+	function clearAll(e) {
+		if (e) e.preventDefault();
+		state = { categoria: '', livello: '', eta: '', q: '' };
+		if (livello) livello.value = '';
+		if (eta) eta.value = '';
+		if (search) search.value = '';
+		apply();
 	}
 
 	chips.forEach(function (chip) {
 		chip.addEventListener('click', function () {
-			chips.forEach(function (c) { c.classList.remove('cso-corsi-chip--active'); });
-			chip.classList.add('cso-corsi-chip--active');
-			active = chip.dataset.livello;
-			filter();
+			state.categoria = chip.dataset.categoria;
+			apply();
 		});
 	});
-
+	if (livello) livello.addEventListener('change', function () { state.livello = livello.value; apply(); });
+	if (eta) eta.addEventListener('input', function () { state.eta = eta.value; apply(); });
 	if (search) {
 		var t;
-		search.addEventListener('input', function () { clearTimeout(t); t = setTimeout(filter, 200); });
-	}
-
-	if (resetEl) {
-		resetEl.addEventListener('click', function (e) {
-			e.preventDefault();
-			active = '';
-			chips.forEach(function (c, i) { c.classList.toggle('cso-corsi-chip--active', i === 0); });
-			if (search) search.value = '';
-			filter();
+		search.addEventListener('input', function () {
+			clearTimeout(t);
+			t = setTimeout(function () { state.q = search.value; apply(); }, 150);
 		});
 	}
+	if (reset) reset.addEventListener('click', clearAll);
+	if (emptyRst) emptyRst.addEventListener('click', clearAll);
+
+	/* Filtri iniziali dall'indirizzo (es. /corsi/?categoria=apnea&eta=12). */
+	var params = new URLSearchParams(window.location.search);
+	state.categoria = params.get('categoria') || '';
+	if (state.categoria && !document.querySelector('.cso-corsi-chip[data-categoria="' + CSS.escape(state.categoria) + '"]')) state.categoria = '';
+	state.livello = livello && params.get('livello') ? params.get('livello') : '';
+	if (livello) { livello.value = state.livello; state.livello = livello.value; }
+	state.eta = eta && params.get('eta') ? params.get('eta') : '';
+	if (eta) eta.value = state.eta;
+	state.q = search && params.get('q') ? params.get('q') : '';
+	if (search) search.value = state.q;
+	apply();
 })();
 </script>
 

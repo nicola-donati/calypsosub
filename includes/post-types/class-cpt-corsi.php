@@ -96,7 +96,7 @@ class Calypsosub_CPT_Corsi {
 			],
 			'public'          => true,
 			'show_in_rest'    => true,
-			'supports'        => [ 'title', 'editor', 'thumbnail' ],
+			'supports'        => [ 'title', 'editor', 'thumbnail', 'page-attributes' ],
 			'menu_icon'       => 'dashicons-welcome-learn-more',
 			'rewrite'         => [ 'slug' => 'corsi' ],
 			'has_archive'     => true,
@@ -185,6 +185,10 @@ class Calypsosub_CPT_Corsi {
 			<div class="calypso-meta-field">
 				<label><?php _e( 'Profondità', 'calypsosub' ); ?> <small>(es. "18 m")</small></label>
 				<input type="text" name="calypso_stat_profondita" value="<?php echo esc_attr( $d['stat_profondita'] ); ?>">
+			</div>
+			<div class="calypso-meta-field">
+				<label><?php _e( 'Età minima', 'calypsosub' ); ?> <small>(anni — usata dal filtro per età nella pagina Corsi)</small></label>
+				<input type="number" name="calypso_eta_min" min="0" max="99" step="1" value="<?php echo esc_attr( $d['eta_min'] ); ?>">
 			</div>
 			<div class="calypso-meta-field">
 				<label><?php _e( 'Contatto sidebar', 'calypsosub' ); ?> <small>(tel. o email)</small></label>
@@ -339,6 +343,13 @@ class Calypsosub_CPT_Corsi {
 				sanitize_text_field( wp_unslash( $_POST[ $post_key ] ?? '' ) ) );
 		}
 
+		$eta_raw = trim( (string) wp_unslash( $_POST['calypso_eta_min'] ?? '' ) );
+		if ( $eta_raw === '' ) {
+			delete_post_meta( $post_id, '_corso_eta_min' );
+		} else {
+			update_post_meta( $post_id, '_corso_eta_min', absint( $eta_raw ) );
+		}
+
 		update_post_meta( $post_id, '_corso_contatto_nome',
 			sanitize_text_field( wp_unslash( $_POST['calypso_contatto_nome'] ?? '' ) ) );
 
@@ -395,6 +406,7 @@ class Calypsosub_CPT_Corsi {
 			'docenti_ids'     => (array)  ( get_post_meta( $post_id, '_corso_docenti_ids', true ) ?: [] ),
 			'fasi'                  => (array)  ( get_post_meta( $post_id, '_corso_fasi', true ) ?: [] ),
 			'requisiti'             => (string) get_post_meta( $post_id, '_corso_requisiti', true ),
+			'eta_min'               => (string) get_post_meta( $post_id, '_corso_eta_min', true ),
 			'hero_use_featured_image' => (string) get_post_meta( $post_id, '_hero_use_featured_image', true ),
 		];
 	}

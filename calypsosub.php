@@ -3,7 +3,7 @@
  * Plugin Name: Calypso Sub Arezzo
  * Plugin URI:  https://calypsosub.it
  * Description: Gestione uscite, eventi, corsi, docenti e prenotazioni per ASD Calypso Sub Arezzo.
- * Version:     1.0.62
+ * Version:     1.0.63
  * Author:      Nicola Donati
  * Text Domain: calypsosub
  * Domain Path: /languages
@@ -13,7 +13,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'CALYPSOSUB_VERSION', '1.0.62' );
+define( 'CALYPSOSUB_VERSION', '1.0.63' );
 define( 'CALYPSOSUB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CALYPSOSUB_URL', plugin_dir_url( __FILE__ ) );
 define( 'CALYPSOSUB_PLUGIN_FILE', __FILE__ );
@@ -21,6 +21,7 @@ define( 'CALYPSOSUB_PLUGIN_FILE', __FILE__ );
 require_once CALYPSOSUB_PATH . 'includes/helpers/functions.php';
 require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-brevetti.php';
 require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-livelli.php';
+require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-categorie-corsi.php';
 require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-fauna.php';
 require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-media-tag.php';
 require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-communication-media.php';
@@ -39,6 +40,9 @@ require_once CALYPSOSUB_PATH . 'includes/migrations/class-migrate-evento-luogo-i
 require_once CALYPSOSUB_PATH . 'includes/migrations/class-flush-rewrite-rules-on-update.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-corsi.php';
 require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-occorrenze.php';
+require_once CALYPSOSUB_PATH . 'includes/import/class-course-spreadsheet-reader.php';
+require_once CALYPSOSUB_PATH . 'includes/import/class-course-import-mapper.php';
+require_once CALYPSOSUB_PATH . 'includes/import/class-course-importer.php';
 require_once CALYPSOSUB_PATH . 'includes/bookings/class-booking-email.php';
 require_once CALYPSOSUB_PATH . 'includes/bookings/class-booking-manager.php';
 require_once CALYPSOSUB_PATH . 'includes/integrations/class-systemeio-client.php';
@@ -75,6 +79,7 @@ add_filter( 'use_block_editor_for_post_type', function ( bool $use, string $post
 
 ( new Calypsosub_Tax_Brevetti() )->init();
 ( new Calypsosub_Tax_Livelli() )->init();
+( new Calypsosub_Tax_Categorie_Corsi() )->init();
 ( new Calypsosub_Tax_Fauna() )->init();
 ( new Calypsosub_Tax_Media_Tag() )->init();
 ( new Calypsosub_Tax_Communication_Media() )->init();
@@ -91,6 +96,7 @@ add_filter( 'use_block_editor_for_post_type', function ( bool $use, string $post
 ( new Calypsosub_Flush_Rewrite_Rules_On_Update() )->init();
 ( new Calypsosub_CPT_Corsi() )->init();
 ( new Calypsosub_CPT_Occorrenze() )->init();
+( new Calypsosub_Course_Importer() )->init();
 
 $email_manager                       = new Calypsosub_Booking_Email();
 $GLOBALS['calypsosub_booking_manager'] = new Calypsosub_Booking_Manager( $email_manager );
