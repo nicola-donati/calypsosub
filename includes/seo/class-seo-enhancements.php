@@ -78,18 +78,12 @@ class Calypsosub_Seo_Enhancements {
 	}
 
 	/**
-	 * Sede del club per i dati strutturati (NAP). Valori predefiniti presi dalla
-	 * scheda Google del club; sovrascrivibili con il filtro 'calypsosub_club_address'.
+	 * Indirizzo del club per i dati strutturati. Vuoto di proposito: l'unico
+	 * indirizzo disponibile è la sede legale, che non va pubblicata. Per
+	 * aggiungerlo in futuro basta il filtro 'calypsosub_club_address'.
 	 */
 	private function club_address(): array {
-		$defaults = [
-			'streetAddress'   => 'Via Anconetana 129',
-			'postalCode'      => '52100',
-			'addressLocality' => 'Arezzo',
-			'addressRegion'   => 'AR',
-			'addressCountry'  => 'IT',
-		];
-		$address = (array) apply_filters( 'calypsosub_club_address', $defaults );
+		$address = (array) apply_filters( 'calypsosub_club_address', [] );
 		return array_filter( array_map( 'strval', $address ), static fn( string $v ): bool => $v !== '' );
 	}
 
