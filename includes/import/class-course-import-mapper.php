@@ -138,6 +138,93 @@ class Calypsosub_Course_Import_Mapper {
 		return in_array( $v, [ 'si', 'yes', 'y', 'x', '1', 'true', 'ok', 'approvato' ], true );
 	}
 
+	/** Fields the user can choose to update on existing courses, with their on-screen labels. */
+	const SELECTABLE_FIELDS = [
+		'title'                  => 'Titolo',
+		'slug'                   => 'Slug (indirizzo della pagina)',
+		'content'                => 'Descrizione (contenuto pagina)',
+		'categoria'              => 'Categoria',
+		'livello'                => 'Livello',
+		'ordine'                 => 'Ordine nella pagina Corsi',
+		'_corso_sottotitolo'     => 'Titolo display',
+		'_corso_badge'           => 'Badge certificazione',
+		'_corso_desc_breve'      => 'Descrizione breve',
+		'_corso_competenze'      => 'Cosa imparerai',
+		'fasi'                   => 'Fasi del programma',
+		'_corso_stat_durata'     => 'Durata',
+		'_corso_stat_pratica'    => 'Immersioni / pratica',
+		'_corso_stat_profondita' => 'Profondità',
+		'_corso_periodo'         => 'Periodo tipico',
+		'_corso_requisiti'       => 'Requisiti di accesso',
+		'eta_min'                => 'Età minima',
+		'_corso_materiale'       => 'Materiale incluso',
+		'_corso_contatto'        => 'Contatto sidebar',
+		'_corso_contatto_nome'   => 'Nome contatto',
+		'direttore'              => 'Direttore del corso',
+		'docenti'                => 'Docenti del corso',
+		'_corso_link_iscrizione' => 'Link iscrizione personalizzato',
+		'_yoast_wpseo_title'     => 'Title SEO',
+		'_yoast_wpseo_metadesc'  => 'Meta description',
+		'_yoast_wpseo_focuskw'   => 'Parola chiave Yoast',
+	];
+
+	/**
+	 * Selectable fields that at least one course of the file would write.
+	 *
+	 * @param array<int, array<string, mixed>> $courses
+	 * @return string[]
+	 */
+	public function fields_in_file( array $courses ): array {
+		$found = [];
+		foreach ( $courses as $c ) {
+			if ( ! empty( $c['skip'] ) ) continue;
+			foreach ( array_keys( self::SELECTABLE_FIELDS ) as $f ) {
+				if ( $this->writes_field( $c, $f ) ) $found[ $f ] = true;
+			}
+		}
+		return array_values( array_filter( array_keys( self::SELECTABLE_FIELDS ), fn( $f ) => isset( $found[ $f ] ) ) );
+	}
+
+	private function writes_field( array $c, string $f ): bool {
+		switch ( $f ) {
+			case 'title':
+				return ( $c['title'] ?? '' ) !== '';
+			case 'slug':
+				return ( $c['slug'] ?? '' ) !== '';
+			case 'ordine':
+				return true;
+			case 'docenti':
+				return ! empty( $c['docenti'] );
+			case 'content': case 'categoria': case 'livello': case 'fasi': case 'eta_min': case 'direttore':
+				return ( $c[ $f ] ?? null ) !== null;
+			default:
+				return array_key_exists( $f, $c['meta'] ?? [] ) || array_key_exists( $f, $c['yoast'] ?? [] );
+		}
+	}
+
+	/**
+	 * Drops from a mapped course every field not in $fields, so an update
+	 * leaves those fields as they are on the site.
+	 *
+	 * @param string[] $fields
+	 */
+	public function restrict( array $course, array $fields ): array {
+		$keep = array_flip( $fields );
+		if ( ! isset( $keep['title'] ) )     $course['title']     = null;
+		if ( ! isset( $keep['slug'] ) )      $course['slug']      = '';
+		if ( ! isset( $keep['content'] ) )   $course['content']   = null;
+		if ( ! isset( $keep['categoria'] ) ) $course['categoria'] = null;
+		if ( ! isset( $keep['livello'] ) )   $course['livello']   = null;
+		if ( ! isset( $keep['fasi'] ) )      $course['fasi']      = null;
+		if ( ! isset( $keep['eta_min'] ) )   $course['eta_min']   = null;
+		if ( ! isset( $keep['direttore'] ) ) $course['direttore'] = null;
+		if ( ! isset( $keep['docenti'] ) )   $course['docenti']   = [];
+		$course['set_order'] = isset( $keep['ordine'] );
+		$course['meta']  = array_intersect_key( $course['meta'] ?? [], $keep );
+		$course['yoast'] = array_intersect_key( $course['yoast'] ?? [], $keep );
+		return $course;
+	}
+
 	/** Cell value that empties a course field on import (an empty cell leaves it unchanged). */
 	const CLEAR_TOKEN = '(vuoto)';
 

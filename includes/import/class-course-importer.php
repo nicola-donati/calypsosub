@@ -370,6 +370,7 @@ class Calypsosub_Course_Importer {
 			<form method="post">
 				<?php wp_nonce_field( self::NONCE_ACTION ); ?>
 				<input type="hidden" name="calypso_import_step" value="import">
+				<?php $this->render_field_choices( $mapped['courses'], ( $counts['update'] ?? 0 ) > 0 ); ?>
 				<p>
 					<?php submit_button( __( 'Conferma e importa', 'calypsosub' ), 'primary', 'submit', false ); ?>
 					<a class="button" href="<?php echo esc_url( $this->page_url() ); ?>"><?php esc_html_e( 'Annulla', 'calypsosub' ); ?></a>
@@ -439,6 +440,44 @@ class Calypsosub_Course_Importer {
 		return $plan;
 	}
 
+	/** Checkboxes to choose which columns of the file update the existing courses. */
+	private function render_field_choices( array $courses, bool $has_updates ): void {
+		if ( ! $has_updates ) {
+			return;
+		}
+		$fields = $this->mapper->fields_in_file( $courses );
+		if ( ! $fields ) {
+			return;
+		}
+		?>
+		<input type="hidden" name="calypso_fields_shown" value="1">
+		<fieldset class="calypso-import__fields">
+			<h3><?php esc_html_e( 'Campi da aggiornare nei corsi già presenti', 'calypsosub' ); ?></h3>
+			<p class="description"><?php esc_html_e( 'Togli la spunta alle colonne che non vuoi toccare: quei campi restano come sono sul sito. I corsi nuovi vengono creati con tutte le colonne.', 'calypsosub' ); ?></p>
+			<p>
+				<button type="button" class="button-link" data-calypso-fields="all"><?php esc_html_e( 'Seleziona tutti', 'calypsosub' ); ?></button> ·
+				<button type="button" class="button-link" data-calypso-fields="none"><?php esc_html_e( 'Deseleziona tutti', 'calypsosub' ); ?></button>
+			</p>
+			<div style="columns:3 220px;margin:8px 0 16px">
+				<?php foreach ( $fields as $f ) : ?>
+					<label style="display:block;margin:0 0 6px;break-inside:avoid">
+						<input type="checkbox" name="calypso_fields[]" value="<?php echo esc_attr( $f ); ?>" checked>
+						<?php echo esc_html( Calypsosub_Course_Import_Mapper::SELECTABLE_FIELDS[ $f ] ); ?>
+					</label>
+				<?php endforeach; ?>
+			</div>
+		</fieldset>
+		<script>
+		document.querySelectorAll('[data-calypso-fields]').forEach(function (b) {
+			b.addEventListener('click', function () {
+				var on = b.getAttribute('data-calypso-fields') === 'all';
+				document.querySelectorAll('input[name="calypso_fields[]"]').forEach(function (c) { c.checked = on; });
+			});
+		});
+		</script>
+		<?php
+	}
+
 	private function render_plan_table( array $plan ): void {
 		$labels = [
 			'create' => __( 'Crea', 'calypsosub' ),
@@ -487,6 +526,14 @@ class Calypsosub_Course_Importer {
 		}
 		delete_transient( $this->transient_key() );
 
+		if ( isset( $_POST['calypso_fields_shown'] ) ) {
+			$posted = array_map( 'sanitize_key', (array) wp_unslash( $_POST['calypso_fields'] ?? [] ) );
+			$data['options']['fields'] = array_values( array_intersect(
+				array_keys( Calypsosub_Course_Import_Mapper::SELECTABLE_FIELDS ),
+				$posted
+			) );
+		}
+
 		$results = [];
 		foreach ( $data['plan'] as $item ) {
 			if ( $item['action'] === 'skip' ) {
@@ -532,6 +579,9 @@ class Calypsosub_Course_Importer {
 	public function apply( array $item, array $options ): array {
 		$c       = $item['course'];
 		$created = $item['action'] === 'create';
+		if ( ! $created && isset( $options['fields'] ) ) {
+			$c = $this->mapper->restrict( $c, (array) $options['fields'] );
+		}
 		$meta    = $this->sanitize_meta( $c['meta'] + $c['yoast'] );
 		if ( $c['eta_min'] !== null ) {
 			$meta['_corso_eta_min'] = (int) $c['eta_min'];
@@ -561,10 +611,14 @@ class Calypsosub_Course_Importer {
 
 		$postarr = [
 			'post_type'  => 'calypso_corso',
-			'post_title' => sanitize_text_field( $c['title'] ),
-			'menu_order' => (int) $c['position'] * 10,
 			'meta_input' => $meta,
 		];
+		if ( ( $c['title'] ?? '' ) !== '' ) {
+			$postarr['post_title'] = sanitize_text_field( $c['title'] );
+		}
+		if ( $c['set_order'] ?? true ) {
+			$postarr['menu_order'] = (int) $c['position'] * 10;
+		}
 		if ( $c['slug'] !== '' ) {
 			$postarr['post_name'] = sanitize_title( $c['slug'] );
 		}
@@ -582,7 +636,7 @@ class Calypsosub_Course_Importer {
 
 		if ( is_wp_error( $post_id ) || ! $post_id ) {
 			return [
-				'title'   => $c['title'],
+				'title'   => $item['course']['title'],
 				'post_id' => 0,
 				'created' => $created,
 				'error'   => is_wp_error( $post_id ) ? $post_id->get_error_message() : __( 'Errore sconosciuto', 'calypsosub' ),
@@ -596,7 +650,7 @@ class Calypsosub_Course_Importer {
 			$this->assign_category( (int) $post_id, $c['categoria'], (int) $c['position'] );
 		}
 
-		return [ 'title' => $c['title'], 'post_id' => (int) $post_id, 'created' => $created, 'error' => '' ];
+		return [ 'title' => $item['course']['title'], 'post_id' => (int) $post_id, 'created' => $created, 'error' => '' ];
 	}
 
 	/** Sets the course category; a new category gets the order of its first course in the file. */

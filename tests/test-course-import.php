@@ -113,6 +113,32 @@ class Test_Course_Import extends TestCase {
 		$this->assertArrayNotHasKey( '_corso_stat_durata', $c['meta'], 'An empty cell still leaves the field unchanged' );
 	}
 
+	public function test_restrict_keeps_only_selected_fields(): void {
+		$m = new Calypsosub_Course_Import_Mapper();
+		$c = $m->map_rows( $this->xlsx_rows() )['courses'][0];
+		$r = $m->restrict( $c, [ '_corso_badge', '_yoast_wpseo_title' ] );
+		$this->assertNull( $r['title'], 'Title left unchanged' );
+		$this->assertSame( '', $r['slug'] );
+		$this->assertNull( $r['content'] );
+		$this->assertNull( $r['fasi'] );
+		$this->assertFalse( $r['set_order'] );
+		$this->assertSame( [ '_yoast_wpseo_title' ], array_keys( $r['yoast'] ) );
+		$this->assertArrayNotHasKey( '_corso_sottotitolo', $r['meta'] );
+		$this->assertSame( $c['title'], $m->restrict( $c, [ 'title' ] )['title'] );
+		$this->assertTrue( $m->restrict( $c, [ 'ordine' ] )['set_order'] );
+	}
+
+	public function test_fields_in_file_lists_only_columns_with_values(): void {
+		$rows   = [ [ 'Corso (titolo WordPress)' => 'Corso X', 'Badge certificazione' => 'FIAS', 'Durata' => '', 'Materiale incluso' => '(vuoto)' ] ];
+		$m      = new Calypsosub_Course_Import_Mapper();
+		$fields = $m->fields_in_file( $m->map_rows( $rows, false )['courses'] );
+		$this->assertContains( '_corso_badge', $fields );
+		$this->assertContains( '_corso_materiale', $fields, '(vuoto) counts: it writes an empty value' );
+		$this->assertContains( 'title', $fields );
+		$this->assertNotContains( '_corso_stat_durata', $fields );
+		$this->assertNotContains( 'content', $fields );
+	}
+
 	public function test_explicit_age_column_wins(): void {
 		$rows = ( new Calypsosub_Course_Spreadsheet_Reader() )->read( $this->fixture( 'corsi-esempio.csv' ), 'csv' );
 		$c    = ( new Calypsosub_Course_Import_Mapper() )->map_rows( $rows )['courses'][0];
