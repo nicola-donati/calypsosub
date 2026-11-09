@@ -120,7 +120,7 @@ class Calypsosub_Seo_Enhancements {
 		$events = [];
 		foreach ( $occorrenze as $occ ) {
 			$start = $this->iso_date( (string) get_post_meta( $occ->ID, '_occorrenza_uscita_data', true ) );
-			if ( $start === '' ) continue;
+			if ( $start === '' || $this->is_past( $start ) ) continue;
 
 			$event = $this->base_event( $title, $url, $start, $luogo, $img, $desc );
 			$event['@id'] = $url . '#event-' . $occ->ID;
@@ -141,7 +141,7 @@ class Calypsosub_Seo_Enhancements {
 		$events = [];
 		foreach ( $dates as $idx => $dt ) {
 			$start = $this->iso_date( (string) $dt );
-			if ( $start === '' ) continue;
+			if ( $start === '' || $this->is_past( $start ) ) continue;
 
 			$event        = $this->base_event( $title, $url, $start, $luogo, $img, $desc, $indirizzo );
 			$event['@id'] = $url . '#event-' . $idx;
@@ -266,6 +266,12 @@ class Calypsosub_Seo_Enhancements {
 		if ( $same_as ) $person['sameAs'] = $same_as;
 
 		return [ $person ];
+	}
+
+	/** Dates already gone are not emitted: an EventScheduled in the past misleads search engines. */
+	private function is_past( string $iso ): bool {
+		$ts = strtotime( $iso );
+		return $ts !== false && $ts < time();
 	}
 
 	private function iso_date( string $dt ): string {

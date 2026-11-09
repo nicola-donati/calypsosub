@@ -77,6 +77,10 @@ foreach ( $occorrenze as $occ ) {
 if ( ! $prossima_occ && $occorrenze ) $prossima_occ = end( $occorrenze );
 $prossima      = $prossima_occ ? (string) get_post_meta( $prossima_occ->ID, '_occorrenza_uscita_data', true ) : '';
 $prossima_time = $prossima ? $fmt_time( $prossima ) : '';
+$occorrenze_future = array_values( array_filter(
+	$occorrenze,
+	static fn( $occ ) => (string) get_post_meta( $occ->ID, '_occorrenza_uscita_data', true ) >= $oggi
+) );
 
 $num_immersioni = ( $num_immersioni_raw !== '' && $num_immersioni_raw !== false )
 	? (int) $num_immersioni_raw
@@ -129,7 +133,7 @@ if ( ! empty( $programma_override ) ) {
 $maps = $indirizzo ? calypso_maps_links( $indirizzo ) : null;
 
 $cal_links = null;
-if ( $prossima ) {
+if ( $prossima && $prossima >= $oggi ) {
 	$end_dt = '';
 	if ( $prossima_time && preg_match( '/^([01]?\d|2[0-3]):[0-5]\d$/', trim( $rientro_previsto ) ) ) {
 		$end_dt = substr( $prossima, 0, 10 ) . 'T' . trim( $rientro_previsto );
@@ -658,11 +662,11 @@ $_ud = [
 	</div>
 	<?php endif; ?>
 
-	<?php if ( ! empty( $occorrenze ) ) : ?>
+	<?php if ( ! empty( $occorrenze_future ) ) : ?>
 	<div class="cso-sintesi__inizi">
 		<span class="cso-inizi-label"><?php echo esc_html( calypsosub_opt( 'uscite', 'inizi_label', __( 'Prossime date', 'calypsosub' ) ) ); ?></span>
 		<p class="cso-inizi-note"><?php echo esc_html( calypsosub_opt( 'uscite', 'inizi_note', __( 'Stesso itinerario, date diverse durante la stagione.', 'calypsosub' ) ) ); ?></p>
-		<?php foreach ( $occorrenze as $occ ) :
+		<?php foreach ( $occorrenze_future as $occ ) :
 			$occ_data     = (string) get_post_meta( $occ->ID, '_occorrenza_uscita_data', true );
 			$remaining    = $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager
 				? $calypsosub_booking_manager->get_remaining_spots( $occ->ID )

@@ -282,6 +282,12 @@ if ( isset( $tipi['corsi'] ) ) {
  * In quel caso, se è impostato un form di fallback, viene mostrato quello al
  * posto del form di prenotazione normale.
  */
+// Le date già passate non si mostrano: non sono prenotabili e farebbero sembrare
+// "prossime" uscite ed eventi conclusi.
+foreach ( $items_by_tipo as $tipo => $cards ) {
+	$items_by_tipo[ $tipo ] = array_values( array_filter( $cards, static fn( $c ) => empty( $c['scaduta'] ) ) );
+}
+
 $tipo_has_bookable = [];
 foreach ( $items_by_tipo as $tipo => $cards ) {
 	$tipo_has_bookable[ $tipo ] = (bool) array_filter( $cards, static fn( $c ) => $c['disponibile'] ?? true );
