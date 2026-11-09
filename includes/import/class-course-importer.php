@@ -83,6 +83,7 @@ class Calypsosub_Course_Importer {
 			<li><?php esc_html_e( 'Nel file Excel viene letto il foglio «Corsi» (o il primo foglio). La prima riga deve contenere i nomi delle colonne.', 'calypsosub' ); ?></li>
 			<li><?php esc_html_e( 'I corsi già presenti vengono riconosciuti dallo slug o, in mancanza, dal titolo, e vengono aggiornati.', 'calypsosub' ); ?></li>
 			<li><?php esc_html_e( 'Le celle vuote e i segnaposto come [DA DEFINIRE] non sovrascrivono i dati già salvati.', 'calypsosub' ); ?></li>
+			<li><?php esc_html_e( 'Per svuotare un campo del corso (per esempio "Materiale incluso") scrivi (vuoto) nella cella.', 'calypsosub' ); ?></li>
 			<li><?php esc_html_e( 'Docenti e direttore vengono collegati per nome ai profili esistenti in Docenti.', 'calypsosub' ); ?></li>
 		</ul>
 		<p><a class="button" href="<?php echo esc_url( $template_url ); ?>"><?php esc_html_e( 'Scarica il modello CSV vuoto', 'calypsosub' ); ?></a></p>

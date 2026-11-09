@@ -105,6 +105,14 @@ class Test_Course_Import extends TestCase {
 		$this->assertContains( '_corso_sottotitolo', $c['warnings'] );
 	}
 
+	public function test_clear_token_empties_meta_fields(): void {
+		$rows = [ [ 'Corso (titolo WordPress)' => 'Corso X', 'Materiale incluso' => ' (Vuoto) ', 'Titolo display' => 'Ciao.', 'Durata' => '' ] ];
+		$c    = ( new Calypsosub_Course_Import_Mapper() )->map_rows( $rows, false )['courses'][0];
+		$this->assertSame( '', $c['meta']['_corso_materiale'], '"(vuoto)" clears the field' );
+		$this->assertSame( 'Ciao.', $c['meta']['_corso_sottotitolo'] );
+		$this->assertArrayNotHasKey( '_corso_stat_durata', $c['meta'], 'An empty cell still leaves the field unchanged' );
+	}
+
 	public function test_explicit_age_column_wins(): void {
 		$rows = ( new Calypsosub_Course_Spreadsheet_Reader() )->read( $this->fixture( 'corsi-esempio.csv' ), 'csv' );
 		$c    = ( new Calypsosub_Course_Import_Mapper() )->map_rows( $rows )['courses'][0];

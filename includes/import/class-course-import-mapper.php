@@ -107,7 +107,7 @@ class Calypsosub_Course_Import_Mapper {
 		];
 
 		foreach ( self::META_COLUMNS as $key => $aliases ) {
-			$v = $this->value( $row, $aliases );
+			$v = $this->is_clear_token( (string) $this->raw( $row, $aliases ) ) ? '' : $this->value( $row, $aliases );
 			if ( $v !== null ) {
 				$course['meta'][ $key ] = $v;
 			}
@@ -136,6 +136,13 @@ class Calypsosub_Course_Import_Mapper {
 		$v = strtolower( trim( $value ) );
 		$v = str_replace( [ 'ì', 'í' ], 'i', $v );
 		return in_array( $v, [ 'si', 'yes', 'y', 'x', '1', 'true', 'ok', 'approvato' ], true );
+	}
+
+	/** Cell value that empties a course field on import (an empty cell leaves it unchanged). */
+	const CLEAR_TOKEN = '(vuoto)';
+
+	public function is_clear_token( string $value ): bool {
+		return mb_strtolower( trim( $value ) ) === self::CLEAR_TOKEN;
 	}
 
 	/** True for empty cells and "[DA DEFINIRE]"-style placeholders. */
