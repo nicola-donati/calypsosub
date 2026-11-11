@@ -284,7 +284,7 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 .cso-uscita-row--passata .cso-uscita-row__dayname{color:rgba(11,26,38,.3) !important}
 
 /* Nessuna uscita in calendario: stesso blocco e stessa riga dei mesi */
-@media(min-width:761px){.cso-uscita-row.cso-stagione__row{grid-template-columns:90px 1fr auto;gap:24px}}
+@media(min-width:761px){.cso-uscita-row.cso-stagione__row{grid-template-columns:1fr auto;gap:24px}}
 .cso-archive .cso-stagione__text{max-width:560px;line-height:1.5}
 
 /* Stato vuoto */
@@ -479,10 +479,6 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 		</h2>
 		<div class="cso-uscite-list">
 			<div class="cso-uscita-row cso-stagione__row">
-				<div class="cso-uscita-row__date" aria-hidden="true">
-					<span class="cso-uscita-row__dayname">&nbsp;</span>
-					<p class="cso-uscita-row__daynum display">—</p>
-				</div>
 				<div class="cso-uscita-row__info">
 					<h3 class="cso-uscita-row__title"><?php echo esc_html( calypsosub_opt( 'uscite', 'stagione_titolo', __( 'Nessuna uscita in calendario, per ora.', 'calypsosub' ) ) ); ?></h3>
 					<p class="cso-uscita-row__luogo cso-stagione__text"><?php echo esc_html( calypsosub_opt( 'uscite', 'stagione_testo', __( 'Dicci dove vorresti immergerti e che brevetto hai: ti scriviamo quando fissiamo la prossima uscita.', 'calypsosub' ) ) ); ?></p>
