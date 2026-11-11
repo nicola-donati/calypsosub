@@ -283,16 +283,9 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 .cso-uscita-row--passata .cso-uscita-row__title{color:rgba(11,26,38,.45) !important}
 .cso-uscita-row--passata .cso-uscita-row__dayname{color:rgba(11,26,38,.3) !important}
 
-/* Nessuna uscita in calendario: stessi colori e font dell'hero */
-.cso-stagione{position:relative;overflow:hidden;margin:0 0 64px;padding:44px 48px 48px;background:#0a2540;border-radius:16px;color:#fff}
-.cso-stagione::after{content:"";position:absolute;right:-80px;top:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(89,198,249,.22),rgba(89,198,249,0) 70%);pointer-events:none}
-.cso-archive .cso-stagione__eyebrow{margin:0 0 14px;font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#59C6F9}
-.cso-archive .cso-stagione__title{margin:0 0 18px;font-family:"Big Shoulders Display",Anton,Impact,sans-serif;font-weight:800;text-transform:uppercase;font-size:56px;line-height:.95;color:#fff}
-.cso-archive .cso-stagione__title em{font-style:italic;color:#59C6F9}
-.cso-archive .cso-stagione__text{margin:0 0 28px;max-width:560px;font-size:16px;line-height:1.6;color:rgba(255,255,255,.82)}
-.cso-archive .cso-stagione__btn{display:inline-flex;align-items:center;gap:8px;padding:14px 22px;background:#E4C33C;color:#0a2540;font-size:14px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;text-decoration:none;transition:background .15s}
-.cso-archive .cso-stagione__btn:hover{background:#f0d35a;color:#0a2540}
-@media(max-width:768px){.cso-stagione{padding:30px 22px 32px;margin-bottom:44px}.cso-archive .cso-stagione__title{font-size:38px}}
+/* Nessuna uscita in calendario: stesso blocco e stessa riga dei mesi */
+@media(min-width:761px){.cso-uscita-row.cso-stagione__row{grid-template-columns:90px 1fr auto;gap:24px}}
+.cso-archive .cso-stagione__text{max-width:560px;line-height:1.5}
 
 /* Stato vuoto */
 .cso-empty{padding:64px 0;text-align:center}
@@ -479,15 +472,27 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 			$stagione_link = $contatti ? get_permalink( $contatti ) : home_url( '/' );
 		}
 	?>
-	<section class="cso-stagione">
-		<p class="cso-stagione__eyebrow"><?php echo esc_html( calypsosub_opt( 'uscite', 'stagione_eyebrow', __( 'Calendario in aggiornamento', 'calypsosub' ) ) ); ?></p>
-		<h2 class="cso-stagione__title display">
-			<?php echo esc_html( calypsosub_opt( 'uscite', 'stagione_titolo', __( 'Nessuna uscita in calendario,', 'calypsosub' ) ) ); ?>
-			<em><?php echo esc_html( calypsosub_opt( 'uscite', 'stagione_titolo_em', __( 'per ora.', 'calypsosub' ) ) ); ?></em>
+	<div class="cso-mese cso-stagione">
+		<h2 class="cso-mese__heading display">
+			<?php echo esc_html( calypsosub_opt( 'uscite', 'stagione_heading', __( 'Prossime uscite', 'calypsosub' ) ) ); ?>
+			<span class="cso-mese__count"><?php echo esc_html( calypsosub_opt( 'uscite', 'stagione_count', __( 'Da definire', 'calypsosub' ) ) ); ?></span>
 		</h2>
-		<p class="cso-stagione__text"><?php echo esc_html( calypsosub_opt( 'uscite', 'stagione_testo', __( 'Le date della prossima stagione non sono ancora uscite. Dicci dove vorresti immergerti e che brevetto hai: ti scriviamo noi quando fissiamo la prossima uscita.', 'calypsosub' ) ) ); ?></p>
-		<a class="cso-stagione__btn" href="<?php echo esc_url( $stagione_link ); ?>"><?php echo esc_html( calypsosub_opt( 'uscite', 'stagione_btn', __( 'Richiedi la prossima uscita', 'calypsosub' ) ) ); ?> <span aria-hidden="true">→</span></a>
-	</section>
+		<div class="cso-uscite-list">
+			<div class="cso-uscita-row cso-stagione__row">
+				<div class="cso-uscita-row__date" aria-hidden="true">
+					<span class="cso-uscita-row__dayname">&nbsp;</span>
+					<p class="cso-uscita-row__daynum display">—</p>
+				</div>
+				<div class="cso-uscita-row__info">
+					<h3 class="cso-uscita-row__title"><?php echo esc_html( calypsosub_opt( 'uscite', 'stagione_titolo', __( 'Nessuna uscita in calendario, per ora.', 'calypsosub' ) ) ); ?></h3>
+					<p class="cso-uscita-row__luogo cso-stagione__text"><?php echo esc_html( calypsosub_opt( 'uscite', 'stagione_testo', __( 'Dicci dove vorresti immergerti e che brevetto hai: ti scriviamo quando fissiamo la prossima uscita.', 'calypsosub' ) ) ); ?></p>
+				</div>
+				<div class="cso-uscita-row__cta">
+					<a class="cso-btn-dark" href="<?php echo esc_url( $stagione_link ); ?>"><?php echo esc_html( calypsosub_opt( 'uscite', 'stagione_btn', __( 'Richiedi la prossima uscita', 'calypsosub' ) ) ); ?></a>
+				</div>
+			</div>
+		</div>
+	</div>
 	<?php endif; ?>
 
 	<?php if ( empty( $per_mese ) ) : ?>
