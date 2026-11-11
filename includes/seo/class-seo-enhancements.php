@@ -33,7 +33,7 @@ class Calypsosub_Seo_Enhancements {
 			'email'        => 'calypso@fias.it',
 			'memberOf'     => [
 				'@type' => 'SportsOrganization',
-				'name'  => 'FIAS – Federazione Italiana Attività Subacquee',
+				'name'  => 'FIAS', // solo ASCII: il server trasforma accenti e trattini dell'output di Yoast in entità HTML
 				'url'   => 'https://www.fias.it/',
 			],
 		] );
