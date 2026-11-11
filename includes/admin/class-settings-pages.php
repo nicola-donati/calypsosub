@@ -152,9 +152,10 @@ class Calypsosub_Settings_Pages {
 					],
 					'Archivio — Nessuna uscita in calendario (mostrato sopra la lista quando tutte le uscite sono terminate)' => [
 						'stagione_eyebrow' => [ 'label' => 'Eyebrow',         'default' => 'Calendario in aggiornamento' ],
-						'stagione_titolo'  => [ 'label' => 'Titolo',          'default' => 'Nessuna uscita in calendario, per ora.' ],
-						'stagione_testo'   => [ 'label' => 'Testo',           'default' => 'Le uscite qui sotto sono già terminate e le prossime date non sono ancora in calendario. Scrivici quale meta ti interessa e che brevetto hai: ti ricontattiamo quando organizziamo la prossima uscita.', 'type' => 'textarea' ],
-						'stagione_btn'     => [ 'label' => 'Bottone',         'default' => 'Richiedi la prossima uscita →' ],
+						'stagione_titolo'  => [ 'label' => 'Titolo',          'default' => 'Nessuna uscita in calendario,' ],
+						'stagione_titolo_em' => [ 'label' => 'Titolo, parte finale in evidenza (corsivo azzurro)', 'default' => 'per ora.' ],
+						'stagione_testo'   => [ 'label' => 'Testo',           'default' => 'Le date della prossima stagione non sono ancora uscite. Dicci dove vorresti immergerti e che brevetto hai: ti scriviamo noi quando fissiamo la prossima uscita.', 'type' => 'textarea' ],
+						'stagione_btn'     => [ 'label' => 'Bottone',         'default' => 'Richiedi la prossima uscita' ],
 						'stagione_link'    => [ 'label' => 'Link del bottone (vuoto = pagina Contattaci)', 'default' => '' ],
 					],
 					'Pagina singola — Sezioni' => [
