@@ -376,7 +376,7 @@ body:has(.csh-hero) .entry-content>*{margin-top:0!important;margin-block-start:0
 
   <div class="csh-hero__bg">
     <?php if ( $bg_url ) : ?>
-      <img src="<?php echo esc_url( $bg_url ); ?>" alt="" loading="eager" fetchpriority="high">
+      <img src="<?php echo esc_url( $bg_url ); ?>"<?php echo calypsosub_srcset_attr( (int) $image_id ); ?> alt="" loading="eager" fetchpriority="high">
     <?php endif; ?>
   </div>
   <div class="csh-hero__overlay"></div>

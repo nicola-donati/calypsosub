@@ -475,7 +475,7 @@ $_ud = [
 
 	<?php if ( ! $hero_bg && $img ) : ?>
 	<div class="cso-hero__img-wrap">
-		<img class="cso-hero__img" src="<?php echo esc_url( $img ); ?>" alt="<?php the_title_attribute(); ?>">
+		<img class="cso-hero__img" src="<?php echo esc_url( $img ); ?>"<?php echo calypsosub_srcset_attr( (int) get_post_thumbnail_id( $id ) ); ?> alt="<?php the_title_attribute(); ?>">
 		<div class="cso-hero__img-cap"><?php echo esc_html( get_the_title() . ( $luogo ? ' · ' . $luogo : '' ) ); ?></div>
 	</div>
 	<?php endif; ?>

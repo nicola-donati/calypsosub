@@ -366,7 +366,7 @@ $overlay_gradient = sprintf( 'linear-gradient(rgba(%d,%d,%d,%.3f) 0%%,rgba(%d,%d
 <section class="cso-hero<?php echo $hero_img_url ? ' cso-hero--has-img' : ''; ?>">
 <?php if ( $hero_img_url ) : ?>
 <div class="cso-hero__bg">
-	<img src="<?php echo esc_url( $hero_img_url ); ?>" alt="" loading="eager" fetchpriority="high">
+	<img src="<?php echo esc_url( $hero_img_url ); ?>"<?php echo calypsosub_srcset_attr( (int) $hero_img_id ); ?> alt="" loading="eager" fetchpriority="high">
 </div>
 <div class="cso-hero__overlay" style="background:<?php echo esc_attr( $overlay_gradient ); ?>"></div>
 <?php endif; ?>

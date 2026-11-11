@@ -316,7 +316,7 @@ $_evd = [
 
 	<?php if ( $hero_img ) : ?>
 	<div class="cso-hero__img-wrap">
-		<img src="<?php echo esc_url( $hero_img ); ?>" alt="<?php the_title_attribute(); ?>">
+		<img src="<?php echo esc_url( $hero_img ); ?>"<?php echo calypsosub_srcset_attr( (int) get_post_thumbnail_id( $id ) ); ?> alt="<?php the_title_attribute(); ?>">
 		<span class="cso-hero__img-cap"><?php echo esc_html( get_the_title() ); ?></span>
 	</div>
 	<?php endif; ?>

@@ -521,3 +521,19 @@ function calypso_gcal_link( string $title, string $start, string $end, string $l
 	];
 	return 'https://calendar.google.com/calendar/render?' . http_build_query( $args, '', '&', PHP_QUERY_RFC3986 );
 }
+
+/**
+ * srcset and sizes attributes for an <img> that shows an attachment at full size
+ * (heroes): browsers then download a size that fits the screen instead of the
+ * 2560px original. Returns '' when WordPress has no smaller sizes.
+ */
+function calypsosub_srcset_attr( int $attachment_id, string $sizes = '100vw' ): string {
+	if ( $attachment_id <= 0 ) {
+		return '';
+	}
+	$srcset = wp_get_attachment_image_srcset( $attachment_id, 'full' );
+	if ( ! $srcset ) {
+		return '';
+	}
+	return ' srcset="' . esc_attr( $srcset ) . '" sizes="' . esc_attr( $sizes ) . '"';
+}
