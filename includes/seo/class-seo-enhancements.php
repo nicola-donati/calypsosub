@@ -15,13 +15,43 @@ class Calypsosub_Seo_Enhancements {
 	public function init(): void {
 		add_action( 'wp_head', [ $this, 'output_schema' ], 30 );
 		add_filter( 'wpseo_metadesc', [ $this, 'docente_metadesc_fallback' ] );
+		add_filter( 'wpseo_schema_organization', [ $this, 'enrich_yoast_organization' ] );
+	}
+
+	/**
+	 * Completa l'organizzazione che Yoast pubblica su ogni pagina (nome legale e
+	 * nome alternativo restano quelli impostati in Yoast): tipo SportsClub, anno di
+	 * fondazione, affiliazione FIAS, mail. Valori modificabili con il filtro
+	 * 'calypsosub_club_schema'.
+	 */
+	public function enrich_yoast_organization( $data ) {
+		if ( ! is_array( $data ) ) {
+			return $data;
+		}
+		$extra = (array) apply_filters( 'calypsosub_club_schema', [
+			'foundingDate' => '1977',
+			'email'        => 'calypso@fias.it',
+			'memberOf'     => [
+				'@type' => 'SportsOrganization',
+				'name'  => 'FIAS – Federazione Italiana Attività Subacquee',
+				'url'   => 'https://www.fias.it/',
+			],
+		] );
+		$types         = (array) ( $data['@type'] ?? 'Organization' );
+		$data['@type'] = array_values( array_unique( array_merge( $types, [ 'SportsClub' ] ) ) );
+		foreach ( $extra as $key => $value ) {
+			if ( empty( $data[ $key ] ) ) {
+				$data[ $key ] = $value;
+			}
+		}
+		$address = $this->club_address();
+		if ( $address && empty( $data['address'] ) ) {
+			$data['address'] = [ '@type' => 'PostalAddress' ] + $address;
+		}
+		return $data;
 	}
 
 	public function output_schema(): void {
-		if ( is_front_page() ) {
-			$this->print_graph( [ $this->organization() ] );
-			return;
-		}
 		if ( ! is_singular( [ 'calypso_uscita', 'calypso_evento', 'calypso_corso', 'calypso_docente' ] ) ) {
 			return;
 		}
@@ -87,7 +117,15 @@ class Calypsosub_Seo_Enhancements {
 		return array_filter( array_map( 'strval', $address ), static fn( string $v ): bool => $v !== '' );
 	}
 
+	/**
+	 * Il club come organizzatore/fornitore. Con Yoast attivo è un rimando alla
+	 * sua organizzazione (#organization), così il club ha un solo nodo con nome
+	 * legale, nome alternativo e dati completi; senza Yoast, un nodo minimo.
+	 */
 	private function organization(): array {
+		if ( defined( 'WPSEO_VERSION' ) ) {
+			return [ '@id' => home_url( '/#organization' ) ];
+		}
 		$org = [
 			'@type' => 'SportsClub',
 			'@id'   => home_url( '/#club' ),
@@ -139,11 +177,15 @@ class Calypsosub_Seo_Enhancements {
 		$dates     = (array) ( get_post_meta( $id, '_evento_date', true ) ?: [] );
 
 		$events = [];
-		foreach ( $dates as $idx => $dt ) {
-			$start = $this->iso_date( (string) $dt );
-			if ( $start === '' || $this->is_past( $start ) ) continue;
+		foreach ( $this->day_runs( $dates ) as $idx => $run ) {
+			$start = $this->iso_date( (string) $run[0] );
+			$last  = $this->iso_date( (string) end( $run ) );
+			if ( $start === '' || $this->is_past( $last ) ) continue;
 
-			$event        = $this->base_event( $title, $url, $start, $luogo, $img, $desc, $indirizzo );
+			$event = $this->base_event( $title, $url, $start, $luogo, $img, $desc, $indirizzo );
+			if ( count( $run ) > 1 ) {
+				$event['endDate'] = $last;
+			}
 			$event['@id'] = $url . '#event-' . $idx;
 			$events[]     = $event;
 		}
@@ -266,6 +308,30 @@ class Calypsosub_Seo_Enhancements {
 		if ( $same_as ) $person['sameAs'] = $same_as;
 
 		return [ $person ];
+	}
+
+	/**
+	 * Groups dates that fall on consecutive days (a three-day fair) so they
+	 * become one Event with startDate and endDate; other dates stay separate.
+	 *
+	 * @return array<int, string[]>
+	 */
+	private function day_runs( array $dates ): array {
+		$dates = array_values( array_filter( array_map( 'strval', $dates ) ) );
+		sort( $dates );
+		$runs = [];
+		foreach ( $dates as $dt ) {
+			$day = substr( $dt, 0, 10 );
+			if ( $runs ) {
+				$prev = substr( (string) end( $runs[ count( $runs ) - 1 ] ), 0, 10 );
+				if ( $day === $prev || $day === date( 'Y-m-d', strtotime( $prev . ' +1 day' ) ) ) {
+					$runs[ count( $runs ) - 1 ][] = $dt;
+					continue;
+				}
+			}
+			$runs[] = [ $dt ];
+		}
+		return $runs;
 	}
 
 	/** Dates already gone are not emitted: an EventScheduled in the past misleads search engines. */
