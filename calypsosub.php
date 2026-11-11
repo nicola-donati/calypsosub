@@ -3,7 +3,7 @@
  * Plugin Name: Calypso Sub Arezzo
  * Plugin URI:  https://calypsosub.it
  * Description: Gestione uscite, eventi, corsi, docenti e prenotazioni per ASD Calypso Sub Arezzo.
- * Version:     1.0.82
+ * Version:     1.0.81
  * Author:      Nicola Donati
  * Text Domain: calypsosub
  * Domain Path: /languages
@@ -13,7 +13,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'CALYPSOSUB_VERSION', '1.0.82' );
+define( 'CALYPSOSUB_VERSION', '1.0.81' );
 define( 'CALYPSOSUB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CALYPSOSUB_URL', plugin_dir_url( __FILE__ ) );
 define( 'CALYPSOSUB_PLUGIN_FILE', __FILE__ );
@@ -47,7 +47,6 @@ require_once CALYPSOSUB_PATH . 'includes/bookings/class-booking-email.php';
 require_once CALYPSOSUB_PATH . 'includes/bookings/class-booking-manager.php';
 require_once CALYPSOSUB_PATH . 'includes/integrations/class-systemeio-client.php';
 require_once CALYPSOSUB_PATH . 'includes/integrations/class-telegram-client.php';
-require_once CALYPSOSUB_PATH . 'includes/integrations/class-cf7-assets.php';
 require_once CALYPSOSUB_PATH . 'includes/communications/class-communications-settings.php';
 require_once CALYPSOSUB_PATH . 'includes/communications/class-cpt-communications.php';
 require_once CALYPSOSUB_PATH . 'includes/communications/class-communication-dispatcher.php';
@@ -107,7 +106,6 @@ $GLOBALS['calypsosub_booking_manager']->init();
 ( new Calypsosub_Communication_Dispatcher( new Calypsosub_SystemeIO_Client(), new Calypsosub_Telegram_Client() ) )->init();
 
 ( new Calypsosub_Seo_Enhancements() )->init();
-( new Calypsosub_CF7_Assets() )->init();
 ( new Calypsosub_Updater() )->init();
 ( new Calypsosub_Template_Loader() )->init();
 ( new Calypsosub_Admin_Menus() )->init();
