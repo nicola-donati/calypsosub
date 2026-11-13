@@ -66,8 +66,10 @@ class Calypsosub_CF7_Booking_Handler {
 		$user_id     = $this->resolve_user_id( wp_unslash( $_POST ) );
 		$guest_email = $user_id ? '' : calypso_extract_email( wp_unslash( $_POST ) );
 
+		$persons     = 1 + Calypsosub_Booking_Manager::companions_from_form( wp_unslash( $_POST ) );
+
 		if ( in_array( $post_type, [ 'calypso_occ_uscita', 'calypso_evento' ], true )
-			&& ! calypso_can_book( $post_id, $user_id, $guest_email ) ) {
+			&& ! calypso_can_book( $post_id, $user_id, $guest_email, $persons ) ) {
 			$result->invalidate( 'booking_post_id', __( 'Posti esauriti o richiesta già inviata.', 'calypsosub' ) );
 		} elseif ( $post_type === 'calypso_corso' ) {
 			global $calypsosub_booking_manager;

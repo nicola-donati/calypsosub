@@ -74,7 +74,7 @@ $confirmed   = 0;
 
 if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 	$remaining   = $calypsosub_booking_manager->get_remaining_spots( $id );
-	$confirmed   = $calypsosub_booking_manager->count_confirmed( $id );
+	$confirmed   = $calypsosub_booking_manager->count_people( $id );
 	$has_booking = $logged_in && $calypsosub_booking_manager->user_has_booking( $id, $user_id );
 	// Prenotazione aperta anche a chi non è loggato (richiesta del club):
 	// il controllo doppioni per gli ospiti avviene all'invio, sull'email.

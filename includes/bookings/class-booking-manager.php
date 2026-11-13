@@ -28,7 +28,10 @@ class Calypsosub_Booking_Manager {
 			'label'           => __( 'Prenotazioni', 'calypsosub' ),
 			'public'          => false,
 			'show_ui'         => true,
-			'show_in_menu'    => 'calypsosub',
+			// Niente voce di menu: si gestiscono da Calypso Sub → Prenotazioni
+			// (Calypsosub_Bookings_Admin); il dettaglio singolo resta
+			// raggiungibile da lì.
+			'show_in_menu'    => false,
 			'capability_type' => 'post',
 			'supports'        => [],
 		] );
@@ -147,7 +150,7 @@ class Calypsosub_Booking_Manager {
 		if ( $post_type === 'calypso_corso' ) {
 			$status = 'in_attesa';
 		} else {
-			$status = $this->resolve_booking_status( $post_id );
+			$status = $this->resolve_booking_status( $post_id, 1 + self::companions_from_form( $form_data ) );
 			if ( is_wp_error( $status ) ) return $status;
 		}
 
@@ -204,8 +207,9 @@ class Calypsosub_Booking_Manager {
 		update_post_meta( $booking_id, '_booking_status', 'annullata' );
 		$this->email->send_booking_cancelled( $booking_id );
 
-		// Promuovi primo in lista d'attesa
-		if ( $current_status === 'confermata' ) {
+		// Posti liberati (anche da una prenotazione ancora da confermare,
+		// che li occupava): promuovi la lista d'attesa.
+		if ( in_array( $current_status, [ 'confermata', 'in_attesa' ], true ) ) {
 			$post_id = (int) get_post_meta( $booking_id, '_booking_post_id', true );
 			$this->promote_waitlist( $post_id );
 		}
@@ -217,61 +221,80 @@ class Calypsosub_Booking_Manager {
 	// Helpers
 	// -------------------------------------------------------------------------
 
-	private function resolve_booking_status( int $post_id ): string|WP_Error {
-		$post_type   = get_post_type( $post_id );
-		$meta_prefix = $post_type === 'calypso_occ_uscita' ? '_occorrenza_uscita' : '_evento';
-		$max_field   = $post_type === 'calypso_occ_uscita' ? '_posti' : '_max_partecipanti';
-		$max         = get_post_meta( $post_id, $meta_prefix . $max_field, true );
-
-		if ( $max === '' || $max === null ) {
+	/**
+	 * Stato iniziale di una nuova prenotazione da $persons persone
+	 * (prenotante + accompagnatori). Se non ci stanno nei posti liberi va in
+	 * lista d'attesa quando è abilitata, altrimenti è rifiutata.
+	 */
+	private function resolve_booking_status( int $post_id, int $persons = 1 ): string|WP_Error {
+		$remaining = $this->get_remaining_spots( $post_id );
+		if ( $remaining === null || $persons <= $remaining ) {
 			return 'in_attesa';
 		}
-
-		if ( $this->count_confirmed( $post_id ) < (int) $max ) {
-			return 'in_attesa';
+		if ( self::waitlist_enabled( $post_id ) ) {
+			return 'lista_attesa';
 		}
-
 		return new WP_Error( 'full', __( 'Posti esauriti.', 'calypsosub' ) );
 	}
 
-	public function count_confirmed( int $post_id ): int {
-		global $wpdb;
-		return (int) $wpdb->get_var( $wpdb->prepare(
-			"SELECT COUNT(p.ID)
-			 FROM {$wpdb->posts} p
-			 INNER JOIN {$wpdb->postmeta} pm_pid ON p.ID = pm_pid.post_id
-			   AND pm_pid.meta_key = '_booking_post_id' AND pm_pid.meta_value = %d
-			 INNER JOIN {$wpdb->postmeta} pm_status ON p.ID = pm_status.post_id
-			   AND pm_status.meta_key = '_booking_status'
-			   AND pm_status.meta_value IN ('confermata','in_attesa')
-			 WHERE p.post_type = 'calypso_prenotazione' AND p.post_status = 'publish'",
-			$post_id
-		) );
+	public static function waitlist_enabled( int $post_id ): bool {
+		$meta_prefix = get_post_type( $post_id ) === 'calypso_occ_uscita' ? '_occorrenza_uscita' : '_evento';
+		return (bool) get_post_meta( $post_id, $meta_prefix . '_lista_attesa', true );
 	}
 
-	public function count_waitlist( int $post_id ): int {
-		global $wpdb;
-		return (int) $wpdb->get_var( $wpdb->prepare(
-			"SELECT COUNT(p.ID)
-			 FROM {$wpdb->posts} p
-			 INNER JOIN {$wpdb->postmeta} pm_pid ON p.ID = pm_pid.post_id
-			   AND pm_pid.meta_key = '_booking_post_id' AND pm_pid.meta_value = %d
-			 INNER JOIN {$wpdb->postmeta} pm_status ON p.ID = pm_status.post_id
-			   AND pm_status.meta_key = '_booking_status' AND pm_status.meta_value = 'lista_attesa'
-			 WHERE p.post_type = 'calypso_prenotazione' AND p.post_status = 'publish'",
-			$post_id
-		) );
+	/** Posti massimi (persone) di un'uscita/evento, null = illimitati. */
+	public static function get_capacity( int $post_id ): ?int {
+		$post_type = get_post_type( $post_id );
+		if ( $post_type === 'calypso_occ_uscita' ) {
+			$max = get_post_meta( $post_id, '_occorrenza_uscita_posti', true );
+		} elseif ( $post_type === 'calypso_evento' ) {
+			$max = get_post_meta( $post_id, '_evento_max_partecipanti', true );
+		} else {
+			return null;
+		}
+		return ( $max === '' || $max === null || $max === false ) ? null : (int) $max;
 	}
 
+	/**
+	 * ID delle prenotazioni di un elemento negli stati indicati, in ordine
+	 * di arrivo.
+	 *
+	 * @param string[] $statuses
+	 * @return int[]
+	 */
+	public function get_booking_ids( int $post_id, array $statuses ): array {
+		return array_map( 'intval', get_posts( [
+			'post_type'      => 'calypso_prenotazione',
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'fields'         => 'ids',
+			'orderby'        => 'date',
+			'order'          => 'ASC',
+			'meta_query'     => [
+				[ 'key' => '_booking_post_id', 'value' => $post_id, 'type' => 'NUMERIC' ],
+				[ 'key' => '_booking_status',  'value' => $statuses, 'compare' => 'IN' ],
+			],
+		] ) );
+	}
+
+	/** Persone di una prenotazione: prenotante + accompagnatori. */
+	public static function get_people( int $booking_id ): int {
+		return 1 + self::get_companions( $booking_id );
+	}
+
+	/**
+	 * Persone che occupano posti (prenotazioni confermate o in attesa di
+	 * conferma): ogni prenotazione conta 1 + i suoi accompagnatori.
+	 */
+	public function count_people( int $post_id ): int {
+		return array_sum( array_map( [ self::class, 'get_people' ], $this->get_booking_ids( $post_id, [ 'confermata', 'in_attesa' ] ) ) );
+	}
+
+	/** Posti liberi in persone, null = illimitati. */
 	public function get_remaining_spots( int $post_id ): int|null {
-		$post_type   = get_post_type( $post_id );
-		$meta_prefix = $post_type === 'calypso_occ_uscita' ? '_occorrenza_uscita' : '_evento';
-		$max_field   = $post_type === 'calypso_occ_uscita' ? '_posti' : '_max_partecipanti';
-		$max         = get_post_meta( $post_id, $meta_prefix . $max_field, true );
-
-		if ( $max === '' || $max === null ) return null;
-
-		return max( 0, (int) $max - $this->count_confirmed( $post_id ) );
+		$max = self::get_capacity( $post_id );
+		if ( $max === null ) return null;
+		return max( 0, $max - $this->count_people( $post_id ) );
 	}
 
 	public function user_has_booking( int $post_id, int $user_id ): bool {
@@ -512,11 +535,40 @@ class Calypsosub_Booking_Manager {
 		}
 		if ( ! current_user_can( 'edit_posts' ) ) wp_die( esc_html__( 'Permessi insufficienti.', 'calypsosub' ) );
 
+		$this->admin_confirm( $booking_id );
+		$this->redirect_back( 'confirmed' );
+	}
+
+	/** Torna alla pagina da cui è partita l'azione (elenco o dettaglio). */
+	private function redirect_back( string $msg ): void {
+		$back = wp_get_referer() ?: Calypsosub_Bookings_Admin::page_url();
+		wp_safe_redirect( add_query_arg( [ 'cso_msg' => $msg, 'cso_count' => 1 ], $back ) );
+		exit;
+	}
+
+	/** Conferma da admin (anche da lista d'attesa) e invia l'email. */
+	public function admin_confirm( int $booking_id ): bool {
+		$current = (string) get_post_meta( $booking_id, '_booking_status', true );
+		if ( ! in_array( $current, [ 'in_attesa', 'lista_attesa' ], true ) ) return false;
 		update_post_meta( $booking_id, '_booking_status', 'confermata' );
 		$this->email->send_booking_confirmed( $booking_id );
+		return true;
+	}
 
-		wp_redirect( add_query_arg( [ 'post_type' => 'calypso_prenotazione', 'calypso_msg' => 'confirmed' ], admin_url( 'edit.php' ) ) );
-		exit;
+	/**
+	 * Rifiuta (se non ancora confermata) o annulla (se confermata) da admin e
+	 * invia l'email. Un annullamento libera posti: si promuove la lista
+	 * d'attesa, come quando annulla l'utente stesso.
+	 */
+	public function admin_reject( int $booking_id ): bool {
+		$current = (string) get_post_meta( $booking_id, '_booking_status', true );
+		if ( ! in_array( $current, [ 'in_attesa', 'lista_attesa', 'confermata' ], true ) ) return false;
+		update_post_meta( $booking_id, '_booking_status', $current === 'confermata' ? 'annullata' : 'rifiutata' );
+		$this->email->send_booking_rejected( $booking_id );
+		if ( $current !== 'lista_attesa' ) {
+			$this->promote_waitlist( (int) get_post_meta( $booking_id, '_booking_post_id', true ) );
+		}
+		return true;
 	}
 
 	public function handle_reject_booking(): void {
@@ -526,13 +578,8 @@ class Calypsosub_Booking_Manager {
 		}
 		if ( ! current_user_can( 'edit_posts' ) ) wp_die( esc_html__( 'Permessi insufficienti.', 'calypsosub' ) );
 
-		$current = (string) get_post_meta( $booking_id, '_booking_status', true );
-		$new_status = ( $current === 'confermata' ) ? 'annullata' : 'rifiutata';
-		update_post_meta( $booking_id, '_booking_status', $new_status );
-		$this->email->send_booking_rejected( $booking_id );
-
-		wp_redirect( add_query_arg( [ 'post_type' => 'calypso_prenotazione', 'calypso_msg' => 'rejected' ], admin_url( 'edit.php' ) ) );
-		exit;
+		$this->admin_reject( $booking_id );
+		$this->redirect_back( 'rejected' );
 	}
 
 	public function booking_row_actions( array $actions, WP_Post $post ): array {
@@ -595,23 +642,18 @@ class Calypsosub_Booking_Manager {
 		}
 	}
 
+	/**
+	 * Dopo un annullamento: promuove, in ordine di arrivo, le prenotazioni in
+	 * lista d'attesa che entrano nei posti liberati (contando anche i loro
+	 * accompagnatori). Una prenotazione troppo grande viene saltata, non
+	 * blocca quelle dopo.
+	 */
 	private function promote_waitlist( int $post_id ): void {
-		global $wpdb;
-		$next_id = $wpdb->get_var( $wpdb->prepare(
-			"SELECT p.ID
-			 FROM {$wpdb->posts} p
-			 INNER JOIN {$wpdb->postmeta} pm_pid ON p.ID = pm_pid.post_id
-			   AND pm_pid.meta_key = '_booking_post_id' AND pm_pid.meta_value = %d
-			 INNER JOIN {$wpdb->postmeta} pm_status ON p.ID = pm_status.post_id
-			   AND pm_status.meta_key = '_booking_status' AND pm_status.meta_value = 'lista_attesa'
-			 WHERE p.post_type = 'calypso_prenotazione' AND p.post_status = 'publish'
-			 ORDER BY p.post_date ASC LIMIT 1",
-			$post_id
-		) );
-
-		if ( $next_id ) {
-			update_post_meta( (int) $next_id, '_booking_status', 'confermata' );
-			$this->email->send_promoted_from_waitlist( (int) $next_id );
+		foreach ( $this->get_booking_ids( $post_id, [ 'lista_attesa' ] ) as $next_id ) {
+			$remaining = $this->get_remaining_spots( $post_id );
+			if ( $remaining !== null && self::get_people( $next_id ) > $remaining ) continue;
+			update_post_meta( $next_id, '_booking_status', 'confermata' );
+			$this->email->send_promoted_from_waitlist( $next_id );
 		}
 	}
 }

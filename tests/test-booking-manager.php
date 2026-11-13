@@ -52,7 +52,7 @@ class Test_Booking_Manager extends TestCase {
 		Functions\when( 'current_time' )->justReturn( '2026-05-22 10:00:00' );
 
 		$email = $this->createMock( Calypsosub_Booking_Email::class );
-		$email->expects( $this->once() )->method( 'send_booking_confirmed' );
+		$email->expects( $this->once() )->method( 'send_booking_received' );
 		$email->expects( $this->once() )->method( 'send_admin_notification' );
 
 		$manager = $this->getMockBuilder( Calypsosub_Booking_Manager::class )
@@ -72,10 +72,10 @@ class Test_Booking_Manager extends TestCase {
 		$email   = $this->createMock( Calypsosub_Booking_Email::class );
 		$manager = $this->getMockBuilder( Calypsosub_Booking_Manager::class )
 		                ->setConstructorArgs( [ $email ] )
-		                ->onlyMethods( [ 'user_has_booking', 'count_confirmed' ] )
+		                ->onlyMethods( [ 'user_has_booking', 'count_people' ] )
 		                ->getMock();
 		$manager->method( 'user_has_booking' )->willReturn( false );
-		$manager->method( 'count_confirmed' )->willReturn( 10 );
+		$manager->method( 'count_people' )->willReturn( 10 );
 
 		Functions\expect( 'get_post_meta' )
 			->once()
@@ -93,25 +93,25 @@ class Test_Booking_Manager extends TestCase {
 	}
 
 	public function test_book_full_with_waitlist_returns_lista_attesa(): void {
-		Functions\when( 'get_post_type' )->justReturn( 'calypso_uscita' );
+		Functions\when( 'get_post_type' )->justReturn( 'calypso_occ_uscita' );
 		Functions\when( 'wp_insert_post' )->justReturn( 10 );
 		Functions\when( 'update_post_meta' )->justReturn( true );
 		Functions\when( 'current_time' )->justReturn( '2026-05-22 10:00:00' );
 
 		$email   = $this->createMock( Calypsosub_Booking_Email::class );
-		$email->expects( $this->once() )->method( 'send_booking_confirmed' );
+		$email->expects( $this->once() )->method( 'send_booking_received' );
 		$manager = $this->getMockBuilder( Calypsosub_Booking_Manager::class )
 		                ->setConstructorArgs( [ $email ] )
-		                ->onlyMethods( [ 'user_has_booking', 'count_confirmed' ] )
+		                ->onlyMethods( [ 'user_has_booking', 'count_people' ] )
 		                ->getMock();
 		$manager->method( 'user_has_booking' )->willReturn( false );
-		$manager->method( 'count_confirmed' )->willReturn( 5 );
+		$manager->method( 'count_people' )->willReturn( 5 );
 
 		Functions\expect( 'get_post_meta' )
-			->with( 1, '_uscita_max_partecipanti', true )
+			->with( 1, '_occorrenza_uscita_posti', true )
 			->andReturn( '5' );
 		Functions\expect( 'get_post_meta' )
-			->with( 1, '_uscita_lista_attesa', true )
+			->with( 1, '_occorrenza_uscita_lista_attesa', true )
 			->andReturn( 1 );
 
 		$result = $manager->book( 1, 1, [] );

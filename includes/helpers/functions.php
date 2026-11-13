@@ -397,7 +397,11 @@ function calypso_extract_email( array $data ): string {
  * controllo duplicati solo quando $user_id è 0 (prenotante anonimo): non
  * c'è un utente loggato su cui basarsi, quindi si usa l'email del form.
  */
-function calypso_can_book( int $post_id, int $user_id, string $guest_email = '' ): bool {
+/**
+ * @param int $persons Persone della richiesta (prenotante + accompagnatori):
+ *                     devono entrare tutte nei posti liberi.
+ */
+function calypso_can_book( int $post_id, int $user_id, string $guest_email = '', int $persons = 1 ): bool {
 	global $calypsosub_booking_manager;
 	if ( ! $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) return false;
 	if ( $user_id ) {
@@ -418,9 +422,8 @@ function calypso_can_book( int $post_id, int $user_id, string $guest_email = '' 
 
 	$remaining = $calypsosub_booking_manager->get_remaining_spots( $post_id );
 	if ( $remaining === null ) return true;
-	if ( $remaining > 0 ) return true;
-	$meta_prefix = $post_type === 'calypso_occ_uscita' ? '_occorrenza_uscita' : '_evento';
-	return (bool) get_post_meta( $post_id, $meta_prefix . '_lista_attesa', true );
+	if ( $remaining >= max( 1, $persons ) ) return true;
+	return Calypsosub_Booking_Manager::waitlist_enabled( $post_id );
 }
 
 /**
