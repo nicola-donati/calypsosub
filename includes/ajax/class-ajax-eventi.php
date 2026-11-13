@@ -211,9 +211,7 @@ class Calypsosub_Ajax_Eventi {
 								. esc_html( $posti . ' ' . __( 'posti', 'calypsosub' ) ) . '</span>';
 						}
 
-						$book_url = is_user_logged_in()
-							? add_query_arg( 'prenota', '1', get_permalink( $e->ID ) )
-							: wp_login_url( get_permalink( $e->ID ) );
+						$book_url = add_query_arg( 'prenota', '1', get_permalink( $e->ID ) );
 
 						if ( $posti === 0 && ! $lista_attesa ) {
 							$btn_html = '<span class="cso-btn-dark cso-btn-dark--disabled">'

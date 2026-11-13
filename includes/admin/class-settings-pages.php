@@ -321,7 +321,6 @@ class Calypsosub_Settings_Pages {
 						'msg_gia_iscritto'   => [ 'label' => 'Messaggio già iscritto',          'default' => '✓ Sei già iscritto a questo evento.' ],
 						'msg_lista_avviso'   => [ 'label' => 'Avviso lista attesa',              'default' => "Posti esauriti — puoi iscriverti in lista d'attesa." ],
 						'msg_esauriti'       => [ 'label' => 'Messaggio posti esauriti',         'default' => 'Posti esauriti.' ],
-						'msg_accedi_cta'     => [ 'label' => "Testo invito al login",            'default' => "Accedi per iscriverti all'evento." ],
 					],
 					'Archivio — Design' => [
 						'overlay_color'           => [ 'label' => 'Colore overlay hero archivio',         'default' => '#061826',  'type' => 'color' ],

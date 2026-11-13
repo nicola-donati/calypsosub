@@ -626,8 +626,8 @@ class Calypsosub_Blocks {
 				'max_width'          => [ 'type' => 'integer', 'default' => 1320 ],
 
 				/* Accesso per tipo */
-				'require_login_uscite' => [ 'type' => 'boolean', 'default' => true ],
-				'require_login_eventi' => [ 'type' => 'boolean', 'default' => true ],
+				'require_login_uscite' => [ 'type' => 'boolean', 'default' => false ],
+				'require_login_eventi' => [ 'type' => 'boolean', 'default' => false ],
 				'require_login_corsi'  => [ 'type' => 'boolean', 'default' => false ],
 				'login_message'        => [ 'type' => 'string',  'default' => 'Per prenotarti devi aver effettuato il login.' ],
 
@@ -3164,13 +3164,13 @@ class Calypsosub_Blocks {
 							el(ToggleControl, {
 								label: 'Uscite — richiedi login',
 								help: 'Se attivo, chi non è loggato vede un messaggio con link al login.',
-								checked: a.require_login_uscite !== false,
+								checked: !!a.require_login_uscite,
 								onChange: function (v) { set({ require_login_uscite: v }); }
 							}),
 							el(ToggleControl, {
 								label: 'Eventi — richiedi login',
 								help: 'Se attivo, chi non è loggato vede un messaggio con link al login.',
-								checked: a.require_login_eventi !== false,
+								checked: !!a.require_login_eventi,
 								onChange: function (v) { set({ require_login_eventi: v }); }
 							}),
 							el(ToggleControl, {

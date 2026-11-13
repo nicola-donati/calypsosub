@@ -76,7 +76,9 @@ if ( $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager ) {
 	$remaining   = $calypsosub_booking_manager->get_remaining_spots( $id );
 	$confirmed   = $calypsosub_booking_manager->count_confirmed( $id );
 	$has_booking = $logged_in && $calypsosub_booking_manager->user_has_booking( $id, $user_id );
-	$can_book    = $logged_in && calypso_can_book( $id, $user_id );
+	// Prenotazione aperta anche a chi non è loggato (richiesta del club):
+	// il controllo doppioni per gli ospiti avviene all'invio, sull'email.
+	$can_book    = calypso_can_book( $id, $user_id );
 }
 
 /* Testo posti per l'hero-fact (stessa logica usata in origine per l'infobar) */
@@ -209,8 +211,6 @@ if ( class_exists( 'Calypsosub_Ajax_Eventi' ) ) {
 .cso-notice--success{background:#d4edda;color:#155724}
 .cso-notice--waitlist{background:#d1ecf1;color:#0c5460}
 .cso-notice--error{background:#f8d7da;color:#721c24}
-.cso-login-cta{text-align:center;padding:24px}
-.cso-login-cta p{margin:0 0 16px;font-size:14px;color:#666}
 .cso-related{background:var(--c-bone,#F5F1E7);padding:64px 24px}
 .cso-related__inner{max-width:1320px;margin:0 auto}
 .cso-related__head{display:flex;align-items:baseline;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:32px}
@@ -394,12 +394,6 @@ $_evd = [
 				<?php if ( $has_booking ) : ?>
 				<div class="cso-notice cso-notice--success"><?php echo esc_html( calypsosub_opt( 'eventi', 'msg_gia_iscritto', __( '✓ Sei già iscritto a questo evento.', 'calypsosub' ) ) ); ?></div>
 				<a href="<?php echo esc_url( get_permalink( get_option( 'calypsosub_account_page_id' ) ) ); ?>" class="cso-btn" style="background:<?php echo esc_attr( $_evd['deep'] ); ?>"><?php echo esc_html( calypsosub_opt( 'eventi', 'btn_area_personale', __( 'Area personale', 'calypsosub' ) ) ); ?></a>
-
-				<?php elseif ( ! $logged_in ) : ?>
-				<div class="cso-login-cta">
-					<p><?php echo esc_html( calypsosub_opt( 'eventi', 'msg_accedi_cta', __( "Accedi per iscriverti all'evento.", 'calypsosub' ) ) ); ?></p>
-					<a href="<?php echo esc_url( wp_login_url( get_permalink() ) ); ?>" class="cso-btn"><?php esc_html_e( 'Accedi', 'calypsosub' ); ?></a>
-				</div>
 
 				<?php elseif ( $can_book ) : ?>
 				<?php if ( $remaining === 0 && $lista_attesa ) : ?>

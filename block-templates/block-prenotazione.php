@@ -8,8 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 $a = $attributes ?? [];
 
-$require_login_uscite = (bool)   ( $a['require_login_uscite'] ?? true );
-$require_login_eventi = (bool)   ( $a['require_login_eventi'] ?? true );
+$require_login_uscite = (bool)   ( $a['require_login_uscite'] ?? false );
+$require_login_eventi = (bool)   ( $a['require_login_eventi'] ?? false );
 $require_login_corsi  = (bool)   ( $a['require_login_corsi']  ?? false );
 $login_message        = (string) ( $a['login_message']        ?? 'Per prenotarti devi aver effettuato il login.' );
 
