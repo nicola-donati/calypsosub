@@ -315,17 +315,56 @@ function calypso_get_prossime_uscite_escluso( int $uscita_id_escluso, int $limit
 }
 
 /**
- * Lista docenti.
+ * Lista docenti. L'ordine predefinito ('orderby' => 'title', anche quello
+ * scelto nel blocco carosello) è alfabetico per COGNOME, poi nome: il titolo
+ * del post è "Nome Cognome", quindi un orderby SQL sul titolo ordinerebbe
+ * per nome. Ordinato in PHP perché un orderby su meta escluderebbe i docenti
+ * senza cognome compilato.
  */
 function calypso_get_docenti( array $args = [] ): array {
-	$query = new WP_Query( array_merge( [
+	$args = array_merge( [
 		'post_type'      => 'calypso_docente',
 		'post_status'    => 'publish',
 		'posts_per_page' => -1,
 		'orderby'        => 'title',
 		'order'          => 'ASC',
-	], $args ) );
-	return $query->posts;
+	], $args );
+
+	if ( $args['orderby'] !== 'title' ) {
+		return ( new WP_Query( $args ) )->posts;
+	}
+
+	// Il limite si applica dopo l'ordinamento, non prima.
+	$limit                  = (int) $args['posts_per_page'];
+	$args['posts_per_page'] = -1;
+	$posts                  = calypso_sort_docenti_by_surname( ( new WP_Query( $args ) )->posts );
+	return $limit > 0 ? array_slice( $posts, 0, $limit ) : $posts;
+}
+
+/**
+ * Ordina docenti per cognome e poi nome (meta _docente_cognome/_docente_nome),
+ * senza distinguere maiuscole e accenti. Senza cognome compilato si usa
+ * l'ultima parola del titolo.
+ *
+ * @param WP_Post[] $docenti
+ * @return WP_Post[]
+ */
+function calypso_sort_docenti_by_surname( array $docenti ): array {
+	$key = static function ( WP_Post $d ): string {
+		$cognome = trim( (string) get_post_meta( $d->ID, '_docente_cognome', true ) );
+		$nome    = trim( (string) get_post_meta( $d->ID, '_docente_nome', true ) );
+		if ( $cognome === '' ) {
+			// Cognome non compilato: il titolo è "Nome Cognome", si prende
+			// l'ultima parola (giusto per i cognomi di una sola parola).
+			$parole  = preg_split( '/\s+/', trim( $d->post_title ) );
+			$cognome = (string) array_pop( $parole );
+			$nome    = implode( ' ', $parole );
+		}
+		$base    = $cognome . ' ' . $nome;
+		return strtolower( remove_accents( html_entity_decode( $base, ENT_QUOTES, 'UTF-8' ) ) );
+	};
+	usort( $docenti, static fn( $a, $b ) => strcmp( $key( $a ), $key( $b ) ) );
+	return $docenti;
 }
 
 /**

@@ -24,13 +24,7 @@ if ( $cso_header_html !== '' ) {
 }
 
 /* ── Dati ── */
-$docenti = get_posts( [
-	'post_type'      => 'calypso_docente',
-	'posts_per_page' => -1,
-	'post_status'    => 'publish',
-	'orderby'        => 'title',
-	'order'          => 'ASC',
-] );
+$docenti = calypso_get_docenti(); // alfabetico per cognome
 $total = count( $docenti );
 
 $hero_img_id  = (int) get_option( 'calypsosub_hero_img_docenti', 0 );

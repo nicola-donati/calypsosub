@@ -3463,7 +3463,7 @@ class Calypsosub_Blocks {
 							a.source_mode === 'manual' ? textRow('ID docenti separati da virgola (nell\'ordine desiderato)', 'manual_ids_str') : null,
 							a.source_mode !== 'manual' ? el(SelectControl, { label: 'Ordinamento base', value: a.order || 'title',
 								options: [
-									{ value: 'title',      label: 'Titolo A→Z' },
+									{ value: 'title',      label: 'Cognome A→Z' },
 									{ value: 'menu_order', label: 'Ordine menu (drag WP)' },
 									{ value: 'date',       label: 'Data aggiunta (recente)' },
 									{ value: 'rand',       label: 'Casuale' },
