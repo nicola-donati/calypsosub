@@ -105,7 +105,7 @@ $page_title        = $is_guest_mode ? __( 'La tua prenotazione', 'calypsosub' ) 
 			$post_id    = (int) get_post_meta( $bid, '_booking_post_id', true );
 			$post_type  = get_post_type( $post_id );
 			$status     = (string) get_post_meta( $bid, '_booking_status', true );
-			$companions = (int) get_post_meta( $bid, '_booking_companions', true );
+			$companions = Calypsosub_Booking_Manager::get_companions( $bid );
 			$mp         = $post_type === 'calypso_uscita' ? '_uscita' : '_evento';
 			$date_raw   = (array) ( get_post_meta( $post_id, $mp . '_date', true ) ?: [] );
 			$prima_data = ! empty( $date_raw )

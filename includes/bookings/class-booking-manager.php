@@ -103,6 +103,19 @@ class Calypsosub_Booking_Manager {
 	}
 
 	/**
+	 * Accompagnatori di una prenotazione. Le prenotazioni fatte prima della
+	 * 1.0.90 hanno salvato 0 anche se il form diceva altro (campo
+	 * "altri_partecipanti" non letto): in quel caso si ricalcola dai dati
+	 * del form, senza riscrivere nulla nel database.
+	 */
+	public static function get_companions( int $booking_id ): int {
+		$saved = (int) get_post_meta( $booking_id, '_booking_companions', true );
+		if ( $saved > 0 ) return $saved;
+		$form_data = get_post_meta( $booking_id, '_booking_form_data', true );
+		return is_array( $form_data ) ? self::companions_from_form( $form_data ) : 0;
+	}
+
+	/**
 	 * Crea una prenotazione. Restituisce status string o WP_Error.
 	 *
 	 * @param int   $post_id
@@ -379,7 +392,7 @@ class Calypsosub_Booking_Manager {
 		$status     = (string) get_post_meta( $post->ID, '_booking_status', true );
 		$post_id    = (int)    get_post_meta( $post->ID, '_booking_post_id', true );
 		$user_id    = (int)    get_post_meta( $post->ID, '_booking_user_id', true );
-		$companions = (int)    get_post_meta( $post->ID, '_booking_companions', true );
+		$companions = self::get_companions( $post->ID );
 		$allergies  = (string) get_post_meta( $post->ID, '_booking_allergies', true );
 		$date       = (string) get_post_meta( $post->ID, '_booking_date', true );
 		$post_type  = (string) get_post_meta( $post->ID, '_booking_post_type', true );

@@ -85,20 +85,53 @@ class Calypsosub_Booking_Email {
 		$titolo    = get_the_title( $post_id );
 
 		$indirizzo = '';
+		// Stessi dati di navigatore/calendario delle pagine singole (vedi
+		// templates/single-calypso_uscita.php e single-calypso_evento.php).
+		$maps_query = '';
+		$cal_event  = null;
 		if ( $post_type === 'calypso_occ_uscita' ) {
 			$uscita_id  = (int) get_post_meta( $post_id, '_occorrenza_uscita_uscita_id', true );
 			$luogo      = (string) get_post_meta( $uscita_id, '_uscita_luogo', true );
+			$indirizzo  = (string) get_post_meta( $uscita_id, '_uscita_indirizzo', true );
+			$ritrovo    = (string) get_post_meta( $uscita_id, '_uscita_ritrovo', true );
+			$rientro    = trim( (string) get_post_meta( $uscita_id, '_uscita_rientro_previsto', true ) );
 			$date_str   = (string) get_post_meta( $post_id, '_occorrenza_uscita_data', true );
 			$prima_data = $date_str ? calypso_format_datetime( $date_str ) : '';
 			$titolo     = $uscita_id ? get_the_title( $uscita_id ) : $titolo;
+			$maps_query = $indirizzo;
+			if ( $date_str !== '' ) {
+				$end_dt = ( strlen( $date_str ) > 10 && preg_match( '/^([01]?\d|2[0-3]):[0-5]\d$/', $rientro ) )
+					? substr( $date_str, 0, 10 ) . 'T' . $rientro
+					: '';
+				$cal_event = [
+					'title'       => $titolo,
+					'start'       => $date_str,
+					'end'         => $end_dt,
+					'location'    => $indirizzo ?: ( $ritrovo ?: $luogo ),
+					'description' => (string) get_post_meta( $uscita_id, '_uscita_desc_breve', true ),
+					'duration'    => 4.0,
+				];
+			}
 		} else {
 			$luogo      = (string) get_post_meta( $post_id, '_evento_luogo', true );
 			$indirizzo  = (string) get_post_meta( $post_id, '_evento_indirizzo', true );
 			$date_raw   = (array) ( get_post_meta( $post_id, '_evento_date', true ) ?: [] );
-			$prima_data = ! empty( $date_raw ) ? calypso_format_datetime( $date_raw[0] ) : '';
+			$prossima   = calypso_next_future_date( $date_raw );
+			$prima_data = $prossima !== '' ? calypso_format_datetime( $prossima ) : '';
+			$maps_query = $indirizzo ?: $luogo;
+			if ( $prossima !== '' ) {
+				$cal_event = [
+					'title'       => $titolo,
+					'start'       => $prossima,
+					'location'    => $indirizzo ?: $luogo,
+					'description' => (string) get_post_meta( $post_id, '_evento_sottotitolo', true ),
+				];
+			}
 		}
+		$maps     = $maps_query !== '' ? calypso_maps_links( $maps_query ) : null;
+		$cal_url  = $cal_event ? Calypsosub_Calendar_Download::url( $cal_event ) : '';
 
-		$accompagnatori = (int) get_post_meta( $booking_id, '_booking_companions', true );
+		$accompagnatori = Calypsosub_Booking_Manager::get_companions( $booking_id );
 		$allergie       = (string) get_post_meta( $booking_id, '_booking_allergies', true );
 		$status         = (string) get_post_meta( $booking_id, '_booking_status', true );
 		$booking_date   = (string) get_post_meta( $booking_id, '_booking_date', true );
@@ -124,7 +157,34 @@ class Calypsosub_Booking_Email {
 			'{stato_prenotazione}' => $status,
 			'{link_area_personale}'=> $manage_link,
 			'{data_prenotazione}'  => $booking_date,
+			'{link_calendario}'    => $cal_url,
+			'{link_google_maps}'   => $maps['google'] ?? '',
+			'{link_apple_maps}'    => $maps['apple'] ?? '',
+			'{link_waze}'          => $maps['waze'] ?? '',
+			'{pulsanti_navigatore_calendario}' => self::nav_calendar_buttons_html( $maps, $cal_url ),
 		];
+	}
+
+	/**
+	 * Blocco pronto "Apri sul navigatore" + "Aggiungi al calendario" per le
+	 * email, come nelle pagine evento/uscita. Solo stili inline e niente SVG
+	 * (Gmail li toglie); vuoto se non c'è né un luogo né una data.
+	 *
+	 * @param array{google:string,apple:string,waze:string}|null $maps
+	 */
+	private static function nav_calendar_buttons_html( ?array $maps, string $cal_url ): string {
+		$btn  = 'display:inline-block;padding:10px 18px;margin:0 6px 8px 0;border:1px solid #3473A5;border-radius:999px;color:#3473A5;text-decoration:none;font-weight:bold;font-size:14px';
+		$html = '';
+		if ( $cal_url !== '' ) {
+			$html .= '<p style="margin:20px 0 8px"><a href="' . esc_url( $cal_url ) . '" style="display:inline-block;padding:12px 22px;border-radius:999px;background:#3473A5;color:#ffffff;text-decoration:none;font-weight:bold;font-size:15px">&#128197; ' . esc_html__( 'Aggiungi al calendario', 'calypsosub' ) . '</a></p>';
+		}
+		if ( $maps ) {
+			$html .= '<p style="margin:16px 0 6px;font-weight:bold">&#128205; ' . esc_html__( 'Apri sul navigatore', 'calypsosub' ) . '</p><p style="margin:0">'
+				. '<a href="' . esc_url( $maps['google'] ) . '" style="' . $btn . '">Google Maps</a>'
+				. '<a href="' . esc_url( $maps['apple'] ) . '" style="' . $btn . '">Apple Maps</a>'
+				. '<a href="' . esc_url( $maps['waze'] ) . '" style="' . $btn . '">Waze</a></p>';
+		}
+		return $html;
 	}
 
 	private function get_template_subject( string $key, array $vars ): string {
@@ -156,13 +216,13 @@ class Calypsosub_Booking_Email {
 				'label'       => __( 'Prenotazione ricevuta', 'calypsosub' ),
 				'description' => __( 'Inviata a chi prenota subito dopo l\'invio del modulo, finché lo staff non conferma.', 'calypsosub' ),
 				'subject' => __( 'Pre-prenotazione ricevuta: {titolo_evento}', 'calypsosub' ),
-				'body'    => __( "<p>Ciao {nome_utente},</p>\n<p>Abbiamo ricevuto la tua richiesta di partecipazione per <strong>{titolo_evento}</strong>.</p>\n<p>La tua pre-prenotazione è <strong>in attesa di conferma</strong> da parte dello staff. Riceverai una mail non appena sarà elaborata.</p>\n<p><strong>Data:</strong> {data_evento}<br><strong>Luogo:</strong> {luogo}<br><strong>Accompagnatori:</strong> {num_accompagnatori}</p>\n<p><a href=\"{link_area_personale}\">Gestisci le tue prenotazioni</a></p>", 'calypsosub' ),
+				'body'    => __( "<p>Ciao {nome_utente},</p>\n<p>Abbiamo ricevuto la tua richiesta di partecipazione per <strong>{titolo_evento}</strong>.</p>\n<p>La tua pre-prenotazione è <strong>in attesa di conferma</strong> da parte dello staff. Riceverai una mail non appena sarà elaborata.</p>\n<p><strong>Data:</strong> {data_evento}<br><strong>Luogo:</strong> {luogo}<br><strong>Accompagnatori:</strong> {num_accompagnatori}</p>\n{pulsanti_navigatore_calendario}\n<p><a href=\"{link_area_personale}\">Gestisci le tue prenotazioni</a></p>", 'calypsosub' ),
 			],
 			'conferma_prenotazione' => [
 				'label'       => __( 'Conferma prenotazione', 'calypsosub' ),
 				'description' => __( 'Inviata a chi ha prenotato quando lo staff conferma la prenotazione.', 'calypsosub' ),
 				'subject' => __( 'Prenotazione confermata: {titolo_evento}', 'calypsosub' ),
-				'body'    => __( "<p>Ciao {nome_utente},</p>\n<p>La tua prenotazione per <strong>{titolo_evento}</strong> è confermata.</p>\n<p><strong>Data:</strong> {data_evento}<br><strong>Luogo:</strong> {luogo}<br><strong>Accompagnatori:</strong> {num_accompagnatori}</p>\n<p><a href=\"{link_area_personale}\">Gestisci le tue prenotazioni</a></p>", 'calypsosub' ),
+				'body'    => __( "<p>Ciao {nome_utente},</p>\n<p>La tua prenotazione per <strong>{titolo_evento}</strong> è confermata.</p>\n<p><strong>Data:</strong> {data_evento}<br><strong>Luogo:</strong> {luogo}<br><strong>Accompagnatori:</strong> {num_accompagnatori}</p>\n{pulsanti_navigatore_calendario}\n<p><a href=\"{link_area_personale}\">Gestisci le tue prenotazioni</a></p>", 'calypsosub' ),
 			],
 			'prenotazione_rifiutata' => [
 				'label'       => __( 'Prenotazione rifiutata', 'calypsosub' ),
@@ -180,7 +240,7 @@ class Calypsosub_Booking_Email {
 				'label'       => __( 'Promosso da lista d\'attesa', 'calypsosub' ),
 				'description' => __( 'Inviata a chi era in lista d\'attesa quando si libera un posto.', 'calypsosub' ),
 				'subject' => __( 'Posto disponibile: {titolo_evento}', 'calypsosub' ),
-				'body'    => __( "<p>Ciao {nome_utente},</p>\n<p>Si è liberato un posto per <strong>{titolo_evento}</strong>. La tua prenotazione è ora confermata!</p>\n<p><strong>Data:</strong> {data_evento}<br><strong>Luogo:</strong> {luogo}</p>\n<p><a href=\"{link_area_personale}\">Vedi i dettagli</a></p>", 'calypsosub' ),
+				'body'    => __( "<p>Ciao {nome_utente},</p>\n<p>Si è liberato un posto per <strong>{titolo_evento}</strong>. La tua prenotazione è ora confermata!</p>\n<p><strong>Data:</strong> {data_evento}<br><strong>Luogo:</strong> {luogo}</p>\n{pulsanti_navigatore_calendario}\n<p><a href=\"{link_area_personale}\">Vedi i dettagli</a></p>", 'calypsosub' ),
 			],
 			'notifica_admin_prenotazione' => [
 				'label'       => __( 'Notifica admin', 'calypsosub' ),

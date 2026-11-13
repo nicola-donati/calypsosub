@@ -58,7 +58,7 @@ class Calypsosub_Email_Templates {
 			$templates[ $current_key ]['body']
 		);
 
-		$vars_list = '{nome_utente}, {email_utente}, {titolo_evento}, {data_evento}, {luogo}, {indirizzo}, {num_accompagnatori}, {allergie}, {stato_prenotazione}, {link_area_personale}, {data_prenotazione}';
+		$vars_list = '{nome_utente}, {email_utente}, {titolo_evento}, {data_evento}, {luogo}, {indirizzo}, {num_accompagnatori}, {allergie}, {stato_prenotazione}, {link_area_personale}, {data_prenotazione}, {pulsanti_navigatore_calendario}, {link_calendario}, {link_google_maps}, {link_apple_maps}, {link_waze}';
 		?>
 		<div class="wrap">
 			<h1><?php _e( 'Template Email', 'calypsosub' ); ?></h1>
