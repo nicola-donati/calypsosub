@@ -30,6 +30,13 @@ class Calypsosub_Email_Templates {
 		}
 
 		if ( isset( $_POST['calypsosub_email_nonce'] ) &&
+		     wp_verify_nonce( sanitize_key( $_POST['calypsosub_email_nonce'] ), 'calypsosub_email_' . $current_key ) &&
+		     isset( $_POST['calypsosub_email_reset'] ) ) {
+			// Senza opzioni salvate, Calypsosub_Booking_Email usa il testo predefinito.
+			delete_option( 'calypsosub_email_subject_' . $current_key );
+			delete_option( 'calypsosub_email_body_' . $current_key );
+			echo '<div class="notice notice-success"><p>' . esc_html__( 'Testo predefinito ripristinato.', 'calypsosub' ) . '</p></div>';
+		} elseif ( isset( $_POST['calypsosub_email_nonce'] ) &&
 		     wp_verify_nonce( sanitize_key( $_POST['calypsosub_email_nonce'] ), 'calypsosub_email_' . $current_key ) ) {
 			update_option(
 				'calypsosub_email_subject_' . $current_key,
@@ -41,13 +48,6 @@ class Calypsosub_Email_Templates {
 			);
 			echo '<div class="notice notice-success"><p>' . esc_html__( 'Template salvato.', 'calypsosub' ) . '</p></div>';
 		}
-
-		$template_labels = [
-			'conferma_prenotazione'       => __( 'Conferma prenotazione', 'calypsosub' ),
-			'prenotazione_annullata'      => __( 'Prenotazione annullata', 'calypsosub' ),
-			'promosso_lista_attesa'       => __( 'Promosso da lista attesa', 'calypsosub' ),
-			'notifica_admin_prenotazione' => __( 'Notifica admin', 'calypsosub' ),
-		];
 
 		$current_subject = get_option(
 			'calypsosub_email_subject_' . $current_key,
@@ -64,14 +64,15 @@ class Calypsosub_Email_Templates {
 			<h1><?php _e( 'Template Email', 'calypsosub' ); ?></h1>
 
 			<nav class="nav-tab-wrapper" style="margin-bottom:20px">
-				<?php foreach ( $template_labels as $key => $label ) : ?>
+				<?php foreach ( $templates as $key => $template ) : ?>
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=calypsosub-email-templates&template=' . $key ) ); ?>"
 				   class="nav-tab <?php echo $key === $current_key ? 'nav-tab-active' : ''; ?>">
-					<?php echo esc_html( $label ); ?>
+					<?php echo esc_html( $template['label'] ); ?>
 				</a>
 				<?php endforeach; ?>
 			</nav>
 
+			<p style="margin:0 0 8px"><strong><?php echo esc_html( $templates[ $current_key ]['description'] ); ?></strong></p>
 			<p class="description" style="margin-bottom:16px">
 				<?php _e( 'Variabili disponibili:', 'calypsosub' ); ?>
 				<code><?php echo esc_html( $vars_list ); ?></code>
@@ -96,7 +97,13 @@ class Calypsosub_Email_Templates {
 						</td>
 					</tr>
 				</table>
-				<?php submit_button( __( 'Salva template', 'calypsosub' ) ); ?>
+				<p class="submit">
+					<?php submit_button( __( 'Salva template', 'calypsosub' ), 'primary', 'submit', false ); ?>
+					<button type="submit" name="calypsosub_email_reset" value="1" class="button" style="margin-left:8px"
+					        onclick="return confirm('<?php echo esc_js( __( 'Ripristinare oggetto e testo predefiniti di questa email? Le modifiche salvate andranno perse.', 'calypsosub' ) ); ?>');">
+						<?php _e( 'Ripristina testo predefinito', 'calypsosub' ); ?>
+					</button>
+				</p>
 			</form>
 		</div>
 		<?php

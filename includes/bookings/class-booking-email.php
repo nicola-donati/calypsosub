@@ -145,31 +145,48 @@ class Calypsosub_Booking_Email {
 		return array_filter( array_map( 'trim', explode( ',', $raw ) ) );
 	}
 
+	/**
+	 * Tutte le email inviate dal plugin. Ogni voce compare come scheda in
+	 * Calypso Sub → Template Email (Calypsosub_Email_Templates scorre questo
+	 * array): una nuova email aggiunta qui è subito modificabile dal sito.
+	 */
 	public function default_templates(): array {
 		return [
+			'prenotazione_ricevuta' => [
+				'label'       => __( 'Prenotazione ricevuta', 'calypsosub' ),
+				'description' => __( 'Inviata a chi prenota subito dopo l\'invio del modulo, finché lo staff non conferma.', 'calypsosub' ),
+				'subject' => __( 'Pre-prenotazione ricevuta: {titolo_evento}', 'calypsosub' ),
+				'body'    => __( "<p>Ciao {nome_utente},</p>\n<p>Abbiamo ricevuto la tua richiesta di partecipazione per <strong>{titolo_evento}</strong>.</p>\n<p>La tua pre-prenotazione è <strong>in attesa di conferma</strong> da parte dello staff. Riceverai una mail non appena sarà elaborata.</p>\n<p><strong>Data:</strong> {data_evento}<br><strong>Luogo:</strong> {luogo}<br><strong>Accompagnatori:</strong> {num_accompagnatori}</p>\n<p><a href=\"{link_area_personale}\">Gestisci le tue prenotazioni</a></p>", 'calypsosub' ),
+			],
 			'conferma_prenotazione' => [
+				'label'       => __( 'Conferma prenotazione', 'calypsosub' ),
+				'description' => __( 'Inviata a chi ha prenotato quando lo staff conferma la prenotazione.', 'calypsosub' ),
 				'subject' => __( 'Prenotazione confermata: {titolo_evento}', 'calypsosub' ),
 				'body'    => __( "<p>Ciao {nome_utente},</p>\n<p>La tua prenotazione per <strong>{titolo_evento}</strong> è confermata.</p>\n<p><strong>Data:</strong> {data_evento}<br><strong>Luogo:</strong> {luogo}<br><strong>Accompagnatori:</strong> {num_accompagnatori}</p>\n<p><a href=\"{link_area_personale}\">Gestisci le tue prenotazioni</a></p>", 'calypsosub' ),
 			],
+			'prenotazione_rifiutata' => [
+				'label'       => __( 'Prenotazione rifiutata', 'calypsosub' ),
+				'description' => __( 'Inviata a chi ha prenotato quando lo staff rifiuta la prenotazione.', 'calypsosub' ),
+				'subject' => __( 'Aggiornamento prenotazione: {titolo_evento}', 'calypsosub' ),
+				'body'    => __( "<p>Ciao {nome_utente},</p>\n<p>Purtroppo la tua prenotazione per <strong>{titolo_evento}</strong> non ha potuto essere confermata.</p>\n<p>Per maggiori informazioni contatta lo staff.</p>\n<p><a href=\"{link_area_personale}\">Gestisci le tue prenotazioni</a></p>", 'calypsosub' ),
+			],
 			'prenotazione_annullata' => [
+				'label'       => __( 'Prenotazione annullata', 'calypsosub' ),
+				'description' => __( 'Inviata a chi ha prenotato quando la prenotazione viene annullata.', 'calypsosub' ),
 				'subject' => __( 'Prenotazione annullata: {titolo_evento}', 'calypsosub' ),
 				'body'    => __( "<p>Ciao {nome_utente},</p>\n<p>La tua prenotazione per <strong>{titolo_evento}</strong> è stata annullata.</p>\n<p><a href=\"{link_area_personale}\">Gestisci le tue prenotazioni</a></p>", 'calypsosub' ),
 			],
 			'promosso_lista_attesa' => [
+				'label'       => __( 'Promosso da lista d\'attesa', 'calypsosub' ),
+				'description' => __( 'Inviata a chi era in lista d\'attesa quando si libera un posto.', 'calypsosub' ),
 				'subject' => __( 'Posto disponibile: {titolo_evento}', 'calypsosub' ),
 				'body'    => __( "<p>Ciao {nome_utente},</p>\n<p>Si è liberato un posto per <strong>{titolo_evento}</strong>. La tua prenotazione è ora confermata!</p>\n<p><strong>Data:</strong> {data_evento}<br><strong>Luogo:</strong> {luogo}</p>\n<p><a href=\"{link_area_personale}\">Vedi i dettagli</a></p>", 'calypsosub' ),
 			],
 			'notifica_admin_prenotazione' => [
+				'label'       => __( 'Notifica admin', 'calypsosub' ),
+				'description' => __( 'Inviata agli indirizzi indicati in "Email notifiche admin" a ogni nuova prenotazione.', 'calypsosub' ),
 				'subject' => __( 'Nuova pre-prenotazione: {titolo_evento}', 'calypsosub' ),
 				'body'    => __( "<p>Nuova pre-prenotazione ricevuta — <strong>in attesa di conferma manuale</strong>.</p>\n<p><strong>Utente:</strong> {nome_utente} ({email_utente})<br><strong>Evento:</strong> {titolo_evento}<br><strong>Data:</strong> {data_evento}<br><strong>Accompagnatori:</strong> {num_accompagnatori}<br><strong>Allergie:</strong> {allergie}</p>", 'calypsosub' ),
-			],
-			'prenotazione_ricevuta' => [
-				'subject' => __( 'Pre-prenotazione ricevuta: {titolo_evento}', 'calypsosub' ),
-				'body'    => __( "<p>Ciao {nome_utente},</p>\n<p>Abbiamo ricevuto la tua richiesta di partecipazione per <strong>{titolo_evento}</strong>.</p>\n<p>La tua pre-prenotazione è <strong>in attesa di conferma</strong> da parte dello staff. Riceverai una mail non appena sarà elaborata.</p>\n<p><strong>Data:</strong> {data_evento}<br><strong>Luogo:</strong> {luogo}<br><strong>Accompagnatori:</strong> {num_accompagnatori}</p>\n<p><a href=\"{link_area_personale}\">Gestisci le tue prenotazioni</a></p>", 'calypsosub' ),
-			],
-			'prenotazione_rifiutata' => [
-				'subject' => __( 'Aggiornamento prenotazione: {titolo_evento}', 'calypsosub' ),
-				'body'    => __( "<p>Ciao {nome_utente},</p>\n<p>Purtroppo la tua prenotazione per <strong>{titolo_evento}</strong> non ha potuto essere confermata.</p>\n<p>Per maggiori informazioni contatta lo staff.</p>\n<p><a href=\"{link_area_personale}\">Gestisci le tue prenotazioni</a></p>", 'calypsosub' ),
 			],
 		];
 	}
