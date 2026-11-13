@@ -93,6 +93,8 @@ class Calypsosub_Admin_Menus {
 		}
 
 		$notification_emails = get_option( 'calypsosub_notification_emails', '' );
+		$email_from_name     = (string) get_option( 'calypsosub_email_from_name', '' );
+		$email_from_address  = (string) get_option( 'calypsosub_email_from_address', '' );
 		$account_page_id     = (int) get_option( 'calypsosub_account_page_id', 0 );
 		$prenotazioni_page_id = (int) get_option( 'calypsosub_prenotazioni_page_id', 0 );
 
@@ -142,6 +144,31 @@ class Calypsosub_Admin_Menus {
 							       value="<?php echo esc_attr( $notification_emails ); ?>"
 							       class="regular-text">
 							<p class="description"><?php _e( 'Indirizzi email separati da virgola che ricevono notifica ad ogni nuova prenotazione.', 'calypsosub' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label for="calypsosub_email_from_name"><?php _e( 'Nome mittente email', 'calypsosub' ); ?></label>
+						</th>
+						<td>
+							<input type="text" id="calypsosub_email_from_name"
+							       name="calypsosub_email_from_name"
+							       value="<?php echo esc_attr( $email_from_name ); ?>"
+							       placeholder="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>"
+							       class="regular-text">
+							<p class="description"><?php _e( 'Il nome che compare come mittente delle email di prenotazione. Vuoto = nome del sito.', 'calypsosub' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label for="calypsosub_email_from_address"><?php _e( 'Indirizzo mittente email', 'calypsosub' ); ?></label>
+						</th>
+						<td>
+							<input type="email" id="calypsosub_email_from_address"
+							       name="calypsosub_email_from_address"
+							       value="<?php echo esc_attr( $email_from_address ); ?>"
+							       class="regular-text">
+							<p class="description"><?php _e( 'Vuoto = indirizzo predefinito di WordPress. Usa solo un indirizzo del dominio del sito (es. info@calypsosub.it): un Gmail o simili fa finire le email nello spam.', 'calypsosub' ); ?></p>
 						</td>
 					</tr>
 					<tr>
@@ -582,6 +609,10 @@ class Calypsosub_Admin_Menus {
 	private function save_settings(): void {
 		update_option( 'calypsosub_notification_emails',
 			sanitize_text_field( wp_unslash( $_POST['calypsosub_notification_emails'] ?? '' ) ) );
+		update_option( 'calypsosub_email_from_name',
+			sanitize_text_field( wp_unslash( $_POST['calypsosub_email_from_name'] ?? '' ) ) );
+		update_option( 'calypsosub_email_from_address',
+			(string) sanitize_email( wp_unslash( $_POST['calypsosub_email_from_address'] ?? '' ) ) );
 		update_option( 'calypsosub_account_page_id',
 			absint( $_POST['calypsosub_account_page_id'] ?? 0 ) );
 		update_option( 'calypsosub_prenotazioni_page_id',

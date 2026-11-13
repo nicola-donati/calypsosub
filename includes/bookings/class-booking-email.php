@@ -32,7 +32,7 @@ class Calypsosub_Booking_Email {
 		$body    = $this->get_template_body( 'notifica_admin_prenotazione', $vars );
 
 		foreach ( $recipients as $email ) {
-			wp_mail( $email, $subject, $body, [ 'Content-Type: text/html; charset=UTF-8' ] );
+			$this->send( $email, $subject, $body );
 		}
 	}
 
@@ -74,7 +74,28 @@ class Calypsosub_Booking_Email {
 		$subject = $this->get_template_subject( $template_key, $vars );
 		$body    = $this->get_template_body( $template_key, $vars );
 
-		wp_mail( $recipient['email'], $subject, $body, [ 'Content-Type: text/html; charset=UTF-8' ] );
+		$this->send( $recipient['email'], $subject, $body );
+	}
+
+	/**
+	 * wp_mail() con il mittente delle impostazioni (Impostazioni → Generali)
+	 * invece di "WordPress": nome del sito se non impostato, indirizzo solo
+	 * se impostato. I filtri valgono solo per questo invio, non per le
+	 * altre email di WordPress.
+	 */
+	private function send( string $to, string $subject, string $body ): void {
+		$name    = trim( (string) get_option( 'calypsosub_email_from_name', '' ) ) ?: wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES );
+		$address = trim( (string) get_option( 'calypsosub_email_from_address', '' ) );
+
+		$set_name    = static fn() => $name;
+		$set_address = static fn( $default ) => is_email( $address ) ? $address : $default;
+		add_filter( 'wp_mail_from_name', $set_name, 99 );
+		add_filter( 'wp_mail_from', $set_address, 99 );
+
+		wp_mail( $to, $subject, $body, [ 'Content-Type: text/html; charset=UTF-8' ] );
+
+		remove_filter( 'wp_mail_from_name', $set_name, 99 );
+		remove_filter( 'wp_mail_from', $set_address, 99 );
 	}
 
 	private function build_vars( int $booking_id ): array {
