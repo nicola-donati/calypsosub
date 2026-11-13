@@ -269,10 +269,13 @@ if ( isset( $tipi['eventi'] ) ) {
 		array_slice( calypso_get_eventi(), 0, $max_items_per_tab )
 	);
 }
+// I corsi sono un catalogo, non date che si accumulano: niente tetto
+// max_items_per_tab, altrimenti quelli oltre il limite in ordine alfabetico
+// sparivano del tutto (64 corsi pubblicati, 50 mostrati — 2026-11-13).
 if ( isset( $tipi['corsi'] ) ) {
 	$items_by_tipo['corsi'] = array_map(
 		static fn( $p ) => $build_card( $p, 'corsi' ),
-		array_slice( calypso_get_corsi(), 0, $max_items_per_tab )
+		calypso_get_corsi()
 	);
 }
 

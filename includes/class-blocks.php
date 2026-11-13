@@ -3185,8 +3185,8 @@ class Calypsosub_Blocks {
 								onChange: function (v) { set({ login_message: v }); }
 							}),
 							el(RangeControl, {
-								label: 'Elementi totali per tab (cap query)',
-								help: 'Massimo elementi caricati per tab, prima dei filtri/paginazione.',
+								label: 'Numero massimo di uscite/eventi caricati',
+								help: 'Non è la paginazione (vedi Card per pagina): uscite ed eventi oltre questo numero non vengono mostrati in nessuna pagina. I corsi vengono mostrati sempre tutti.',
 								value: a.max_items_per_tab || 60,
 								min: 1, max: 200, step: 1,
 								onChange: function (v) { set({ max_items_per_tab: v || 60 }); }
