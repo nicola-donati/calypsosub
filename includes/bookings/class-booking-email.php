@@ -112,6 +112,16 @@ class Calypsosub_Booking_Email {
 					'duration'    => 4.0,
 				];
 			}
+		} elseif ( $post_type === 'calypso_corso' ) {
+			// Un corso non ha date proprie: si usano la prossima edizione
+			// (occorrenza) e il suo luogo, o il periodo indicativo del corso.
+			// Niente calendario: un corso dura settimane, non è un singolo
+			// appuntamento.
+			$occ        = calypso_get_next_occorrenza( $post_id );
+			$inizio     = $occ ? (string) get_post_meta( $occ->ID, '_occorrenza_data_inizio', true ) : '';
+			$prima_data = $inizio !== '' ? calypso_format_datetime( $inizio ) : (string) get_post_meta( $post_id, '_corso_periodo', true );
+			$luogo      = $occ ? (string) get_post_meta( $occ->ID, '_occorrenza_luogo', true ) : '';
+			$maps_query = $luogo;
 		} else {
 			$luogo      = (string) get_post_meta( $post_id, '_evento_luogo', true );
 			$indirizzo  = (string) get_post_meta( $post_id, '_evento_indirizzo', true );
@@ -199,7 +209,24 @@ class Calypsosub_Booking_Email {
 	private function get_template_body( string $key, array $vars ): string {
 		$default = $this->default_templates()[ $key ]['body'] ?? '';
 		$saved   = get_option( 'calypsosub_email_body_' . $key, $default );
-		return str_replace( array_keys( $vars ), array_values( $vars ), $saved );
+		return str_replace( array_keys( $vars ), array_values( $vars ), self::strip_empty_fields( $saved, $vars ) );
+	}
+
+	/**
+	 * Toglie le righe "<strong>Etichetta:</strong> {variabile}" quando la
+	 * variabile è vuota (es. luogo di un corso senza edizione), invece di
+	 * lasciare "Luogo:" senza niente dopo. Toglie anche il <br> che la
+	 * separava dalla riga accanto; un paragrafo rimasto vuoto sparisce.
+	 */
+	public static function strip_empty_fields( string $template, array $vars ): string {
+		foreach ( $vars as $placeholder => $value ) {
+			if ( trim( (string) $value ) !== '' ) continue;
+			$field    = '<strong>[^<]*<\/strong>\s*' . preg_quote( $placeholder, '/' );
+			$template = preg_replace( '/' . $field . '\s*<br\s*\/?>\s*/i', '', $template );
+			$template = preg_replace( '/\s*<br\s*\/?>\s*' . $field . '/i', '', $template );
+			$template = preg_replace( '/' . $field . '/i', '', $template );
+		}
+		return preg_replace( '/<p>\s*<\/p>\s*/i', '', $template );
 	}
 
 	private function get_admin_recipients(): array {
