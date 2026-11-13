@@ -19,6 +19,10 @@ class Calypsosub_Booking_Email {
 		$this->send_to_user( $booking_id, 'prenotazione_annullata' );
 	}
 
+	public function send_booking_updated( int $booking_id ): void {
+		$this->send_to_user( $booking_id, 'prenotazione_modificata' );
+	}
+
 	public function send_promoted_from_waitlist( int $booking_id ): void {
 		$this->send_to_user( $booking_id, 'promosso_lista_attesa' );
 	}
@@ -193,7 +197,28 @@ class Calypsosub_Booking_Email {
 			'{link_navigatore}'    => $nav_url,
 			'{link_waze}'          => $waze_url,
 			'{pulsanti_navigatore_calendario}' => self::nav_calendar_buttons_html( $nav_url, $waze_url, $cal_url ),
+			'{dettagli_prenotazione}' => self::details_html( $booking_id ),
 		];
+	}
+
+	/**
+	 * Tabella dei dati inviati col modulo (con le etichette dei campi, non i
+	 * nomi tecnici), per l'email "Prenotazione modificata" e per chiunque
+	 * usi {dettagli_prenotazione} in un template.
+	 */
+	private static function details_html( int $booking_id ): string {
+		$form = get_post_meta( $booking_id, '_booking_form_data', true );
+		if ( ! is_array( $form ) ) return '';
+		$rows = '';
+		foreach ( $form as $name => $value ) {
+			$name  = (string) $name;
+			$field = Calypsosub_Booking_Fields::field( $name );
+			if ( Calypsosub_Booking_Fields::is_hidden( $name ) || $field['type'] === 'acceptance' ) continue;
+			$value = is_array( $value ) ? implode( ', ', array_filter( $value ) ) : (string) $value;
+			if ( trim( $value ) === '' ) continue;
+			$rows .= '<tr><td style="padding:4px 16px 4px 0;color:#555;vertical-align:top">' . esc_html( $field['label'] ) . '</td><td style="padding:4px 0;vertical-align:top"><strong>' . nl2br( esc_html( $value ) ) . '</strong></td></tr>';
+		}
+		return $rows === '' ? '' : '<table style="border-collapse:collapse;margin:8px 0 16px">' . $rows . '</table>';
 	}
 
 	/**
@@ -292,6 +317,12 @@ class Calypsosub_Booking_Email {
 				'description' => __( 'Inviata a chi era in lista d\'attesa quando si libera un posto.', 'calypsosub' ),
 				'subject' => __( 'Posto disponibile: {titolo_evento}', 'calypsosub' ),
 				'body'    => __( "<p>Ciao {nome_utente},</p>\n<p>Si è liberato un posto per <strong>{titolo_evento}</strong>. La tua prenotazione è ora confermata!</p>\n<p><strong>Data:</strong> {data_evento}<br><strong>Luogo:</strong> {luogo}</p>\n{pulsanti_navigatore_calendario}\n<p><a href=\"{link_area_personale}\">Vedi i dettagli</a></p>", 'calypsosub' ),
+			],
+			'prenotazione_modificata' => [
+				'label'       => __( 'Prenotazione modificata', 'calypsosub' ),
+				'description' => __( 'Inviata a chi ha prenotato quando lo staff modifica i dati della prenotazione dal dettaglio in admin (se la casella di invio è spuntata).', 'calypsosub' ),
+				'subject' => __( 'Prenotazione aggiornata: {titolo_evento}', 'calypsosub' ),
+				'body'    => __( "<p>Ciao {nome_utente},</p>\n<p>abbiamo aggiornato i dati della tua prenotazione per <strong>{titolo_evento}</strong>.</p>\n<p><strong>Data:</strong> {data_evento}<br><strong>Luogo:</strong> {luogo}<br><strong>Accompagnatori:</strong> {num_accompagnatori}</p>\n<p>Ecco i dati aggiornati:</p>\n{dettagli_prenotazione}\n{pulsanti_navigatore_calendario}\n<p>Se qualcosa non è corretto, rispondi a questa email o contattaci.</p>\n<p><a href=\"{link_area_personale}\">Gestisci le tue prenotazioni</a></p>", 'calypsosub' ),
 			],
 			'notifica_admin_prenotazione' => [
 				'label'       => __( 'Notifica admin', 'calypsosub' ),

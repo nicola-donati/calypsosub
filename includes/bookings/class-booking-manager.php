@@ -15,6 +15,9 @@ class Calypsosub_Booking_Manager {
 		add_action( 'wp_ajax_calypso_cancel_booking',        [ $this, 'ajax_cancel' ] );
 		add_action( 'wp_ajax_nopriv_calypso_cancel_booking', [ $this, 'ajax_cancel' ] );
 		add_action( 'add_meta_boxes',                [ $this, 'add_booking_meta_box' ] );
+		add_action( 'save_post_calypso_prenotazione', [ $this, 'save_booking_edit' ] );
+		add_action( 'admin_notices',                 [ $this, 'booking_edit_notices' ] );
+		add_filter( 'post_updated_messages',         [ $this, 'booking_updated_messages' ] );
 		add_action( 'admin_head',                    [ $this, 'booking_admin_css' ] );
 		add_action( 'admin_action_calypso_confirm_booking', [ $this, 'handle_confirm_booking' ] );
 		add_action( 'admin_action_calypso_reject_booking',  [ $this, 'handle_reject_booking' ] );
@@ -26,6 +29,19 @@ class Calypsosub_Booking_Manager {
 	public function register_post_type(): void {
 		register_post_type( 'calypso_prenotazione', [
 			'label'           => __( 'Prenotazioni', 'calypsosub' ),
+			'labels'          => [
+				'name'               => __( 'Prenotazioni', 'calypsosub' ),
+				'singular_name'      => __( 'Prenotazione', 'calypsosub' ),
+				'edit_item'          => __( 'Dettaglio prenotazione', 'calypsosub' ),
+				'view_item'          => __( 'Vedi prenotazione', 'calypsosub' ),
+				'search_items'       => __( 'Cerca prenotazioni', 'calypsosub' ),
+				'not_found'          => __( 'Nessuna prenotazione trovata', 'calypsosub' ),
+				'all_items'          => __( 'Prenotazioni', 'calypsosub' ),
+			],
+			// Le prenotazioni nascono solo dal modulo sul sito: niente
+			// "Aggiungi nuova" in admin.
+			'capabilities'    => [ 'create_posts' => 'do_not_allow' ],
+			'map_meta_cap'    => true,
 			'public'          => false,
 			'show_ui'         => true,
 			// Niente voce di menu: si gestiscono da Calypso Sub → Prenotazioni
@@ -439,116 +455,245 @@ class Calypsosub_Booking_Manager {
 		$post_id    = (int)    get_post_meta( $post->ID, '_booking_post_id', true );
 		$user_id    = (int)    get_post_meta( $post->ID, '_booking_user_id', true );
 		$companions = self::get_companions( $post->ID );
-		$allergies  = (string) get_post_meta( $post->ID, '_booking_allergies', true );
 		$date       = (string) get_post_meta( $post->ID, '_booking_date', true );
 		$post_type  = (string) get_post_meta( $post->ID, '_booking_post_type', true );
 		$user       = $user_id ? get_user_by( 'id', $user_id ) : false;
-		$form_data  = (array) get_post_meta( $post->ID, '_booking_form_data', true );
+		$form_data  = get_post_meta( $post->ID, '_booking_form_data', true );
+		$form_data  = is_array( $form_data ) ? $form_data : [];
+		$updated_at = (string) get_post_meta( $post->ID, '_booking_updated', true );
 
-		$email_display = $user ? $user->user_email : '';
-		if ( ! $email_display ) {
-			foreach ( [ 'email', 'mail', 'e-mail', 'your-email' ] as $k ) {
-				if ( ! empty( $form_data[ $k ] ) ) { $email_display = (string) $form_data[ $k ]; break; }
-			}
-		}
+		$email_display = $user ? $user->user_email : calypso_extract_email( $form_data );
 
+		$titolo = get_the_title( $post_id );
 		if ( $post_type === 'calypso_occ_uscita' ) {
 			$date_str    = (string) get_post_meta( $post_id, '_occorrenza_uscita_data', true );
 			$data_evento = $date_str ? calypso_format_datetime( $date_str ) : '—';
 			$uscita_id   = (int) get_post_meta( $post_id, '_occorrenza_uscita_uscita_id', true );
+			$titolo      = $uscita_id ? get_the_title( $uscita_id ) : $titolo;
+		} elseif ( $post_type === 'calypso_evento' ) {
+			$prossima    = calypso_next_future_date( (array) ( get_post_meta( $post_id, '_evento_date', true ) ?: [] ) );
+			$data_evento = $prossima ? calypso_format_datetime( $prossima ) : '—';
 		} else {
-			$date_raw    = (array) ( get_post_meta( $post_id, '_evento_date', true ) ?: [] );
-			$data_evento = ! empty( $date_raw ) ? calypso_format_datetime( $date_raw[0] ) : '—';
-			$uscita_id   = 0;
+			$data_evento = '—';
 		}
 
-		$labels = [
-			'in_attesa'    => [ 'label' => __( 'In attesa di conferma', 'calypsosub' ), 'color' => '#92400e', 'bg' => '#fef3c7' ],
-			'confermata'   => [ 'label' => __( 'Confermata', 'calypsosub' ),            'color' => '#065f46', 'bg' => '#d1fae5' ],
-			'lista_attesa' => [ 'label' => __( 'Lista attesa', 'calypsosub' ),           'color' => '#1e40af', 'bg' => '#dbeafe' ],
-			'annullata'    => [ 'label' => __( 'Annullata', 'calypsosub' ),              'color' => '#991b1b', 'bg' => '#fee2e2' ],
-			'rifiutata'    => [ 'label' => __( 'Rifiutata', 'calypsosub' ),              'color' => '#991b1b', 'bg' => '#fee2e2' ],
-		];
-		$l = $labels[ $status ] ?? [ 'label' => $status, 'color' => '#444', 'bg' => '#eee' ];
+		$l = Calypsosub_Bookings_Admin::status_labels()[ $status ] ?? [ 'label' => $status, 'color' => '#444', 'bg' => '#eee' ];
 
 		$confirm_url = wp_nonce_url( admin_url( 'admin.php?action=calypso_confirm_booking&booking_id=' . $post->ID ), 'calypso_confirm_' . $post->ID );
 		$reject_url  = wp_nonce_url( admin_url( 'admin.php?action=calypso_reject_booking&booking_id='  . $post->ID ), 'calypso_reject_'  . $post->ID );
+		$list_url    = Calypsosub_Bookings_Admin::page_url( $post_id ? [ 'item' => $post_id ] : [] );
 		?>
 		<style>
-		.calpren-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 32px;margin-bottom:24px}
-		.calpren-field label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:4px}
-		.calpren-field .val{font-size:14px;color:#1d2327}
+		.calpren-head{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:20px}
 		.calpren-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700}
-		.calpren-actions{display:flex;gap:10px;padding-top:16px;border-top:1px solid #e5e7eb}
+		.calpren-head .button{margin-left:0}
+		.calpren-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px 32px;margin-bottom:24px}
+		.calpren-field label,.calpren-section{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#787c82;margin-bottom:4px}
+		.calpren-field .val{font-size:14px;color:#1d2327}
+		.calpren-section{font-size:12px;color:#1d2327;border-bottom:1px solid #e5e7eb;padding-bottom:6px;margin:8px 0 14px}
+		.calpren-form{display:grid;grid-template-columns:minmax(160px,240px) 1fr;gap:10px 20px;align-items:start;max-width:900px}
+		.calpren-form > label{font-weight:600;padding-top:6px}
+		.calpren-form input[type=text],.calpren-form input[type=email],.calpren-form input[type=number],.calpren-form select,.calpren-form textarea{width:100%;max-width:520px}
+		.calpren-form .calpren-ro{padding-top:6px;color:#50575e}
+		.calpren-save{display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-top:20px;padding-top:16px;border-top:1px solid #e5e7eb}
+		@media(max-width:782px){.calpren-form{grid-template-columns:1fr}.calpren-form > label{padding-top:0}}
 		</style>
-		<div class="calpren-grid">
-			<div class="calpren-field" style="grid-column:1/-1">
-				<label><?php _e( 'Stato', 'calypsosub' ); ?></label>
-				<span class="calpren-badge" style="background:<?php echo esc_attr( $l['bg'] ); ?>;color:<?php echo esc_attr( $l['color'] ); ?>"><?php echo esc_html( $l['label'] ); ?></span>
-			</div>
-			<div class="calpren-field">
-				<label><?php _e( 'Utente', 'calypsosub' ); ?></label>
-				<span class="val"><?php echo $user ? esc_html( $user->display_name ) : esc_html__( 'Ospite (non registrato)', 'calypsosub' ); ?></span>
-			</div>
-			<div class="calpren-field">
-				<label><?php _e( 'Email', 'calypsosub' ); ?></label>
-				<span class="val"><?php echo $email_display ? esc_html( $email_display ) : '—'; ?></span>
-			</div>
-			<div class="calpren-field">
-				<label><?php _e( 'Evento', 'calypsosub' ); ?></label>
-				<span class="val"><a href="<?php echo esc_url( get_edit_post_link( $post_id ) ); ?>"><?php echo esc_html( get_the_title( $post_id ) ); ?></a></span>
-			</div>
-			<?php if ( $uscita_id ) : ?>
-			<div class="calpren-field">
-				<label><?php _e( 'Scheda uscita', 'calypsosub' ); ?></label>
-				<span class="val"><a href="<?php echo esc_url( get_edit_post_link( $uscita_id ) ); ?>"><?php echo esc_html( get_the_title( $uscita_id ) ); ?></a></span>
-			</div>
+
+		<p><a href="<?php echo esc_url( $list_url ); ?>">← <?php esc_html_e( 'Torna all\'elenco prenotazioni', 'calypsosub' ); ?></a></p>
+
+		<div class="calpren-head">
+			<span class="calpren-badge" style="background:<?php echo esc_attr( $l['bg'] ); ?>;color:<?php echo esc_attr( $l['color'] ); ?>"><?php echo esc_html( $l['label'] ); ?></span>
+			<?php if ( in_array( $status, [ 'in_attesa', 'lista_attesa' ], true ) ) : ?>
+				<a href="<?php echo esc_url( $confirm_url ); ?>" class="button button-primary"><?php esc_html_e( '✓ Conferma prenotazione', 'calypsosub' ); ?></a>
+				<a href="<?php echo esc_url( $reject_url ); ?>" class="button" style="color:#991b1b;border-color:#991b1b" onclick="return confirm('<?php echo esc_js( __( 'Rifiutare la prenotazione? Verrà inviata l\'email di rifiuto.', 'calypsosub' ) ); ?>')"><?php esc_html_e( '✕ Rifiuta', 'calypsosub' ); ?></a>
+			<?php elseif ( $status === 'confermata' ) : ?>
+				<a href="<?php echo esc_url( $reject_url ); ?>" class="button" style="color:#991b1b;border-color:#991b1b" onclick="return confirm('<?php echo esc_js( __( 'Annullare la prenotazione confermata? Verrà inviata un\'email.', 'calypsosub' ) ); ?>')"><?php esc_html_e( 'Annulla prenotazione', 'calypsosub' ); ?></a>
 			<?php endif; ?>
+		</div>
+
+		<div class="calpren-grid">
 			<div class="calpren-field">
-				<label><?php _e( 'Data evento', 'calypsosub' ); ?></label>
+				<label><?php esc_html_e( 'Prenotazione per', 'calypsosub' ); ?></label>
+				<span class="val"><?php echo $post_id ? '<a href="' . esc_url( $list_url ) . '">' . esc_html( $titolo ) . '</a>' : '—'; ?></span>
+			</div>
+			<div class="calpren-field">
+				<label><?php esc_html_e( 'Data', 'calypsosub' ); ?></label>
 				<span class="val"><?php echo esc_html( $data_evento ); ?></span>
 			</div>
 			<div class="calpren-field">
-				<label><?php _e( 'Accompagnatori', 'calypsosub' ); ?></label>
-				<span class="val"><?php echo esc_html( $companions ); ?></span>
+				<label><?php esc_html_e( 'Account', 'calypsosub' ); ?></label>
+				<span class="val"><?php echo $user ? esc_html( $user->display_name ) : esc_html__( 'Ospite (non registrato)', 'calypsosub' ); ?></span>
 			</div>
 			<div class="calpren-field">
-				<label><?php _e( 'Pre-prenotazione ricevuta il', 'calypsosub' ); ?></label>
-				<span class="val"><?php echo esc_html( $date ); ?></span>
+				<label><?php esc_html_e( 'Email', 'calypsosub' ); ?></label>
+				<span class="val"><?php echo $email_display ? '<a href="mailto:' . esc_attr( $email_display ) . '">' . esc_html( $email_display ) . '</a>' : '—'; ?></span>
 			</div>
-			<?php if ( $allergies ) : ?>
-			<div class="calpren-field" style="grid-column:1/-1">
-				<label><?php _e( 'Allergie / note', 'calypsosub' ); ?></label>
-				<span class="val"><?php echo esc_html( $allergies ); ?></span>
+			<div class="calpren-field">
+				<label><?php esc_html_e( 'Persone', 'calypsosub' ); ?></label>
+				<span class="val"><?php echo esc_html( sprintf( __( '%1$d (1 + %2$d accompagnatori)', 'calypsosub' ), 1 + $companions, $companions ) ); ?></span>
 			</div>
-			<?php endif; ?>
-			<?php if ( $form_data ) : ?>
-			<div class="calpren-field" style="grid-column:1/-1">
-				<label><?php _e( 'Dati inviati dal form', 'calypsosub' ); ?></label>
-				<table style="width:100%;border-collapse:collapse;margin-top:4px">
-					<?php foreach ( $form_data as $campo => $valore ) :
-						if ( is_array( $valore ) ) $valore = implode( ', ', $valore );
-					?>
-					<tr>
-						<td style="padding:4px 10px 4px 0;font-weight:600;color:#555;white-space:nowrap;vertical-align:top"><?php echo esc_html( $campo ); ?></td>
-						<td style="padding:4px 0;color:#1d2327"><?php echo esc_html( (string) $valore ); ?></td>
-					</tr>
-					<?php endforeach; ?>
-				</table>
+			<div class="calpren-field">
+				<label><?php esc_html_e( 'Ricevuta il', 'calypsosub' ); ?></label>
+				<span class="val"><?php echo esc_html( $date ? mysql2date( 'd/m/Y H:i', $date ) : '—' ); ?></span>
+			</div>
+			<?php if ( $updated_at ) : ?>
+			<div class="calpren-field">
+				<label><?php esc_html_e( 'Ultima modifica', 'calypsosub' ); ?></label>
+				<span class="val"><?php echo esc_html( mysql2date( 'd/m/Y H:i', $updated_at ) ); ?></span>
 			</div>
 			<?php endif; ?>
 		</div>
-		<?php if ( $status === 'in_attesa' ) : ?>
-		<div class="calpren-actions">
-			<a href="<?php echo esc_url( $confirm_url ); ?>" class="button button-primary"><?php _e( '✓ Conferma prenotazione', 'calypsosub' ); ?></a>
-			<a href="<?php echo esc_url( $reject_url ); ?>"  class="button" style="color:#991b1b;border-color:#991b1b"><?php _e( '✕ Rifiuta', 'calypsosub' ); ?></a>
+
+		<div class="calpren-section"><?php esc_html_e( 'Dati della prenotazione', 'calypsosub' ); ?></div>
+		<?php wp_nonce_field( 'calypso_booking_edit_' . $post->ID, 'calypso_booking_edit_nonce' ); ?>
+		<div class="calpren-form">
+			<?php foreach ( $form_data as $name => $value ) :
+				$name = (string) $name;
+				if ( Calypsosub_Booking_Fields::is_hidden( $name ) ) continue;
+				$field = Calypsosub_Booking_Fields::field( $name );
+				$id    = 'calpren-' . sanitize_html_class( $name );
+				?>
+				<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $field['label'] ); ?></label>
+				<div><?php self::render_field_input( $name, $value, $field, $id ); ?></div>
+			<?php endforeach; ?>
+			<?php if ( ! array_filter( array_keys( $form_data ), static fn( $k ) => ! Calypsosub_Booking_Fields::is_hidden( (string) $k ) ) ) : ?>
+				<p class="calpren-ro"><?php esc_html_e( 'Nessun dato inviato dal modulo.', 'calypsosub' ); ?></p>
+			<?php endif; ?>
 		</div>
-		<?php elseif ( $status === 'confermata' ) : ?>
-		<div class="calpren-actions">
-			<a href="<?php echo esc_url( $reject_url ); ?>" class="button" style="color:#991b1b;border-color:#991b1b"><?php _e( 'Annulla prenotazione', 'calypsosub' ); ?></a>
+
+		<div class="calpren-save">
+			<button type="submit" name="save" value="1" class="button button-primary button-large"><?php esc_html_e( 'Salva modifiche', 'calypsosub' ); ?></button>
+			<label><input type="checkbox" name="calypso_booking_notify" value="1" checked> <?php echo esc_html( $email_display ? sprintf( __( 'Invia l\'email "Prenotazione modificata" a %s', 'calypsosub' ), $email_display ) : __( 'Invia l\'email "Prenotazione modificata"', 'calypsosub' ) ); ?></label>
 		</div>
-		<?php endif; ?>
+		<p class="description"><?php esc_html_e( 'L\'email viene inviata solo se qualcosa è cambiato. Il testo si modifica in Calypso Sub → Template Email → Prenotazione modificata.', 'calypsosub' ); ?></p>
 		<?php
+	}
+
+	/**
+	 * Campo di modifica per un dato del modulo, del tipo del tag CF7
+	 * d'origine (quando noto).
+	 *
+	 * @param array{label:string,type:string,options:string[]} $field
+	 */
+	private static function render_field_input( string $name, $value, array $field, string $id ): void {
+		$input_name = 'calypso_booking_form[' . $name . ']';
+		$type       = $field['type'];
+		$values     = array_map( 'strval', is_array( $value ) ? $value : [ $value ] );
+		$options    = $field['options'];
+
+		if ( $type === 'acceptance' ) {
+			// Consenso dato da chi ha prenotato: non si modifica.
+			echo '<div class="calpren-ro">' . esc_html( array_filter( $values ) ? __( 'Accettato', 'calypsosub' ) : __( 'Non accettato', 'calypsosub' ) ) . '</div>';
+			echo '<input type="hidden" name="' . esc_attr( $input_name ) . '" value="' . esc_attr( implode( ', ', $values ) ) . '">';
+			return;
+		}
+		if ( $type === 'checkbox' && $options ) {
+			echo '<input type="hidden" name="' . esc_attr( $input_name ) . '[]" value="">';
+			foreach ( array_unique( array_merge( $options, array_filter( $values ) ) ) as $opt ) {
+				echo '<label style="margin-right:14px"><input type="checkbox" name="' . esc_attr( $input_name ) . '[]" value="' . esc_attr( $opt ) . '"' . checked( in_array( $opt, $values, true ), true, false ) . '> ' . esc_html( $opt ) . '</label>';
+			}
+			return;
+		}
+		if ( in_array( $type, [ 'select', 'radio' ], true ) && $options ) {
+			echo '<select id="' . esc_attr( $id ) . '" name="' . esc_attr( $input_name ) . '">';
+			foreach ( array_unique( array_merge( [ '' ], $options, array_filter( $values ) ) ) as $opt ) {
+				echo '<option value="' . esc_attr( $opt ) . '"' . selected( $values[0] ?? '', $opt, false ) . '>' . esc_html( $opt === '' ? '—' : $opt ) . '</option>';
+			}
+			echo '</select>';
+			return;
+		}
+		$joined = implode( ', ', $values );
+		if ( $type === 'textarea' || strlen( $joined ) > 80 || str_contains( $joined, "\n" ) ) {
+			echo '<textarea id="' . esc_attr( $id ) . '" name="' . esc_attr( $input_name ) . '" rows="3">' . esc_textarea( $joined ) . '</textarea>';
+			return;
+		}
+		$html_type = ( $type === 'email' || in_array( $name, [ 'email', 'mail', 'e-mail', 'your-email' ], true ) ) ? 'email' : ( $type === 'number' || $name === 'accompagnatori' || $name === 'altri_partecipanti' ? 'number' : 'text' );
+		echo '<input type="' . $html_type . '" id="' . esc_attr( $id ) . '" name="' . esc_attr( $input_name ) . '" value="' . esc_attr( $joined ) . '"' . ( $html_type === 'number' ? ' min="0"' : '' ) . '>';
+	}
+
+	/**
+	 * Salvataggio dei dati modificati dal dettaglio prenotazione in admin.
+	 * Aggiorna anche i meta derivati (accompagnatori, email ospite usata per
+	 * i doppioni, allergie) e, se richiesto e se qualcosa è cambiato, invia
+	 * l'email "Prenotazione modificata".
+	 */
+	public function save_booking_edit( int $booking_id ): void {
+		if ( ! isset( $_POST['calypso_booking_edit_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['calypso_booking_edit_nonce'] ), 'calypso_booking_edit_' . $booking_id ) ) return;
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
+		if ( ! current_user_can( 'calypsosub_manage' ) ) return;
+
+		$old    = get_post_meta( $booking_id, '_booking_form_data', true );
+		$old    = is_array( $old ) ? $old : [];
+		$posted = (array) wp_unslash( $_POST['calypso_booking_form'] ?? [] );
+		$new    = $old;
+
+		foreach ( $old as $name => $old_value ) {
+			$name = (string) $name;
+			if ( Calypsosub_Booking_Fields::is_hidden( $name ) || ! array_key_exists( $name, $posted ) ) continue;
+			$field = Calypsosub_Booking_Fields::field( $name );
+			$raw   = $posted[ $name ];
+
+			if ( $field['type'] === 'acceptance' ) continue;
+			if ( is_array( $raw ) ) {
+				$new[ $name ] = array_values( array_filter( array_map( 'sanitize_text_field', $raw ), static fn( $v ) => $v !== '' ) );
+			} elseif ( $field['type'] === 'email' || in_array( $name, [ 'email', 'mail', 'e-mail', 'your-email' ], true ) ) {
+				$new[ $name ] = sanitize_email( $raw );
+			} elseif ( $field['type'] === 'textarea' || str_contains( (string) $raw, "\n" ) ) {
+				$new[ $name ] = sanitize_textarea_field( $raw );
+			} else {
+				$new[ $name ] = sanitize_text_field( $raw );
+			}
+			// Un valore singolo in origine resta singolo (es. select CF7 salvato come array).
+			if ( is_array( $old_value ) && ! is_array( $new[ $name ] ) ) $new[ $name ] = [ $new[ $name ] ];
+		}
+
+		if ( $new === $old ) return;
+
+		$post_id     = (int) get_post_meta( $booking_id, '_booking_post_id', true );
+		$old_people  = self::get_people( $booking_id );
+		$companions  = self::companions_from_form( $new );
+
+		update_post_meta( $booking_id, '_booking_form_data', $new );
+		update_post_meta( $booking_id, '_booking_companions', $companions );
+		if ( array_key_exists( 'allergie', $new ) ) {
+			update_post_meta( $booking_id, '_booking_allergies', is_array( $new['allergie'] ) ? implode( ', ', $new['allergie'] ) : (string) $new['allergie'] );
+		}
+		if ( ! (int) get_post_meta( $booking_id, '_booking_user_id', true ) ) {
+			$email = calypso_extract_email( $new );
+			if ( $email !== '' ) update_post_meta( $booking_id, '_booking_guest_email', strtolower( $email ) );
+		}
+		update_post_meta( $booking_id, '_booking_updated', current_time( 'mysql' ) );
+
+		// Più persone di prima e posti superati: si salva comunque (decide lo
+		// staff), ma lo si segnala dopo il redirect.
+		$status   = (string) get_post_meta( $booking_id, '_booking_status', true );
+		$capacity = self::get_capacity( $post_id );
+		if ( in_array( $status, [ 'confermata', 'in_attesa' ], true ) && $capacity !== null
+			&& 1 + $companions > $old_people && $this->count_people( $post_id ) > $capacity ) {
+			set_transient( 'calypso_booking_over_' . get_current_user_id(), 1, 60 );
+		}
+
+		if ( ! empty( $_POST['calypso_booking_notify'] ) ) {
+			$this->email->send_booking_updated( $booking_id );
+		}
+	}
+
+	public function booking_edit_notices(): void {
+		$screen = get_current_screen();
+		if ( ! $screen || $screen->post_type !== 'calypso_prenotazione' || $screen->base !== 'post' ) return;
+		if ( get_transient( 'calypso_booking_over_' . get_current_user_id() ) ) {
+			delete_transient( 'calypso_booking_over_' . get_current_user_id() );
+			echo '<div class="notice notice-warning"><p>' . esc_html__( 'Modifica salvata, ma con le nuove persone i posti dell\'evento risultano superati.', 'calypsosub' ) . '</p></div>';
+		}
+	}
+
+	/** Messaggi "Articolo aggiornato" → "Prenotazione aggiornata". */
+	public function booking_updated_messages( array $messages ): array {
+		$messages['calypso_prenotazione'] = array_fill( 0, 11, '' );
+		$messages['calypso_prenotazione'][1] = __( 'Prenotazione aggiornata.', 'calypsosub' );
+		$messages['calypso_prenotazione'][4] = __( 'Prenotazione aggiornata.', 'calypsosub' );
+		$messages['calypso_prenotazione'][6] = __( 'Prenotazione salvata.', 'calypsosub' );
+		return $messages;
 	}
 
 	public function handle_confirm_booking(): void {

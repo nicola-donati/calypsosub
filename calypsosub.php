@@ -3,7 +3,7 @@
  * Plugin Name: Calypso Sub Arezzo
  * Plugin URI:  https://calypsosub.it
  * Description: Gestione uscite, eventi, corsi, docenti e prenotazioni per ASD Calypso Sub Arezzo.
- * Version:     1.0.98
+ * Version:     1.0.99
  * Author:      Nicola Donati
  * Text Domain: calypsosub
  * Domain Path: /languages
@@ -13,7 +13,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'CALYPSOSUB_VERSION', '1.0.98' );
+define( 'CALYPSOSUB_VERSION', '1.0.99' );
 define( 'CALYPSOSUB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CALYPSOSUB_URL', plugin_dir_url( __FILE__ ) );
 define( 'CALYPSOSUB_PLUGIN_FILE', __FILE__ );
@@ -43,6 +43,7 @@ require_once CALYPSOSUB_PATH . 'includes/post-types/class-cpt-occorrenze.php';
 require_once CALYPSOSUB_PATH . 'includes/import/class-course-spreadsheet-reader.php';
 require_once CALYPSOSUB_PATH . 'includes/import/class-course-import-mapper.php';
 require_once CALYPSOSUB_PATH . 'includes/import/class-course-importer.php';
+require_once CALYPSOSUB_PATH . 'includes/bookings/class-booking-fields.php';
 require_once CALYPSOSUB_PATH . 'includes/bookings/class-booking-email.php';
 require_once CALYPSOSUB_PATH . 'includes/bookings/class-booking-manager.php';
 require_once CALYPSOSUB_PATH . 'includes/integrations/class-systemeio-client.php';

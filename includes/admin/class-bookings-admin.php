@@ -340,12 +340,18 @@ class Calypsosub_Bookings_Admin {
 		</form>
 
 		<?php $this->render_stats( [
-			__( 'Elementi', 'calypsosub' )       => count( $items ),
-			__( 'Prenotanti', 'calypsosub' )     => $tot['prenotanti'],
-			__( 'Accompagnatori', 'calypsosub' ) => $tot['accompagnatori'],
-			__( 'Persone totali', 'calypsosub' ) => $tot['persone'],
-			__( 'Da confermare', 'calypsosub' )  => $tot['da_confermare'],
-			__( 'In lista d\'attesa', 'calypsosub' ) => $tot['lista_attesa'],
+			__( 'Partecipanti', 'calypsosub' ) => [
+				__( 'Prenotanti', 'calypsosub' )     => $tot['prenotanti'],
+				__( 'Accompagnatori', 'calypsosub' ) => $tot['accompagnatori'],
+				__( 'Persone totali', 'calypsosub' ) => $tot['persone'],
+			],
+			__( 'Stato prenotazioni', 'calypsosub' ) => [
+				__( 'Da confermare', 'calypsosub' )      => $tot['da_confermare'],
+				__( 'In lista d\'attesa', 'calypsosub' ) => $tot['lista_attesa'],
+			],
+			__( 'Elenco', 'calypsosub' ) => [
+				__( 'Elementi mostrati', 'calypsosub' ) => count( $items ),
+			],
 		], [ __( 'Da confermare', 'calypsosub' ) => $tot['da_confermare'] > 0 ] ); ?>
 
 		<table class="widefat striped cso-bk__table">
@@ -418,16 +424,22 @@ class Calypsosub_Bookings_Admin {
 
 		<?php
 		$stats = [
-			__( 'Prenotanti', 'calypsosub' )     => $c['prenotanti'],
-			__( 'Accompagnatori', 'calypsosub' ) => $c['accompagnatori'],
-			__( 'Persone totali', 'calypsosub' ) => $c['persone'],
+			__( 'Partecipanti', 'calypsosub' ) => [
+				__( 'Prenotanti', 'calypsosub' )     => $c['prenotanti'],
+				__( 'Accompagnatori', 'calypsosub' ) => $c['accompagnatori'],
+				__( 'Persone totali', 'calypsosub' ) => $c['persone'],
+			],
 		];
 		if ( $info['capacity'] !== null ) {
-			$stats[ __( 'Posti liberi', 'calypsosub' ) ] = max( 0, $info['capacity'] - $c['persone'] ) . ' / ' . $info['capacity'];
+			$stats[ __( 'Posti', 'calypsosub' ) ] = [
+				__( 'Liberi', 'calypsosub' ) => max( 0, $info['capacity'] - $c['persone'] ) . ' / ' . $info['capacity'],
+			];
 		}
-		$stats[ __( 'Confermate', 'calypsosub' ) ]    = $c['confermate'];
-		$stats[ __( 'Da confermare', 'calypsosub' ) ] = $c['da_confermare'];
-		$stats[ __( 'Lista d\'attesa', 'calypsosub' ) ] = $c['lista_attesa'] ? sprintf( '%d (%d pers.)', $c['lista_attesa'], $c['lista_persone'] ) : 0;
+		$stats[ __( 'Stato prenotazioni', 'calypsosub' ) ] = [
+			__( 'Confermate', 'calypsosub' )    => $c['confermate'],
+			__( 'Da confermare', 'calypsosub' ) => $c['da_confermare'],
+			__( 'Lista d\'attesa', 'calypsosub' ) => $c['lista_attesa'] ? sprintf( '%d (%d pers.)', $c['lista_attesa'], $c['lista_persone'] ) : 0,
+		];
 		$this->render_stats( $stats, [ __( 'Da confermare', 'calypsosub' ) => $c['da_confermare'] > 0 ] );
 		?>
 
@@ -550,11 +562,21 @@ class Calypsosub_Bookings_Admin {
 		echo '<th class="' . esc_attr( $class ) . '"><a href="' . esc_url( self::page_url( array_merge( $base, [ 'orderby' => $key, 'order' => $next ] ) ) ) . '">' . esc_html( $label . $arrow ) . '</a></th>';
 	}
 
-	/** @param array<string,int|string> $stats @param array<string,bool> $highlight */
-	private function render_stats( array $stats, array $highlight = [] ): void {
-		echo '<div class="cso-bk__stats">';
-		foreach ( $stats as $label => $value ) {
-			echo '<div class="cso-bk__stat' . ( ! empty( $highlight[ $label ] ) ? ' is-warn' : '' ) . '"><span>' . esc_html( (string) $value ) . '</span>' . esc_html( $label ) . '</div>';
+	/**
+	 * Riepilogo a sola lettura: gruppi di numeri separati da una linea, in
+	 * un unico pannello piatto — non riquadri singoli che sembrano pulsanti.
+	 *
+	 * @param array<string,array<string,int|string>> $groups
+	 * @param array<string,bool>                     $highlight
+	 */
+	private function render_stats( array $groups, array $highlight = [] ): void {
+		echo '<div class="cso-bk__stats" role="group" aria-label="' . esc_attr__( 'Riepilogo', 'calypsosub' ) . '">';
+		foreach ( $groups as $group => $stats ) {
+			echo '<div class="cso-bk__group"><div class="cso-bk__group-title">' . esc_html( $group ) . '</div><dl>';
+			foreach ( $stats as $label => $value ) {
+				echo '<div class="cso-bk__stat' . ( ! empty( $highlight[ $label ] ) ? ' is-warn' : '' ) . '"><dt>' . esc_html( $label ) . '</dt><dd>' . esc_html( (string) $value ) . '</dd></div>';
+			}
+			echo '</dl></div>';
 		}
 		echo '</div>';
 	}
@@ -581,10 +603,16 @@ class Calypsosub_Bookings_Admin {
 		.cso-bk__seg a{padding:5px 14px;text-decoration:none;color:#2c3338;border-left:1px solid #c3c4c7}
 		.cso-bk__seg a:first-child{border-left:0}
 		.cso-bk__seg a.is-active{background:#2271b1;color:#fff}
-		.cso-bk__stats{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 4px}
-		.cso-bk__stat{background:#fff;border:1px solid #dcdcde;border-radius:6px;padding:10px 16px;min-width:110px;font-size:12px;color:#50575e}
-		.cso-bk__stat span{display:block;font-size:22px;font-weight:700;color:#1d2327;line-height:1.2}
-		.cso-bk__stat.is-warn{border-color:#dba617;background:#fcf9e8}
+		.cso-bk__stats{display:flex;flex-wrap:wrap;margin:12px 0 16px;padding:12px 0;border-top:1px solid #dcdcde;border-bottom:1px solid #dcdcde;cursor:default;user-select:text}
+		.cso-bk__group{padding:0 28px;border-left:1px solid #dcdcde}
+		.cso-bk__group:first-child{padding-left:0;border-left:0}
+		.cso-bk__group-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#8c8f94;margin-bottom:4px}
+		.cso-bk__group dl{display:flex;gap:24px;margin:0}
+		.cso-bk__stat{display:flex;flex-direction:column-reverse}
+		.cso-bk__stat dd{margin:0;font-size:20px;font-weight:700;color:#1d2327;line-height:1.3}
+		.cso-bk__stat dt{font-size:12px;color:#50575e}
+		.cso-bk__stat.is-warn dd{color:#b26200}
+		@media(max-width:782px){.cso-bk__group{padding:8px 0;border-left:0;width:100%}}
 		.cso-bk__table th.num,.cso-bk__table td.num{text-align:center}
 		.cso-bk__table th a{color:inherit;text-decoration:none}
 		.cso-bk__row{cursor:pointer}
@@ -653,14 +681,14 @@ class Calypsosub_Bookings_Admin {
 
 		// Tutti i campi del form presenti in almeno una prenotazione, in coda
 		// alle colonne fisse (i form CF7 possono avere campi diversi).
-		$skip       = [ 'nome', 'cognome', 'email', 'telefono', '_debug_login' ];
+		$skip       = [ 'nome', 'cognome', 'email', 'telefono' ];
 		$form_keys  = [];
 		foreach ( $rows as $r ) {
 			foreach ( array_keys( $r['form'] ) as $k ) {
 				// Solo nomi di campo "normali": i dati del form arrivano dal
 				// visitatore e un nome di campo arbitrario finirebbe
 				// nell'intestazione del CSV.
-				if ( ! in_array( $k, $skip, true ) && preg_match( '/^[a-z0-9][a-z0-9_-]*$/i', (string) $k ) ) $form_keys[ $k ] = true;
+				if ( ! in_array( $k, $skip, true ) && ! Calypsosub_Booking_Fields::is_hidden( (string) $k ) && preg_match( '/^[a-z0-9][a-z0-9_-]*$/i', (string) $k ) ) $form_keys[ $k ] = true;
 			}
 		}
 		$form_keys = array_keys( $form_keys );
@@ -673,7 +701,7 @@ class Calypsosub_Bookings_Admin {
 		$out = fopen( 'php://output', 'w' );
 		fwrite( $out, "\xEF\xBB\xBF" ); // BOM: Excel riconosce l'UTF-8 (accenti).
 		// Punto e virgola: separatore che Excel in italiano apre in colonne.
-		fputcsv( $out, array_map( [ self::class, 'csv_safe' ], array_merge( [ 'Cognome', 'Nome', 'Email', 'Telefono', 'Accompagnatori', 'Persone', 'Stato', 'Ricevuta', 'Note' ], $form_keys ) ), ';' );
+		fputcsv( $out, array_map( [ self::class, 'csv_safe' ], array_merge( [ 'Cognome', 'Nome', 'Email', 'Telefono', 'Accompagnatori', 'Persone', 'Stato', 'Ricevuta', 'Note' ], array_map( [ 'Calypsosub_Booking_Fields', 'label' ], $form_keys ) ) ), ';' );
 		foreach ( $rows as $r ) {
 			$line = [ $r['cognome'], $r['nome'], $r['email'], $r['telefono'], $r['companions'], $r['people'], $labels[ $r['status'] ]['label'] ?? $r['status'], $r['received'], $r['notes'] ];
 			foreach ( $form_keys as $k ) {
