@@ -146,4 +146,11 @@ class Test_Booking_Manager extends TestCase {
 		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertSame( 'already_cancelled', $result->get_error_code() );
 	}
+
+	public function test_companions_from_form_accepts_both_field_names(): void {
+		$this->assertSame( 2, Calypsosub_Booking_Manager::companions_from_form( [ 'accompagnatori' => '2' ] ) );
+		$this->assertSame( 1, Calypsosub_Booking_Manager::companions_from_form( [ 'altri_partecipanti' => '1' ] ) );
+		$this->assertSame( 3, Calypsosub_Booking_Manager::companions_from_form( [ 'altri_partecipanti' => [ '3' ] ] ) );
+		$this->assertSame( 0, Calypsosub_Booking_Manager::companions_from_form( [ 'nome' => 'Mario' ] ) );
+	}
 }

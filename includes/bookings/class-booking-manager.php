@@ -88,6 +88,21 @@ class Calypsosub_Booking_Manager {
 	// -------------------------------------------------------------------------
 
 	/**
+	 * Numero di accompagnatori dal form. Il campo CF7 non ha sempre lo
+	 * stesso nome: il form eventi live lo chiama "altri_partecipanti", non
+	 * "accompagnatori" — prima veniva salvato 0 (segnalato 2026-11-13).
+	 * Un select/radio CF7 arriva come array di un solo valore.
+	 */
+	public static function companions_from_form( array $form_data ): int {
+		foreach ( [ 'accompagnatori', 'altri_partecipanti' ] as $key ) {
+			if ( ! isset( $form_data[ $key ] ) ) continue;
+			$value = is_array( $form_data[ $key ] ) ? reset( $form_data[ $key ] ) : $form_data[ $key ];
+			return absint( $value );
+		}
+		return 0;
+	}
+
+	/**
 	 * Crea una prenotazione. Restituisce status string o WP_Error.
 	 *
 	 * @param int   $post_id
@@ -134,7 +149,7 @@ class Calypsosub_Booking_Manager {
 		update_post_meta( $booking_id, '_booking_post_id',      $post_id );
 		update_post_meta( $booking_id, '_booking_post_type',    $post_type );
 		update_post_meta( $booking_id, '_booking_user_id',      $user_id );
-		update_post_meta( $booking_id, '_booking_companions',   absint( $form_data['accompagnatori'] ?? 0 ) );
+		update_post_meta( $booking_id, '_booking_companions',   self::companions_from_form( $form_data ) );
 		update_post_meta( $booking_id, '_booking_allergies',    $form_data['allergie'] ?? '' );
 		update_post_meta( $booking_id, '_booking_status',       $status );
 		update_post_meta( $booking_id, '_booking_date',         current_time( 'mysql' ) );
