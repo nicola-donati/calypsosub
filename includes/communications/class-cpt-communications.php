@@ -104,7 +104,7 @@ class Calypsosub_CPT_Communications {
 			<div id="cso-com-images-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0"></div>
 			<button type="button" class="button" id="cso-com-images-pick" <?php echo $dis; ?>><?php _e( 'Scegli immagini', 'calypsosub' ); ?></button>
 			<input type="hidden" name="cso_com_image_ids" id="cso_com_image_ids" value="<?php echo esc_attr( implode( ',', $image_ids ) ); ?>">
-			<p class="description"><?php _e( 'Solo anteprima qui, non vanno inserite nel testo: all\'invio viene sempre usata la versione originale a piena risoluzione, indipendentemente dalla dimensione scelta nel picker.', 'calypsosub' ); ?></p>
+			<p class="description"><?php _e( 'Solo anteprima qui, non vanno inserite nel testo: nella mail compaiono sotto il testo, larghe al massimo 600px; su Telegram viene inviata la versione originale a piena risoluzione.', 'calypsosub' ); ?></p>
 		</p>
 		<p>
 			<strong><?php _e( 'Categoria', 'calypsosub' ); ?></strong><br>

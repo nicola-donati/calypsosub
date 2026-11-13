@@ -99,10 +99,12 @@ class Calypsosub_Communication_Dispatcher {
 		$all_ok    = true;
 
 		// Scelte col picker dedicato (vedi Calypsosub_CPT_Communications),
-		// non inserite nel corpo: si risolve sempre la dimensione 'full' qui,
+		// non inserite nel corpo: la dimensione si risolve qui,
 		// indipendentemente da quale anteprima l'operatore vedeva nel picker
 		// — l'editor classico inserirebbe di default una versione ridotta,
-		// questo evita del tutto quel problema.
+		// questo evita del tutto quel problema. Telegram riceve l'originale
+		// ('full'); la mail la versione 'large' (~1024px), più che
+		// sufficiente per una colonna email da 600px e molto più leggera.
 		$image_ids  = (array) get_post_meta( $post_id, '_com_image_ids', true );
 		$image_urls = array_values( array_filter( array_map(
 			static fn( $id ) => wp_get_attachment_image_url( (int) $id, 'full' ),
@@ -110,14 +112,21 @@ class Calypsosub_Communication_Dispatcher {
 		) ) );
 
 		if ( in_array( 'email', $channels, true ) ) {
-			$email_body = $body_html;
-			if ( ! empty( $image_urls ) ) {
-				$images_html = implode( '', array_map(
-					static fn( $url ) => '<p><img src="' . esc_url( $url ) . '" style="max-width:100%"></p>',
-					$image_urls
-				) );
-				$email_body = $images_html . $email_body;
+			// Immagini DOPO il testo, a larghezza fissa 600px (standard
+			// email): con l'originale in cima e solo max-width:100%, in Gmail
+			// la foto riempiva lo schermo e il testo finiva fuori vista
+			// (segnalato 2026-11-13). L'attributo width serve per i client
+			// che ignorano il CSS (Outlook desktop).
+			// Un'immagine più stretta di 600px resta alla sua larghezza
+			// invece di essere ingrandita.
+			$email_images = '';
+			foreach ( $image_ids as $id ) {
+				$src = wp_get_attachment_image_src( (int) $id, 'large' );
+				if ( ! $src ) continue;
+				$width = min( 600, (int) $src[1] ?: 600 );
+				$email_images .= '<p><img src="' . esc_url( $src[0] ) . '" width="' . $width . '" alt="" style="display:block;width:100%;max-width:' . $width . 'px;height:auto;border:0"></p>';
 			}
+			$email_body = $body_html . $email_images;
 
 			$tag = (string) $category['tag_systemeio'];
 			$result = $tag !== ''
