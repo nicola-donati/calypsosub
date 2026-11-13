@@ -46,14 +46,14 @@ foreach ( $date as $dt ) {
 if ( ! $prossima && $date ) $prossima = end( $date );
 
 $fmt = static function ( string $dt ): string {
-	$ts = strtotime( $dt );
+	$ts = calypso_local_ts( $dt );
 	if ( ! $ts ) return $dt;
 	return strlen( $dt ) > 10 ? wp_date( 'j F Y — H:i', $ts ) : wp_date( 'j F Y', $ts );
 };
 
 $dc_dow = $dc_day = $dc_mon = $dc_time = '';
 if ( $prossima ) {
-	$dc_ts   = strtotime( $prossima );
+	$dc_ts   = calypso_local_ts( $prossima );
 	$dc_dow  = mb_strtoupper( wp_date( 'D', $dc_ts ) );
 	$dc_day  = wp_date( 'd', $dc_ts );
 	$dc_mon  = mb_strtoupper( wp_date( 'M', $dc_ts ) );
@@ -186,11 +186,11 @@ if ( class_exists( 'Calypsosub_Ajax_Eventi' ) ) {
 .cso-dove__nav{display:flex;flex-wrap:wrap;gap:16px}
 .cso-dove__nav a{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--c-wave);text-decoration:none}
 .cso-dove__nav a:hover{color:var(--c-deep,#0a2540)}
-.cso-card__links{padding:16px 24px;border-top:1px solid rgba(255,255,255,.1)}
-.cso-card__links-label{letter-spacing:.08em;text-transform:uppercase;font-weight:600;font-size:11px;color:rgba(255,255,255,.6);display:block;margin-bottom:10px}
+.cso-card__links{padding:16px 24px 20px;border-top:1px solid rgba(11,26,38,.08)}
+.cso-card__links-label{letter-spacing:.08em;text-transform:uppercase;font-weight:600;font-size:11px;color:rgba(11,26,38,.55);display:block;margin-bottom:10px}
 .cso-card__links-row{display:flex;flex-wrap:wrap;gap:8px}
-.cso-card__links-row a{flex:1;display:flex;justify-content:center;padding:9px 10px;font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,.2);border-radius:999px;color:#fff;text-decoration:none;white-space:nowrap}
-.cso-card__links-row a:hover{border-color:rgba(255,255,255,.5)}
+.cso-card__links-row a{flex:1;display:flex;justify-content:center;padding:9px 10px;font-size:12px;font-weight:600;border:1px solid rgba(11,26,38,.15);border-radius:999px;color:var(--c-deep,#3473A5);text-decoration:none;white-space:nowrap}
+.cso-card__links-row a:hover{border-color:var(--c-deep,#3473A5)}
 .cso-card{background:#fff;border-radius:18px;box-shadow:0 20px 50px -24px rgba(10,37,64,.5);overflow:hidden;position:sticky;top:24px}
 .cso-card__head{color:#fff;padding:24px}
 .cso-card__head-title{font-size:20px;font-weight:700;text-transform:uppercase;margin:0 0 4px}

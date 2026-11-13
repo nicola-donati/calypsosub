@@ -409,6 +409,20 @@ function calypso_cancel_booking( int $booking_id, int $user_id, string $token = 
 }
 
 /**
+ * Timestamp di una data/ora salvata come ora locale del sito ('Y-m-d' o
+ * 'Y-m-d\TH:i'), da passare a wp_date(). strtotime() non va bene qui: WP
+ * gira con il fuso PHP a UTC, quindi "20:30" diventava 20:30 UTC e wp_date()
+ * lo mostrava come 21:30 (22:30 con l'ora legale) — segnalato 2026-11-13.
+ */
+function calypso_local_ts( string $dt ): ?int {
+	try {
+		return ( new DateTimeImmutable( $dt, wp_timezone() ) )->getTimestamp();
+	} catch ( Exception $e ) {
+		return null;
+	}
+}
+
+/**
  * Prima data futura di un array di date stringa (Y-m-d o Y-m-d\TH:i),
  * o l'ultima se tutte sono passate, o '' se l'array è vuoto.
  */

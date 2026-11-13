@@ -58,12 +58,12 @@ $hero_focal_x = $hero_focal_x_raw !== '' ? min( 100, max( 0, (int) $hero_focal_x
 $hero_focal_y = $hero_focal_y_raw !== '' ? min( 100, max( 0, (int) $hero_focal_y_raw ) ) : 50;
 
 $fmt = static function ( string $dt ): string {
-	$ts = strtotime( $dt );
+	$ts = calypso_local_ts( $dt );
 	if ( ! $ts ) return $dt;
 	return strlen( $dt ) > 10 ? wp_date( 'j F Y — H:i', $ts ) : wp_date( 'j F Y', $ts );
 };
 $fmt_time = static function ( string $dt ): string {
-	$ts = strtotime( $dt );
+	$ts = calypso_local_ts( $dt );
 	return ( $ts && strlen( $dt ) > 10 ) ? wp_date( 'H:i', $ts ) : '';
 };
 
