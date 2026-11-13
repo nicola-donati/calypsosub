@@ -105,6 +105,23 @@ class Calypsosub_Booking_Manager {
 		return 0;
 	}
 
+	/** Limite accompagnatori quando l'uscita non ne imposta uno proprio. */
+	public const DEFAULT_MAX_COMPANIONS = 10;
+
+	/**
+	 * Accompagnatori ammessi per una prenotazione: il "Max accompagnatori per
+	 * prenotazione" dell'uscita se impostato, altrimenti un tetto fisso. Da
+	 * quando i posti contano le persone, senza un limite un solo modulo
+	 * (anche anonimo) potrebbe occupare tutti i posti.
+	 */
+	public static function max_companions( int $post_id ): int {
+		if ( get_post_type( $post_id ) === 'calypso_occ_uscita' ) {
+			$max = get_post_meta( $post_id, '_occorrenza_uscita_max_accompagnatori', true );
+			if ( $max !== '' && $max !== false && $max !== null ) return (int) $max;
+		}
+		return self::DEFAULT_MAX_COMPANIONS;
+	}
+
 	/**
 	 * Accompagnatori di una prenotazione. Le prenotazioni fatte prima della
 	 * 1.0.90 hanno salvato 0 anche se il form diceva altro (campo
@@ -150,7 +167,11 @@ class Calypsosub_Booking_Manager {
 		if ( $post_type === 'calypso_corso' ) {
 			$status = 'in_attesa';
 		} else {
-			$status = $this->resolve_booking_status( $post_id, 1 + self::companions_from_form( $form_data ) );
+			$companions = self::companions_from_form( $form_data );
+			if ( $companions > self::max_companions( $post_id ) ) {
+				return new WP_Error( 'too_many_companions', sprintf( __( 'Puoi indicare al massimo %d accompagnatori.', 'calypsosub' ), self::max_companions( $post_id ) ) );
+			}
+			$status = $this->resolve_booking_status( $post_id, 1 + $companions );
 			if ( is_wp_error( $status ) ) return $status;
 		}
 
@@ -207,9 +228,11 @@ class Calypsosub_Booking_Manager {
 		update_post_meta( $booking_id, '_booking_status', 'annullata' );
 		$this->email->send_booking_cancelled( $booking_id );
 
-		// Posti liberati (anche da una prenotazione ancora da confermare,
-		// che li occupava): promuovi la lista d'attesa.
-		if ( in_array( $current_status, [ 'confermata', 'in_attesa' ], true ) ) {
+		// Promozione automatica solo quando si libera un posto CONFERMATO
+		// dallo staff: annullare una richiesta ancora da confermare non deve
+		// poter confermare d'ufficio altre persone (la promozione salta la
+		// conferma manuale).
+		if ( $current_status === 'confermata' ) {
 			$post_id = (int) get_post_meta( $booking_id, '_booking_post_id', true );
 			$this->promote_waitlist( $post_id );
 		}
@@ -558,14 +581,15 @@ class Calypsosub_Booking_Manager {
 	/**
 	 * Rifiuta (se non ancora confermata) o annulla (se confermata) da admin e
 	 * invia l'email. Un annullamento libera posti: si promuove la lista
-	 * d'attesa, come quando annulla l'utente stesso.
+	 * d'attesa, come quando annulla l'utente stesso (solo per prenotazioni
+	 * confermate, vedi cancel_booking()).
 	 */
 	public function admin_reject( int $booking_id ): bool {
 		$current = (string) get_post_meta( $booking_id, '_booking_status', true );
 		if ( ! in_array( $current, [ 'in_attesa', 'lista_attesa', 'confermata' ], true ) ) return false;
 		update_post_meta( $booking_id, '_booking_status', $current === 'confermata' ? 'annullata' : 'rifiutata' );
 		$this->email->send_booking_rejected( $booking_id );
-		if ( $current !== 'lista_attesa' ) {
+		if ( $current === 'confermata' ) {
 			$this->promote_waitlist( (int) get_post_meta( $booking_id, '_booking_post_id', true ) );
 		}
 		return true;

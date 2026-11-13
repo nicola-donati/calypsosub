@@ -657,7 +657,10 @@ class Calypsosub_Bookings_Admin {
 		$form_keys  = [];
 		foreach ( $rows as $r ) {
 			foreach ( array_keys( $r['form'] ) as $k ) {
-				if ( ! in_array( $k, $skip, true ) && $k[0] !== '_' ) $form_keys[ $k ] = true;
+				// Solo nomi di campo "normali": i dati del form arrivano dal
+				// visitatore e un nome di campo arbitrario finirebbe
+				// nell'intestazione del CSV.
+				if ( ! in_array( $k, $skip, true ) && preg_match( '/^[a-z0-9][a-z0-9_-]*$/i', (string) $k ) ) $form_keys[ $k ] = true;
 			}
 		}
 		$form_keys = array_keys( $form_keys );
@@ -670,7 +673,7 @@ class Calypsosub_Bookings_Admin {
 		$out = fopen( 'php://output', 'w' );
 		fwrite( $out, "\xEF\xBB\xBF" ); // BOM: Excel riconosce l'UTF-8 (accenti).
 		// Punto e virgola: separatore che Excel in italiano apre in colonne.
-		fputcsv( $out, array_merge( [ 'Cognome', 'Nome', 'Email', 'Telefono', 'Accompagnatori', 'Persone', 'Stato', 'Ricevuta', 'Note' ], $form_keys ), ';' );
+		fputcsv( $out, array_map( [ self::class, 'csv_safe' ], array_merge( [ 'Cognome', 'Nome', 'Email', 'Telefono', 'Accompagnatori', 'Persone', 'Stato', 'Ricevuta', 'Note' ], $form_keys ) ), ';' );
 		foreach ( $rows as $r ) {
 			$line = [ $r['cognome'], $r['nome'], $r['email'], $r['telefono'], $r['companions'], $r['people'], $labels[ $r['status'] ]['label'] ?? $r['status'], $r['received'], $r['notes'] ];
 			foreach ( $form_keys as $k ) {
@@ -686,7 +689,7 @@ class Calypsosub_Bookings_Admin {
 	/** Evita che Excel interpreti come formula un valore inserito da un utente. */
 	private static function csv_safe( $value ): string {
 		$value = (string) $value;
-		return ( $value !== '' && in_array( $value[0], [ '=', '+', '-', '@' ], true ) && ! is_numeric( $value ) ) ? "'" . $value : $value;
+		return ( $value !== '' && in_array( $value[0], [ '=', '+', '-', '@', "\t", "\r" ], true ) && ! is_numeric( $value ) ) ? "'" . $value : $value;
 	}
 
 	public function handle_print(): void {
