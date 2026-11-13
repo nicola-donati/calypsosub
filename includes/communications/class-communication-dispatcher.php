@@ -133,7 +133,7 @@ class Calypsosub_Communication_Dispatcher {
 		if ( in_array( 'telegram', $channels, true ) ) {
 			$groups     = Calypsosub_Communications_Settings::get_telegram_groups();
 			$group_keys = $category['groups'];
-			$text       = $this->telegram->html_to_plain_text( $body_html );
+			$message    = $this->telegram->html_to_message( $body_html );
 			$results['telegram'] = [];
 
 			if ( empty( $group_keys ) ) {
@@ -151,7 +151,7 @@ class Calypsosub_Communication_Dispatcher {
 					$all_ok = false;
 					continue;
 				}
-				$result = $this->telegram->send_communication( $group['chat_id'], $subject, $text, $image_urls );
+				$result = $this->telegram->send_communication( $group['chat_id'], $subject, $message['text'], $message['entities'], $image_urls );
 				$results['telegram'][ $label ] = is_wp_error( $result )
 					? [ 'ok' => false, 'msg' => $result->get_error_message(), 'debug' => $result->get_error_data() ]
 					: [ 'ok' => true ];

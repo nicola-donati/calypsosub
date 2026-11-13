@@ -11,6 +11,10 @@ class Calypsosub_Telegram_Client {
 	/** Limite Telegram per le didascalie foto/album, in unità UTF-16. */
 	public const CAPTION_MAX_LENGTH = 1024;
 
+	/** Marcatori interni di html_to_message() (Unicode a uso privato). */
+	private const LINK_OPEN  = "\u{E000}";
+	private const LINK_CLOSE = "\u{E001}";
+
 	/**
 	 * Lunghezza di una stringa in unità UTF-16 — quella che Telegram usa
 	 * davvero per i suoi limiti (stesso criterio di JS string.length), non
@@ -45,11 +49,13 @@ class Calypsosub_Telegram_Client {
 	}
 
 	/**
-	 * Manda $text (plain text) a un singolo chat_id.
+	 * Manda $text (plain text, con eventuali entità Telegram) a un singolo
+	 * chat_id.
 	 *
+	 * @param array<int,array<string,mixed>> $entities
 	 * @return true|WP_Error
 	 */
-	public function send_message( string $chat_id, string $text ) {
+	public function send_message( string $chat_id, string $text, array $entities = [] ) {
 		$token = trim( (string) get_option( 'calypsosub_telegram_bot_token', '' ) );
 		if ( $token === '' ) {
 			return new WP_Error( 'calypso_telegram_no_token', __( 'Token del bot Telegram non configurato.', 'calypsosub' ) );
@@ -58,11 +64,16 @@ class Calypsosub_Telegram_Client {
 			return new WP_Error( 'calypso_telegram_no_chat_id', __( 'chat_id mancante.', 'calypsosub' ) );
 		}
 
-		return $this->post_telegram_api( $token, 'sendMessage', [
+		$payload = [
 			'chat_id'                  => $chat_id,
 			'text'                     => $text,
 			'disable_web_page_preview' => true,
-		], 15 );
+		];
+		if ( $entities ) {
+			$payload['entities'] = $entities;
+		}
+
+		return $this->post_telegram_api( $token, 'sendMessage', $payload, 15 );
 	}
 
 	/** @param array<string,string> $headers */
@@ -111,9 +122,10 @@ class Calypsosub_Telegram_Client {
 	 * 1024 caratteri, il limite Telegram per le didascalie foto (molto più
 	 * basso del limite testo normale di sendMessage).
 	 *
+	 * @param array<int,array<string,mixed>> $caption_entities
 	 * @return true|WP_Error
 	 */
-	public function send_photo( string $chat_id, string $photo_url, string $caption = '' ) {
+	public function send_photo( string $chat_id, string $photo_url, string $caption = '', array $caption_entities = [] ) {
 		$token = trim( (string) get_option( 'calypsosub_telegram_bot_token', '' ) );
 		if ( $token === '' ) {
 			return new WP_Error( 'calypso_telegram_no_token', __( 'Token del bot Telegram non configurato.', 'calypsosub' ) );
@@ -123,9 +135,12 @@ class Calypsosub_Telegram_Client {
 		}
 
 		$payload = [ 'chat_id' => $chat_id, 'photo' => $photo_url ];
-		$caption = trim( $caption );
 		if ( $caption !== '' ) {
 			$payload['caption'] = self::utf16_truncate( $caption, self::CAPTION_MAX_LENGTH );
+			$caption_entities   = self::shift_entities( $caption_entities, 0, self::CAPTION_MAX_LENGTH );
+			if ( $caption_entities ) {
+				$payload['caption_entities'] = $caption_entities;
+			}
 		}
 
 		return $this->post_telegram_api( $token, 'sendPhoto', $payload, 20 );
@@ -137,9 +152,10 @@ class Calypsosub_Telegram_Client {
 	 * mostra come didascalia dell'intero album, non serve ripeterla.
 	 *
 	 * @param string[] $photo_urls
+	 * @param array<int,array<string,mixed>> $caption_entities
 	 * @return true|WP_Error
 	 */
-	public function send_media_group( string $chat_id, array $photo_urls, string $caption = '' ) {
+	public function send_media_group( string $chat_id, array $photo_urls, string $caption = '', array $caption_entities = [] ) {
 		$token = trim( (string) get_option( 'calypsosub_telegram_bot_token', '' ) );
 		if ( $token === '' ) {
 			return new WP_Error( 'calypso_telegram_no_token', __( 'Token del bot Telegram non configurato.', 'calypsosub' ) );
@@ -148,14 +164,17 @@ class Calypsosub_Telegram_Client {
 			return new WP_Error( 'calypso_telegram_no_chat_id', __( 'chat_id mancante.', 'calypsosub' ) );
 		}
 
-		$photo_urls = array_slice( array_values( $photo_urls ), 0, 10 );
-		$caption    = trim( $caption );
+		$photo_urls       = array_slice( array_values( $photo_urls ), 0, 10 );
+		$caption_entities = self::shift_entities( $caption_entities, 0, self::CAPTION_MAX_LENGTH );
 
 		$media = [];
 		foreach ( $photo_urls as $i => $url ) {
 			$item = [ 'type' => 'photo', 'media' => $url ];
 			if ( 0 === $i && $caption !== '' ) {
 				$item['caption'] = self::utf16_truncate( $caption, self::CAPTION_MAX_LENGTH );
+				if ( $caption_entities ) {
+					$item['caption_entities'] = $caption_entities;
+				}
 			}
 			$media[] = $item;
 		}
@@ -170,20 +189,27 @@ class Calypsosub_Telegram_Client {
 	 * foto con didascalia solo l'oggetto, poi il testo completo. Senza
 	 * immagini resta sempre un unico messaggio oggetto+testo.
 	 *
+	 * $text/$entities sono l'output di html_to_message(): $text già pulito
+	 * e senza spazi ai bordi, offset delle entità relativi a $text.
+	 *
+	 * @param array<int,array<string,mixed>> $entities
 	 * @param string[] $image_urls
 	 * @return true|WP_Error
 	 */
-	public function send_communication( string $chat_id, string $subject, string $text, array $image_urls = [] ) {
-		$combined = trim( $subject . "\n\n" . $text );
+	public function send_communication( string $chat_id, string $subject, string $text, array $entities = [], array $image_urls = [] ) {
+		$subject           = trim( $subject );
+		$prefix            = $subject !== '' && $text !== '' ? $subject . "\n\n" : $subject;
+		$combined          = $prefix . $text;
+		$combined_entities = self::shift_entities( $entities, self::utf16_length( $prefix ) );
 
 		if ( empty( $image_urls ) ) {
-			return $this->send_message( $chat_id, $combined );
+			return $this->send_message( $chat_id, $combined, $combined_entities );
 		}
 
 		if ( self::utf16_length( $combined ) <= self::CAPTION_MAX_LENGTH ) {
 			return count( $image_urls ) === 1
-				? $this->send_photo( $chat_id, $image_urls[0], $combined )
-				: $this->send_media_group( $chat_id, $image_urls, $combined );
+				? $this->send_photo( $chat_id, $image_urls[0], $combined, $combined_entities )
+				: $this->send_media_group( $chat_id, $image_urls, $combined, $combined_entities );
 		}
 
 		$photo_result = count( $image_urls ) === 1
@@ -194,8 +220,7 @@ class Calypsosub_Telegram_Client {
 			return $photo_result;
 		}
 
-		$text = trim( $text );
-		return $text === '' ? true : $this->send_message( $chat_id, $text );
+		return $text === '' ? true : $this->send_message( $chat_id, $text, $entities );
 	}
 
 	/**
@@ -334,13 +359,17 @@ class Calypsosub_Telegram_Client {
 
 	/**
 	 * Converte il corpo HTML di una comunicazione in testo semplice per
-	 * Telegram. Niente parse_mode HTML/Markdown: stare su plain text evita i
-	 * problemi di escaping delle entità HTML viste altrove nel plugin (vedi
-	 * memoria "no & in block JS") — qui il rischio analogo sarebbe un '&'
-	 * letterale nel testo non convertito in '&amp;', che Telegram in modalità
-	 * HTML rifiuterebbe con un errore di parsing.
-	 */
-	/**
+	 * Telegram, più i link come entità `text_link`. Niente parse_mode
+	 * HTML/Markdown: stare su plain text evita i problemi di escaping delle
+	 * entità HTML visti altrove nel plugin (vedi memoria "no & in block JS")
+	 * — qui il rischio analogo sarebbe un '&' letterale nel testo non
+	 * convertito in '&amp;', che Telegram in modalità HTML rifiuterebbe con
+	 * un errore di parsing. Le entità invece sono offset/lunghezze sul testo
+	 * già pulito, quindi il testo cliccabile resta quello scritto
+	 * nell'editor (prima i <a> venivano semplicemente rimossi e il link
+	 * andava perso, segnalato 2026-11-13) e il limite didascalia continua a
+	 * contare solo il testo visibile.
+	 *
 	 * Ogni pressione di Enter nell'editor classico crea un nuovo <p>, non un
 	 * <br> dentro lo stesso paragrafo — anche per quello che l'operatore
 	 * intendeva come un semplice ritorno a capo (es. ogni riga di un elenco
@@ -349,8 +378,10 @@ class Calypsosub_Telegram_Client {
 	 * come un singolo a capo, uniformemente — chi vuole una riga vuota vera
 	 * tra due paragrafi può ancora ottenerla premendo Enter due volte (due
 	 * </p> consecutivi producono comunque \n\n).
+	 *
+	 * @return array{text:string,entities:array<int,array{type:string,offset:int,length:int,url:string}>}
 	 */
-	public function html_to_plain_text( string $html ): string {
+	public function html_to_message( string $html ): array {
 		// Whitespace puro tra due tag (es. il \n che il salvataggio
 		// dell'editor lascia tra </p> e il <p> successivo, leggibilità del
 		// codice HTML salvato) non è dentro nessun tag — nessuna delle
@@ -359,11 +390,90 @@ class Calypsosub_Telegram_Client {
 		// sostituzione singola (bug persistito, osservato ancora 2026-10-15
 		// — va eliminato PRIMA, qui, non dopo).
 		$html = preg_replace( '/>\s+</', '><', $html );
-		$text = preg_replace( '/<\s*br\s*\/?\s*>/i', "\n", $html );
+
+		// I link diventano due marcatori (caratteri Unicode a uso privato,
+		// che nessun passaggio sotto tocca) attorno al testo cliccabile: gli
+		// offset si possono calcolare solo sul testo finale, dopo strip dei
+		// tag, decode delle entità e compattazione degli a capo.
+		$urls = [];
+		$html = preg_replace_callback(
+			'/<a\s[^>]*?href\s*=\s*(["\'])(.*?)\1[^>]*>(.*?)<\/a\s*>/is',
+			static function ( array $m ) use ( &$urls ): string {
+				$url = trim( html_entity_decode( $m[2], ENT_QUOTES, 'UTF-8' ) );
+				// Telegram rifiuta l'intero messaggio per un text_link con
+				// URL non http(s) (es. mailto:) — meglio perdere solo quel
+				// link che tutto l'invio.
+				if ( ! preg_match( '#^https?://#i', $url ) ) {
+					return $m[3];
+				}
+				$urls[] = $url;
+				return self::LINK_OPEN . $m[3] . self::LINK_CLOSE;
+			},
+			(string) $html
+		);
+
+		$text = preg_replace( '/<\s*br\s*\/?\s*>/i', "\n", (string) $html );
 		$text = preg_replace( '/<\s*\/p\s*>/i', "\n", (string) $text );
 		$text = wp_strip_all_tags( (string) $text );
 		$text = html_entity_decode( $text, ENT_QUOTES, 'UTF-8' );
 		$text = preg_replace( "/\n{3,}/", "\n\n", $text );
-		return trim( (string) $text );
+		$text = trim( (string) $text );
+
+		return self::extract_link_entities( $text, $urls );
+	}
+
+	/**
+	 * Toglie i marcatori LINK_OPEN/LINK_CLOSE da $text e li trasforma in
+	 * entità text_link con offset/lunghezza in unità UTF-16 (il criterio di
+	 * Telegram, vedi utf16_length()).
+	 *
+	 * @param string[] $urls nell'ordine dei marcatori di apertura
+	 * @return array{text:string,entities:array<int,array{type:string,offset:int,length:int,url:string}>}
+	 */
+	private static function extract_link_entities( string $text, array $urls ): array {
+		$parts    = preg_split( '/(' . self::LINK_OPEN . '|' . self::LINK_CLOSE . ')/u', $text, -1, PREG_SPLIT_DELIM_CAPTURE );
+		$out      = '';
+		$offset   = 0;
+		$entities = [];
+		$link_i   = 0;
+		$open_at  = null;
+
+		foreach ( (array) $parts as $part ) {
+			if ( $part === self::LINK_OPEN ) {
+				$open_at = $offset;
+				continue;
+			}
+			if ( $part === self::LINK_CLOSE ) {
+				$url = $urls[ $link_i++ ] ?? '';
+				if ( $open_at !== null && $url !== '' && $offset > $open_at ) {
+					$entities[] = [ 'type' => 'text_link', 'offset' => $open_at, 'length' => $offset - $open_at, 'url' => $url ];
+				}
+				$open_at = null;
+				continue;
+			}
+			$out    .= $part;
+			$offset += self::utf16_length( $part );
+		}
+
+		return [ 'text' => $out, 'entities' => $entities ];
+	}
+
+	/**
+	 * Sposta le entità di $shift unità e scarta/accorcia quelle che escono
+	 * da [0, $max_units) — per anteporre l'oggetto al testo e per le
+	 * didascalie troncate.
+	 *
+	 * @param array<int,array{type:string,offset:int,length:int,url:string}> $entities
+	 * @return array<int,array{type:string,offset:int,length:int,url:string}>
+	 */
+	public static function shift_entities( array $entities, int $shift, int $max_units = PHP_INT_MAX ): array {
+		$out = [];
+		foreach ( $entities as $e ) {
+			$e['offset'] += $shift;
+			if ( $e['offset'] >= $max_units ) continue;
+			$e['length'] = min( $e['length'], $max_units - $e['offset'] );
+			if ( $e['length'] > 0 ) $out[] = $e;
+		}
+		return $out;
 	}
 }

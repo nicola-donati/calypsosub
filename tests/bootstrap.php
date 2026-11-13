@@ -12,3 +12,4 @@ require_once CALYPSOSUB_PATH . 'includes/helpers/functions.php';
 require_once CALYPSOSUB_PATH . 'includes/blocks/class-gallery-helpers.php';
 require_once CALYPSOSUB_PATH . 'includes/taxonomies/class-tax-media-tag.php';
 require_once CALYPSOSUB_PATH . 'includes/media/class-media-overlay-field.php';
+require_once CALYPSOSUB_PATH . 'includes/integrations/class-telegram-client.php';
