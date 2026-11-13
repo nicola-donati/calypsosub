@@ -98,7 +98,6 @@ $show_bar = $calypsosub_booking_manager instanceof Calypsosub_Booking_Manager
 $bar_pct  = $show_bar ? max( 0, min( 100, (int) round( $confirmed / (int) $max_part * 100 ) ) ) : 0;
 
 $maps_query = $indirizzo ?: $luogo;
-$maps       = $maps_query ? calypso_maps_links( $maps_query ) : null;
 
 $cal_event = null;
 if ( $prossima ) {
@@ -187,13 +186,12 @@ if ( class_exists( 'Calypsosub_Ajax_Eventi' ) ) {
 .cso-dove__photo-cap{position:absolute;bottom:0;left:0;letter-spacing:.1em;text-transform:uppercase;padding:10px 14px;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);border-top-right-radius:8px;font-size:11px;color:rgba(255,255,255,.9)}
 .cso-dove__info{padding:26px;display:flex;flex-direction:column;gap:14px}
 .cso-dove__addr{display:flex;align-items:flex-start;gap:8px;font-weight:700;color:var(--c-deep);margin:0;font-size:15px}
-.cso-dove__nav{display:flex;flex-wrap:wrap;gap:16px}
-.cso-dove__nav a{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--c-wave);text-decoration:none}
-.cso-dove__nav a:hover{color:var(--c-deep,#0a2540)}
 .cso-card__links{padding:16px 24px 20px;border-top:1px solid rgba(11,26,38,.08)}
-.cso-cal-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;box-sizing:border-box;padding:13px 18px;border:2px solid var(--c-deep,#3473A5);border-radius:999px;color:var(--c-deep,#3473A5);font-size:14px;font-weight:700;text-decoration:none;transition:background .15s,color .15s}
-.cso-cal-btn:hover,.cso-cal-btn:focus-visible{background:var(--c-deep,#3473A5);color:#fff}
-.cso-cal-btn svg{flex-shrink:0}
+.cso-icon-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;box-sizing:border-box;padding:13px 18px;border:2px solid var(--c-deep,#3473A5);border-radius:999px;color:var(--c-deep,#3473A5);font-size:14px;font-weight:700;text-decoration:none;transition:background .15s,color .15s}
+.cso-icon-btn:hover,.cso-icon-btn:focus-visible{background:var(--c-deep,#3473A5);color:#fff}
+.cso-icon-btn svg{flex-shrink:0}
+.cso-icon-btn__alt{display:block;margin-top:10px;text-align:center;font-size:12px;font-weight:600;color:var(--c-deep,#3473A5);text-decoration:underline}
+.cso-dove__nav{max-width:320px}
 .cso-card{background:#fff;border-radius:18px;box-shadow:0 20px 50px -24px rgba(10,37,64,.5);overflow:hidden;position:sticky;top:24px}
 .cso-card__head{color:#fff;padding:24px}
 .cso-card__head-title{font-size:20px;font-weight:700;text-transform:uppercase;margin:0 0 4px}
@@ -361,11 +359,9 @@ $_evd = [
 				<div class="cso-dove__info">
 					<p class="cso-dove__addr">📍 <?php echo esc_html( $indirizzo ); ?></p>
 					<div class="cso-prose"><?php echo wpautop( esc_html( $luogo_descrizione ) ); ?></div>
-					<?php if ( $maps ) : ?>
+					<?php if ( $maps_query ) : ?>
 					<div class="cso-dove__nav">
-						<a href="<?php echo esc_url( $maps['google'] ); ?>" target="_blank" rel="noopener">Apri in Google Maps →</a>
-						<a href="<?php echo esc_url( $maps['apple'] ); ?>" target="_blank" rel="noopener">Apple Maps →</a>
-						<a href="<?php echo esc_url( $maps['waze'] ); ?>" target="_blank" rel="noopener">Waze →</a>
+						<?php Calypsosub_Navigation_Link::render_button( $maps_query ); ?>
 					</div>
 					<?php endif; ?>
 				</div>

@@ -128,7 +128,8 @@ class Calypsosub_Booking_Email {
 				];
 			}
 		}
-		$maps     = $maps_query !== '' ? calypso_maps_links( $maps_query ) : null;
+		$nav_url  = $maps_query !== '' ? Calypsosub_Navigation_Link::url( $maps_query ) : '';
+		$waze_url = $maps_query !== '' ? Calypsosub_Navigation_Link::url( $maps_query, 'waze' ) : '';
 		$cal_url  = $cal_event ? Calypsosub_Calendar_Download::url( $cal_event ) : '';
 
 		$accompagnatori = Calypsosub_Booking_Manager::get_companions( $booking_id );
@@ -158,31 +159,33 @@ class Calypsosub_Booking_Email {
 			'{link_area_personale}'=> $manage_link,
 			'{data_prenotazione}'  => $booking_date,
 			'{link_calendario}'    => $cal_url,
-			'{link_google_maps}'   => $maps['google'] ?? '',
-			'{link_apple_maps}'    => $maps['apple'] ?? '',
-			'{link_waze}'          => $maps['waze'] ?? '',
-			'{pulsanti_navigatore_calendario}' => self::nav_calendar_buttons_html( $maps, $cal_url ),
+			'{link_navigatore}'    => $nav_url,
+			'{link_waze}'          => $waze_url,
+			'{pulsanti_navigatore_calendario}' => self::nav_calendar_buttons_html( $nav_url, $waze_url, $cal_url ),
 		];
 	}
 
 	/**
-	 * Blocco pronto "Apri sul navigatore" + "Aggiungi al calendario" per le
-	 * email, come nelle pagine evento/uscita. Solo stili inline e niente SVG
-	 * (Gmail li toglie); vuoto se non c'è né un luogo né una data.
-	 *
-	 * @param array{google:string,apple:string,waze:string}|null $maps
+	 * Blocco pronto "Aggiungi al calendario" + "Apri sul navigatore" per le
+	 * email, come nelle pagine evento/uscita: un pulsante ciascuno, l'app
+	 * giusta la scelgono gli endpoint al clic (vedi
+	 * Calypsosub_Calendar_Download e Calypsosub_Navigation_Link). Solo stili
+	 * inline e niente SVG (Gmail li toglie); vuoto se non c'è né un luogo né
+	 * una data.
 	 */
-	private static function nav_calendar_buttons_html( ?array $maps, string $cal_url ): string {
-		$btn  = 'display:inline-block;padding:10px 18px;margin:0 6px 8px 0;border:1px solid #3473A5;border-radius:999px;color:#3473A5;text-decoration:none;font-weight:bold;font-size:14px';
+	private static function nav_calendar_buttons_html( string $nav_url, string $waze_url, string $cal_url ): string {
+		$btn  = 'display:inline-block;padding:12px 22px;margin:0 8px 8px 0;border-radius:999px;background:#3473A5;color:#ffffff;text-decoration:none;font-weight:bold;font-size:15px';
 		$html = '';
 		if ( $cal_url !== '' ) {
-			$html .= '<p style="margin:20px 0 8px"><a href="' . esc_url( $cal_url ) . '" style="display:inline-block;padding:12px 22px;border-radius:999px;background:#3473A5;color:#ffffff;text-decoration:none;font-weight:bold;font-size:15px">&#128197; ' . esc_html__( 'Aggiungi al calendario', 'calypsosub' ) . '</a></p>';
+			$html .= '<a href="' . esc_url( $cal_url ) . '" style="' . $btn . '">&#128197; ' . esc_html__( 'Aggiungi al calendario', 'calypsosub' ) . '</a>';
 		}
-		if ( $maps ) {
-			$html .= '<p style="margin:16px 0 6px;font-weight:bold">&#128205; ' . esc_html__( 'Apri sul navigatore', 'calypsosub' ) . '</p><p style="margin:0">'
-				. '<a href="' . esc_url( $maps['google'] ) . '" style="' . $btn . '">Google Maps</a>'
-				. '<a href="' . esc_url( $maps['apple'] ) . '" style="' . $btn . '">Apple Maps</a>'
-				. '<a href="' . esc_url( $maps['waze'] ) . '" style="' . $btn . '">Waze</a></p>';
+		if ( $nav_url !== '' ) {
+			$html .= '<a href="' . esc_url( $nav_url ) . '" style="' . $btn . '">&#128205; ' . esc_html__( 'Apri sul navigatore', 'calypsosub' ) . '</a>';
+		}
+		if ( $html === '' ) return '';
+		$html = '<p style="margin:20px 0 4px">' . $html . '</p>';
+		if ( $waze_url !== '' ) {
+			$html .= '<p style="margin:0 0 16px;font-size:13px"><a href="' . esc_url( $waze_url ) . '" style="color:#3473A5">' . esc_html__( 'Usi Waze? Apri con Waze', 'calypsosub' ) . '</a></p>';
 		}
 		return $html;
 	}

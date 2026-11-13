@@ -130,7 +130,6 @@ if ( ! empty( $programma_override ) ) {
 	}
 }
 
-$maps = $indirizzo ? calypso_maps_links( $indirizzo ) : null;
 
 $cal_event = null;
 if ( $prossima && $prossima >= $oggi ) {
@@ -299,12 +298,10 @@ $gallery_units = Calypsosub_Gallery_Helpers::build_units(
 .cso-sintesi__box-label{letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin:0 0 10px;display:block}
 .cso-sintesi .cso-sintesi__box-label{font-size:16px;color:var(--c-aqua,#59C6F9)}
 .cso .cso-sintesi__box-text{font-size:14px;line-height:1.6;color:rgba(255,255,255,.8);margin:0;white-space:pre-line}
-.cso-cal-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;box-sizing:border-box;padding:13px 18px;border:2px solid #fff;border-radius:999px;color:#fff;font-size:14px;font-weight:700;text-decoration:none;transition:background .15s,color .15s}
-.cso-cal-btn:hover,.cso-cal-btn:focus-visible{background:#fff;color:var(--c-deep,#3473A5)}
-.cso-cal-btn svg{flex-shrink:0}
-.cso-sintesi__linkrow{display:flex;flex-wrap:wrap;gap:8px}
-.cso-sintesi__linkrow a{flex:1;display:flex;justify-content:center;padding:9px 10px;font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,.2);border-radius:999px;color:#fff;text-decoration:none;white-space:nowrap}
-.cso-sintesi__linkrow a:hover{border-color:rgba(255,255,255,.5)}
+.cso-icon-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;box-sizing:border-box;padding:13px 18px;border:2px solid #fff;border-radius:999px;color:#fff;font-size:14px;font-weight:700;text-decoration:none;transition:background .15s,color .15s}
+.cso-icon-btn:hover,.cso-icon-btn:focus-visible{background:#fff;color:var(--c-deep,#3473A5)}
+.cso-icon-btn svg{flex-shrink:0}
+.cso-icon-btn__alt{display:block;margin-top:10px;text-align:center;font-size:12px;font-weight:600;color:rgba(255,255,255,.8);text-decoration:underline}
 
 /* ── Uscite correlate ── */
 .cso-related{background:var(--c-bone,#F5F1E7);padding:80px 48px 96px}
@@ -724,14 +721,9 @@ $_ud = [
 	</div>
 	<?php endif; ?>
 
-	<?php if ( $maps ) : ?>
+	<?php if ( $indirizzo ) : ?>
 	<div class="cso-sintesi__box">
-		<span class="cso-sintesi__box-label"><?php esc_html_e( 'Apri sul navigatore', 'calypsosub' ); ?></span>
-		<div class="cso-sintesi__linkrow">
-			<a href="<?php echo esc_url( $maps['google'] ); ?>" target="_blank" rel="noopener">Google Maps</a>
-			<a href="<?php echo esc_url( $maps['apple'] ); ?>" target="_blank" rel="noopener">Apple Maps</a>
-			<a href="<?php echo esc_url( $maps['waze'] ); ?>" target="_blank" rel="noopener">Waze</a>
-		</div>
+		<?php Calypsosub_Navigation_Link::render_button( $indirizzo ); ?>
 	</div>
 	<?php endif; ?>
 

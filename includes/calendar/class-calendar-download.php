@@ -39,9 +39,9 @@ class Calypsosub_Calendar_Download {
 	}
 
 	/** @param array{title:string,start:string,end?:string,location?:string,description?:string,duration?:float} $event */
-	public static function render_button( array $event, string $modifier = '' ): void {
+	public static function render_button( array $event ): void {
 		?>
-		<a class="cso-cal-btn<?php echo $modifier !== '' ? ' cso-cal-btn--' . esc_attr( $modifier ) : ''; ?>" href="<?php echo esc_url( self::url( $event ) ); ?>" rel="nofollow">
+		<a class="cso-icon-btn" href="<?php echo esc_url( self::url( $event ) ); ?>" rel="nofollow">
 			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg>
 			<span><?php esc_html_e( 'Aggiungi al calendario', 'calypsosub' ); ?></span>
 		</a>
