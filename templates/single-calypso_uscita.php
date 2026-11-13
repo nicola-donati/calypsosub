@@ -132,16 +132,20 @@ if ( ! empty( $programma_override ) ) {
 
 $maps = $indirizzo ? calypso_maps_links( $indirizzo ) : null;
 
-$cal_links = null;
+$cal_event = null;
 if ( $prossima && $prossima >= $oggi ) {
 	$end_dt = '';
 	if ( $prossima_time && preg_match( '/^([01]?\d|2[0-3]):[0-5]\d$/', trim( $rientro_previsto ) ) ) {
 		$end_dt = substr( $prossima, 0, 10 ) . 'T' . trim( $rientro_previsto );
 	}
 	$cal_location = $indirizzo ?: ( $ritrovo ?: $luogo );
-	$cal_links = [
-		'gcal' => calypso_gcal_link( get_the_title(), $prossima, $end_dt, $cal_location, $desc_breve, 4.0 ),
-		'ics'  => calypso_ics_data_uri( get_the_title(), $prossima, $end_dt, $cal_location, $desc_breve, 4.0 ),
+	$cal_event = [
+		'title'       => get_the_title(),
+		'start'       => $prossima,
+		'end'         => $end_dt,
+		'location'    => $cal_location,
+		'description' => $desc_breve,
+		'duration'    => 4.0,
 	];
 }
 
@@ -295,6 +299,9 @@ $gallery_units = Calypsosub_Gallery_Helpers::build_units(
 .cso-sintesi__box-label{letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin:0 0 10px;display:block}
 .cso-sintesi .cso-sintesi__box-label{font-size:16px;color:var(--c-aqua,#59C6F9)}
 .cso .cso-sintesi__box-text{font-size:14px;line-height:1.6;color:rgba(255,255,255,.8);margin:0;white-space:pre-line}
+.cso-cal-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;box-sizing:border-box;padding:13px 18px;border:2px solid #fff;border-radius:999px;color:#fff;font-size:14px;font-weight:700;text-decoration:none;transition:background .15s,color .15s}
+.cso-cal-btn:hover,.cso-cal-btn:focus-visible{background:#fff;color:var(--c-deep,#3473A5)}
+.cso-cal-btn svg{flex-shrink:0}
 .cso-sintesi__linkrow{display:flex;flex-wrap:wrap;gap:8px}
 .cso-sintesi__linkrow a{flex:1;display:flex;justify-content:center;padding:9px 10px;font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,.2);border-radius:999px;color:#fff;text-decoration:none;white-space:nowrap}
 .cso-sintesi__linkrow a:hover{border-color:rgba(255,255,255,.5)}
@@ -728,13 +735,9 @@ $_ud = [
 	</div>
 	<?php endif; ?>
 
-	<?php if ( $cal_links ) : ?>
+	<?php if ( $cal_event ) : ?>
 	<div class="cso-sintesi__box">
-		<span class="cso-sintesi__box-label"><?php esc_html_e( 'Aggiungi al calendario', 'calypsosub' ); ?></span>
-		<div class="cso-sintesi__linkrow">
-			<a href="<?php echo esc_url( $cal_links['gcal'] ); ?>" target="_blank" rel="noopener">Google</a>
-			<a href="<?php echo esc_attr( $cal_links['ics'] ); ?>" download="<?php echo esc_attr( sanitize_title( get_the_title() ) ); ?>.ics">Apple / Outlook</a>
-		</div>
+		<?php Calypsosub_Calendar_Download::render_button( $cal_event ); ?>
 	</div>
 	<?php endif; ?>
 

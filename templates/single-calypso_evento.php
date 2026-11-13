@@ -98,11 +98,13 @@ $bar_pct  = $show_bar ? max( 0, min( 100, (int) round( $confirmed / (int) $max_p
 $maps_query = $indirizzo ?: $luogo;
 $maps       = $maps_query ? calypso_maps_links( $maps_query ) : null;
 
-$cal_links = null;
+$cal_event = null;
 if ( $prossima ) {
-	$cal_links = [
-		'gcal' => calypso_gcal_link( get_the_title(), $prossima, '', $indirizzo ?: $luogo, $sottotitolo ),
-		'ics'  => calypso_ics_data_uri( get_the_title(), $prossima, '', $indirizzo ?: $luogo, $sottotitolo ),
+	$cal_event = [
+		'title'       => get_the_title(),
+		'start'       => $prossima,
+		'location'    => $indirizzo ?: $luogo,
+		'description' => $sottotitolo,
 	];
 }
 
@@ -187,10 +189,9 @@ if ( class_exists( 'Calypsosub_Ajax_Eventi' ) ) {
 .cso-dove__nav a{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--c-wave);text-decoration:none}
 .cso-dove__nav a:hover{color:var(--c-deep,#0a2540)}
 .cso-card__links{padding:16px 24px 20px;border-top:1px solid rgba(11,26,38,.08)}
-.cso-card__links-label{letter-spacing:.08em;text-transform:uppercase;font-weight:600;font-size:11px;color:rgba(11,26,38,.55);display:block;margin-bottom:10px}
-.cso-card__links-row{display:flex;flex-wrap:wrap;gap:8px}
-.cso-card__links-row a{flex:1;display:flex;justify-content:center;padding:9px 10px;font-size:12px;font-weight:600;border:1px solid rgba(11,26,38,.15);border-radius:999px;color:var(--c-deep,#3473A5);text-decoration:none;white-space:nowrap}
-.cso-card__links-row a:hover{border-color:var(--c-deep,#3473A5)}
+.cso-cal-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;box-sizing:border-box;padding:13px 18px;border:2px solid var(--c-deep,#3473A5);border-radius:999px;color:var(--c-deep,#3473A5);font-size:14px;font-weight:700;text-decoration:none;transition:background .15s,color .15s}
+.cso-cal-btn:hover,.cso-cal-btn:focus-visible{background:var(--c-deep,#3473A5);color:#fff}
+.cso-cal-btn svg{flex-shrink:0}
 .cso-card{background:#fff;border-radius:18px;box-shadow:0 20px 50px -24px rgba(10,37,64,.5);overflow:hidden;position:sticky;top:24px}
 .cso-card__head{color:#fff;padding:24px}
 .cso-card__head-title{font-size:20px;font-weight:700;text-transform:uppercase;margin:0 0 4px}
@@ -417,13 +418,9 @@ $_evd = [
 				<?php endif; ?>
 
 			</div>
-			<?php if ( $cal_links ) : ?>
+			<?php if ( $cal_event ) : ?>
 			<div class="cso-card__links">
-				<span class="cso-card__links-label"><?php esc_html_e( 'Aggiungi al calendario', 'calypsosub' ); ?></span>
-				<div class="cso-card__links-row">
-					<a href="<?php echo esc_url( $cal_links['gcal'] ); ?>" target="_blank" rel="noopener">Google</a>
-					<a href="<?php echo esc_attr( $cal_links['ics'] ); ?>" download="<?php echo esc_attr( sanitize_title( get_the_title() ) ); ?>.ics">Apple / Outlook</a>
-				</div>
+				<?php Calypsosub_Calendar_Download::render_button( $cal_event ); ?>
 			</div>
 			<?php endif; ?>
 		</div>

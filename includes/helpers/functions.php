@@ -461,10 +461,10 @@ function calypso_ics_escape( string $text ): string {
 }
 
 /**
- * Costruisce un file .ics (singolo VEVENT) e lo restituisce come data: URI,
- * pronto per un <a href="..." download="evento.ics">. Nessun endpoint
- * server separato necessario. L'orario è quello locale del sito (floating,
- * senza fuso) — sufficiente per un singolo club, niente VTIMEZONE.
+ * Contenuto di un file .ics (singolo VEVENT), servito da
+ * Calypsosub_Calendar_Download. Gli orari sono salvati come ora locale del
+ * sito e qui convertiti in UTC (suffisso Z): un orario "floating" senza fuso
+ * verrebbe letto nel fuso del dispositivo, sbagliato per chi è all'estero.
  *
  * @param string      $title     Titolo evento.
  * @param string      $start     'Y-m-d' (tutto il giorno) o 'Y-m-d\TH:i'.
@@ -473,7 +473,7 @@ function calypso_ics_escape( string $text ): string {
  * @param string      $description
  * @param float       $duration_hours  Usata solo se $end è vuoto e $start ha un orario.
  */
-function calypso_ics_data_uri( string $title, string $start, string $end, string $location, string $description = '', float $duration_hours = 2.0 ): string {
+function calypso_ics_content( string $title, string $start, string $end, string $location, string $description = '', float $duration_hours = 2.0 ): string {
 	$all_day = strlen( $start ) <= 10;
 
 	if ( $all_day ) {
@@ -481,10 +481,10 @@ function calypso_ics_data_uri( string $title, string $start, string $end, string
 		$end_ts  = strtotime( ( $end ?: $start ) . ' +1 day' );
 		$dtend   = 'DTEND;VALUE=DATE:' . gmdate( 'Ymd', $end_ts );
 	} else {
-		$start_ts = strtotime( str_replace( 'T', ' ', $start ) );
-		$end_ts   = $end !== '' ? strtotime( str_replace( 'T', ' ', $end ) ) : $start_ts + (int) round( $duration_hours * HOUR_IN_SECONDS );
-		$dtstart  = 'DTSTART:' . gmdate( 'Ymd\THis', $start_ts );
-		$dtend    = 'DTEND:' . gmdate( 'Ymd\THis', $end_ts );
+		$start_ts = (int) calypso_local_ts( $start );
+		$end_ts   = $end !== '' ? (int) calypso_local_ts( $end ) : $start_ts + (int) round( $duration_hours * HOUR_IN_SECONDS );
+		$dtstart  = 'DTSTART:' . gmdate( 'Ymd\THis\Z', $start_ts );
+		$dtend    = 'DTEND:' . gmdate( 'Ymd\THis\Z', $end_ts );
 	}
 
 	$lines = [
@@ -492,6 +492,7 @@ function calypso_ics_data_uri( string $title, string $start, string $end, string
 		'VERSION:2.0',
 		'PRODID:-//Calypso Sub Arezzo//Eventi//IT',
 		'CALSCALE:GREGORIAN',
+		'METHOD:PUBLISH',
 		'BEGIN:VEVENT',
 		'UID:' . md5( $title . $start . $location ) . '@calypsosub.it',
 		'DTSTAMP:' . gmdate( 'Ymd\THis\Z' ),
@@ -504,12 +505,11 @@ function calypso_ics_data_uri( string $title, string $start, string $end, string
 	$lines[] = 'END:VEVENT';
 	$lines[] = 'END:VCALENDAR';
 
-	$ics = implode( "\r\n", $lines );
-	return 'data:text/calendar;charset=utf8,' . rawurlencode( $ics );
+	return implode( "\r\n", $lines ) . "\r\n";
 }
 
 /**
- * Link "Aggiungi a Google Calendar" (web). Stessi parametri di calypso_ics_data_uri().
+ * Link "Aggiungi a Google Calendar" (web). Stessi parametri di calypso_ics_content().
  */
 function calypso_gcal_link( string $title, string $start, string $end, string $location, string $description = '', float $duration_hours = 2.0 ): string {
 	$all_day = strlen( $start ) <= 10;
